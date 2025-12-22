@@ -3,7 +3,6 @@ import { join } from "path";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  reactCompiler: true,
   // Specify the correct root directory to avoid workspace detection issues
   turbopack: {
     root: join(__dirname, ".")

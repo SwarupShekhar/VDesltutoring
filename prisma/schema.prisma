@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model users {
+  id                String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkId           String?           @unique
+  email             String            @unique
+  full_name         String
+  role              user_role?        @default(LEARNER)
+  profile_image_url String?
+  is_active         Boolean?          @default(true)
+  last_login        DateTime?         @db.Timestamptz(6)
+  created_at        DateTime?         @default(now()) @db.Timestamptz(6)
+  student_profiles  student_profiles?
+  tutor_profiles    tutor_profiles?
+}
+
+model packages {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  price_usd     Decimal  @db.Decimal(10, 2)
+  credit_amount Int
+  is_public     Boolean? @default(true)
+}
+
+model sessions {
+  id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  student_id         String           @db.Uuid
+  tutor_id           String           @db.Uuid
+  start_time         DateTime         @db.Timestamptz(6)
+  end_time           DateTime         @db.Timestamptz(6)
+  status             session_status?  @default(SCHEDULED)
+  livekit_room_id    String?          @unique
+  meeting_link       String?
+  admin_notes        String?
+  created_at         DateTime?        @default(now()) @db.Timestamptz(6)
+  completion_notes   String?
+  student_join_time  DateTime?        @db.Timestamptz(6)
+  student_leave_time DateTime?        @db.Timestamptz(6)
+  tutor_join_time    DateTime?        @db.Timestamptz(6)
+  tutor_leave_time   DateTime?        @db.Timestamptz(6)
+  student_profiles   student_profiles @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tutor_profiles     tutor_profiles   @relation(fields: [tutor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([start_time], map: "idx_sessions_start_time")
+  @@index([student_id], map: "idx_sessions_student")
+  @@index([tutor_id], map: "idx_sessions_tutor")
+}
+
+model student_profiles {
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id          String?    @unique @db.Uuid
+  credits          Int        @default(0)
+  primary_tutor_id String?    @db.Uuid
+  learning_goals   String?
+  sessions         sessions[]
+  users            users?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tutor_profiles {
+  id                     String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                String?              @unique @db.Uuid
+  bio                    String?
+  expertise_tags         String[]
+  hourly_rate_equivalent Int?                 @default(1)
+  sessions               sessions[]
+  tutor_availability     tutor_availability[]
+  users                  users?               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([expertise_tags], map: "idx_tutor_tags", type: Gin)
+}
+
+model tutor_availability {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  tutor_id       String?         @db.Uuid
+  day_of_week    Int?
+  start_time     DateTime        @db.Time(6)
+  end_time       DateTime        @db.Time(6)
+  tutor_profiles tutor_profiles? @relation(fields: [tutor_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([tutor_id, day_of_week, start_time])
+}
+
+model idempotency_records {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key               String   @unique
+  operation         String
+  user_id           String
+  request_data_hash String
+  response_data     Json?
+  status_code       Int
+  expires_at        DateTime @db.Timestamptz(6)
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([key], map: "idx_idempotency_key")
+  @@index([expires_at], map: "idx_idempotency_expires")
+}
+
+model audit_logs {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String?
+  user_type     String?
+  action        String
+  event_type    String
+  resource_id   String?
+  resource_type String?
+  details       Json?
+  ip_address    String?
+  user_agent    String?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([user_id], map: "idx_audit_user")
+  @@index([event_type], map: "idx_audit_event_type")
+  @@index([resource_id], map: "idx_audit_resource")
+  @@index([created_at], map: "idx_audit_created_at")
+}
+
+enum session_status {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum user_role {
+  ADMIN
+  TUTOR
+  LEARNER
+}

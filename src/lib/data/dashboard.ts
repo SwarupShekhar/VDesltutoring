@@ -9,8 +9,11 @@ export type DashboardData = {
 
 export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Promise<DashboardData> {
     try {
+        console.log(`[DashboardService] Fetching data for role: ${role}`);
         const { userId } = await auth();
-        if (!userId) throw new Error("Unauthorized");
+        console.log(`[DashboardService] Auth userId: ${userId}`);
+
+        if (!userId) throw new Error("Unauthorized: No userId from auth()");
 
         const user = await prisma.users.findUnique({
             where: { clerkId: userId },
@@ -20,33 +23,46 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             },
         });
 
-        if (!user) throw new Error("User not found");
+        if (!user) {
+            console.error(`[DashboardService] User not found in DB for clerkId: ${userId}`);
+            throw new Error("User not found in database");
+        }
+
+        console.log(`[DashboardService] User found: ${user.id}, Role: ${user.role}, Active: ${user.is_active}`);
 
         let sessions: any[] = [];
         let credits = 0;
 
         // Fetch Sessions based on Role
-        if (role === 'LEARNER' && user.student_profiles) {
-            credits = user.student_profiles.credits;
-            sessions = await prisma.sessions.findMany({
-                where: { student_id: user.student_profiles.id },
-                include: {
-                    tutor_profiles: { include: { users: true } },
-                },
-                orderBy: { start_time: 'desc' },
-            });
-        } else if (role === 'TUTOR' && user.tutor_profiles) {
-            sessions = await prisma.sessions.findMany({
-                where: { tutor_id: user.tutor_profiles.id },
-                include: {
-                    student_profiles: { include: { users: true } },
-                },
-                orderBy: { start_time: 'desc' },
-            });
+        if (role === 'LEARNER') {
+            if (!user.student_profiles) {
+                console.warn(`[DashboardService] Role is LEARNER but no student_profile found for user ${user.id}`);
+            } else {
+                credits = user.student_profiles.credits;
+                console.log(`[DashboardService] Fetching sessions for Student Profile: ${user.student_profiles.id} (Credits: ${credits})`);
+                sessions = await prisma.sessions.findMany({
+                    where: { student_id: user.student_profiles.id },
+                    include: {
+                        tutor_profiles: { include: { users: true } },
+                    },
+                    orderBy: { start_time: 'desc' },
+                });
+            }
+        } else if (role === 'TUTOR') {
+            if (!user.tutor_profiles) {
+                console.warn(`[DashboardService] Role is TUTOR but no tutor_profile found for user ${user.id}`);
+            } else {
+                console.log(`[DashboardService] Fetching sessions for Tutor Profile: ${user.tutor_profiles.id}`);
+                sessions = await prisma.sessions.findMany({
+                    where: { tutor_id: user.tutor_profiles.id },
+                    include: {
+                        student_profiles: { include: { users: true } },
+                    },
+                    orderBy: { start_time: 'desc' },
+                });
+            }
         } else if (role === 'ADMIN' && user.role === 'ADMIN') {
-            // Admin Logic might need to be broader, but for dashboard usually we show ALL?
-            // Or maybe reuse the existing logic in api/sessions?
-            // The API route had a special case for ADMIN.
+            console.log(`[DashboardService] Fetching ALL sessions for ADMIN`);
             sessions = await prisma.sessions.findMany({
                 include: {
                     student_profiles: { include: { users: true } },
@@ -55,7 +71,11 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 orderBy: { start_time: 'desc' },
                 take: 50,
             });
+        } else {
+            console.warn(`[DashboardService] Role mismatch or unauthorized access. Request Role: ${role}, User Role: ${user.role}`);
         }
+
+        console.log(`[DashboardService] Found ${sessions.length} sessions.`);
 
         // Format Sessions (Shared Logic from API)
         const formattedSessions = sessions.map((session) => {
@@ -64,23 +84,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
 
             return {
                 id: session.id,
-                start_time: session.start_time, // Keep snake_case if frontend expects it, or unify? 
-                // The frontend currently uses snake_case: s.start_time
-                // API returned CamelCase: startTime. 
-                // WAIT. The Frontend code in page.tsx uses `s.start_time` (lines 91, 130).
-                // The API route (Step 616) returned `startTime`!
-                // This implies the frontend was ALREADY broken if it expected snake_case but API returned camelCase?
-                // OR the frontend code I read in Step 552:
-                // `new Date(s.start_time)`
-                // If API returns `startTime`, then `s.start_time` is undefined.
-                // SO THE FRONTEND WAS BROKEN ANYWAY for `start_time`.
-                // BUT `status` worked?
-                // Let's look at `s.tutor?.name`.
-                // API returns `tutor: { name: ... }`.
-                // Frontend uses `s.tutor?.name`. Matches.
-                // I shoud return snake_case to match the frontend expectations, OR update frontend.
-                // Updating frontend is better but risky if I miss spots.
-                // I will return snake_case here to match what the frontend *tries* to read.
+                start_time: session.start_time,
                 end_time: session.end_time,
                 status: session.status || 'SCHEDULED',
                 livekit_room_id: session.livekit_room_id,
@@ -99,7 +103,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
         return { credits, sessions: formattedSessions };
 
     } catch (error) {
-        console.error("Dashboard Service Error:", error);
-        throw new Error("Failed to load dashboard data");
+        console.error("[DashboardService] Critical Error:", error);
+        throw error;
     }
 }

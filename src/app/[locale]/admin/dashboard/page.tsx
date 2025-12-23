@@ -20,7 +20,7 @@ export default async function AdminDashboard({ params }: { params: Promise<{ loc
     sessions = data.sessions;
   } catch (err) {
     console.error("Admin Dashboard fetch error:", err);
-    error = "Failed to load admin data.";
+    error = err instanceof Error ? err.message : "Unknown error occurred";
   }
 
   if (error) {

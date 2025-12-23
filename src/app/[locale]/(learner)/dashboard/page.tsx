@@ -25,7 +25,7 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
     sessions = data.sessions;
   } catch (err) {
     console.error("Dashboard data fetch error:", err);
-    error = "Failed to load dashboard data. Please try again later.";
+    error = err instanceof Error ? err.message : "Unknown error occurred";
   }
 
   const upcomingSession = sessions.find(

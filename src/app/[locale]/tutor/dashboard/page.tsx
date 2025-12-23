@@ -18,7 +18,7 @@ export default async function TutorDashboard({ params }: { params: Promise<{ loc
     sessions = data.sessions;
   } catch (err) {
     console.error("Tutor Dashboard fetch error:", err);
-    error = "Failed to load session data.";
+    error = err instanceof Error ? err.message : "Unknown error occurred";
   }
 
   if (error) {

@@ -5,25 +5,7 @@ import { TutorAssignmentForm } from './TutorAssignmentForm'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 
-async function getSessions() {
-  const cookieStore = await cookies()
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/sessions?role=admin`,
-    {
-      cache: 'no-store',
-      headers: {
-        cookie: cookieStore.toString(),
-      },
-    }
-  )
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch sessions')
-  }
-
-  const data = await res.json()
-  return data.sessions
-}
+import { getDashboardData } from '@/lib/data/dashboard';
 
 import { DashboardError } from '@/components/DashboardError'
 
@@ -34,7 +16,8 @@ export default async function AdminDashboard({ params }: { params: Promise<{ loc
   let error = null;
 
   try {
-    sessions = await getSessions()
+    const data = await getDashboardData('ADMIN');
+    sessions = data.sessions;
   } catch (err) {
     console.error("Admin Dashboard fetch error:", err);
     error = "Failed to load admin data.";

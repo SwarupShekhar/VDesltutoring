@@ -6,41 +6,9 @@ import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { getDictionary, type Locale } from '@/i18n/getDictionary'
 import { DashboardError } from '@/components/DashboardError'
 
-async function getMe() {
-  const cookieStore = await cookies()
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/me`, {
-    cache: 'no-store',
-    headers: {
-      cookie: cookieStore.toString(),
-    },
-  })
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch user')
-  }
 
-  return res.json()
-}
-
-async function getSessions() {
-  const cookieStore = await cookies()
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/sessions?role=learner`,
-    {
-      cache: 'no-store',
-      headers: {
-        cookie: cookieStore.toString(),
-      },
-    }
-  )
-
-  if (!res.ok) {
-    throw new Error('Failed to fetch sessions')
-  }
-
-  const data = await res.json()
-  return data.sessions
-}
+import { getDashboardData } from '@/lib/data/dashboard';
 
 export default async function LearnerDashboard({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
@@ -52,12 +20,12 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
   let error = null;
 
   try {
-    me = await getMe();
-    sessions = await getSessions();
+    const data = await getDashboardData('LEARNER');
+    me.credits = data.credits || 0;
+    sessions = data.sessions;
   } catch (err) {
     console.error("Dashboard data fetch error:", err);
     error = "Failed to load dashboard data. Please try again later.";
-    // Optionally redirect to sign-in if 401, but middleware should handle that.
   }
 
   const upcomingSession = sessions.find(

@@ -42,8 +42,8 @@ export function Navbar({ role }: NavbarProps) {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                ESL Academy
+              <Link href="/" className="font-serif text-2xl font-bold text-slate-900 dark:text-white">
+                Natural Fluency
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -51,28 +51,27 @@ export function Navbar({ role }: NavbarProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                    pathname === item.href
+                  className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === item.href
                       ? 'border-indigo-500 text-gray-900 dark:text-white'
                       : 'border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'
-                  }`}
+                    }`}
                 >
                   {item.name}
                 </Link>
               ))}
             </div>
           </div>
-          
+
           <div className="flex items-center">
             <ThemeToggle />
-            
+
             <div className="ml-3 relative">
               <Dropdown
                 trigger={
                   <div className="flex items-center cursor-pointer">
-                    <Avatar 
-                      src={user?.imageUrl} 
-                      alt={user?.fullName || 'User'} 
+                    <Avatar
+                      src={user?.imageUrl}
+                      alt={user?.fullName || 'User'}
                       size="sm"
                     />
                   </div>
@@ -86,13 +85,13 @@ export function Navbar({ role }: NavbarProps) {
                     {user?.primaryEmailAddress?.emailAddress}
                   </p>
                 </div>
-                
+
                 <DropdownItem>
                   <Link href="/dashboard" className="block w-full text-left">
                     Dashboard
                   </Link>
                 </DropdownItem>
-                
+
                 <DropdownItem>
                   <Link href="/sign-out" className="block w-full text-left">
                     Sign out

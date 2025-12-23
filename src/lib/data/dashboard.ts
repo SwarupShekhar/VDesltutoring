@@ -1,4 +1,4 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 
 export type DashboardData = {
@@ -15,7 +15,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
 
         if (!userId) throw new Error("Unauthorized: No userId from auth()");
 
-        const user = await prisma.users.findUnique({
+        let user = await prisma.users.findUnique({
             where: { clerkId: userId },
             include: {
                 student_profiles: { include: { users: true } },
@@ -23,9 +23,53 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             },
         });
 
+        // SELF-HEALING: If user missing in DB but exists in Clerk, create them.
         if (!user) {
-            console.error(`[DashboardService] User not found in DB for clerkId: ${userId}`);
-            throw new Error("User not found in database");
+            console.warn(`[DashboardService] User ${userId} not found in DB. Attempting self-healing...`);
+            const clerkUser = await currentUser();
+
+            if (!clerkUser) {
+                console.error(`[DashboardService] Failed to fetch Clerk user details for ${userId}`);
+                throw new Error("User not found in database and failed to sync from Clerk");
+            }
+
+            const email = clerkUser.emailAddresses[0]?.emailAddress;
+            const fullName = `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'New User';
+
+            console.log(`[DashboardService] Creating user record for ${email}`);
+
+            // Transaction to create User + Student Profile (default role)
+            user = await prisma.$transaction(async (tx) => {
+                const newUser = await tx.users.create({
+                    data: {
+                        clerkId: userId,
+                        email: email,
+                        full_name: fullName,
+                        role: 'LEARNER', // Default to Learner
+                        is_active: true,
+                    }
+                });
+
+                await tx.student_profiles.create({
+                    data: {
+                        user_id: newUser.id,
+                        credits: 0,
+                        learning_goals: "Getting started",
+                    }
+                });
+
+                return await tx.users.findUnique({
+                    where: { id: newUser.id },
+                    include: {
+                        student_profiles: { include: { users: true } },
+                        tutor_profiles: { include: { users: true } },
+                    }
+                });
+            });
+
+            // If still null (shouldn't happen), throw
+            if (!user) throw new Error("Failed to create user record");
+            console.log(`[DashboardService] Self-healing successful. User created: ${user.id}`);
         }
 
         console.log(`[DashboardService] User found: ${user.id}, Role: ${user.role}, Active: ${user.is_active}`);

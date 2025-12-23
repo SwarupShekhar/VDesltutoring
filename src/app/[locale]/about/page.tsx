@@ -8,17 +8,15 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         <div className="min-h-screen bg-background text-foreground">
             <HomeNavbar dict={dict.nav} locale={locale} />
             <main className="container mx-auto px-6 py-32 max-w-3xl">
-                <h1 className="font-serif text-5xl md:text-6xl mb-12">About Natural Flow</h1>
+                <h1 className="font-serif text-5xl md:text-6xl mb-12">{dict.aboutPage?.title || "About Natural Fluency"}</h1>
 
                 <div className="space-y-8 text-lg text-muted-foreground leading-relaxed font-light">
+                    <p dangerouslySetInnerHTML={{ __html: dict.aboutPage?.p1 || '<strong class="text-foreground">We are linguists, actors, and executives.</strong> We built Natural Fluency because we saw brilliant professionals shrinking in English-speaking rooms.' }} />
                     <p>
-                        <strong className="text-foreground">We are linguists, actors, and executives.</strong> We built Natural Flow because we saw brilliant professionals shrinking in English-speaking rooms.
+                        {dict.aboutPage?.p2 || "The traditional ESL industry treats language like math: memorize the rules, and you'll get the answer. But speaking isn't math. It's music. It's rhythm, timing, and confidence."}
                     </p>
                     <p>
-                        The traditional ESL industry treats language like math: memorize the rules, and you'll get the answer. But speaking isn't math. It's music. It's rhythm, timing, and confidence.
-                    </p>
-                    <p>
-                        Our methodology is based on "Interactive Empathy"—the science of how human connection overrides performance anxiety. We don't just teach you words; we teach you how to hold space.
+                        {dict.aboutPage?.p3 || "Our methodology is based on \"Interactive Empathy\"—the science of how human connection overrides performance anxiety. We don't just teach you words; we teach you how to hold space."}
                     </p>
                 </div>
             </main>

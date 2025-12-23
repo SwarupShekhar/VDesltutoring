@@ -15,6 +15,12 @@
         "language": "Idioma",
         "interfaceOnly": "Solo interfaz. El contenido de aprendizaje permanece en inglés."
     },
+    "aboutPage": {
+        "title": "Sobre Natural Fluency",
+        "p1": "<strong class=\"text-foreground\">Somos lingüistas, actores y ejecutivos.</strong> Construimos Natural Fluency porque vimos a profesionales brillantes encogerse en salas de habla inglesa.",
+        "p2": "La industria tradicional de ESL trata el idioma como matemáticas: memoriza las reglas y obtendrás la respuesta. Pero hablar no es matemáticas. Es música. Es ritmo, tiempo y confianza.",
+        "p3": "Nuestra metodología se basa en la \"Empatía Interactiva\"—la ciencia de cómo la conexión humana anula la ansiedad por el rendimiento. No solo te enseñamos palabras; te enseñamos cómo mantener el espacio."
+    },
     "hero": {
         "headline": "Deja de traducir en tu cabeza.<br /><span>Empieza a hablar como tú mismo.</span>",
         "subtext": "El enfoque boutique para la fluidez. Para profesionales que se sienten atrapados en el silencio entre el pensamiento y el habla.",
@@ -60,50 +66,61 @@
             }
         ]
     },
-    "speakingMoments": [
-        {
-            "id": "explain_delay",
-            "title": "Explaining a delay",
-            "description": "When you know what happened but struggle to start explaining.",
-            "example": "“Can you explain why this was delayed?”",
-            "reframe": "Starting matters more than perfect explanation."
+    "speakingMoments": {
+        "headline": "Momentos donde hablar inglés se siente más difícil",
+        "subtext": "No son problemas de gramática. Son problemas de tiempo.",
+        "modal": {
+            "whyHard": "Por qué esto se siente difícil",
+            "whyHardDesc": "Estás tratando de preparar todo antes de hablar.",
+            "reframeLabel": "Reencuadre de Flujo Natural",
+            "practice": "Practicar este momento",
+            "teach": "Mira cómo enseñamos esto"
         },
-        {
-            "id": "unexpected_question",
-            "title": "Being asked unexpectedly",
-            "description": "When you understand the question but your mind goes blank.",
-            "example": "“What do you think about this idea?”",
-            "reframe": "You don’t need an answer — you need an entry."
-        },
-        {
-            "id": "disagree_politely",
-            "title": "Disagreeing politely",
-            "description": "When you want to disagree but fear sounding rude.",
-            "example": "“I’m not sure I agree with that.”",
-            "reframe": "Tone comes from pacing, not vocabulary."
-        },
-        {
-            "id": "clarify_mistake",
-            "title": "Clarifying a misunderstanding",
-            "description": "When something goes wrong and you need to explain yourself.",
-            "example": "“Let me clarify what I meant.”",
-            "reframe": "Speaking early prevents pressure."
-        },
-        {
-            "id": "joining_conversation",
-            "title": "Joining a conversation late",
-            "description": "When the discussion is already moving fast.",
-            "example": "“Can I add something here?”",
-            "reframe": "Claiming space is a skill."
-        },
-        {
-            "id": "thinking_mid_sentence",
-            "title": "Losing your sentence halfway",
-            "description": "When you start speaking and forget what you wanted to say.",
-            "example": "“What I was trying to say is…”",
-            "reframe": "Pausing confidently keeps flow alive."
-        }
-    ],
+        "items": [
+            {
+                "id": "explain_delay",
+                "title": "Explicar un retraso",
+                "description": "Cuando sabes qué pasó pero te cuesta empezar a explicar.",
+                "example": "“Can you explain why this was delayed?”",
+                "reframe": "Empezar importa más que una explicación perfecta."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Ser preguntado inesperadamente",
+                "description": "Cuando entiendes la pregunta pero tu mente se queda en blanco.",
+                "example": "“What do you think about this idea?”",
+                "reframe": "No necesitas una respuesta — necesitas una entrada."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Desacuerdo cortés",
+                "description": "Cuando quieres estar en desacuerdo pero temes sonar grosero.",
+                "example": "“I’m not sure I agree with that.”",
+                "reframe": "El tono viene del ritmo, no del vocabulario."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Aclarar un malentendido",
+                "description": "Cuando algo sale mal y necesitas explicarte.",
+                "example": "“Let me clarify what I meant.”",
+                "reframe": "Hablar temprano previene la presión."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Unirse tarde a una conversación",
+                "description": "Cuando la discusión ya avanza rápido.",
+                "example": "“Can I add something here?”",
+                "reframe": "Reclamar espacio es una habilidad."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Perder la frase a la mitad",
+                "description": "Cuando empiezas a hablar y olvidas lo que querías decir.",
+                "example": "“What I was trying to say is…”",
+                "reframe": "Pausar con confianza mantiene el flujo vivo."
+            }
+        ]
+    },
     "tutors": {
         "headline": "Mentores, no solo profesores.",
         "subtext": "Profesionales seleccionados que entienden la psicología del rendimiento.",

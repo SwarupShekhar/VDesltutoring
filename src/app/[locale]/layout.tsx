@@ -26,7 +26,7 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Natural Flow',
+  title: 'Natural Fluency',
   description: 'The boutique approach to fluency.',
 }
 
@@ -47,7 +47,6 @@ export default async function RootLayout({
         <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <BrowserExtensionFix />
-            <GlobalHeader dict={dict.nav} />
             {children}
           </ThemeProvider>
         </body>

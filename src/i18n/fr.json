@@ -5,6 +5,12 @@
         "practice": "Pratique",
         "pricing": "Tarifs",
         "about": "À propos",
+        "aboutPage": {
+            "title": "À propos de Natural Fluency",
+            "p1": "<strong class=\"text-foreground\">Nous sommes des linguistes, des acteurs et des cadres.</strong> Nous avons créé Natural Fluency parce que nous avons vu des professionnels brillants se recroqueviller dans des salles anglophones.",
+            "p2": "L'industrie ESL traditionnelle traite la langue comme des mathématiques : mémorisez les règles et vous obtiendrez la réponse. Mais parler n'est pas des mathématiques. C'est de la musique. C'est le rythme, le timing et la confiance.",
+            "p3": "Notre méthodologie est basée sur \"l'Empathie Interactive\"—la science de la façon dont la connexion humaine surpasse l'anxiété de performance. Nous ne vous enseignons pas seulement des mots ; nous vous apprenons à occuper l'espace."
+        },
         "signIn": "Se connecter",
         "getStarted": "Commencer",
         "dashboard": "Tableau de bord",
@@ -60,50 +66,61 @@
             }
         ]
     },
-    "speakingMoments": [
-        {
-            "id": "explain_delay",
-            "title": "Explaining a delay",
-            "description": "When you know what happened but struggle to start explaining.",
-            "example": "“Can you explain why this was delayed?”",
-            "reframe": "Starting matters more than perfect explanation."
+    "speakingMoments": {
+        "headline": "Moments où parler anglais semble le plus difficile",
+        "subtext": "Ce ne sont pas des problèmes de grammaire. Ce sont des problèmes de timing.",
+        "modal": {
+            "whyHard": "Pourquoi cela semble difficile",
+            "whyHardDesc": "Vous essayez de tout préparer avant de parler.",
+            "reframeLabel": "Recadrage du Flux Naturel",
+            "practice": "Pratiquer ce moment",
+            "teach": "Voir comment nous enseignons cela"
         },
-        {
-            "id": "unexpected_question",
-            "title": "Being asked unexpectedly",
-            "description": "When you understand the question but your mind goes blank.",
-            "example": "“What do you think about this idea?”",
-            "reframe": "You don’t need an answer — you need an entry."
-        },
-        {
-            "id": "disagree_politely",
-            "title": "Disagreeing politely",
-            "description": "When you want to disagree but fear sounding rude.",
-            "example": "“I’m not sure I agree with that.”",
-            "reframe": "Tone comes from pacing, not vocabulary."
-        },
-        {
-            "id": "clarify_mistake",
-            "title": "Clarifying a misunderstanding",
-            "description": "When something goes wrong and you need to explain yourself.",
-            "example": "“Let me clarify what I meant.”",
-            "reframe": "Speaking early prevents pressure."
-        },
-        {
-            "id": "joining_conversation",
-            "title": "Joining a conversation late",
-            "description": "When the discussion is already moving fast.",
-            "example": "“Can I add something here?”",
-            "reframe": "Claiming space is a skill."
-        },
-        {
-            "id": "thinking_mid_sentence",
-            "title": "Losing your sentence halfway",
-            "description": "When you start speaking and forget what you wanted to say.",
-            "example": "“What I was trying to say is…”",
-            "reframe": "Pausing confidently keeps flow alive."
-        }
-    ],
+        "items": [
+            {
+                "id": "explain_delay",
+                "title": "Expliquer un retard",
+                "description": "Quand vous savez ce qui s'est passé mais peinez à commencer l'explication.",
+                "example": "“Can you explain why this was delayed?”",
+                "reframe": "Le démarrage compte plus qu'une explication parfaite."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Être interrogé de manière inattendue",
+                "description": "Quand vous comprenez la question mais votre esprit devient vide.",
+                "example": "“What do you think about this idea?”",
+                "reframe": "Vous n'avez pas besoin d'une réponse — vous avez besoin d'une entrée."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Être en désaccord poliment",
+                "description": "Quand vous voulez être en désaccord mais craignez de paraître impoli.",
+                "example": "“I’m not sure I agree with that.”",
+                "reframe": "Le ton vient du rythme, pas du vocabulaire."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Clarifier un malentendu",
+                "description": "Quand quelque chose tourne mal et vous devez vous expliquer.",
+                "example": "“Let me clarify what I meant.”",
+                "reframe": "Parler tôt évite la pression."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Rejoindre une conversation en retard",
+                "description": "Quand la discussion avance déjà vite.",
+                "example": "“Can I add something here?”",
+                "reframe": "Prendre sa place est une compétence."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Perdre sa phrase en cours de route",
+                "description": "Quand vous commencez à parler et oubliez ce que vous vouliez dire.",
+                "example": "“What I was trying to say is…”",
+                "reframe": "Faire une pause avec confiance garde le flux vivant."
+            }
+        ]
+    },
     "tutors": {
         "headline": "Mentors, pas juste des professeurs.",
         "subtext": "Des professionnels triés sur le volet qui comprennent la psychologie de la performance.",
@@ -127,7 +144,7 @@
     "faq": {
         "headline": "Questions Fréquentes",
         "q1": "Est-ce pour les débutants ?",
-        "a1": "Non. Natural Flow est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance.",
+        "a1": "Non. Natural Fluency est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance.",
         "q2": "Comment fonctionne la planification ?",
         "a2": "Vous réservez des sessions directement avec votre mentor choisi en fonction de sa disponibilité en direct. Pas de créneaux hebdomadaires fixes requis.",
         "q3": "Et si je ne m'entends pas avec mon mentor ?",

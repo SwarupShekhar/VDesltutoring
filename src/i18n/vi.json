@@ -15,6 +15,12 @@
         "language": "Ngôn ngữ",
         "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh."
     },
+    "aboutPage": {
+        "title": "Về Natural Fluency",
+        "p1": "<strong class=\"text-foreground\">Chúng tôi là những nhà ngôn ngữ học, diễn viên và giám đốc điều hành.</strong> Chúng tôi xây dựng Natural Fluency vì chúng tôi thấy những chuyên gia xuất sắc thu mình lại trong các phòng nói tiếng Anh.",
+        "p2": "Ngành công nghiệp ESL truyền thống coi ngôn ngữ như toán học: ghi nhớ các quy tắc và bạn sẽ có câu trả lời. Nhưng nói không phải là toán học. Đó là âm nhạc. Đó là nhịp điệu, thời gian và sự tự tin.",
+        "p3": "Phương pháp của chúng tôi dựa trên \"Sự đồng cảm tương tác\"—khoa học về cách kết nối con người vượt qua nỗi lo âu về hiệu suất. Chúng tôi không chỉ dạy bạn từ ngữ; chúng tôi dạy bạn cách làm chủ không gian."
+    },
     "hero": {
         "headline": "Ngừng dịch trong đầu.<br /><span>Bắt đầu nói như chính bạn.</span>",
         "subtext": "Phương pháp tiếp cận chuyên biệt để trôi chảy. Dành cho các chuyên gia cảm thấy mắc kẹt trong sự im lặng giữa suy nghĩ và lời nói.",
@@ -60,50 +66,61 @@
             }
         ]
     },
-    "speakingMoments": [
-        {
-            "id": "explain_delay",
-            "title": "Explaining a delay",
-            "description": "When you know what happened but struggle to start explaining.",
-            "example": "“Can you explain why this was delayed?”",
-            "reframe": "Starting matters more than perfect explanation."
+    "speakingMoments": {
+        "headline": "Những khoảnh khắc nói tiếng Anh cảm thấy khó khăn nhất",
+        "subtext": "Đây không phải là vấn đề ngữ pháp. Chúng là vấn đề thời gian.",
+        "modal": {
+            "whyHard": "Tại sao điều này cảm thấy khó",
+            "whyHardDesc": "Bạn đang cố gắng chuẩn bị mọi thứ trước khi nói.",
+            "reframeLabel": "Khung tư duy dòng chảy tự nhiên",
+            "practice": "Thực hành khoảnh khắc này",
+            "teach": "Xem cách chúng tôi dạy điều này"
         },
-        {
-            "id": "unexpected_question",
-            "title": "Being asked unexpectedly",
-            "description": "When you understand the question but your mind goes blank.",
-            "example": "“What do you think about this idea?”",
-            "reframe": "You don’t need an answer — you need an entry."
-        },
-        {
-            "id": "disagree_politely",
-            "title": "Disagreeing politely",
-            "description": "When you want to disagree but fear sounding rude.",
-            "example": "“I’m not sure I agree with that.”",
-            "reframe": "Tone comes from pacing, not vocabulary."
-        },
-        {
-            "id": "clarify_mistake",
-            "title": "Clarifying a misunderstanding",
-            "description": "When something goes wrong and you need to explain yourself.",
-            "example": "“Let me clarify what I meant.”",
-            "reframe": "Speaking early prevents pressure."
-        },
-        {
-            "id": "joining_conversation",
-            "title": "Joining a conversation late",
-            "description": "When the discussion is already moving fast.",
-            "example": "“Can I add something here?”",
-            "reframe": "Claiming space is a skill."
-        },
-        {
-            "id": "thinking_mid_sentence",
-            "title": "Losing your sentence halfway",
-            "description": "When you start speaking and forget what you wanted to say.",
-            "example": "“What I was trying to say is…”",
-            "reframe": "Pausing confidently keeps flow alive."
-        }
-    ],
+        "items": [
+            {
+                "id": "explain_delay",
+                "title": "Giải thích sự chậm trễ",
+                "description": "Khi bạn biết điều gì đã xảy ra nhưng gặp khó khăn khi bắt đầu giải thích.",
+                "example": "“Can you explain why this was delayed?”",
+                "reframe": "Bắt đầu quan trọng hơn là giải thích hoàn hảo."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Bị hỏi bất ngờ",
+                "description": "Khi bạn hiểu câu hỏi nhưng tâm trí bạn trống rỗng.",
+                "example": "“What do you think about this idea?”",
+                "reframe": "Bạn không cần câu trả lời — bạn cần sự nhập cuộc."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Không đồng ý một cách lịch sự",
+                "description": "Khi bạn muốn không đồng ý nhưng sợ nghe có vẻ thô lỗ.",
+                "example": "“I’m not sure I agree with that.”",
+                "reframe": "Giọng điệu đến từ nhịp độ, không phải từ vựng."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Làm rõ sự hiểu lầm",
+                "description": "Khi có gì đó không ổn và bạn cần giải thích bản thân.",
+                "example": "“Let me clarify what I meant.”",
+                "reframe": "Nói sớm ngăn chặn áp lực."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Tham gia cuộc trò chuyện muộn",
+                "description": "Khi cuộc thảo luận đã diễn ra nhanh chóng.",
+                "example": "“Can I add something here?”",
+                "reframe": "Chiếm lĩnh không gian là một kỹ năng."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Mất câu nói giữa chừng",
+                "description": "Khi bạn bắt đầu nói và quên mất những gì bạn muốn nói.",
+                "example": "“What I was trying to say is…”",
+                "reframe": "Tạm dừng tự tin giữ cho dòng chảy sống động."
+            }
+        ]
+    },
     "tutors": {
         "headline": "Cố vấn, không chỉ là giáo viên.",
         "subtext": "Các chuyên gia được tuyển chọn hiểu rõ tâm lý của việc trình bày.",

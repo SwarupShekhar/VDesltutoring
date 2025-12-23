@@ -22,7 +22,7 @@ const plans = [
         name: "Standard",
         price: "$599",
         period: "/ month",
-        description: "The core Natural Flow experience. Best for professionals.",
+        description: "The core Natural Fluency experience. Best for professionals.",
         features: [
             "Everything in Basic",
             "4 Live 1:1 Sessions / month",

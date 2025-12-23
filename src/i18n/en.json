@@ -5,6 +5,12 @@
         "practice": "Practice",
         "pricing": "Pricing",
         "about": "About Us",
+        "aboutPage": {
+            "title": "About Natural Fluency",
+            "p1": "<strong class=\"text-foreground\">We are linguists, actors, and executives.</strong> We built Natural Fluency because we saw brilliant professionals shrinking in English-speaking rooms.",
+            "p2": "The traditional ESL industry treats language like math: memorize the rules, and you'll get the answer. But speaking isn't math. It's music. It's rhythm, timing, and confidence.",
+            "p3": "Our methodology is based on \"Interactive Empathy\"—the science of how human connection overrides performance anxiety. We don't just teach you words; we teach you how to hold space."
+        },
         "signIn": "Sign in",
         "getStarted": "Get Started",
         "dashboard": "Dashboard",
@@ -85,50 +91,61 @@
             }
         ]
     },
-    "speakingMoments": [
-        {
-            "id": "explain_delay",
-            "title": "Explaining a delay",
-            "description": "When you know what happened but struggle to start explaining.",
-            "example": "“Can you explain why this was delayed?”",
-            "reframe": "Starting matters more than perfect explanation."
+    "speakingMoments": {
+        "headline": "Moments where speaking English feels hardest",
+        "subtext": "These are not grammar problems. They’re timing problems.",
+        "modal": {
+            "whyHard": "Why this feels hard",
+            "whyHardDesc": "You're trying to prepare everything before speaking.",
+            "reframeLabel": "Natural Flow Reframe",
+            "practice": "Practice this moment",
+            "teach": "See how we teach this"
         },
-        {
-            "id": "unexpected_question",
-            "title": "Being asked unexpectedly",
-            "description": "When you understand the question but your mind goes blank.",
-            "example": "“What do you think about this idea?”",
-            "reframe": "You don’t need an answer — you need an entry."
-        },
-        {
-            "id": "disagree_politely",
-            "title": "Disagreeing politely",
-            "description": "When you want to disagree but fear sounding rude.",
-            "example": "“I’m not sure I agree with that.”",
-            "reframe": "Tone comes from pacing, not vocabulary."
-        },
-        {
-            "id": "clarify_mistake",
-            "title": "Clarifying a misunderstanding",
-            "description": "When something goes wrong and you need to explain yourself.",
-            "example": "“Let me clarify what I meant.”",
-            "reframe": "Speaking early prevents pressure."
-        },
-        {
-            "id": "joining_conversation",
-            "title": "Joining a conversation late",
-            "description": "When the discussion is already moving fast.",
-            "example": "“Can I add something here?”",
-            "reframe": "Claiming space is a skill."
-        },
-        {
-            "id": "thinking_mid_sentence",
-            "title": "Losing your sentence halfway",
-            "description": "When you start speaking and forget what you wanted to say.",
-            "example": "“What I was trying to say is…”",
-            "reframe": "Pausing confidently keeps flow alive."
-        }
-    ],
+        "items": [
+            {
+                "id": "explain_delay",
+                "title": "Explaining a delay",
+                "description": "When you know what happened but struggle to start explaining.",
+                "example": "“Can you explain why this was delayed?”",
+                "reframe": "Starting matters more than perfect explanation."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Being asked unexpectedly",
+                "description": "When you understand the question but your mind goes blank.",
+                "example": "“What do you think about this idea?”",
+                "reframe": "You don’t need an answer — you need an entry."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Disagreeing politely",
+                "description": "When you want to disagree but fear sounding rude.",
+                "example": "“I’m not sure I agree with that.”",
+                "reframe": "Tone comes from pacing, not vocabulary."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Clarifying a misunderstanding",
+                "description": "When something goes wrong and you need to explain yourself.",
+                "example": "“Let me clarify what I meant.”",
+                "reframe": "Speaking early prevents pressure."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Joining a conversation late",
+                "description": "When the discussion is already moving fast.",
+                "example": "“Can I add something here?”",
+                "reframe": "Claiming space is a skill."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Losing your sentence halfway",
+                "description": "When you start speaking and forget what you wanted to say.",
+                "example": "“What I was trying to say is…”",
+                "reframe": "Pausing confidently keeps flow alive."
+            }
+        ]
+    },
     "tutors": {
         "headline": "Mentors, not just teachers.",
         "subtext": "Hand-picked professionals who understand the psychology of performance.",

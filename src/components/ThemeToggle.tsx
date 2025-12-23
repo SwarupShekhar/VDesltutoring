@@ -6,7 +6,7 @@ import styles from './ThemeToggle.module.css';
 
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
 
   // Wait for mount to avoid mismatch
   useEffect(() => {
@@ -17,7 +17,7 @@ export function ThemeToggle() {
     return <div style={{ width: '56px', height: '25px' }} />; // prevent jumps
   }
 
-  const isDark = theme === 'dark';
+  const isDark = resolvedTheme === 'dark';
 
   const toggleTheme = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTheme(e.target.checked ? 'dark' : 'light');

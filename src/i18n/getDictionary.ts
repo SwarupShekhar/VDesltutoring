@@ -1,6 +1,7 @@
 import 'server-only'
 
-const dictionaries = {
+// Use any to bypass TS inference issues with JSON imports
+const dictionaries: Record<string, () => Promise<any>> = {
     en: () => import('./en.json').then((module) => module.default),
     de: () => import('./de.json').then((module) => module.default),
     fr: () => import('./fr.json').then((module) => module.default),
@@ -11,7 +12,7 @@ const dictionaries = {
 
 export type Locale = keyof typeof dictionaries;
 
-export const getDictionary = async (locale: Locale) => {
+export const getDictionary = async (locale: Locale): Promise<any> => {
     // partial match or fallback
     if (dictionaries[locale]) {
         return dictionaries[locale]();

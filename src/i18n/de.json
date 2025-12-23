@@ -5,6 +5,12 @@
         "practice": "Üben",
         "pricing": "Preise",
         "about": "Über uns",
+        "aboutPage": {
+            "title": "Über Natural Fluency",
+            "p1": "<strong class=\"text-foreground\">Wir sind Linguisten, Schauspieler und Führungskräfte.</strong> Wir haben Natural Fluency aufgebaut, weil wir sahen, wie brillante Profis in englischsprachigen Räumen schrumpften.",
+            "p2": "Die traditionelle ESL-Industrie behandelt Sprache wie Mathe: Regeln auswendig lernen, und du bekommst die Antwort. Aber Sprechen ist keine Mathe. Es ist Musik. Es ist Rhythmus, Timing und Selbstvertrauen.",
+            "p3": "Unsere Methodik basiert auf \"Interaktiver Empathie\"—der Wissenschaft, wie menschliche Verbindung Leistungsangst überwindet. Wir bringen Ihnen nicht nur Wörter bei; wir bringen Ihnen bei, wie man Raum hält."
+        },
         "signIn": "Anmelden",
         "getStarted": "Loslegen",
         "dashboard": "Dashboard",
@@ -85,50 +91,61 @@
             }
         ]
     },
-    "speakingMoments": [
-        {
-            "id": "explain_delay",
-            "title": "Eine Verzögerung erklären",
-            "description": "Wenn Sie wissen, was passiert ist, aber Schwierigkeiten haben, es zu erklären.",
-            "example": "“Können Sie erklären, warum das verzögert wurde?”",
-            "reframe": "Der Start ist wichtiger als die perfekte Erklärung."
+    "speakingMoments": {
+        "headline": "Momente, in denen Englisch sprechen am schwersten fällt",
+        "subtext": "Das sind keine Grammatikprobleme. Es sind Timing-Probleme.",
+        "modal": {
+            "whyHard": "Warum sich das schwer anfühlt",
+            "whyHardDesc": "Du versuchst, alles vorzubereiten, bevor du sprichst.",
+            "reframeLabel": "Natural Flow Umdeutung",
+            "practice": "Diesen Moment üben",
+            "teach": "Wie wir das unterrichten"
         },
-        {
-            "id": "unexpected_question",
-            "title": "Unerwartet gefragt werden",
-            "description": "Wenn Sie die Frage verstehen, aber Ihr Kopf leer ist.",
-            "example": "“Was denken Sie über diese Idee?”",
-            "reframe": "Sie brauchen keine Antwort — Sie brauchen einen Einstieg."
-        },
-        {
-            "id": "disagree_politely",
-            "title": "Höflich widersprechen",
-            "description": "Wenn Sie widersprechen wollen, aber Angst haben, unhöflich zu klingen.",
-            "example": "“Ich bin mir nicht sicher, ob ich dem zustimme.”",
-            "reframe": "Tonfall kommt vom Tempo, nicht vom Wortschatz."
-        },
-        {
-            "id": "clarify_mistake",
-            "title": "Ein Missverständnis klären",
-            "description": "Wenn etwas schief läuft und Sie sich erklären müssen.",
-            "example": "“Lassen Sie mich klarstellen, was ich meinte.”",
-            "reframe": "Frühes Sprechen verhindert Druck."
-        },
-        {
-            "id": "joining_conversation",
-            "title": "Spät in ein Gespräch einsteigen",
-            "description": "Wenn die Diskussion bereits schnell voranschreitet.",
-            "example": "“Darf ich hier etwas hinzufügen?”",
-            "reframe": "Raum einzunehmen ist eine Fähigkeit."
-        },
-        {
-            "id": "thinking_mid_sentence",
-            "title": "Den Satz auf halbem Weg verlieren",
-            "description": "Wenn Sie anfangen zu sprechen und vergessen, was Sie sagen wollten.",
-            "example": "“Was ich sagen wollte ist…”",
-            "reframe": "Selbstbewusstes Pausieren hält den Fluss am Leben."
-        }
-    ],
+        "items": [
+            {
+                "id": "explain_delay",
+                "title": "Eine Verzögerung erklären",
+                "description": "Wenn Sie wissen, was passiert ist, aber Schwierigkeiten haben, es zu erklären.",
+                "example": "“Können Sie erklären, warum das verzögert wurde?”",
+                "reframe": "Der Start ist wichtiger als die perfekte Erklärung."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Unerwartet gefragt werden",
+                "description": "Wenn Sie die Frage verstehen, aber Ihr Kopf leer ist.",
+                "example": "“Was denken Sie über diese Idee?”",
+                "reframe": "Sie brauchen keine Antwort — Sie brauchen einen Einstieg."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Höflich widersprechen",
+                "description": "Wenn Sie widersprechen wollen, aber Angst haben, unhöflich zu klingen.",
+                "example": "“Ich bin mir nicht sicher, ob ich dem zustimme.”",
+                "reframe": "Tonfall kommt vom Tempo, nicht vom Wortschatz."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Ein Missverständnis klären",
+                "description": "Wenn etwas schief läuft und Sie sich erklären müssen.",
+                "example": "“Lassen Sie mich klarstellen, was ich meinte.”",
+                "reframe": "Frühes Sprechen verhindert Druck."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Spät in ein Gespräch einsteigen",
+                "description": "Wenn die Diskussion bereits schnell voranschreitet.",
+                "example": "“Darf ich hier etwas hinzufügen?”",
+                "reframe": "Raum einzunehmen ist eine Fähigkeit."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Den Satz auf halbem Weg verlieren",
+                "description": "Wenn Sie anfangen zu sprechen und vergessen, was Sie sagen wollten.",
+                "example": "“Was ich sagen wollte ist…”",
+                "reframe": "Selbstbewusstes Pausieren hält den Fluss am Leben."
+            }
+        ]
+    },
     "tutors": {
         "headline": "Mentoren, nicht nur Lehrer.",
         "subtext": "Handverlesene Profis, die die Psychologie der Leistung verstehen.",

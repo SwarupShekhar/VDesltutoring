@@ -59,12 +59,12 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
           <div className="flex justify-between h-20 items-center">
 
             {/* LEFT: BRAND */}
-            <div className="flex-shrink-0 cursor-pointer group" onClick={scrollToTop}>
+            <Link href={`/${locale}`} className="flex-shrink-0 cursor-pointer group" onClick={scrollToTop}>
               <BubbleText />
               <p className="hidden lg:block text-xs text-slate-500 dark:text-slate-400 font-sans tracking-wide opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-1">
                 {t.brandSubtitle || 'Speak without translating'}
               </p>
-            </div>
+            </Link>
 
             {/* CENTER: NAVIGATION */}
             <div className="hidden md:flex items-center space-x-10">
@@ -170,7 +170,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
             className="fixed inset-0 z-[60] bg-white dark:bg-slate-950 p-6 flex flex-col"
           >
             <div className="flex justify-between items-center mb-12">
-              <span className="font-serif text-2xl font-bold text-slate-900 dark:text-white">Natural Flow</span>
+              <span className="font-serif text-2xl font-bold text-slate-900 dark:text-white">Natural Fluency</span>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-full bg-slate-100 dark:bg-white/5"

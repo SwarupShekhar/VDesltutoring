@@ -49,11 +49,24 @@ const SPEAKING_MOMENTS = [
     }
 ];
 
-export const SpeakingMomentsGrid = ({ dict }: { dict?: any[] }) => {
+export const SpeakingMomentsGrid = ({ dict }: { dict?: any }) => {
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    const moments = dict || SPEAKING_MOMENTS;
-    const activeMoment = moments.find(m => m.id === selectedId);
+    // Fallback to array if old structure or empty
+    const moments = Array.isArray(dict) ? dict : (dict?.items || SPEAKING_MOMENTS);
+    const activeMoment = moments.find((m: any) => m.id === selectedId);
+
+    // Dynamic labels with fallbacks
+    const headline = dict?.headline || "Moments where speaking English feels hardest";
+    const subtext = dict?.subtext || "These are not grammar problems. They’re timing problems.";
+
+    const modalLabels = {
+        whyHard: dict?.modal?.whyHard || "Why this feels hard",
+        whyHardDesc: dict?.modal?.whyHardDesc || "You're trying to prepare everything before speaking.",
+        reframeLabel: dict?.modal?.reframeLabel || "Natural Fluency Reframe",
+        practice: dict?.modal?.practice || "Practice this moment",
+        teach: dict?.modal?.teach || "See how we teach this"
+    };
 
     return (
         <section className="py-24 px-6 relative z-10">
@@ -65,7 +78,7 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any[] }) => {
                         viewport={{ once: true }}
                         className="text-3xl md:text-4xl font-serif text-gray-900 dark:text-white mb-4"
                     >
-                        Moments where speaking English feels hardest
+                        {headline}
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -74,12 +87,12 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any[] }) => {
                         transition={{ delay: 0.1 }}
                         className="text-lg text-gray-600 dark:text-gray-400 font-sans"
                     >
-                        These are not grammar problems. They’re timing problems.
+                        {subtext}
                     </motion.p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {moments.map((moment, index) => (
+                    {moments.map((moment: any, index: number) => (
                         <motion.div
                             key={moment.id}
                             initial={{ opacity: 0, y: 30 }}
@@ -144,15 +157,15 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any[] }) => {
                                     </div>
 
                                     <div>
-                                        <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">Why this feels hard</p>
+                                        <p className="text-xs uppercase tracking-wider text-gray-400 mb-2">{modalLabels.whyHard}</p>
                                         <p className="text-base text-gray-600 dark:text-gray-300">
-                                            You&apos;re trying to prepare everything before speaking.
+                                            {modalLabels.whyHardDesc}
                                         </p>
                                     </div>
 
                                     <div>
                                         <p className="text-xs uppercase tracking-wider text-electric mb-2 flex items-center gap-2">
-                                            <Sparkles size={12} /> Natural Flow Reframe
+                                            <Sparkles size={12} /> {modalLabels.reframeLabel}
                                         </p>
                                         <p className="text-lg font-medium text-gray-900 dark:text-white">
                                             {activeMoment.reframe}

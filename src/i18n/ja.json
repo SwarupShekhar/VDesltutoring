@@ -15,6 +15,12 @@
         "language": "言語",
         "interfaceOnly": "インターフェースのみ。学習コンテンツは英語のままです。"
     },
+    "aboutPage": {
+        "title": "Natural Fluency について",
+        "p1": "<strong class=\"text-foreground\">私たちは言語学者、俳優、そして経営幹部です。</strong> 英語を話す環境で優秀な専門家が萎縮してしまうのを見て、Natural Fluency を構築しました。",
+        "p2": "従来のESL業界は言語を数学のように扱います：ルールを覚えれば答えが得られると。しかし、話すことは数学ではありません。それは音楽です。リズム、タイミング、そして自信です。",
+        "p3": "私たちの方法論は「インタラクティブ・エンパシー」に基づいています—人間関係がパフォーマンス不安をどのように克服するかという科学です。単に言葉を教えるのではなく、空間を保持する方法を教えます。"
+    },
     "hero": {
         "headline": "頭の中で翻訳するのはやめよう。<br /><span>自分らしく話し始めよう。</span>",
         "subtext": "流暢さへのブティック・アプローチ。思考と言葉の間の沈黙に行き詰まりを感じているプロフェッショナルのために。",
@@ -94,50 +100,61 @@
         "button": "最初のセッションを予約",
         "guarantee": "コミットメントは不要です。100%返金保証。"
     },
-    "speakingMoments": [
-        {
-            "id": "explain_delay",
-            "title": "Explaining a delay",
-            "description": "When you know what happened but struggle to start explaining.",
-            "example": "“Can you explain why this was delayed?”",
-            "reframe": "Starting matters more than perfect explanation."
+    "speakingMoments": {
+        "headline": "英語を話すのが最も難しく感じる瞬間",
+        "subtext": "これは文法上の問題ではありません。タイミングの問題です。",
+        "modal": {
+            "whyHard": "なぜこれが難しく感じるのか",
+            "whyHardDesc": "話す前にすべてを準備しようとしているからです。",
+            "reframeLabel": "ナチュラルフローのリフレーム",
+            "practice": "この瞬間を練習する",
+            "teach": "私たちがこれをどう教えるかを見る"
         },
-        {
-            "id": "unexpected_question",
-            "title": "Being asked unexpectedly",
-            "description": "When you understand the question but your mind goes blank.",
-            "example": "“What do you think about this idea?”",
-            "reframe": "You don’t need an answer — you need an entry."
-        },
-        {
-            "id": "disagree_politely",
-            "title": "Disagreeing politely",
-            "description": "When you want to disagree but fear sounding rude.",
-            "example": "“I’m not sure I agree with that.”",
-            "reframe": "Tone comes from pacing, not vocabulary."
-        },
-        {
-            "id": "clarify_mistake",
-            "title": "Clarifying a misunderstanding",
-            "description": "When something goes wrong and you need to explain yourself.",
-            "example": "“Let me clarify what I meant.”",
-            "reframe": "Speaking early prevents pressure."
-        },
-        {
-            "id": "joining_conversation",
-            "title": "Joining a conversation late",
-            "description": "When the discussion is already moving fast.",
-            "example": "“Can I add something here?”",
-            "reframe": "Claiming space is a skill."
-        },
-        {
-            "id": "thinking_mid_sentence",
-            "title": "Losing your sentence halfway",
-            "description": "When you start speaking and forget what you wanted to say.",
-            "example": "“What I was trying to say is…”",
-            "reframe": "Pausing confidently keeps flow alive."
-        }
-    ],
+        "items": [
+            {
+                "id": "explain_delay",
+                "title": "遅れを説明する",
+                "description": "何が起こったのかわかっているが、説明を始めるのに苦労するとき。",
+                "example": "“Can you explain why this was delayed?”",
+                "reframe": "完璧な説明よりも、話し始めることが重要です。"
+            },
+            {
+                "id": "unexpected_question",
+                "title": "突然の質問",
+                "description": "質問の意味はわかるが、頭が真っ白になるとき。",
+                "example": "“What do you think about this idea?”",
+                "reframe": "答えは必要ありません。入り口が必要です。"
+            },
+            {
+                "id": "disagree_politely",
+                "title": "丁寧に反対する",
+                "description": "反対したいが、失礼になるのを恐れるとき。",
+                "example": "“I’m not sure I agree with that.”",
+                "reframe": "トーンは語彙ではなく、ペースから生まれます。"
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "誤解を解く",
+                "description": "何かがうまくいかず、自分自身を説明する必要があるとき。",
+                "example": "“Let me clarify what I meant.”",
+                "reframe": "早めに話すことでプレッシャーを防ぎます。"
+            },
+            {
+                "id": "joining_conversation",
+                "title": "会話に遅れて参加する",
+                "description": "議論がすでに急速に進んでいるとき。",
+                "example": "“Can I add something here?”",
+                "reframe": "スペースを主張することはスキルです。"
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "話の途中で言葉を失う",
+                "description": "話し始めたが、言いたいことを忘れてしまったとき。",
+                "example": "“What I was trying to say is…”",
+                "reframe": "自信を持って一時停止することで、フローを維持できます。"
+            }
+        ]
+    },
     "dashboard": {
         "learnerTitle": "学習者ダッシュボード",
         "bookSession": "新しいセッションを予約",

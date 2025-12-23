@@ -1,0 +1,155 @@
+{
+    "nav": {
+        "brandSubtitle": "Nói không cần dịch",
+        "approach": "Phương pháp",
+        "practice": "Luyện tập",
+        "pricing": "Bảng giá",
+        "about": "Về chúng tôi",
+        "signIn": "Đăng nhập",
+        "getStarted": "Bắt đầu",
+        "dashboard": "Bảng điều khiển",
+        "signOut": "Đăng xuất",
+        "startAssessment": "Bắt đầu đánh giá",
+        "signInToPractice": "Đăng nhập để luyện tập",
+        "createAccount": "Tạo tài khoản",
+        "language": "Ngôn ngữ",
+        "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh."
+    },
+    "hero": {
+        "headline": "Ngừng dịch trong đầu.<br /><span>Bắt đầu nói như chính bạn.</span>",
+        "subtext": "Phương pháp tiếp cận chuyên biệt để trôi chảy. Dành cho các chuyên gia cảm thấy mắc kẹt trong sự im lặng giữa suy nghĩ và lời nói.",
+        "ctaAssessment": "Bắt đầu đánh giá của bạn",
+        "ctaMethod": "Phương pháp của chúng tôi"
+    },
+    "problems": {
+        "label": "Vấn đề",
+        "headline": "Tại sao các ứng dụng không thể dạy bạn điều này.",
+        "p1": "Hầu hết các ứng dụng ngôn ngữ dạy bạn <strong>từ vựng</strong> (nói gì). Nhưng trong một cuộc họp thực tế, bạn không gặp khó khăn vì thiếu từ.",
+        "p2": "Bạn gặp khó khăn vì <strong>áp lực</strong>.",
+        "p3": "Khi rủi ro tăng cao, não bạn quay về trạng thái an toàn: <span class=\"text-foreground italic\">dịch từ tiếng mẹ đẻ</span>. Sự chậm trễ này là thứ giết chết sự tự tin của bạn, không phải ngữ pháp.",
+        "simulationLabel": "Mô phỏng áp lực thời gian thực",
+        "you": "Bạn"
+    },
+    "features": {
+        "dialogues": {
+            "title": "Đối thoại có cấu trúc",
+            "desc": "Không có những cuộc trò chuyện ngẫu nhiên. Mỗi buổi học đều có mục tiêu chính xác."
+        },
+        "feedback": {
+            "title": "Phản hồi tức thì",
+            "desc": "Sự sửa lỗi mang lại cảm giác hỗ trợ, không phải chỉ trích."
+        },
+        "match": {
+            "title": "Ghép đôi theo sự phù hợp",
+            "desc": "Chúng tôi ghép bạn với những người cố vấn phù hợp với phong cách chuyên nghiệp của bạn."
+        }
+    },
+    "testimonials": {
+        "headline": "Sự trôi chảy là đòn bẩy sự nghiệp.",
+        "subtext": "Đừng chỉ nghe lời chúng tôi.",
+        "stories": [
+            {
+                "quote": "I stopped being the quiet one in strategy meetings. I finally sound like the expert I actually am.",
+                "author": "Elena K.",
+                "role": "Senior Product Manager, Berlin"
+            },
+            {
+                "quote": "My English was 'good enough', but I wasn't connecting. Now I can joke, interrupt, and lead with nuance.",
+                "author": "Marco R.",
+                "role": "Tech Lead, São Paulo"
+            }
+        ]
+    },
+    "speakingMoments": [
+        {
+            "id": "explain_delay",
+            "title": "Explaining a delay",
+            "description": "When you know what happened but struggle to start explaining.",
+            "example": "“Can you explain why this was delayed?”",
+            "reframe": "Starting matters more than perfect explanation."
+        },
+        {
+            "id": "unexpected_question",
+            "title": "Being asked unexpectedly",
+            "description": "When you understand the question but your mind goes blank.",
+            "example": "“What do you think about this idea?”",
+            "reframe": "You don’t need an answer — you need an entry."
+        },
+        {
+            "id": "disagree_politely",
+            "title": "Disagreeing politely",
+            "description": "When you want to disagree but fear sounding rude.",
+            "example": "“I’m not sure I agree with that.”",
+            "reframe": "Tone comes from pacing, not vocabulary."
+        },
+        {
+            "id": "clarify_mistake",
+            "title": "Clarifying a misunderstanding",
+            "description": "When something goes wrong and you need to explain yourself.",
+            "example": "“Let me clarify what I meant.”",
+            "reframe": "Speaking early prevents pressure."
+        },
+        {
+            "id": "joining_conversation",
+            "title": "Joining a conversation late",
+            "description": "When the discussion is already moving fast.",
+            "example": "“Can I add something here?”",
+            "reframe": "Claiming space is a skill."
+        },
+        {
+            "id": "thinking_mid_sentence",
+            "title": "Losing your sentence halfway",
+            "description": "When you start speaking and forget what you wanted to say.",
+            "example": "“What I was trying to say is…”",
+            "reframe": "Pausing confidently keeps flow alive."
+        }
+    ],
+    "tutors": {
+        "headline": "Cố vấn, không chỉ là giáo viên.",
+        "subtext": "Các chuyên gia được tuyển chọn hiểu rõ tâm lý của việc trình bày.",
+        "viewAll": "Xem tất cả giảng viên"
+    },
+    "roadmap": {
+        "headline": "Một quy trình được xây dựng cho sự trôi chảy",
+        "audit": {
+            "title": "Kiểm toán",
+            "desc": "Chúng tôi phân tích các mẫu ngập ngừng của bạn để tạo hồ sơ."
+        },
+        "plan": {
+            "title": "Lộ trình",
+            "desc": "Một kế hoạch tùy chỉnh để lấp đầy các khoảng trống xử lý cụ thể của bạn."
+        },
+        "immersion": {
+            "title": "Đắm mình sâu sắc",
+            "desc": "Các cuộc trò chuyện được hướng dẫn nơi sự im lặng là an toàn và sự tiến bộ được cảm nhận."
+        }
+    },
+    "faq": {
+        "headline": "Câu hỏi thường gặp",
+        "q1": "Cái này có dành cho người mới bắt đầu không?",
+        "a1": "Không. Natural Flow được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp, những người đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin.",
+        "q2": "Việc lên lịch hoạt động như thế nào?",
+        "a2": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian thực của họ. Không yêu cầu các khung giờ cố định hàng tuần.",
+        "q3": "Nếu tôi không hợp với cố vấn thì sao?",
+        "a3": "Sự phù hợp là tất cả. Nếu không khí không đúng trong buổi đầu tiên, chúng tôi sẽ tìm người khác cho bạn miễn phí."
+    },
+    "ctaBottom": {
+        "headline": "Sẵn sàng tìm lại dòng chảy của bạn?",
+        "button": "Đặt buổi học đầu tiên",
+        "guarantee": "Không yêu cầu cam kết. Đảm bảo hoàn tiền 100%."
+    },
+    "dashboard": {
+        "learnerTitle": "Bảng điều khiển học viên",
+        "bookSession": "Đặt buổi học mới",
+        "creditsRemaining": "Số dư tín dụng",
+        "nextSession": "Buổi học tiếp theo",
+        "noUpcoming": "Không có buổi học sắp tới",
+        "yourProgress": "Tiến độ của bạn",
+        "confidenceSpeaking": "Sự tự tin khi nói",
+        "confidenceListening": "Sự tự tin khi nghe",
+        "history": "Lịch sử buổi học",
+        "noHistory": "Bạn chưa có lịch sử buổi học nào",
+        "tutor": "Gia sư",
+        "notAssigned": "Chưa phân công"
+    }
+}

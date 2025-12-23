@@ -49,10 +49,11 @@ const SPEAKING_MOMENTS = [
     }
 ];
 
-export const SpeakingMomentsGrid = () => {
+export const SpeakingMomentsGrid = ({ dict }: { dict?: any[] }) => {
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    const activeMoment = SPEAKING_MOMENTS.find(m => m.id === selectedId);
+    const moments = dict || SPEAKING_MOMENTS;
+    const activeMoment = moments.find(m => m.id === selectedId);
 
     return (
         <section className="py-24 px-6 relative z-10">
@@ -78,7 +79,7 @@ export const SpeakingMomentsGrid = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {SPEAKING_MOMENTS.map((moment, index) => (
+                    {moments.map((moment, index) => (
                         <motion.div
                             key={moment.id}
                             initial={{ opacity: 0, y: 30 }}

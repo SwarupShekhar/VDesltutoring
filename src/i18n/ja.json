@@ -1,0 +1,155 @@
+{
+    "nav": {
+        "brandSubtitle": "翻訳せずに話す",
+        "approach": "アプローチ",
+        "practice": "練習",
+        "pricing": "料金",
+        "about": "私たちについて",
+        "signIn": "サインイン",
+        "getStarted": "始める",
+        "dashboard": "ダッシュボード",
+        "signOut": "サインアウト",
+        "startAssessment": "診断を開始",
+        "signInToPractice": "練習にサインイン",
+        "createAccount": "アカウント作成",
+        "language": "言語",
+        "interfaceOnly": "インターフェースのみ。学習コンテンツは英語のままです。"
+    },
+    "hero": {
+        "headline": "頭の中で翻訳するのはやめよう。<br /><span>自分らしく話し始めよう。</span>",
+        "subtext": "流暢さへのブティック・アプローチ。思考と言葉の間の沈黙に行き詰まりを感じているプロフェッショナルのために。",
+        "ctaAssessment": "アセスメントを開始",
+        "ctaMethod": "私たちの方法論"
+    },
+    "problems": {
+        "label": "問題点",
+        "headline": "なぜアプリではこれを教えられないのか。",
+        "p1": "ほとんどの語学アプリは<strong>語彙</strong>（何を言うか）を教えます。しかし、実際の会議で言葉が足りなくて困るわけではありません。",
+        "p2": "あなたが苦労するのは<strong>プレッシャー</strong>のせいです。",
+        "p3": "賭け金が上がると、脳は安全策に戻ります：<span class=\"text-foreground italic\">母国語からの翻訳</span>。この遅れこそが自信を殺すのであり、文法ではありません。",
+        "simulationLabel": "リアルタイム・プレッシャー・シミュレーション",
+        "you": "あなた"
+    },
+    "features": {
+        "dialogues": {
+            "title": "構造化された対話",
+            "desc": "雑談ではありません。各セッションには明確な目標があります。"
+        },
+        "feedback": {
+            "title": "即時フィードバック",
+            "desc": "批判的ではなく、協力的と感じられる修正。"
+        },
+        "match": {
+            "title": "相性によるマッチング",
+            "desc": "あなたのプロフェッショナルな雰囲気に合うメンターとペアを組みます。"
+        }
+    },
+    "testimonials": {
+        "headline": "流暢さはキャリアのレバレッジです。",
+        "subtext": "私たちの言葉を鵜呑みにしないでください。",
+        "stories": [
+            {
+                "quote": "I stopped being the quiet one in strategy meetings. I finally sound like the expert I actually am.",
+                "author": "Elena K.",
+                "role": "Senior Product Manager, Berlin"
+            },
+            {
+                "quote": "My English was 'good enough', but I wasn't connecting. Now I can joke, interrupt, and lead with nuance.",
+                "author": "Marco R.",
+                "role": "Tech Lead, São Paulo"
+            }
+        ]
+    },
+    "tutors": {
+        "headline": "教師であるだけでなく、メンター。",
+        "subtext": "パフォーマンスの心理学を理解している厳選されたプロフェッショナル。",
+        "viewAll": "講師一覧を見る"
+    },
+    "roadmap": {
+        "headline": "フローのために構築されたプロセス",
+        "audit": {
+            "title": "監査",
+            "desc": "あなたのためらいのパターンを分析し、プロフィールを作成します。"
+        },
+        "plan": {
+            "title": "ロードマップ",
+            "desc": "特定の処理のギャップを埋めるためのカスタムプラン。"
+        },
+        "immersion": {
+            "title": "深い没入",
+            "desc": "沈黙が安全で、進歩が感じられるガイド付きの会話。"
+        }
+    },
+    "faq": {
+        "headline": "よくある質問",
+        "q1": "初心者向けですか？",
+        "a1": "いいえ。Natural Flowは、文法は知っているが流暢さと自信に苦労している中級から上級のプロフェッショナル向けに設計されています。",
+        "q2": "スケジュールはどうなっていますか？",
+        "a2": "メンターのライブ空き状況に基づいて、直接セッションを予約します。固定の毎週の枠は必要ありません。",
+        "q3": "メンターと合わない場合は？",
+        "a3": "相性がすべてです。最初のセッションで雰囲気が合わない場合は、無料で別のメンターを見つけます。"
+    },
+    "ctaBottom": {
+        "headline": "自分のフローを見つける準備はできましたか？",
+        "button": "最初のセッションを予約",
+        "guarantee": "コミットメントは不要です。100%返金保証。"
+    },
+    "speakingMoments": [
+        {
+            "id": "explain_delay",
+            "title": "Explaining a delay",
+            "description": "When you know what happened but struggle to start explaining.",
+            "example": "“Can you explain why this was delayed?”",
+            "reframe": "Starting matters more than perfect explanation."
+        },
+        {
+            "id": "unexpected_question",
+            "title": "Being asked unexpectedly",
+            "description": "When you understand the question but your mind goes blank.",
+            "example": "“What do you think about this idea?”",
+            "reframe": "You don’t need an answer — you need an entry."
+        },
+        {
+            "id": "disagree_politely",
+            "title": "Disagreeing politely",
+            "description": "When you want to disagree but fear sounding rude.",
+            "example": "“I’m not sure I agree with that.”",
+            "reframe": "Tone comes from pacing, not vocabulary."
+        },
+        {
+            "id": "clarify_mistake",
+            "title": "Clarifying a misunderstanding",
+            "description": "When something goes wrong and you need to explain yourself.",
+            "example": "“Let me clarify what I meant.”",
+            "reframe": "Speaking early prevents pressure."
+        },
+        {
+            "id": "joining_conversation",
+            "title": "Joining a conversation late",
+            "description": "When the discussion is already moving fast.",
+            "example": "“Can I add something here?”",
+            "reframe": "Claiming space is a skill."
+        },
+        {
+            "id": "thinking_mid_sentence",
+            "title": "Losing your sentence halfway",
+            "description": "When you start speaking and forget what you wanted to say.",
+            "example": "“What I was trying to say is…”",
+            "reframe": "Pausing confidently keeps flow alive."
+        }
+    ],
+    "dashboard": {
+        "learnerTitle": "学習者ダッシュボード",
+        "bookSession": "新しいセッションを予約",
+        "creditsRemaining": "残りのクレジット",
+        "nextSession": "次のセッション",
+        "noUpcoming": "予定されているセッションはありません",
+        "yourProgress": "あなたの進捗",
+        "confidenceSpeaking": "話す自信",
+        "confidenceListening": "聞く自信",
+        "history": "セッション履歴",
+        "noHistory": "セッション履歴はまだありません",
+        "tutor": "チューター",
+        "notAssigned": "未割り当て"
+    }
+}

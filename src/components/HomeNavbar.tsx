@@ -3,34 +3,49 @@
 import { useState } from 'react';
 import { useUser, SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Avatar } from '@/components/ui/Avatar';
 import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/Button';
 import { Menu, X, ChevronDown, User, CreditCard, Info, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { BubbleText } from '@/components/BubbleText';
 
-export function HomeNavbar() {
+export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   const { user, isLoaded } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+
+  const t = dict || {};
+  const locales = ['en', 'de', 'fr', 'es', 'vi', 'ja'];
+
+  const switchLocale = (newLocale: string) => {
+    const segments = pathname.split('/');
+    if (segments.length > 1) {
+      segments[1] = newLocale;
+      router.push(segments.join('/'));
+    } else {
+      router.push(`/${newLocale}`);
+    }
+  };
 
   // Custom Navigation Logic
   const handlePracticeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (isLoaded && user) {
-      router.push('/assessment');
+      router.push(`/${locale}/assessment`);
     } else {
-      router.push('/sign-in');
+      router.push(`/${locale}/sign-in`);
     }
   };
 
   const navLinks = [
-    { label: 'Approach', href: '/#approach' },
-    { label: 'Practice', href: '/assessment', onClick: handlePracticeClick }, // Custom logic applied via onClick
-    { label: 'Pricing', href: '/pricing' },
-    { label: 'About Us', href: '/about' },
+    { label: t.approach || 'Approach', href: '#approach' },
+    { label: t.practice || 'Practice', href: `/${locale}/assessment`, onClick: handlePracticeClick },
+    { label: t.pricing || 'Pricing', href: `/${locale}/pricing` },
+    { label: t.about || 'About Us', href: `/${locale}/about` },
   ];
 
   const scrollToTop = () => {
@@ -45,11 +60,9 @@ export function HomeNavbar() {
 
             {/* LEFT: BRAND */}
             <div className="flex-shrink-0 cursor-pointer group" onClick={scrollToTop}>
-              <h1 className="font-serif text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-                Natural Flow
-              </h1>
+              <BubbleText />
               <p className="hidden lg:block text-xs text-slate-500 dark:text-slate-400 font-sans tracking-wide opacity-0 group-hover:opacity-100 transition-opacity absolute -bottom-1">
-                Speak without translating
+                {t.brandSubtitle || 'Speak without translating'}
               </p>
             </div>
 
@@ -70,71 +83,61 @@ export function HomeNavbar() {
 
             {/* RIGHT: ACTIONS */}
             <div className="hidden md:flex items-center gap-6">
+              {/* Language Switcher Desktop */}
+              <div className="flex items-center gap-2 border-r border-gray-200 dark:border-white/10 pr-4">
+                {locales.map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => switchLocale(l)}
+                    className={`text-xs font-medium uppercase transition-colors ${locale === l
+                      ? 'text-electric font-bold'
+                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+                      }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+
               <ThemeToggle />
 
               {isLoaded && user ? (
-                // LOGGED IN STATE
-                <div className="relative flex items-center gap-4">
-                  <Link href="/dashboard">
-                    <Button size="sm" className="rounded-full bg-electric text-white shadow-lg hover:shadow-electric/25">
-                      Dashboard
-                    </Button>
-                  </Link>
-
-                  <Dropdown
-                    trigger={
-                      <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity">
-                        <Avatar
-                          src={user.imageUrl}
-                          alt={user.fullName || 'User'}
-                          size="sm"
-                        />
-                        <ChevronDown size={14} className="text-slate-500" />
-                      </div>
-                    }
-                  >
-                    <div className="px-4 py-3 border-b border-gray-100 dark:border-white/5">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white">
-                        {user.fullName}
-                      </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[150px]">
-                        {user.primaryEmailAddress?.emailAddress}
-                      </p>
-                    </div>
-
-                    <DropdownItem>
-                      <Link href="/dashboard" className="flex items-center gap-2 w-full">
-                        <User size={14} /> Dashboard
-                      </Link>
+                <Dropdown
+                  trigger={
+                    <button className="focus:outline-none">
+                      <Avatar src={user.imageUrl} alt={user.fullName || 'User'} size="sm" className="border-2 border-transparent hover:border-electric transition-colors" />
+                    </button>
+                  }
+                  align="right"
+                >
+                  <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">{user.fullName}</p>
+                    <p className="text-xs text-slate-500 truncate">{user.primaryEmailAddress?.emailAddress}</p>
+                  </div>
+                  <DropdownItem onClick={() => router.push(`/${locale}/dashboard`)} className="flex items-center gap-2">
+                    <User size={16} />
+                    {t.dashboard || 'Dashboard'}
+                  </DropdownItem>
+                  <DropdownItem onClick={() => router.push(`/${locale}/pricing`)} className="flex items-center gap-2">
+                    <CreditCard size={16} />
+                    {t.pricing || 'Pricing'}
+                  </DropdownItem>
+                  <div className="h-px bg-gray-50 dark:bg-white/5 my-1" />
+                  <SignOutButton>
+                    <DropdownItem className="text-red-500 hover:text-red-600 flex items-center gap-2">
+                      <LogOut size={16} />
+                      {t.signOut || 'Sign Out'}
                     </DropdownItem>
-                    <DropdownItem>
-                      <Link href="/pricing" className="flex items-center gap-2 w-full">
-                        <CreditCard size={14} /> Pricing
-                      </Link>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <Link href="/about" className="flex items-center gap-2 w-full">
-                        <Info size={14} /> About Us
-                      </Link>
-                    </DropdownItem>
-                    <DropdownItem>
-                      <SignOutButton>
-                        <button className="flex items-center gap-2 w-full text-red-500 hover:text-red-600">
-                          <LogOut size={14} /> Sign out
-                        </button>
-                      </SignOutButton>
-                    </DropdownItem>
-                  </Dropdown>
-                </div>
+                  </SignOutButton>
+                </Dropdown>
               ) : (
-                // LOGGED OUT STATE
-                <div className="flex items-center gap-6">
-                  <Link href="/sign-in" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric transition-colors">
-                    Sign in
+                <div className="flex items-center gap-4">
+                  <Link href={`/${locale}/sign-in`} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+                    {t.signIn || 'Sign In'}
                   </Link>
-                  <Link href="/sign-up">
+                  <Link href={`/${locale}/sign-up`}>
                     <Button size="sm" className="rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 border border-transparent hover:bg-slate-800 dark:hover:bg-slate-100 transition-all font-medium px-6">
-                      Get Started
+                      {t.getStarted || 'Get Started'}
                     </Button>
                   </Link>
                 </div>
@@ -143,6 +146,7 @@ export function HomeNavbar() {
 
             {/* MOBILE TOGGLE */}
             <div className="md:hidden flex items-center gap-4">
+              <span className="text-xs font-bold uppercase text-electric">{locale}</span>
               <ThemeToggle />
               <button
                 onClick={() => setMobileMenuOpen(true)}
@@ -176,9 +180,25 @@ export function HomeNavbar() {
             </div>
 
             <div className="flex flex-col gap-6 text-center">
-              <Link href={user ? "/assessment" : "/sign-in"} onClick={() => setMobileMenuOpen(false)}>
+              {/* Mobile Language Switcher */}
+              <div className="flex justify-center gap-4 mb-4">
+                {locales.map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => { switchLocale(l); setMobileMenuOpen(false); }}
+                    className={`text-sm font-medium uppercase p-2 rounded-lg ${locale === l
+                      ? 'bg-electric text-white'
+                      : 'bg-muted text-muted-foreground'
+                      }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+
+              <Link href={user ? `/${locale}/assessment` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
                 <div className="bg-electric/10 text-electric py-4 rounded-xl font-medium text-lg">
-                  {user ? 'Start Assessment' : 'Sign In to Practice'}
+                  {user ? (t.startAssessment || 'Start Assessment') : (t.signInToPractice || 'Sign In to Practice')}
                 </div>
               </Link>
 
@@ -202,15 +222,15 @@ export function HomeNavbar() {
 
               {user ? (
                 <>
-                  <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">Dashboard</Link>
-                  <Link href="/pricing" onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">Pricing</Link>
+                  <Link href={`/${locale}/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.dashboard || 'Dashboard'}</Link>
+                  <Link href={`/${locale}/pricing`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.pricing || 'Pricing'}</Link>
                   <SignOutButton>
-                    <button className="text-lg text-red-500">Sign Out</button>
+                    <button className="text-lg text-red-500 w-full">{t.signOut || 'Sign Out'}</button>
                   </SignOutButton>
                 </>
               ) : (
-                <Link href="/sign-up" onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-900 dark:text-white">
-                  Create Account
+                <Link href={`/${locale}/sign-up`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-900 dark:text-white">
+                  {t.createAccount || 'Create Account'}
                 </Link>
               )}
             </div>

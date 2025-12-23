@@ -1,4 +1,5 @@
 import { HomeNavbar } from '@/components/HomeNavbar';
+import { getDictionary, type Locale } from '@/i18n/getDictionary';
 import { Button } from '@/components/ui/Button';
 import { Check } from 'lucide-react';
 
@@ -48,10 +49,12 @@ const plans = [
     }
 ];
 
-export default function PricingPage() {
+export default async function PricingPage({ params }: { params: Promise<{ locale: Locale }> }) {
+    const { locale } = await params;
+    const dict = await getDictionary(locale);
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <HomeNavbar />
+            <HomeNavbar dict={dict.nav} locale={locale} />
             <main className="container mx-auto px-6 py-32 max-w-7xl">
                 <div className="text-center mb-20">
                     <h1 className="font-serif text-5xl md:text-6xl mb-6">Invest in your voice.</h1>

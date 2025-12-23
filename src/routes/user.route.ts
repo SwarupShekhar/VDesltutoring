@@ -1,4 +1,4 @@
-import { validate } from "../middleware/validate";
+import { validate } from "../middlewares/validate";
 import { createProductSchema } from "../schemas/user.schema";
 
 // Example: use Zod as a gatekeeper before hitting your DB/business logic.

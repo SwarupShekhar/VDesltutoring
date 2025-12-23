@@ -1,9 +1,12 @@
 import { HomeNavbar } from '@/components/HomeNavbar';
+import { getDictionary, type Locale } from '@/i18n/getDictionary';
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: { params: Promise<{ locale: Locale }> }) {
+    const { locale } = await params;
+    const dict = await getDictionary(locale);
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <HomeNavbar />
+            <HomeNavbar dict={dict.nav} locale={locale} />
             <main className="container mx-auto px-6 py-32 max-w-3xl">
                 <h1 className="font-serif text-5xl md:text-6xl mb-12">About Natural Flow</h1>
 

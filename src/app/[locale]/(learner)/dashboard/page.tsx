@@ -3,12 +3,14 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
+import { getDictionary, type Locale } from '@/i18n/getDictionary'
 
 async function getMe() {
+  const cookieStore = await cookies()
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/me`, {
     cache: 'no-store',
     headers: {
-      cookie: cookies().toString(),
+      cookie: cookieStore.toString(),
     },
   })
 
@@ -20,12 +22,13 @@ async function getMe() {
 }
 
 async function getSessions() {
+  const cookieStore = await cookies()
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/sessions?role=learner`,
     {
       cache: 'no-store',
       headers: {
-        cookie: cookies().toString(),
+        cookie: cookieStore.toString(),
       },
     }
   )
@@ -38,7 +41,11 @@ async function getSessions() {
   return data.sessions
 }
 
-export default async function LearnerDashboard() {
+export default async function LearnerDashboard({ params }: { params: Promise<{ locale: Locale }> }) {
+  const { locale } = await params
+  const dict = await getDictionary(locale)
+  const t = dict.dashboard || {}
+
   const me = await getMe()
   const sessions = await getSessions()
 
@@ -54,10 +61,10 @@ export default async function LearnerDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Learner Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t.learnerTitle || 'Learner Dashboard'}</h1>
         <Button>
-          <a href="/sessions/book" className="text-white no-underline">
-            Book a new session
+          <a href={`/${locale}/sessions/book`} className="text-white no-underline">
+            {t.bookSession || 'Book a new session'}
           </a>
         </Button>
       </div>
@@ -65,7 +72,7 @@ export default async function LearnerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Credits Remaining</CardTitle>
+            <CardTitle>{t.creditsRemaining || 'Credits Remaining'}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">{me.credits}</p>
@@ -74,23 +81,23 @@ export default async function LearnerDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Next Session</CardTitle>
+            <CardTitle>{t.nextSession || 'Next Session'}</CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingSession ? (
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="font-medium">
-                    {new Date(upcomingSession.start_time).toLocaleString()}
+                    {new Date(upcomingSession.start_time).toLocaleString(locale)}
                   </span>
                   <Badge>{upcomingSession.status}</Badge>
                 </div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Tutor: {upcomingSession.tutor?.name || 'Not assigned'}
+                  {t.tutor || 'Tutor'}: {upcomingSession.tutor?.name || (t.notAssigned || 'Not assigned')}
                 </p>
               </div>
             ) : (
-              <p className="text-gray-500 dark:text-gray-400">No upcoming sessions</p>
+              <p className="text-gray-500 dark:text-gray-400">{t.noUpcoming || 'No upcoming sessions'}</p>
             )}
           </CardContent>
         </Card>
@@ -100,18 +107,18 @@ export default async function LearnerDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Your Progress</CardTitle>
+            <CardTitle>{t.yourProgress || 'Your Progress'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ConfidenceMeter label="Speaking confidence" initialLevel={0.35} />
-            <ConfidenceMeter label="Listening confidence" initialLevel={0.45} />
+            <ConfidenceMeter label={t.confidenceSpeaking || "Speaking confidence"} initialLevel={0.35} />
+            <ConfidenceMeter label={t.confidenceListening || "Listening confidence"} initialLevel={0.45} />
           </CardContent>
         </Card>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>Session History</CardTitle>
+          <CardTitle>{t.history || 'Session History'}</CardTitle>
         </CardHeader>
         <CardContent>
           {sessionHistory.length > 0 ? (
@@ -120,10 +127,10 @@ export default async function LearnerDashboard() {
                 <div key={s.id} className="flex items-center justify-between p-4 border rounded-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
                   <div>
                     <div className="font-medium">
-                      {new Date(s.start_time).toLocaleString()}
+                      {new Date(s.start_time).toLocaleString(locale)}
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">
-                      Tutor: {s.tutor?.name || 'Not assigned'}
+                      {t.tutor || 'Tutor'}: {s.tutor?.name || (t.notAssigned || 'Not assigned')}
                     </div>
                   </div>
                   <Badge variant={s.status === 'COMPLETED' ? 'default' : 'destructive'}>
@@ -133,7 +140,7 @@ export default async function LearnerDashboard() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">You don't have any session history yet</p>
+            <p className="text-gray-500 dark:text-gray-400">{t.noHistory || "You don't have any session history yet"}</p>
           )}
         </CardContent>
       </Card>

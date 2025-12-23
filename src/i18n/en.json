@@ -1,0 +1,180 @@
+{
+    "nav": {
+        "brandSubtitle": "Speak without translating",
+        "approach": "Approach",
+        "practice": "Practice",
+        "pricing": "Pricing",
+        "about": "About Us",
+        "signIn": "Sign in",
+        "getStarted": "Get Started",
+        "dashboard": "Dashboard",
+        "signOut": "Sign out",
+        "startAssessment": "Start Assessment",
+        "signInToPractice": "Sign In to Practice",
+        "createAccount": "Create Account",
+        "language": "Language",
+        "interfaceOnly": "Interface only. Learning content remains in English."
+    },
+    "hero": {
+        "headline": "Stop translating in your head.<br /><span>Start speaking like yourself.</span>",
+        "subtext": "The boutique approach to fluency. For professionals who feel stuck in the silence between thought and speech.",
+        "ctaAssessment": "Start Your Assessment",
+        "ctaMethod": "Our Methodology"
+    },
+    "problems": {
+        "label": "The Problem",
+        "headline": "Why apps can't teach you this.",
+        "p1": "Most language apps teach you <strong>vocabulary</strong> (what to say). But in a real meeting, you don't struggle because you lack words.",
+        "p2": "You struggle because of <strong>pressure</strong>.",
+        "p3": "When the stakes go up, your brain reverts to safety: <span class=\"text-foreground italic\">translating from your native language</span>. This delay is what kills your confidence, not your grammar.",
+        "simulationLabel": "Real-time pressure simulation",
+        "you": "You"
+    },
+    "features": {
+        "dialogues": {
+            "title": "Structured Dialogues",
+            "desc": "No random chats. Every session has a precise goal."
+        },
+        "feedback": {
+            "title": "Instant Feedback",
+            "desc": "Correction that feels supportive, not critical."
+        },
+        "match": {
+            "title": "Matched for Chemistry",
+            "desc": "We pair you with mentors who match your professional vibe."
+        }
+    },
+    "testimonials": {
+        "headline": "Fluency is career leverage.",
+        "subtext": "Don't just take our word for it.",
+        "stories": [
+            {
+                "quote": "I stopped being the quiet one in strategy meetings. I finally sound like the expert I actually am.",
+                "author": "Elena K.",
+                "role": "Senior Product Manager, Berlin"
+            },
+            {
+                "quote": "My English was 'good enough', but I wasn't connecting. Now I can joke, interrupt, and lead with nuance.",
+                "author": "Marco R.",
+                "role": "Tech Lead, São Paulo"
+            },
+            {
+                "quote": "The 'Timing Problems' concept changed everything. I realized I wasn't bad at English, I was just slow at processing.",
+                "author": "Hiroshi T.",
+                "role": "Investment Banker, Tokyo"
+            },
+            {
+                "quote": "Just 4 weeks in, my CEO asked if I had lived abroad. I haven't. I just stopped translating in my head.",
+                "author": "Camille D.",
+                "role": "Marketing Director, Paris"
+            },
+            {
+                "quote": "My accent is still there, but my hesitation is gone. People listen to me differently now.",
+                "author": "Lars J.",
+                "role": "Architect, Copenhagen"
+            },
+            {
+                "quote": "I used to dread Q&A sessions. Now they are my favorite part of the presentation.",
+                "author": "Priya S.",
+                "role": "Lead Developer, Bangalore"
+            },
+            {
+                "quote": "Finally, a method that respects my intelligence. No childish games, just high-level coaching.",
+                "author": "Stefan W.",
+                "role": "Surgeon, Zurich"
+            }
+        ]
+    },
+    "speakingMoments": [
+        {
+            "id": "explain_delay",
+            "title": "Explaining a delay",
+            "description": "When you know what happened but struggle to start explaining.",
+            "example": "“Can you explain why this was delayed?”",
+            "reframe": "Starting matters more than perfect explanation."
+        },
+        {
+            "id": "unexpected_question",
+            "title": "Being asked unexpectedly",
+            "description": "When you understand the question but your mind goes blank.",
+            "example": "“What do you think about this idea?”",
+            "reframe": "You don’t need an answer — you need an entry."
+        },
+        {
+            "id": "disagree_politely",
+            "title": "Disagreeing politely",
+            "description": "When you want to disagree but fear sounding rude.",
+            "example": "“I’m not sure I agree with that.”",
+            "reframe": "Tone comes from pacing, not vocabulary."
+        },
+        {
+            "id": "clarify_mistake",
+            "title": "Clarifying a misunderstanding",
+            "description": "When something goes wrong and you need to explain yourself.",
+            "example": "“Let me clarify what I meant.”",
+            "reframe": "Speaking early prevents pressure."
+        },
+        {
+            "id": "joining_conversation",
+            "title": "Joining a conversation late",
+            "description": "When the discussion is already moving fast.",
+            "example": "“Can I add something here?”",
+            "reframe": "Claiming space is a skill."
+        },
+        {
+            "id": "thinking_mid_sentence",
+            "title": "Losing your sentence halfway",
+            "description": "When you start speaking and forget what you wanted to say.",
+            "example": "“What I was trying to say is…”",
+            "reframe": "Pausing confidently keeps flow alive."
+        }
+    ],
+    "tutors": {
+        "headline": "Mentors, not just teachers.",
+        "subtext": "Hand-picked professionals who understand the psychology of performance.",
+        "viewAll": "View all faculty"
+    },
+    "roadmap": {
+        "headline": "A process built for flow",
+        "audit": {
+            "title": "The Audit",
+            "desc": "We analyze your hesitation patterns to create your profile."
+        },
+        "plan": {
+            "title": "The Roadmap",
+            "desc": "A custom plan to bridge your specific processing gaps."
+        },
+        "immersion": {
+            "title": "Deep Immersion",
+            "desc": "Guided conversations where silence is safe and progress is felt."
+        }
+    },
+    "faq": {
+        "headline": "Frequently Asked Questions",
+        "q1": "Is this for beginners?",
+        "a1": "No. Natural Flow is designed for intermediate to advanced professionals who already know grammar but struggle with fluency and confidence.",
+        "q2": "How does scheduling work?",
+        "a2": "You book sessions directly with your chosen mentor based on their live availability. No fixed weekly slots required.",
+        "q3": "What if I don't click with my mentor?",
+        "a3": "Chemistry is everything. If the vibe isn't right in your first session, we'll find you someone else for free."
+    },
+    "ctaBottom": {
+        "headline": "Ready to find your flow?",
+        "button": "Book your first session",
+        "guarantee": "No commitment required. 100% money-back guarantee."
+    },
+    "dashboard": {
+        "learnerTitle": "Learner Dashboard",
+        "bookSession": "Book a new session",
+        "creditsRemaining": "Credits Remaining",
+        "nextSession": "Next Session",
+        "noUpcoming": "No upcoming sessions",
+        "yourProgress": "Your Progress",
+        "confidenceSpeaking": "Speaking confidence",
+        "confidenceListening": "Listening confidence",
+        "history": "Session History",
+        "noHistory": "You don't have any session history yet",
+        "tutor": "Tutor",
+        "notAssigned": "Not assigned"
+    }
+}

@@ -1,0 +1,180 @@
+{
+    "nav": {
+        "brandSubtitle": "Sprechen ohne zu übersetzen",
+        "approach": "Ansatz",
+        "practice": "Üben",
+        "pricing": "Preise",
+        "about": "Über uns",
+        "signIn": "Anmelden",
+        "getStarted": "Loslegen",
+        "dashboard": "Dashboard",
+        "signOut": "Abmelden",
+        "startAssessment": "Einschaetzung starten",
+        "signInToPractice": "Zum Üben anmelden",
+        "createAccount": "Konto erstellen",
+        "language": "Sprache",
+        "interfaceOnly": "Nur Benutzeroberfläche. Lerninhalte bleiben auf Englisch."
+    },
+    "hero": {
+        "headline": "Hör auf, im Kopf zu übersetzen.<br /><span>Fang an, wie du selbst zu sprechen.</span>",
+        "subtext": "Der Boutique-Ansatz für Redefluss. Für Profis, die sich in der Stille zwischen Gedanke und Sprache gefangen fühlen.",
+        "ctaAssessment": "Starten Sie Ihre Einschätzung",
+        "ctaMethod": "Unsere Methodik"
+    },
+    "problems": {
+        "label": "Das Problem",
+        "headline": "Warum Apps dir das nicht beibringen können.",
+        "p1": "Die meisten Sprach-Apps lehren dich <strong>Vokabeln</strong> (was du sagen sollst). Aber in einem echten Meeting scheiterst du nicht, weil dir die Worte fehlen.",
+        "p2": "Du scheiterst wegen des <strong>Drucks</strong>.",
+        "p3": "Wenn es darauf ankommt, fällt dein Gehirn in die Sicherheit zurück: <span class=\"text-foreground italic\">Übersetzen aus deiner Muttersprache</span>. Diese Verzögerung tötet dein Selbstvertrauen, nicht deine Grammatik.",
+        "simulationLabel": "Echtzeit-Drucksimulation",
+        "you": "Du"
+    },
+    "features": {
+        "dialogues": {
+            "title": "Strukturierte Dialoge",
+            "desc": "Kein zufälliger Smalltalk. Jede Sitzung hat ein präzises Ziel."
+        },
+        "feedback": {
+            "title": "Sofortiges Feedback",
+            "desc": "Korrekturen, die sich unterstützend anfühlen, nicht kritisch."
+        },
+        "match": {
+            "title": "Passende Chemie",
+            "desc": "Wir bringen dich mit Mentoren zusammen, die zu deinem professionellen Vibe passen."
+        }
+    },
+    "testimonials": {
+        "headline": "Redefluss ist ein Karriere-Hebel.",
+        "subtext": "Glaub nicht nur uns.",
+        "stories": [
+            {
+                "quote": "Ich habe aufgehört, der Ruhige in Strategiesitzungen zu sein. Endlich klinge ich wie der Experte, der ich wirklich bin.",
+                "author": "Elena K.",
+                "role": "Senior Product Manager, Berlin"
+            },
+            {
+                "quote": "Mein Englisch war 'gut genug', aber ich fand keinen Draht. Jetzt kann ich Witze machen, unterbrechen und nuanciert führen.",
+                "author": "Marco R.",
+                "role": "Tech Lead, São Paulo"
+            },
+            {
+                "quote": "Das Konzept der 'Timing-Probleme' hat alles verändert. Mir wurde klar, dass ich nicht schlecht in Englisch war, sondern nur langsam in der Verarbeitung.",
+                "author": "Hiroshi T.",
+                "role": "Investment Banker, Tokyo"
+            },
+            {
+                "quote": "Nur 4 Wochen später fragte mein CEO, ob ich im Ausland gelebt hätte. Habe ich nicht. Ich habe nur aufgehört, im Kopf zu übersetzen.",
+                "author": "Camille D.",
+                "role": "Marketing Director, Paris"
+            },
+            {
+                "quote": "Mein Akzent ist noch da, aber mein Zögern ist weg. Die Leute hören mir jetzt anders zu.",
+                "author": "Lars J.",
+                "role": "Architect, Copenhagen"
+            },
+            {
+                "quote": "Ich habe Q&A-Sessions früher gefürchtet. Jetzt sind sie mein Lieblingsteil der Präsentation.",
+                "author": "Priya S.",
+                "role": "Lead Developer, Bangalore"
+            },
+            {
+                "quote": "Endlich eine Methode, die meine Intelligenz respektiert. Keine kindischen Spiele, nur Coaching auf hohem Niveau.",
+                "author": "Stefan W.",
+                "role": "Surgeon, Zurich"
+            }
+        ]
+    },
+    "speakingMoments": [
+        {
+            "id": "explain_delay",
+            "title": "Eine Verzögerung erklären",
+            "description": "Wenn Sie wissen, was passiert ist, aber Schwierigkeiten haben, es zu erklären.",
+            "example": "“Können Sie erklären, warum das verzögert wurde?”",
+            "reframe": "Der Start ist wichtiger als die perfekte Erklärung."
+        },
+        {
+            "id": "unexpected_question",
+            "title": "Unerwartet gefragt werden",
+            "description": "Wenn Sie die Frage verstehen, aber Ihr Kopf leer ist.",
+            "example": "“Was denken Sie über diese Idee?”",
+            "reframe": "Sie brauchen keine Antwort — Sie brauchen einen Einstieg."
+        },
+        {
+            "id": "disagree_politely",
+            "title": "Höflich widersprechen",
+            "description": "Wenn Sie widersprechen wollen, aber Angst haben, unhöflich zu klingen.",
+            "example": "“Ich bin mir nicht sicher, ob ich dem zustimme.”",
+            "reframe": "Tonfall kommt vom Tempo, nicht vom Wortschatz."
+        },
+        {
+            "id": "clarify_mistake",
+            "title": "Ein Missverständnis klären",
+            "description": "Wenn etwas schief läuft und Sie sich erklären müssen.",
+            "example": "“Lassen Sie mich klarstellen, was ich meinte.”",
+            "reframe": "Frühes Sprechen verhindert Druck."
+        },
+        {
+            "id": "joining_conversation",
+            "title": "Spät in ein Gespräch einsteigen",
+            "description": "Wenn die Diskussion bereits schnell voranschreitet.",
+            "example": "“Darf ich hier etwas hinzufügen?”",
+            "reframe": "Raum einzunehmen ist eine Fähigkeit."
+        },
+        {
+            "id": "thinking_mid_sentence",
+            "title": "Den Satz auf halbem Weg verlieren",
+            "description": "Wenn Sie anfangen zu sprechen und vergessen, was Sie sagen wollten.",
+            "example": "“Was ich sagen wollte ist…”",
+            "reframe": "Selbstbewusstes Pausieren hält den Fluss am Leben."
+        }
+    ],
+    "tutors": {
+        "headline": "Mentoren, nicht nur Lehrer.",
+        "subtext": "Handverlesene Profis, die die Psychologie der Leistung verstehen.",
+        "viewAll": "Alle Fakultäten anzeigen"
+    },
+    "roadmap": {
+        "headline": "Ein Prozess für den Flow",
+        "audit": {
+            "title": "Das Audit",
+            "desc": "Wir analysieren Ihre Zögerungsmuster, um Ihr Profil zu erstellen."
+        },
+        "plan": {
+            "title": "Der Fahrplan",
+            "desc": "Ein individueller Plan, um Ihre spezifischen Verarbeitungslücken zu schließen."
+        },
+        "immersion": {
+            "title": "Tiefe Immersion",
+            "desc": "Geführte Gespräche, in denen Stille sicher ist und Fortschritt spürbar ist."
+        }
+    },
+    "faq": {
+        "headline": "Häufig gestellte Fragen",
+        "q1": "Ist das für Anfänger?",
+        "a1": "Nein. Natural Flow ist für fortgeschrittene Profis konzipiert, die Grammatik kennen, aber mit Redefluss und Selbstvertrauen kämpfen.",
+        "q2": "Wie funktioniert die Terminplanung?",
+        "a2": "Sie buchen Sitzungen direkt bei Ihrem gewählten Mentor basierend auf dessen Verfügbarkeit. Keine festen wöchentlichen Slots.",
+        "q3": "Was ist, wenn ich mich mit meinem Mentor nicht verstehe?",
+        "a3": "Chemie ist alles. Wenn es in der ersten Sitzung nicht passt, finden wir kostenlos jemand anderen für Sie."
+    },
+    "ctaBottom": {
+        "headline": "Bereit, Ihren Flow zu finden?",
+        "button": "Buchen Sie Ihre erste Sitzung",
+        "guarantee": "Keine Verpflichtung. 100% Geld-zurück-Garantie."
+    },
+    "dashboard": {
+        "learnerTitle": "Lernenden-Dashboard",
+        "bookSession": "Neue Sitzung buchen",
+        "creditsRemaining": "Verbleibende Credits",
+        "nextSession": "Nächste Sitzung",
+        "noUpcoming": "Keine anstehenden Sitzungen",
+        "yourProgress": "Dein Fortschritt",
+        "confidenceSpeaking": "Sprechsicherheit",
+        "confidenceListening": "Hörsicherheit",
+        "history": "Sitzungsverlauf",
+        "noHistory": "Du hast noch keinen Sitzungsverlauf",
+        "tutor": "Tutor",
+        "notAssigned": "Nicht zugewiesen"
+    }
+}

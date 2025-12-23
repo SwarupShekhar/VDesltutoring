@@ -1,0 +1,155 @@
+{
+    "nav": {
+        "brandSubtitle": "Parlez sans traduire",
+        "approach": "Approche",
+        "practice": "Pratique",
+        "pricing": "Tarifs",
+        "about": "À propos",
+        "signIn": "Se connecter",
+        "getStarted": "Commencer",
+        "dashboard": "Tableau de bord",
+        "signOut": "Déconnexion",
+        "startAssessment": "Commencer l'évaluation",
+        "signInToPractice": "Se connecter pour pratiquer",
+        "createAccount": "Créer un compte",
+        "language": "Langue",
+        "interfaceOnly": "Interface seulement. Le contenu d'apprentissage reste en anglais."
+    },
+    "hero": {
+        "headline": "Arrêtez de traduire dans votre tête.<br /><span>Commencez à parler comme vous-même.</span>",
+        "subtext": "L'approche boutique de la fluidité. Pour les professionnels qui se sentent coincés dans le silence entre la pensée et la parole.",
+        "ctaAssessment": "Commencer votre évaluation",
+        "ctaMethod": "Notre Méthodologie"
+    },
+    "problems": {
+        "label": "Le Problème",
+        "headline": "Pourquoi les applications ne peuvent pas vous apprendre ça.",
+        "p1": "La plupart des applications vous apprennent le <strong>vocabulaire</strong> (quoi dire). Mais dans une vraie réunion, vous ne luttez pas parce qu'il vous manque des mots.",
+        "p2": "Vous luttez à cause de la <strong>pression</strong>.",
+        "p3": "Quand les enjeux montent, votre cerveau revient à la sécurité : <span class=\"text-foreground italic\">traduire depuis votre langue maternelle</span>. Ce délai est ce qui tue votre confiance, pas votre grammaire.",
+        "simulationLabel": "Simulation de pression en temps réel",
+        "you": "Vous"
+    },
+    "features": {
+        "dialogues": {
+            "title": "Dialogues Structurés",
+            "desc": "Pas de discussions aléatoires. Chaque session a un objectif précis."
+        },
+        "feedback": {
+            "title": "Retour Instantané",
+            "desc": "Des corrections qui semblent encourageantes, pas critiques."
+        },
+        "match": {
+            "title": "Match par Alchimie",
+            "desc": "Nous vous jumelons avec des mentors qui correspondent à votre style professionnel."
+        }
+    },
+    "testimonials": {
+        "headline": "La fluidité est un levier de carrière.",
+        "subtext": "Ne nous croyez pas sur parole.",
+        "stories": [
+            {
+                "quote": "I stopped being the quiet one in strategy meetings. I finally sound like the expert I actually am.",
+                "author": "Elena K.",
+                "role": "Senior Product Manager, Berlin"
+            },
+            {
+                "quote": "My English was 'good enough', but I wasn't connecting. Now I can joke, interrupt, and lead with nuance.",
+                "author": "Marco R.",
+                "role": "Tech Lead, São Paulo"
+            }
+        ]
+    },
+    "speakingMoments": [
+        {
+            "id": "explain_delay",
+            "title": "Explaining a delay",
+            "description": "When you know what happened but struggle to start explaining.",
+            "example": "“Can you explain why this was delayed?”",
+            "reframe": "Starting matters more than perfect explanation."
+        },
+        {
+            "id": "unexpected_question",
+            "title": "Being asked unexpectedly",
+            "description": "When you understand the question but your mind goes blank.",
+            "example": "“What do you think about this idea?”",
+            "reframe": "You don’t need an answer — you need an entry."
+        },
+        {
+            "id": "disagree_politely",
+            "title": "Disagreeing politely",
+            "description": "When you want to disagree but fear sounding rude.",
+            "example": "“I’m not sure I agree with that.”",
+            "reframe": "Tone comes from pacing, not vocabulary."
+        },
+        {
+            "id": "clarify_mistake",
+            "title": "Clarifying a misunderstanding",
+            "description": "When something goes wrong and you need to explain yourself.",
+            "example": "“Let me clarify what I meant.”",
+            "reframe": "Speaking early prevents pressure."
+        },
+        {
+            "id": "joining_conversation",
+            "title": "Joining a conversation late",
+            "description": "When the discussion is already moving fast.",
+            "example": "“Can I add something here?”",
+            "reframe": "Claiming space is a skill."
+        },
+        {
+            "id": "thinking_mid_sentence",
+            "title": "Losing your sentence halfway",
+            "description": "When you start speaking and forget what you wanted to say.",
+            "example": "“What I was trying to say is…”",
+            "reframe": "Pausing confidently keeps flow alive."
+        }
+    ],
+    "tutors": {
+        "headline": "Mentors, pas juste des professeurs.",
+        "subtext": "Des professionnels triés sur le volet qui comprennent la psychologie de la performance.",
+        "viewAll": "Voir toute la faculté"
+    },
+    "roadmap": {
+        "headline": "Un processus conçu pour le flux",
+        "audit": {
+            "title": "L'Audit",
+            "desc": "Nous analysons vos modèles d'hésitation pour créer votre profil."
+        },
+        "plan": {
+            "title": "La Feuille de Route",
+            "desc": "Un plan personnalisé pour combler vos lacunes de traitement spécifiques."
+        },
+        "immersion": {
+            "title": "Immersion Profonde",
+            "desc": "Des conversations guidées où le silence est sûr et le progrès ressenti."
+        }
+    },
+    "faq": {
+        "headline": "Questions Fréquentes",
+        "q1": "Est-ce pour les débutants ?",
+        "a1": "Non. Natural Flow est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance.",
+        "q2": "Comment fonctionne la planification ?",
+        "a2": "Vous réservez des sessions directement avec votre mentor choisi en fonction de sa disponibilité en direct. Pas de créneaux hebdomadaires fixes requis.",
+        "q3": "Et si je ne m'entends pas avec mon mentor ?",
+        "a3": "L'alchimie est tout. Si le courant ne passe pas lors de votre première session, nous vous trouverons quelqu'un d'autre gratuitement."
+    },
+    "ctaBottom": {
+        "headline": "Prêt à trouver votre flux ?",
+        "button": "Réserver votre première session",
+        "guarantee": "Aucun engagement requis. Garantie de remboursement à 100%."
+    },
+    "dashboard": {
+        "learnerTitle": "Tableau de bord de l'apprenant",
+        "bookSession": "Réserver une nouvelle session",
+        "creditsRemaining": "Crédits restants",
+        "nextSession": "Prochaine session",
+        "noUpcoming": "Aucune session à venir",
+        "yourProgress": "Votre Progrès",
+        "confidenceSpeaking": "Confiance à l'oral",
+        "confidenceListening": "Confiance à l'écoute",
+        "history": "Historique des sessions",
+        "noHistory": "Vous n'avez pas encore d'historique de session",
+        "tutor": "Tuteur",
+        "notAssigned": "Non assigné"
+    }
+}

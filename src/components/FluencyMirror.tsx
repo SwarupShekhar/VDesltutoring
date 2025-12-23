@@ -8,6 +8,11 @@ import { Button } from '@/components/ui/Button';
 
 // --- CONSTANTS & DATA ---
 
+// ⚠️ PEDAGOGY RULE: Assessment content must remain English-only
+// Jumbled sentences, word bubbles, draggable fragments, and example sentences must be hard-coded English strings.
+// Do not move these to i18n dictionaries.
+
+
 const SCENARIO_PROMPTS = [
     "You are asked unexpectedly in a meeting:",
     "A client suddenly asks you:",

@@ -6,12 +6,13 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 
 async function getSessions() {
+  const cookieStore = await cookies()
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/sessions?role=admin`,
     {
       cache: 'no-store',
       headers: {
-        cookie: cookies().toString(),
+        cookie: cookieStore.toString(),
       },
     }
   )
@@ -24,7 +25,8 @@ async function getSessions() {
   return data.sessions
 }
 
-export default async function AdminDashboard() {
+export default async function AdminDashboard({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
   const sessions = await getSessions()
 
   return (
@@ -43,7 +45,7 @@ export default async function AdminDashboard() {
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="font-medium">
-                        {new Date(s.start_time).toLocaleString()}
+                        {new Date(s.start_time).toLocaleString(locale)}
                       </div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         Student: {s.student?.name || 'Not assigned'}

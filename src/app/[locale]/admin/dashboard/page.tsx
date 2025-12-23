@@ -1,23 +1,21 @@
 import { cookies } from 'next/headers'
-import { EvidenceViewer } from './EvidenceViewer'
-import { CreditAdjustmentForm } from './CreditAdjustmentForm'
-import { TutorAssignmentForm } from './TutorAssignmentForm'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
-
 import { getDashboardData } from '@/lib/data/dashboard';
-
 import { DashboardError } from '@/components/DashboardError'
+import { StudentList } from './StudentList'
+import { SessionManager } from './SessionManager'
+import { CreditAdjustmentForm } from './CreditAdjustmentForm'
+// TutorAssignmentForm is now largely redundant for primary tutors, but we can keep it or remove it if session assignment is preferred.
+// Keeping it for now as "Primary Tutor Assignment"
+import { TutorAssignmentForm } from './TutorAssignmentForm'
 
 export default async function AdminDashboard({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
 
-  let sessions = [];
+  let dashboardData: any = {};
   let error = null;
 
   try {
-    const data = await getDashboardData('ADMIN');
-    sessions = data.sessions;
+    dashboardData = await getDashboardData('ADMIN');
   } catch (err) {
     console.error("Admin Dashboard fetch error:", err);
     error = err instanceof Error ? err.message : "Unknown error occurred";
@@ -27,49 +25,37 @@ export default async function AdminDashboard({ params }: { params: Promise<{ loc
     return <DashboardError message={error} />
   }
 
+  const { students = [], unassignedSessions = [], scheduledSessions = [], pastSessions = [] } = dashboardData;
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>All Sessions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {sessions.length > 0 ? (
-            <div className="space-y-4">
-              {sessions.map((s: any) => (
-                <div key={s.id} className="p-4 border rounded-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="font-medium">
-                        {new Date(s.start_time).toLocaleString(locale)}
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Student: {s.student?.name || 'Not assigned'}
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Tutor: {s.tutor?.name || 'Not assigned'}
-                      </div>
-                    </div>
-                    <Badge>{s.status}</Badge>
-                  </div>
-                  <div className="mt-3">
-                    <EvidenceViewer sessionId={s.id} />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 dark:text-gray-400">No sessions found</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <CreditAdjustmentForm />
-        <TutorAssignmentForm />
+    <div className="space-y-8 pb-10">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin Operations Center</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Manage students, assign tutors, and monitor sessions.</p>
+        </div>
       </div>
+
+      {/* 1. Critical Operations: Sessions */}
+      <section>
+        <SessionManager
+          unassigned={unassignedSessions}
+          upcoming={scheduledSessions}
+          past={pastSessions}
+          locale={locale}
+        />
+      </section>
+
+      {/* 2. Management: Students */}
+      <section>
+        <StudentList students={students} />
+      </section>
+
+      {/* 3. Utility Tools */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CreditAdjustmentForm />
+        {/* TutorAssignmentForm removed as Primary Tutor feature is deprecated */}
+      </section>
     </div>
   )
 }

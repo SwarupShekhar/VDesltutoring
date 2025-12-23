@@ -3,7 +3,11 @@ import { prisma } from '@/lib/prisma'
 
 export type DashboardData = {
     credits?: number;
-    sessions: any[]; // You can type this properly if you have shared types
+    sessions: any[];
+    students?: any[];
+    unassignedSessions?: any[];
+    scheduledSessions?: any[];
+    pastSessions?: any[];
     error?: string;
 }
 
@@ -53,7 +57,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 await tx.student_profiles.create({
                     data: {
                         user_id: newUser.id,
-                        credits: 0,
+                        credits: 10, // Default free credits
                         learning_goals: "Getting started",
                     }
                 });
@@ -79,18 +83,39 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
 
         // Fetch Sessions based on Role
         if (role === 'LEARNER') {
+            // ENHANCED SELF-HEALING: If User exists but Profile missing
             if (!user.student_profiles) {
-                console.warn(`[DashboardService] Role is LEARNER but no student_profile found for user ${user.id}`);
-            } else {
-                credits = user.student_profiles.credits;
-                console.log(`[DashboardService] Fetching sessions for Student Profile: ${user.student_profiles.id} (Credits: ${credits})`);
-                sessions = await prisma.sessions.findMany({
-                    where: { student_id: user.student_profiles.id },
-                    include: {
-                        tutor_profiles: { include: { users: true } },
-                    },
-                    orderBy: { start_time: 'desc' },
+                console.warn(`[DashboardService] Role is LEARNER but no student_profile found for user ${user.id}. Creating one...`);
+                const newProfile = await prisma.student_profiles.create({
+                    data: {
+                        user_id: user.id,
+                        credits: 10, // Grant default credits
+                        learning_goals: "Getting started",
+                    }
                 });
+                // Attach to current user object to proceed without refetch
+                user.student_profiles = { ...newProfile, users: user };
+            }
+
+            credits = user.student_profiles.credits;
+            console.log(`[DashboardService] Fetching sessions for Student Profile: ${user.student_profiles!.id} (Credits: ${credits})`);
+
+            sessions = await prisma.sessions.findMany({
+                where: { student_id: user.student_profiles!.id },
+                include: {
+                    tutor_profiles: { include: { users: true } },
+                },
+                orderBy: { start_time: 'desc' },
+            });
+
+            // RETROACTIVE FIX: If 0 credits and 0 history, grant 10 credits (for users caught in the bug)
+            if (credits === 0 && sessions.length === 0) {
+                console.log(`[DashboardService] User has 0 credits and 0 sessions. Applying retroactive welcome bonus.`);
+                await prisma.student_profiles.update({
+                    where: { id: user.student_profiles!.id },
+                    data: { credits: 10 }
+                });
+                credits = 10;
             }
         } else if (role === 'TUTOR') {
             if (!user.tutor_profiles) {
@@ -106,22 +131,100 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 });
             }
         } else if (role === 'ADMIN' && user.role === 'ADMIN') {
-            console.log(`[DashboardService] Fetching ALL sessions for ADMIN`);
-            sessions = await prisma.sessions.findMany({
+            console.log(`[DashboardService] Fetching Ops Center data for ADMIN`);
+
+            // 1. Fetch Students
+            // 1. Fetch Students (Exclude Admins and Tutors to keep registry clean)
+            const students = await prisma.student_profiles.findMany({
+                where: {
+                    users: {
+                        role: 'LEARNER'
+                    }
+                },
+                include: { users: true },
+                orderBy: { users: { full_name: 'asc' } }
+            });
+
+            // 2. Fetch Sessions for partitioning
+            const allSessions = await prisma.sessions.findMany({
                 include: {
                     student_profiles: { include: { users: true } },
                     tutor_profiles: { include: { users: true } },
                 },
-                orderBy: { start_time: 'desc' },
-                take: 50,
+                orderBy: { start_time: 'asc' }, // Ascending for upcoming timeline
+                // take: 100, // Removed limit to see full ops picture
             });
+
+            // 3. Partition and Auto-expire
+            const now = new Date();
+            const unassignedSessions: any[] = [];
+            const scheduledSessions: any[] = [];
+            const pastSessions: any[] = [];
+
+            // DEBUG: Inspect specific inconsistent sessions
+            // REMOVED: Since auto-assignment is disabled, SCHEDULED + No Tutor is now a valid state.
+            // if (sess.status === 'SCHEDULED' && !sess.tutor_id) { ... }
+            for (const sess of allSessions) {
+                const startTime = new Date(sess.start_time);
+                const isPast = startTime < now;
+
+                if (isPast) {
+                    // Auto-expire logic: If status is still SCHEDULED but time is past, treat as completed/expired
+                    // In a real system, we might update the DB here or have a cron job.
+                    // For "Operations Center" visibility, we put them in pastSessions.
+                    pastSessions.push(sess);
+                } else {
+                    // Future sessions
+                    if (!sess.tutor_id) {
+                        unassignedSessions.push(sess);
+                    } else {
+                        scheduledSessions.push(sess);
+                    }
+                }
+            }
+
+
+            // Return expanded data structure for Admin Ops
+            sessions = allSessions; // Keep legacy flat list for compatibility if needed
+
+            // Format nested lists
+            const formatSess = (list: any[]) => list.map((session) => {
+                const studentProfile = session.student_profiles;
+                const tutorProfile = session.tutor_profiles;
+                return {
+                    id: session.id,
+                    start_time: session.start_time,
+                    end_time: session.end_time,
+                    status: session.status || 'SCHEDULED',
+                    livekit_room_id: session.livekit_room_id,
+                    meeting_link: session.meeting_link,
+                    student: studentProfile ? { id: studentProfile.id, name: studentProfile.users?.full_name, email: studentProfile.users?.email } : null,
+                    tutor: tutorProfile ? { id: tutorProfile.id, name: tutorProfile.users?.full_name } : null,
+                }
+            });
+
+            return {
+                credits: 0,
+                sessions: formatSess(sessions), // Legacy support
+                // New Ops Fields
+                students: students.map(s => ({
+                    id: s.id,
+                    name: s.users?.full_name,
+                    email: s.users?.email,
+                    credits: s.credits
+                })),
+                unassignedSessions: formatSess(unassignedSessions),
+                scheduledSessions: formatSess(scheduledSessions),
+                pastSessions: formatSess(pastSessions).reverse() // Show most recent past first
+            } as any; // Cast to any to bypass strict type for now until type def is updated
+
         } else {
             console.warn(`[DashboardService] Role mismatch or unauthorized access. Request Role: ${role}, User Role: ${user.role}`);
         }
 
         console.log(`[DashboardService] Found ${sessions.length} sessions.`);
 
-        // Format Sessions (Shared Logic from API)
+        // Format Sessions (Shared Legacy Logic for Learner/Tutor)
         const formattedSessions = sessions.map((session) => {
             const studentProfile = 'student_profiles' in session ? (session as any).student_profiles : null
             const tutorProfile = 'tutor_profiles' in session ? (session as any).tutor_profiles : null

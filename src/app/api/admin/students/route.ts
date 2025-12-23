@@ -25,7 +25,14 @@ export async function GET() {
     }
 
     // 4. Get all students with their profiles and credits
+    // STRICT FILTER: Only show actual LEARNER accounts, excluding Admins/Tutors 
+    // who might have a student_profile for testing purposes.
     const students = await prisma.student_profiles.findMany({
+      where: {
+        users: {
+          role: 'LEARNER'
+        }
+      },
       include: {
         users: {
           select: {

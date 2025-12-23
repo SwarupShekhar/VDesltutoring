@@ -48,11 +48,11 @@ export function apiError(options: ApiErrorOptions) {
   const { message, code, status = 500, details } = options
 
   const body: any = { error: message }
-  
+
   if (code) {
     body.code = code
   }
-  
+
   if (details) {
     body.details = details
   }
@@ -179,7 +179,7 @@ export const ApiErrors = {
       message: 'Internal server error',
       code: ErrorCode.INTERNAL_ERROR,
       status: 500,
-      details: process.env.NODE_ENV === 'development' ? details : undefined,
+      details: details || 'No details provided', // Force details for debugging
     }),
 }
 

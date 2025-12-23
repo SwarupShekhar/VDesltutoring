@@ -16,6 +16,7 @@ model users {
   is_active         Boolean?          @default(true)
   last_login        DateTime?         @db.Timestamptz(6)
   created_at        DateTime?         @default(now()) @db.Timestamptz(6)
+  notifications     notifications[]
   student_profiles  student_profiles?
   tutor_profiles    tutor_profiles?
 }
@@ -31,7 +32,7 @@ model packages {
 model sessions {
   id                 String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   student_id         String           @db.Uuid
-  tutor_id           String           @db.Uuid
+  tutor_id           String?          @db.Uuid
   start_time         DateTime         @db.Timestamptz(6)
   end_time           DateTime         @db.Timestamptz(6)
   status             session_status?  @default(SCHEDULED)
@@ -45,7 +46,7 @@ model sessions {
   tutor_join_time    DateTime?        @db.Timestamptz(6)
   tutor_leave_time   DateTime?        @db.Timestamptz(6)
   student_profiles   student_profiles @relation(fields: [student_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  tutor_profiles     tutor_profiles   @relation(fields: [tutor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tutor_profiles     tutor_profiles?  @relation(fields: [tutor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@index([start_time], map: "idx_sessions_start_time")
   @@index([student_id], map: "idx_sessions_student")
@@ -118,6 +119,18 @@ model audit_logs {
   @@index([event_type], map: "idx_audit_event_type")
   @@index([resource_id], map: "idx_audit_resource")
   @@index([created_at], map: "idx_audit_created_at")
+}
+
+model notifications {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  title      String
+  message    String
+  is_read    Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "idx_notifications_user")
 }
 
 enum session_status {

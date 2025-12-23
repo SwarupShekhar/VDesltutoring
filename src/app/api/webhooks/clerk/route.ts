@@ -52,25 +52,31 @@ export async function POST(req: Request) {
 
   // Handle Clerk webhook events
   const eventType = evt.type;
-  
+
   if (eventType === 'user.created') {
     const validatedData = userWebhookSchema.parse(evt.data);
     const fullName = [validatedData.first_name, validatedData.last_name]
       .filter(Boolean)
       .join(' ') || 'User';
 
-    // Create user in database with clerkId
+    // Create user in database with clerkId AND default student profile
     await prisma.users.create({
       data: {
-        clerkId: validatedData.id, // Correct field - Clerk ID
+        clerkId: validatedData.id,
         email: validatedData.email_addresses[0].email_address,
         full_name: fullName,
         profile_image_url: validatedData.image_url,
-        role: 'LEARNER', // Default role - users table is source of truth
+        role: 'LEARNER',
+        student_profiles: {
+          create: {
+            credits: 10, // Default free credits
+            learning_goals: "Getting started",
+          }
+        }
       },
     });
   }
-  
+
   if (eventType === 'user.updated') {
     const validatedData = userWebhookSchema.parse(evt.data);
     const fullName = [validatedData.first_name, validatedData.last_name]
@@ -89,10 +95,10 @@ export async function POST(req: Request) {
       },
     });
   }
-  
+
   if (eventType === 'user.deleted') {
     const validatedData = z.object({ id: z.string() }).parse(evt.data);
-    
+
     // Soft delete or hard delete based on your needs
     await prisma.users.update({
       where: { clerkId: validatedData.id },

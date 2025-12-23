@@ -70,16 +70,34 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
           </CardHeader>
           <CardContent>
             {upcomingSession ? (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">
-                    {new Date(upcomingSession.start_time).toLocaleString(locale)}
-                  </span>
-                  <Badge>{upcomingSession.status}</Badge>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">
+                      {new Date(upcomingSession.start_time).toLocaleString(locale)}
+                    </span>
+                    <Badge>{upcomingSession.status}</Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.tutor || 'Tutor'}: {upcomingSession.tutor?.name || (t.notAssigned || 'Not assigned')}
+                  </p>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {t.tutor || 'Tutor'}: {upcomingSession.tutor?.name || (t.notAssigned || 'Not assigned')}
-                </p>
+
+                {/* Join Button */}
+                <div className="flex gap-2">
+                  <Button>
+                    <a href={`/sessions/${upcomingSession.id}/join`} target="_blank" rel="noopener noreferrer" className="text-white no-underline flex items-center gap-2">
+                      Join Session
+                    </a>
+                  </Button>
+                  {upcomingSession.meeting_link && (
+                    <Button variant="outline">
+                      <a href={upcomingSession.meeting_link} target="_blank" rel="noopener noreferrer">
+                        External Link
+                      </a>
+                    </Button>
+                  )}
+                </div>
               </div>
             ) : (
               <p className="text-gray-500 dark:text-gray-400">{t.noUpcoming || 'No upcoming sessions'}</p>

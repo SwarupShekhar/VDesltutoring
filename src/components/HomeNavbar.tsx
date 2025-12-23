@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser, SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
@@ -8,18 +8,37 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/Button';
-import { Menu, X, ChevronDown, User, CreditCard, Info, LogOut } from 'lucide-react';
+import { Menu, X, ChevronDown, User, CreditCard, Info, LogOut, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BubbleText } from '@/components/BubbleText';
 
 export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   const { user, isLoaded } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
   const t = dict || {};
   const locales = ['en', 'de', 'fr', 'es', 'vi', 'ja'];
+
+  useEffect(() => {
+    async function fetchRole() {
+      if (user) {
+        try {
+          const res = await fetch('/api/me');
+          if (res.ok) {
+            const data = await res.json();
+            console.log("HomeNavbar /api/me response:", data);
+            setUserRole(data.role);
+          }
+        } catch (error) {
+          console.error('Failed to fetch user role:', error);
+        }
+      }
+    }
+    fetchRole();
+  }, [user]);
 
   const switchLocale = (newLocale: string) => {
     const segments = pathname.split('/');
@@ -115,7 +134,16 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                   <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
                     <p className="text-sm font-medium text-slate-900 dark:text-white">{user.fullName}</p>
                     <p className="text-xs text-slate-500 truncate">{user.primaryEmailAddress?.emailAddress}</p>
+                    <p className="text-xs text-electric font-bold mt-1">{userRole}</p>
                   </div>
+
+                  {userRole === 'ADMIN' && (
+                    <DropdownItem onClick={() => router.push(`/${locale}/admin/dashboard`)} className="flex items-center gap-2 text-electric font-medium">
+                      <ShieldAlert size={16} />
+                      Admin Dashboard
+                    </DropdownItem>
+                  )}
+
                   <DropdownItem onClick={() => router.push(`/${locale}/dashboard`)} className="flex items-center gap-2">
                     <User size={16} />
                     {t.dashboard || 'Dashboard'}
@@ -224,6 +252,9 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
               {user ? (
                 <>
+                  {userRole === 'ADMIN' && (
+                    <Link href={`/${locale}/admin/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-electric">Admin Dashboard</Link>
+                  )}
                   <Link href={`/${locale}/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.dashboard || 'Dashboard'}</Link>
                   <Link href={`/${locale}/pricing`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.pricing || 'Pricing'}</Link>
                   <SignOutButton>

@@ -10,9 +10,9 @@ import { PrismaClient } from '@prisma/client'
  */
 
 // Audit event types
-export type AuditEventType = 
-  | 'CREDIT_MUTATION' 
-  | 'ADMIN_OVERRIDE' 
+export type AuditEventType =
+  | 'CREDIT_MUTATION'
+  | 'ADMIN_OVERRIDE'
   | 'SESSION_LIFECYCLE'
   | 'USER_ACTION'
   | 'SYSTEM_EVENT'
@@ -46,7 +46,7 @@ export async function logAuditEvent(prisma: PrismaClient, entry: AuditLogEntry) 
       details: entry.details,
       timestamp: entry.timestamp.toISOString()
     })
-    
+
     // Persist to database
     await (prisma as any).audit_logs.create({
       data: {
@@ -62,7 +62,7 @@ export async function logAuditEvent(prisma: PrismaClient, entry: AuditLogEntry) 
         created_at: entry.timestamp
       }
     })
-    
+
   } catch (error) {
     // Never let audit logging failures break the main flow
     console.warn('Failed to log audit event:', error)
@@ -147,7 +147,7 @@ export async function logSessionLifecycle(
   params: {
     sessionId: string
     studentId: string
-    tutorId: string
+    tutorId: string | null
     oldStatus?: string
     newStatus: string
     triggeredBy: 'SYSTEM' | 'STUDENT' | 'TUTOR' | 'ADMIN'
@@ -157,9 +157,9 @@ export async function logSessionLifecycle(
 ) {
   await logAuditEvent(prisma, {
     userId: params.userId,
-    userType: params.triggeredBy === 'STUDENT' ? 'STUDENT' : 
-              params.triggeredBy === 'TUTOR' ? 'TUTOR' : 
-              params.triggeredBy === 'ADMIN' ? 'ADMIN' : undefined,
+    userType: params.triggeredBy === 'STUDENT' ? 'STUDENT' :
+      params.triggeredBy === 'TUTOR' ? 'TUTOR' :
+        params.triggeredBy === 'ADMIN' ? 'ADMIN' : undefined,
     action: `Session status changed from ${params.oldStatus || 'N/A'} to ${params.newStatus}`,
     eventType: 'SESSION_LIFECYCLE',
     resourceId: params.sessionId,

@@ -11,11 +11,13 @@ export default async function TutorDashboard({ params }: { params: Promise<{ loc
   const { locale } = await params
 
   let sessions = [];
+  let notifications = [];
   let error = null;
 
   try {
     const data = await getDashboardData('TUTOR');
     sessions = data.sessions;
+    notifications = (data as any).notifications || [];
   } catch (err) {
     console.error("Tutor Dashboard fetch error:", err);
     error = err instanceof Error ? err.message : "Unknown error occurred";
@@ -30,6 +32,28 @@ export default async function TutorDashboard({ params }: { params: Promise<{ loc
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tutor Dashboard</h1>
+
+      {/* Notifications Section */}
+      {notifications.length > 0 && (
+        <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              🔔 New Notifications
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {notifications.map((n: any) => (
+                <li key={n.id} className="text-sm p-3 bg-white dark:bg-slate-800 rounded border border-blue-100 dark:border-blue-900 shadow-sm">
+                  <p className="font-semibold text-blue-700 dark:text-blue-300">{n.title}</p>
+                  <p className="text-gray-600 dark:text-gray-300">{n.message}</p>
+                  <span className="text-xs text-gray-400 mt-1 block">{new Date(n.created_at).toLocaleString()}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

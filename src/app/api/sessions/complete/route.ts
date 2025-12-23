@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
 
     // Validate tutor owns the session (if not admin)
     if (user.role === 'TUTOR') {
-      if (session.tutor_profiles.user_id !== user.id) {
+      if (!session.tutor_profiles || session.tutor_profiles.user_id !== user.id) {
         return ApiErrors.forbidden('Not authorized')
       }
     }

@@ -25,9 +25,24 @@ async function getSessions() {
   return data.sessions
 }
 
+import { DashboardError } from '@/components/DashboardError'
+
 export default async function AdminDashboard({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
-  const sessions = await getSessions()
+
+  let sessions = [];
+  let error = null;
+
+  try {
+    sessions = await getSessions()
+  } catch (err) {
+    console.error("Admin Dashboard fetch error:", err);
+    error = "Failed to load admin data.";
+  }
+
+  if (error) {
+    return <DashboardError message={error} />
+  }
 
   return (
     <div className="space-y-6">

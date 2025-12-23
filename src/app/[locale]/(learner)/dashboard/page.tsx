@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { ConfidenceMeter } from '@/components/ConfidenceMeter'
 import { getDictionary, type Locale } from '@/i18n/getDictionary'
+import { DashboardError } from '@/components/DashboardError'
 
 async function getMe() {
   const cookieStore = await cookies()
@@ -46,8 +47,18 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
   const dict = await getDictionary(locale)
   const t = dict.dashboard || {}
 
-  const me = await getMe()
-  const sessions = await getSessions()
+  let me = { credits: 0 };
+  let sessions = [];
+  let error = null;
+
+  try {
+    me = await getMe();
+    sessions = await getSessions();
+  } catch (err) {
+    console.error("Dashboard data fetch error:", err);
+    error = "Failed to load dashboard data. Please try again later.";
+    // Optionally redirect to sign-in if 401, but middleware should handle that.
+  }
 
   const upcomingSession = sessions.find(
     (s: any) => s.status === 'SCHEDULED'
@@ -57,6 +68,12 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
   const sessionHistory = sessions.filter(
     (s: any) => s.status !== 'SCHEDULED'
   )
+
+  // ...
+
+  if (error) {
+    return <DashboardError message={error} retryLabel={t.retry || "Retry"} />
+  }
 
   return (
     <div className="space-y-6">

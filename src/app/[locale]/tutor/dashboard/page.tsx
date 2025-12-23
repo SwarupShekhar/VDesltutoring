@@ -23,9 +23,25 @@ async function getSessions() {
   return data.sessions
 }
 
+import { DashboardError } from '@/components/DashboardError'
+
 export default async function TutorDashboard({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
-  const sessions = await getSessions()
+
+  let sessions = [];
+  let error = null;
+
+  try {
+    sessions = await getSessions()
+  } catch (err) {
+    console.error("Tutor Dashboard fetch error:", err);
+    error = "Failed to load session data.";
+  }
+
+  if (error) {
+    return <DashboardError message={error} />
+  }
+
   const now = Date.now()
 
   return (

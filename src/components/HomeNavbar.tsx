@@ -46,6 +46,8 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
     { label: t.practice || 'Practice', href: `/${locale}/assessment`, onClick: handlePracticeClick },
     { label: t.pricing || 'Pricing', href: `/${locale}/pricing` },
     { label: t.about || 'About Us', href: `/${locale}/about` },
+    // Add Dashboard if logged in (Client-side check via user)
+    ...(user ? [{ label: t.dashboard || 'Dashboard', href: `/${locale}/dashboard` }] : []),
   ];
 
   const scrollToTop = () => {

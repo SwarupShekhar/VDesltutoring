@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import Link from 'next/link'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -92,18 +93,13 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
 
                 {/* Join Button */}
                 <div className="flex gap-2">
-                  <Button disabled={isExpired}>
-                    <a
-                      href={isExpired ? '#' : `/sessions/${upcomingSession.id}/join`}
-                      target={isExpired ? undefined : "_blank"}
-                      rel={isExpired ? undefined : "noopener noreferrer"}
-                      className={`text-white no-underline flex items-center gap-2 ${isExpired ? 'cursor-not-allowed pointer-events-none' : ''}`}
-                    >
+                  <Link href={isExpired ? '#' : `/sessions/${upcomingSession.id}`} prefetch={false} className={isExpired ? 'pointer-events-none' : ''}>
+                    <Button disabled={isExpired} className="w-full flex items-center gap-2 text-white">
                       Join Session
-                    </a>
-                  </Button>
+                    </Button>
+                  </Link>
                   {upcomingSession.meeting_link && !isExpired && (
-                    <Button variant="outline">
+                    <Button variant="outline" asChild>
                       <a href={upcomingSession.meeting_link} target="_blank" rel="noopener noreferrer">
                         External Link
                       </a>

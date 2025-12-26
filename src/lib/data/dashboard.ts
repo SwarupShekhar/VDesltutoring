@@ -168,7 +168,8 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 const startTime = new Date(sess.start_time);
                 const isPast = startTime < now;
 
-                if (isPast) {
+                if (isPast || sess.status === 'COMPLETED' || sess.status === 'CANCELLED' || sess.status === 'NO_SHOW') {
+                    // Completed, Cancelled, No-show OR Past Scheduled sessions go to history
                     // Auto-expire logic: If status is still SCHEDULED but time is past, treat as completed/expired
                     // In a real system, we might update the DB here or have a cron job.
                     // For "Operations Center" visibility, we put them in pastSessions.

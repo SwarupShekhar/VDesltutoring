@@ -2,6 +2,8 @@ import { cookies } from 'next/headers'
 import { SessionActions } from './SessionActions'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
+import Link from 'next/link'
 
 import { getDashboardData } from '@/lib/data/dashboard';
 
@@ -88,12 +90,23 @@ export default async function TutorDashboard({ params }: { params: Promise<{ loc
                         <div className="text-sm text-green-600 dark:text-green-400">Session completed</div>
                       )}
 
-                      {showActions && diffMinutes > 0 && (
+                      {showActions && diffMinutes > 15 && (
                         <div className="text-sm text-yellow-600 dark:text-yellow-400">Awaiting session time</div>
                       )}
 
-                      {showActions && diffMinutes <= 0 && diffMinutes > -60 && (
-                        <div className="text-sm text-blue-600 dark:text-blue-400">Session in progress</div>
+                      {showActions && diffMinutes <= 15 && diffMinutes > -60 && (
+                        <div className="flex flex-col gap-2">
+                          {diffMinutes <= 0 ? (
+                            <div className="text-sm text-blue-600 dark:text-blue-400">Session in progress</div>
+                          ) : (
+                            <div className="text-sm text-green-600 dark:text-green-400">Session starting soon</div>
+                          )}
+                          <Link href={`/tutor/sessions/${s.id}`} prefetch={false}>
+                            <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white">
+                              Join Session
+                            </Button>
+                          </Link>
+                        </div>
                       )}
 
                       {showActions && (

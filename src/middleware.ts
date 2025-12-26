@@ -16,7 +16,8 @@ const isPublicRoute = createRouteMatcher([
     '/:locale/about',
     '/:locale/pricing',
     '/:locale/assessment', // Assessment might be public? User didn't specify, but often is.
-    '/api/webhooks(.*)' // Webhooks must be public
+    '/api/webhooks(.*)', // Webhooks must be public
+    '/api/livekit/token', // Handle auth in route handler for JSON response
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -30,7 +31,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     // Exclude API, internal files, static files from i18n redirection
     // (The matcher config handles most, but double check for logic safety)
-    const isIgnoredPath = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.');
+    const isIgnoredPath = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.') || pathname.startsWith('/ai-tutor');
 
     if (pathnameIsMissingLocale && !isIgnoredPath) {
         const locale = defaultLocale;

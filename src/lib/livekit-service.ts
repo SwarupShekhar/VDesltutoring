@@ -66,7 +66,7 @@ export async function generateLiveKitToken(params: {
         canPublishData: true,
       })
       break
-      
+
     case 'student':
       at.addGrant({
         room: params.roomId,
@@ -76,7 +76,7 @@ export async function generateLiveKitToken(params: {
         canPublishData: true,
       })
       break
-      
+
     case 'admin':
       at.addGrant({
         room: params.roomId,
@@ -87,7 +87,7 @@ export async function generateLiveKitToken(params: {
         hidden: true, // Admin is hidden from participants
       })
       break
-      
+
     default:
       throw new Error('Invalid role')
   }
@@ -108,7 +108,7 @@ export async function createLiveKitRoom(sessionId: string): Promise<string> {
 
   try {
     const roomClient = new RoomServiceClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
-    
+
     // Create room with session ID as room name
     await roomClient.createRoom({
       name: sessionId,
@@ -116,7 +116,7 @@ export async function createLiveKitRoom(sessionId: string): Promise<string> {
       maxParticipants: ROOM_CONFIG.maxParticipants,
       departureTimeout: ROOM_CONFIG.departureTimeout,
     })
-    
+
     return sessionId
   } catch (error) {
     console.error('Failed to create LiveKit room:', error)
@@ -160,16 +160,18 @@ export function validateSessionAccess(params: {
   sessionEndTime: Date
 }): { valid: boolean; reason?: string } {
   const now = new Date()
-  
-  // Check if session is in the future (too early)
-  if (now < params.sessionStartTime) {
+
+  // Check if session is in the future (too early) - Allow joining 15 minutes early
+  const earlyAccessTime = new Date(params.sessionStartTime.getTime() - 15 * 60 * 1000)
+
+  if (now < earlyAccessTime) {
     const minutesUntilStart = Math.ceil((params.sessionStartTime.getTime() - now.getTime()) / (1000 * 60))
     return {
       valid: false,
       reason: `Session starts in ${minutesUntilStart} minutes`
     }
   }
-  
+
   // Check if session is already ended
   if (now > params.sessionEndTime) {
     return {
@@ -177,7 +179,7 @@ export function validateSessionAccess(params: {
       reason: 'Session has already ended'
     }
   }
-  
+
   // Check role validity
   if (!['ADMIN', 'TUTOR', 'LEARNER'].includes(params.userRole)) {
     return {
@@ -185,7 +187,7 @@ export function validateSessionAccess(params: {
       reason: 'Invalid user role'
     }
   }
-  
+
   return { valid: true }
 }
 

@@ -4,7 +4,6 @@ import {
 } from '@clerk/nextjs'
 import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google'
 import '../globals.css'
-import { ThemeProvider } from '@/components/ThemeProvider'
 import { BrowserExtensionFix } from '@/components/BrowserExtensionFix'
 import { GlobalHeader } from '@/components/GlobalHeader'
 import { getDictionary } from '@/i18n/getDictionary'
@@ -42,18 +41,11 @@ export default async function RootLayout({
   const dict = await getDictionary(locale)
 
   return (
-    <ClerkProvider>
-      <html lang={locale} suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
-          suppressHydrationWarning
-        >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <BrowserExtensionFix />
-            {children}
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <>
+      <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen`}>
+        <BrowserExtensionFix />
+        {children}
+      </div>
+    </>
   )
 }

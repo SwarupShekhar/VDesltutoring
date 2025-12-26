@@ -70,10 +70,14 @@ export async function GET(req: Request) {
         // 6. Generate token
         const apiKey = process.env.LIVEKIT_API_KEY;
         const apiSecret = process.env.LIVEKIT_API_SECRET;
-        const wsUrl = process.env.LIVEKIT_URL;
+        const wsUrl = process.env.LIVEKIT_URL || process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
         if (!apiKey || !apiSecret || !wsUrl) {
             console.error("LiveKit Token: Server environment variables missing");
+            console.error(`- API_KEY present: ${!!apiKey}`);
+            console.error(`- API_SECRET present: ${!!apiSecret}`);
+            console.error(`- WS_URL present: ${!!wsUrl}`);
+
             return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
         }
 

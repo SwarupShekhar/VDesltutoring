@@ -43,6 +43,9 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
     return <DashboardError message={error} retryLabel={t.retry || "Retry"} />
   }
 
+  const now = new Date()
+  const isExpired = upcomingSession && (new Date(upcomingSession.start_time).getTime() + 60 * 60 * 1000) < now.getTime()
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -76,7 +79,11 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
                     <span className="font-medium">
                       {new Date(upcomingSession.start_time).toLocaleString(locale)}
                     </span>
-                    <Badge>{upcomingSession.status}</Badge>
+                    {isExpired ? (
+                      <Badge variant="destructive">Expired</Badge>
+                    ) : (
+                      <Badge>{upcomingSession.status}</Badge>
+                    )}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {t.tutor || 'Tutor'}: {upcomingSession.tutor?.name || (t.notAssigned || 'Not assigned')}
@@ -85,12 +92,17 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
 
                 {/* Join Button */}
                 <div className="flex gap-2">
-                  <Button>
-                    <a href={`/sessions/${upcomingSession.id}/join`} target="_blank" rel="noopener noreferrer" className="text-white no-underline flex items-center gap-2">
+                  <Button disabled={isExpired}>
+                    <a
+                      href={isExpired ? '#' : `/sessions/${upcomingSession.id}/join`}
+                      target={isExpired ? undefined : "_blank"}
+                      rel={isExpired ? undefined : "noopener noreferrer"}
+                      className={`text-white no-underline flex items-center gap-2 ${isExpired ? 'cursor-not-allowed pointer-events-none' : ''}`}
+                    >
                       Join Session
                     </a>
                   </Button>
-                  {upcomingSession.meeting_link && (
+                  {upcomingSession.meeting_link && !isExpired && (
                     <Button variant="outline">
                       <a href={upcomingSession.meeting_link} target="_blank" rel="noopener noreferrer">
                         External Link

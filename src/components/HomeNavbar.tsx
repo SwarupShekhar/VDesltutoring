@@ -54,7 +54,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   const handlePracticeClick = (e: React.MouseEvent) => {
     e.preventDefault();
     if (isLoaded && user) {
-      router.push(`/practice`);
+      router.push(`/${locale}/practice`);
     } else {
       router.push(`/${locale}/sign-in`);
     }
@@ -62,7 +62,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
   const navLinks = [
     { label: t.approach || 'Approach', href: '#approach' },
-    { label: t.practice || 'Practice', href: `/practice`, onClick: handlePracticeClick },
+    { label: t.practice || 'Practice', href: `/${locale}/practice`, onClick: handlePracticeClick },
     { label: t.pricing || 'Pricing', href: `/${locale}/pricing` },
     { label: t.about || 'About Us', href: `/${locale}/about` },
     // Add Dashboard if logged in (Client-side check via user)
@@ -226,7 +226,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                 ))}
               </div>
 
-              <Link href={user ? `/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
+              <Link href={user ? `/${locale}/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
                 <div className="bg-electric/10 text-electric py-4 rounded-xl font-medium text-lg">
                   {user ? (t.startAssessment || 'Start Assessment') : (t.signInToPractice || 'Sign In to Practice')}
                 </div>

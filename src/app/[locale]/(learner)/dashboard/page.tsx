@@ -18,12 +18,14 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
 
   let me = { credits: 0 };
   let sessions = [];
+  let aiSessions: any[] = [];
   let error = null;
 
   try {
     const data = await getDashboardData('LEARNER');
     me.credits = data.credits || 0;
     sessions = data.sessions;
+    aiSessions = data.aiSessions || [];
   } catch (err) {
     console.error("Dashboard data fetch error:", err);
     error = err instanceof Error ? err.message : "Unknown error occurred";
@@ -38,7 +40,18 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
     (s: any) => s.status !== 'SCHEDULED'
   )
 
-  // ...
+  // Extract Identity from the most recent AI session that has one
+  const latestIdentity = aiSessions.find(s => s.report?.identity)?.report?.identity || null;
+
+  // Build Timeline Data (Mock + Real)
+  // Logic: Combine AI sessions into a weekly view. For now, strict list.
+  const timeline = aiSessions.map((s, i) => ({
+    id: s.id,
+    date: new Date(s.date).toLocaleDateString(locale, { month: 'short', day: 'numeric' }),
+    status: i === 0 ? 'Current' : 'Past',
+    label: s.report ? (s.report.patterns?.[0] || 'Practice Session') : 'Practice Session'
+  })).reverse();
+
 
   if (error) {
     return <DashboardError message={error} retryLabel={t.retry || "Retry"} />
@@ -48,14 +61,96 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
   const isExpired = upcomingSession && (new Date(upcomingSession.start_time).getTime() + 60 * 60 * 1000) < now.getTime()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t.learnerTitle || 'Learner Dashboard'}</h1>
-        <Button>
+        <div>
+          <h1 className="text-3xl font-serif font-bold text-gray-900 dark:text-white mb-1">{t.learnerTitle || 'Learner Dashboard'}</h1>
+          <p className="text-slate-500 dark:text-slate-400">Welcome back, {me.credits > 0 ? 'Professional' : 'Guest'}.</p>
+        </div>
+        <Button className="rounded-full px-6">
           <a href={`/${locale}/sessions/book`} className="text-white no-underline">
             {t.bookSession || 'Book a new session'}
           </a>
         </Button>
+      </div>
+
+      {/* IDENTITY & TIMELINE ROW */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        {/* 1. IDENTITY CARD */}
+        <div className="lg:col-span-1">
+          <Card className="h-full border-blue-100 dark:border-blue-900 bg-gradient-to-b from-white to-blue-50/20 dark:from-slate-900 dark:to-blue-900/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-blue-600 dark:text-blue-400 text-sm uppercase tracking-widest">
+                Speaking Identity
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {latestIdentity ? (
+                <div className="mt-2">
+                  <div className="text-3xl font-serif font-bold text-slate-900 dark:text-white mb-3">
+                    {latestIdentity.archetype}
+                  </div>
+                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                    {latestIdentity.description}
+                  </p>
+                </div>
+              ) : (
+                <div className="py-8 text-center text-slate-400 dark:text-slate-500">
+                  <p className="italic">No identity established yet.</p>
+                  <Button variant="ghost" asChild className="mt-2 text-blue-500">
+                    <Link href="/ai-tutor">Start a session to discover yours</Link>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 2. FLUENCY JOURNEY (Timeline) */}
+        <div className="lg:col-span-2">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Fluency Journey</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {timeline.length > 0 ? (
+                <div className="relative pl-4 pt-2">
+                  {/* Vertical Line */}
+                  <div className="absolute left-[21px] top-4 bottom-4 w-[2px] bg-slate-100 dark:bg-slate-800" />
+
+                  <div className="space-y-8">
+                    {timeline.map((item, idx) => (
+                      <div key={item.id} className="relative flex items-start gap-6 group">
+                        {/* Dot */}
+                        <div className={`z-10 w-3 h-3 mt-1.5 rounded-full border-2 ${idx === timeline.length - 1 ? 'bg-green-500 border-green-500 ring-4 ring-green-100 dark:ring-green-900/30' : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600'}`} />
+
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start">
+                            <h4 className={`font-medium ${idx === timeline.length - 1 ? 'text-slate-900 dark:text-white text-lg' : 'text-slate-500 dark:text-slate-400'}`}>
+                              {idx === timeline.length - 1 ? 'Current Stage' : item.date}
+                            </h4>
+                            {idx === timeline.length - 1 && <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-green-200">Latest</Badge>}
+                          </div>
+                          <p className={`mt-1 ${idx === timeline.length - 1 ? 'text-slate-700 dark:text-gray-300' : 'text-slate-400 dark:text-gray-500 line-through decoration-slate-300'}`}>
+                            {item.label}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-48 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                  <p className="text-slate-500 dark:text-slate-400 mb-4">Your journey begins with your first conversation.</p>
+                  <Link href="/ai-tutor">
+                    <Button variant="outline">Start Session</Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

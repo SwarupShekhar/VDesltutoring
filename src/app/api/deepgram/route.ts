@@ -5,14 +5,14 @@ const deepgram = createClient(process.env.DEEPGRAM_API_KEY!)
 
 export async function POST(req: Request) {
     try {
-        const { audio } = await req.json()
+        const { audio, mimeType } = await req.json()
 
         const buffer = Buffer.from(audio, "base64")
 
         const { result } = await deepgram.listen.prerecorded.transcribeFile(
             Buffer.from(audio, "base64"),
             {
-                mimetype: "audio/webm",
+                mimetype: mimeType || "audio/webm",
                 punctuate: true,
                 model: "nova-2",
                 language: "en-US",

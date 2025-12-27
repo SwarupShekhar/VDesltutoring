@@ -51,7 +51,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href={`/${locale}/sign-up`}>
                 <Button size="lg" className="rounded-full bg-electric hover:bg-electric/90 text-white font-medium px-8 h-12 text-base shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all hover:scale-105">
-                  {t.hero.ctaAssessment}
+                  {t.hero.ctaReflection}
                 </Button>
               </Link>
               <Link href="#method">

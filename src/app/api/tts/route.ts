@@ -12,9 +12,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Text is required" }, { status: 400 })
         }
 
+        // Strip emojis to prevent reading them aloud
+        // Regex matches common emoji ranges
+        const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
+
         // Use Deepgram Aura for TTS
         const response = await deepgram.speak.request(
-            { text },
+            { text: cleanText },
             {
                 model: "aura-asteria-en", // A nice natural voice
                 encoding: "mp3",

@@ -15,7 +15,7 @@
         "getStarted": "Commencer",
         "dashboard": "Tableau de bord",
         "signOut": "Déconnexion",
-        "startAssessment": "Commencer l'évaluation",
+        "startReflection": "Commencer la réflexion",
         "signInToPractice": "Se connecter pour pratiquer",
         "createAccount": "Créer un compte",
         "language": "Langue",
@@ -24,7 +24,7 @@
     "hero": {
         "headline": "Arrêtez de traduire dans votre tête.<br /><span>Commencez à parler comme vous-même.</span>",
         "subtext": "L'approche boutique de la fluidité. Pour les professionnels qui se sentent coincés dans le silence entre la pensée et la parole.",
-        "ctaAssessment": "Commencer votre évaluation",
+        "ctaReflection": "Commencer votre réflexion",
         "ctaMethod": "Notre Méthodologie"
     },
     "problems": {

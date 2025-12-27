@@ -8,6 +8,7 @@ export type DashboardData = {
     unassignedSessions?: any[];
     scheduledSessions?: any[];
     pastSessions?: any[];
+    aiSessions?: any[];
     error?: string;
 }
 
@@ -248,7 +249,28 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             }
         });
 
-        return { credits, sessions: formattedSessions };
+        // Fetch AI Sessions for Learner
+        let formattedAiSessions: any[] = [];
+        if (role === 'LEARNER') {
+            const aiSessions = await prisma.ai_chat_sessions.findMany({
+                where: { user_id: user.id },
+                orderBy: { started_at: 'desc' },
+                take: 10,
+                select: {
+                    id: true,
+                    started_at: true,
+                    feedback_summary: true
+                }
+            });
+
+            formattedAiSessions = aiSessions.map(s => ({
+                id: s.id,
+                date: s.started_at,
+                report: s.feedback_summary ? JSON.parse(s.feedback_summary) : null
+            }));
+        }
+
+        return { credits, sessions: formattedSessions, aiSessions: formattedAiSessions };
 
     } catch (error) {
         console.error("[DashboardService] Critical Error:", error);

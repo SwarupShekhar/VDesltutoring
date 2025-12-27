@@ -9,7 +9,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { messages, duration, feedback, scores } = await req.json();
+        const { messages, duration, report } = await req.json();
 
         // Find local user by Clerk ID
         const dbUser = await prisma.users.findUnique({
@@ -26,10 +26,12 @@ export async function POST(req: Request) {
                 user_id: dbUser.id,
                 started_at: new Date(Date.now() - (duration || 0) * 1000), // Approximate start time
                 ended_at: new Date(),
-                fluency_score: scores?.fluency,
-                grammar_score: scores?.grammar,
-                vocabulary_score: scores?.vocabulary,
-                feedback_summary: feedback,
+                // We no longer track numeric scores, but keeping columns for legacy data
+                fluency_score: null,
+                grammar_score: null,
+                vocabulary_score: null,
+                // Store the full qualitative report
+                feedback_summary: JSON.stringify(report),
                 messages: {
                     create: messages.map((m: any) => ({
                         role: m.role,

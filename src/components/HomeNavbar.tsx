@@ -231,7 +231,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
               <Link href={user ? `/${locale}/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
                 <div className="bg-electric/10 text-electric py-4 rounded-xl font-medium text-lg">
-                  {user ? (t.startAssessment || 'Start Assessment') : (t.signInToPractice || 'Sign In to Practice')}
+                  {user ? (t.startReflection || 'Start Reflection') : (t.signInToPractice || 'Sign In to Practice')}
                 </div>
               </Link>
 

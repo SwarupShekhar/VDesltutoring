@@ -15,16 +15,16 @@
         "getStarted": "Loslegen",
         "dashboard": "Dashboard",
         "signOut": "Abmelden",
-        "startAssessment": "Einschaetzung starten",
-        "signInToPractice": "Zum Üben anmelden",
-        "createAccount": "Konto erstellen",
+        "startReflection": "Reflexion starten",
+        "signInToPractice": "Sign In to Practice",
+        "createAccount": "Create Account",
         "language": "Sprache",
         "interfaceOnly": "Nur Benutzeroberfläche. Lerninhalte bleiben auf Englisch."
     },
     "hero": {
-        "headline": "Hör auf, im Kopf zu übersetzen.<br /><span>Fang an, wie du selbst zu sprechen.</span>",
-        "subtext": "Der Boutique-Ansatz für Redefluss. Für Profis, die sich in der Stille zwischen Gedanke und Sprache gefangen fühlen.",
-        "ctaAssessment": "Starten Sie Ihre Einschätzung",
+        "headline": "Hören Sie auf, im Kopf zu übersetzen.<br /><span>Sprechen Sie wie Sie selbst.</span>",
+        "subtext": "Der Boutique-Ansatz für Redefluss. Für Profis, die im Schweigen zwischen Gedanke und Sprache feststecken.",
+        "ctaReflection": "Starten Sie Ihre Reflexion",
         "ctaMethod": "Unsere Methodik"
     },
     "problems": {

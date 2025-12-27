@@ -6,6 +6,7 @@ import AIAvatar from "@/components/AIAvatar"
 import { HomeNavbar } from "@/components/HomeNavbar"
 import { VoiceVisualizer } from "@/components/VoiceVisualizer"
 import { FluencyReportModal } from "@/components/FluencyReportModal"
+import { useRouter } from "next/navigation"
 import { Mic, MicOff, Square, Play } from "lucide-react"
 
 type ChatMessage = { role: "user" | "assistant"; content: string; timestamp: Date }
@@ -30,6 +31,8 @@ export default function AITutor() {
     const audioRef = useRef<HTMLAudioElement | null>(null)
     const streamRef = useRef<MediaStream | null>(null)
     const voiceDetectRef = useRef<number | null>(null)
+
+    const router = useRouter()
 
     // Fetch LiveKit token
     useEffect(() => {
@@ -92,8 +95,7 @@ export default function AITutor() {
                 body: JSON.stringify({
                     messages: chats,
                     duration: 300, // TODO: Track actual duration
-                    feedback: JSON.stringify(report.feedback),
-                    scores: report.scores
+                    report: report
                 })
             })
         } catch (e) {
@@ -101,6 +103,11 @@ export default function AITutor() {
         } finally {
             setReportLoading(false)
         }
+    }
+
+    const handleReportClose = () => {
+        setShowReport(false)
+        router.push('/')
     }
 
     const speak = async (text: string) => {
@@ -168,7 +175,7 @@ export default function AITutor() {
 
             recorder.ondataavailable = async (e) => {
                 const blob = e.data
-                if (blob.size < 4000) return // ignore silence blobs
+                if (blob.size < 100) return // ignore tiny empty blobs
 
                 const base64 = await blobToBase64(blob)
 
@@ -190,15 +197,24 @@ export default function AITutor() {
 
                     setProcessing(true)
 
-                    // Text → Gemini
-                    const aiResponseRaw = await fetch("/api/gemini", {
+                    // Text → AI
+                    const aiResponseRaw = await fetch("/api/ai", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ transcript: dg.transcript })
                     })
 
                     if (!aiResponseRaw.ok) {
-                        throw new Error(`Gemini API Error: ${aiResponseRaw.status}`)
+                        let errorMessage = `AI API Error: ${aiResponseRaw.status}`
+                        try {
+                            const errorData = await aiResponseRaw.json()
+                            if (errorData.detail) errorMessage = errorData.detail
+                        } catch (e) {
+                            // ignore json parse error
+                        }
+                        setAiResponse(`Error: ${errorMessage}`)
+                        setProcessing(false)
+                        throw new Error(errorMessage)
                     }
 
                     const ai = await aiResponseRaw.json()
@@ -210,11 +226,20 @@ export default function AITutor() {
                 }
             }
 
+            let silenceStart = Date.now()
+
             const detectVoice = () => {
+                if (!analyser) return
+
                 analyser.getByteFrequencyData(data)
                 const volume = data.reduce((a, b) => a + b, 0) / data.length
 
-                if (volume > 10) { // Threshold adjusted (lower is more sensitive)
+                const THRESHOLD = 10
+
+                if (volume > THRESHOLD) {
+                    // Speaking detected
+                    silenceStart = Date.now()
+
                     // Barge-in: User is speaking, stop AI immediately
                     if (audioRef.current && !audioRef.current.paused) {
                         audioRef.current.pause();
@@ -222,18 +247,18 @@ export default function AITutor() {
                     }
 
                     if (recorder.state === "inactive") {
-                        recorder.start(2000) // record 2s chunks when speaking
+                        recorder.start() // Record indefinitely until silence
                         setListening(true)
                     }
-                } else if (volume < 5 && recorder.state === "recording") {
-                    // Stop if silence? No, let recorder.start(2000) handle chunking, 
-                    // but we can update UI state
-                    // setListening(false) -> actually we want to show listening while recording chunk
+                } else {
+                    // Silence logic
+                    if (recorder.state === "recording") {
+                        if (Date.now() - silenceStart > 1200) { // 1.2s of silence stops recording
+                            recorder.stop()
+                            setListening(false)
+                        }
+                    }
                 }
-
-                // Update listening UI based on recorder state
-                if (recorder.state === "recording") setListening(true)
-                else setListening(false)
 
                 voiceDetectRef.current = requestAnimationFrame(detectVoice)
             }
@@ -259,21 +284,33 @@ export default function AITutor() {
         return (
             <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col transition-colors duration-300">
                 <HomeNavbar locale="en" dict={{}} />
-                <div className="flex-1 flex flex-col items-center justify-center space-y-8 p-10">
-                    <div className="w-32 h-32 bg-blue-100 dark:bg-blue-600 rounded-full flex items-center justify-center shadow-lg dark:shadow-[0_0_60px_rgba(37,99,235,0.4)] mb-4 ring-1 ring-blue-200 dark:ring-0">
-                        <span className="text-5xl">🎓</span>
+                <div className="flex-1 flex flex-col items-center justify-center space-y-12 p-10 relative overflow-hidden">
+                    {/* Decorative Background */}
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+                        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '4s' }} />
+                        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-violet-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '5s' }} />
                     </div>
-                    <h1 className="text-5xl font-bold font-serif bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-200 dark:to-white">English Fluency Tutor</h1>
-                    <p className="text-slate-600 dark:text-gray-400 max-w-md text-center text-lg leading-relaxed">
-                        Improve your speaking skills with an advanced AI tutor. <br />
-                        <span className="text-blue-600 dark:text-blue-200 font-medium">Real-time feedback. Natural conversation.</span>
-                    </p>
+
+                    <div className="relative z-10 flex flex-col items-center space-y-6">
+                        <div className="w-40 h-40 bg-gradient-to-tr from-blue-100 to-white dark:from-blue-600 dark:to-blue-500 rounded-full flex items-center justify-center shadow-2xl dark:shadow-[0_0_80px_rgba(37,99,235,0.5)] mb-6 ring-4 ring-white/20">
+                            <span className="text-6xl animate-bounce-slow">🎓</span>
+                        </div>
+                        <h1 className="text-6xl font-bold font-serif bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 text-center tracking-tight">
+                            Fluency Tutor
+                        </h1>
+                        <p className="text-slate-600 dark:text-gray-300 max-w-lg text-center text-xl leading-relaxed font-light">
+                            Your personal AI conversational partner. <br />
+                            <span className="text-blue-600 dark:text-blue-400 font-medium">No judgment. Just practice.</span>
+                        </p>
+                    </div>
+
                     <button
                         onClick={startSession}
-                        className="px-10 py-4 bg-blue-600 dark:bg-white text-white dark:text-blue-900 rounded-full font-bold text-xl transition-all shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 flex items-center gap-3"
+                        className="group relative px-12 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-bold text-xl transition-all shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-4 z-10 overflow-hidden"
                     >
-                        <Play size={24} fill="currentColor" />
-                        Start Conversation
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        <Play size={28} fill="currentColor" />
+                        <span>Start Conversation</span>
                     </button>
                 </div>
             </div>
@@ -284,49 +321,64 @@ export default function AITutor() {
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col relative overflow-hidden transition-colors duration-300">
             <HomeNavbar locale="en" dict={{}} />
 
-            {/* Background Glow */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-500/5 dark:bg-blue-500/10 blur-[100px] rounded-full pointer-events-none" />
+            {/* Premium Background */}
+            <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 dark:bg-blue-500/10 blur-[120px] rounded-full" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/5 dark:bg-violet-500/10 blur-[100px] rounded-full" />
+            </div>
 
-            <div className="flex-1 flex flex-col items-center justify-center space-y-8 max-w-4xl mx-auto p-6 w-full z-10">
+            <div className="flex-1 flex flex-col items-center justify-between py-12 px-6 w-full max-w-6xl mx-auto z-10 h-full">
 
-                <div className={`transition-all duration-700 flex flex-col items-center ${listening ? 'scale-110' : 'scale-100'}`}>
-                    <AIAvatar state={speaking ? 'speaking' : processing ? 'processing' : listening ? 'listening' : 'idle'} />
-                    <div className="mt-8 w-full max-w-xs h-16 flex items-center justify-center">
+                {/* Top Section: Avatar */}
+                <div className="flex-1 flex flex-col items-center justify-center w-full min-h-[300px]">
+                    <div className={`transition-all duration-700 flex flex-col items-center transform ${listening ? 'scale-105' : 'scale-100'}`}>
+                        <AIAvatar state={speaking ? 'speaking' : processing ? 'processing' : listening ? 'listening' : 'idle'} />
+                    </div>
+                </div>
+
+                {/* Middle Section: Chat Bubbles (Floating) */}
+                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 max-w-4xl">
+                    {/* User Bubble */}
+                    <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${listening
+                        ? 'bg-green-50/50 dark:bg-green-900/10 border-green-200/50 dark:border-green-500/30 shadow-[0_4px_20px_rgba(34,197,94,0.1)]'
+                        : 'bg-white/60 dark:bg-white/5 border-slate-200/50 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/10'}`}>
+                        <div className="flex justify-between items-start mb-4">
+                            <span className="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-widest">You</span>
+                            {listening ? <Mic size={18} className="text-green-500 animate-pulse" /> : <MicOff size={18} className="text-slate-300 dark:text-gray-600" />}
+                        </div>
+                        <p className="text-xl font-light leading-relaxed text-slate-800 dark:text-gray-100">
+                            {transcript || <span className="text-slate-300 dark:text-gray-600 italic">Listening...</span>}
+                        </p>
+                    </div>
+
+                    {/* AI Bubble */}
+                    <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${speaking
+                        ? 'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200/50 dark:border-blue-500/30 shadow-[0_4px_20px_rgba(59,130,246,0.15)]'
+                        : 'bg-blue-50/20 dark:bg-white/5 border-blue-100/30 dark:border-white/10'}`}>
+                        <div className="flex justify-between items-start mb-4">
+                            <span className="text-xs font-bold text-blue-400 dark:text-blue-400 uppercase tracking-widest">AI Tutor</span>
+                        </div>
+                        <p className="text-xl font-light leading-relaxed text-blue-900 dark:text-blue-100">
+                            {aiResponse || <span className="text-blue-300 dark:text-gray-600 italic">...</span>}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Bottom Section: Controls & Visualizer */}
+                <div className="flex flex-col items-center gap-8 w-full">
+                    {/* Visualizer (Only visible when listening/active for a cooler effect) */}
+                    <div className={`w-full max-w-md h-12 transition-opacity duration-500 ${listening ? 'opacity-100' : 'opacity-30'}`}>
                         {analyserNode && <VoiceVisualizer analyser={analyserNode} isListening={true} />}
                     </div>
+
+                    <button
+                        onClick={endSession}
+                        className="group px-8 py-3 bg-white dark:bg-white/5 border border-red-200 dark:border-red-500/20 text-red-500 rounded-full font-medium hover:bg-red-50 dark:hover:bg-red-900/20 hover:border-red-300 transition-all shadow-sm hover:shadow-md flex items-center gap-2 active:scale-95"
+                    >
+                        <Square size={18} fill="currentColor" />
+                        <span>End Session</span>
+                    </button>
                 </div>
-
-
-                <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className={`p-8 bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-3xl min-h-[160px] flex flex-col justify-between transition-all duration-300 group shadow-sm dark:shadow-none ${listening ? 'border-green-500/30 bg-green-50 dark:bg-green-900/10 shadow-[0_0_30px_rgba(34,197,94,0.1)]' : 'hover:shadow-md dark:hover:bg-white/10'}`}>
-                        <div className="flex justify-between items-start mb-3">
-                            <p className="text-xs font-bold text-slate-500 dark:text-gray-500 uppercase tracking-widest flex items-center">
-                                <span className={`w-2 h-2 rounded-full mr-2 ${listening ? "bg-green-500 animate-pulse" : "bg-slate-400 dark:bg-gray-600"}`}></span>
-                                You
-                            </p>
-                            {listening ? <Mic size={16} className="text-green-500 animate-pulse" /> : <MicOff size={16} className="text-slate-400 dark:text-gray-600" />}
-                        </div>
-                        <p className="text-xl font-light leading-relaxed text-slate-800 dark:text-gray-200">{transcript || <span className="text-slate-400 dark:text-gray-600 italic">Listening...</span>}</p>
-                    </div>
-
-                    <div className={`p-8 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-500/20 rounded-3xl min-h-[160px] flex flex-col justify-between transition-all duration-300 shadow-sm dark:shadow-none ${speaking ? 'border-blue-400/50 bg-blue-100 dark:bg-blue-900/20 shadow-[0_0_40px_rgba(59,130,246,0.2)]' : ''}`}>
-                        <div className="flex justify-between items-start mb-3">
-                            <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest flex items-center">
-                                <span className={`w-2 h-2 rounded-full mr-2 ${speaking ? "bg-blue-500 dark:bg-blue-400 animate-pulse" : "bg-blue-300 dark:bg-blue-900"}`}></span>
-                                AI Tutor
-                            </p>
-                        </div>
-                        <p className="text-xl font-light leading-relaxed text-blue-900 dark:text-blue-100">{aiResponse || <span className="text-blue-300 dark:text-white/10 italic">Thinking...</span>}</p>
-                    </div>
-                </div>
-
-                <button
-                    onClick={endSession}
-                    className="mt-8 px-6 py-3 bg-red-500/10 text-red-400 border border-red-500/20 rounded-full font-medium hover:bg-red-500/20 hover:text-red-300 transition-colors flex items-center gap-2"
-                >
-                    <Square size={16} fill="currentColor" />
-                    End Session
-                </button>
 
                 <LiveKitRoom
                     serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
@@ -339,7 +391,7 @@ export default function AITutor() {
 
             <FluencyReportModal
                 isOpen={showReport}
-                onClose={() => setShowReport(false)}
+                onClose={handleReportClose}
                 report={reportData}
                 isLoading={reportLoading}
             />

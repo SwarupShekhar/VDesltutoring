@@ -2,13 +2,17 @@ import { motion } from "framer-motion"
 import { X, CheckCircle, AlertTriangle, BookOpen } from "lucide-react"
 
 interface Report {
-    scores: {
-        fluency: number
-        grammar: number
-        vocabulary: number
+    identity?: {
+        archetype: string
+        description: string
     }
-    feedback: string[]
-    corrections: Array<{ original: string; correction: string; explanation: string }>
+    insights: {
+        fluency: string
+        grammar: string
+        vocabulary: string
+    }
+    patterns: string[]
+    refinements: Array<{ original: string; better: string; explanation: string }>
 }
 
 interface FluencyReportModalProps {
@@ -26,7 +30,7 @@ export function FluencyReportModal({ report, isOpen, onClose, isLoading }: Fluen
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-8 text-slate-900 dark:text-white relative transition-colors duration-300"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl p-8 text-slate-900 dark:text-white relative transition-colors duration-300"
             >
                 <button
                     onClick={onClose}
@@ -35,34 +39,42 @@ export function FluencyReportModal({ report, isOpen, onClose, isLoading }: Fluen
                     <X size={20} />
                 </button>
 
-                <h2 className="text-3xl font-serif font-bold mb-2 text-slate-900 dark:text-white">Session Report</h2>
-                <p className="text-slate-500 dark:text-gray-400 mb-8">Here is how you performed in this session.</p>
+                <h2 className="text-3xl font-serif font-bold mb-2 text-slate-900 dark:text-white">Session Reflection</h2>
+                <p className="text-slate-500 dark:text-gray-400 mb-8">Here are some observations about your speaking style.</p>
 
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-20 space-y-4">
                         <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                        <p className="text-blue-600 dark:text-blue-300 animate-pulse">Analyzing your fluency...</p>
+                        <p className="text-blue-600 dark:text-blue-300 animate-pulse">Gathering insights...</p>
                     </div>
-                ) : report && report.scores ? (
+                ) : report && report.insights ? (
                     <div className="space-y-8">
-                        {/* Scores */}
-                        <div className="grid grid-cols-3 gap-4">
-                            <ScoreCard label="Fluency" score={report.scores.fluency} color="text-green-600 dark:text-green-400" />
-                            <ScoreCard label="Grammar" score={report.scores.grammar} color="text-blue-600 dark:text-blue-400" />
-                            <ScoreCard label="Vocabulary" score={report.scores.vocabulary} color="text-purple-600 dark:text-purple-400" />
+                        {/* Identity Badge */}
+                        {report.identity && (
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-6 rounded-2xl border border-blue-100 dark:border-blue-500/20">
+                                <span className="text-xs font-bold uppercase tracking-widest text-blue-500 dark:text-blue-400 mb-2 block">Your Speaking Identity</span>
+                                <h3 className="text-2xl font-serif font-bold text-slate-900 dark:text-white mb-2">{report.identity.archetype}</h3>
+                                <p className="text-slate-700 dark:text-slate-300">{report.identity.description}</p>
+                            </div>
+                        )}
+                        {/* Insights (formerly Scores) */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <InsightCard label="Flow & Pace" text={report.insights.fluency} color="border-green-200 dark:border-green-500/30 bg-green-50/50 dark:bg-green-900/10" />
+                            <InsightCard label="Structure" text={report.insights.grammar} color="border-blue-200 dark:border-blue-500/30 bg-blue-50/50 dark:bg-blue-900/10" />
+                            <InsightCard label="Word Choice" text={report.insights.vocabulary} color="border-purple-200 dark:border-purple-500/30 bg-purple-50/50 dark:bg-purple-900/10" />
                         </div>
 
-                        {/* Feedback */}
-                        {report.feedback && (
-                            <div className="bg-slate-50 dark:bg-white/5 rounded-2xl p-6 border border-slate-100 dark:border-transparent">
-                                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
-                                    <CheckCircle className="text-green-500 dark:text-green-400" size={20} />
-                                    Key Feedback
+                        {/* Patterns (formerly Feedback) */}
+                        {report.patterns && (
+                            <div className="bg-slate-50 dark:bg-white/5 rounded-2xl p-8 border border-slate-100 dark:border-white/5">
+                                <h3 className="text-xl font-serif font-bold mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
+                                    <BookOpen className="text-blue-500 dark:text-blue-400" size={24} />
+                                    Your Speaking Patterns
                                 </h3>
-                                <ul className="space-y-2">
-                                    {report.feedback.map((item, i) => (
-                                        <li key={i} className="flex items-start gap-3 text-slate-700 dark:text-gray-300">
-                                            <span className="mt-1.5 w-1.5 h-1.5 bg-green-500 dark:bg-green-400 rounded-full shrink-0" />
+                                <ul className="space-y-4">
+                                    {report.patterns.map((item, i) => (
+                                        <li key={i} className="flex items-start gap-4 text-lg font-light text-slate-700 dark:text-gray-200">
+                                            <span className="mt-2 w-2 h-2 bg-blue-500 dark:bg-blue-400 rounded-full shrink-0" />
                                             {item}
                                         </li>
                                     ))}
@@ -70,33 +82,35 @@ export function FluencyReportModal({ report, isOpen, onClose, isLoading }: Fluen
                             </div>
                         )}
 
-                        {/* Corrections */}
-                        {report.corrections && (
-                            <div className="space-y-4">
-                                <h3 className="text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                                    <AlertTriangle className="text-yellow-500 dark:text-yellow-400" size={20} />
-                                    Corrections
+                        {/* Refinements (formerly Corrections) */}
+                        {report.refinements && report.refinements.length > 0 && (
+                            <div className="space-y-6">
+                                <h3 className="text-xl font-serif font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                                    <CheckCircle className="text-green-500 dark:text-green-400" size={24} />
+                                    Natural Refinements
                                 </h3>
-                                {report.corrections.map((c, i) => (
-                                    <div key={i} className="bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-500/20 p-4 rounded-xl">
-                                        <div className="flex items-center gap-2 text-red-600 dark:text-red-300 mb-1 line-through text-sm opacity-70">
-                                            <X size={14} /> {c.original}
+                                <div className="grid gap-4">
+                                    {report.refinements.map((c, i) => (
+                                        <div key={i} className="bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+                                            <div className="mb-3 text-slate-500 dark:text-gray-400 line-through decoration-red-400/50 text-base">
+                                                {c.original}
+                                            </div>
+                                            <div className="flex items-center gap-3 text-green-700 dark:text-green-400 font-medium text-lg mb-2">
+                                                <span>→</span> {c.better}
+                                            </div>
+                                            <p className="text-sm text-slate-500 dark:text-gray-500 italic mt-2 ml-6 border-l-2 border-slate-200 dark:border-white/10 pl-3">
+                                                {c.explanation}
+                                            </p>
                                         </div>
-                                        <div className="flex items-center gap-2 text-green-600 dark:text-green-400 font-medium mb-2">
-                                            <CheckCircle size={14} /> {c.correction}
-                                        </div>
-                                        <div className="text-xs text-slate-500 dark:text-gray-500 flex items-center gap-1">
-                                            <BookOpen size={12} /> {c.explanation}
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
                         )}
                     </div>
                 ) : (
-                    <div className="text-center py-10 text-red-500 dark:text-red-400">
-                        <p>No report data available.</p>
-                        <p className="text-sm text-slate-500 dark:text-gray-500 mt-2">Try speaking more during the session.</p>
+                    <div className="text-center py-10 text-slate-500 dark:text-gray-400">
+                        <p>No reflection data available yet.</p>
+                        <p className="text-sm mt-2">Share more thoughts so I can discover your patterns.</p>
                     </div>
                 )}
             </motion.div>
@@ -104,11 +118,11 @@ export function FluencyReportModal({ report, isOpen, onClose, isLoading }: Fluen
     )
 }
 
-function ScoreCard({ label, score, color }: { label: string; score: number; color: string }) {
+function InsightCard({ label, text, color }: { label: string; text: string; color: string }) {
     return (
-        <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-2xl border border-slate-100 dark:border-white/5 flex flex-col items-center">
-            <span className={`text-3xl font-bold ${color}`}>{score}</span>
-            <span className="text-xs uppercase tracking-wider text-slate-500 dark:text-gray-500 mt-1">{label}</span>
+        <div className={`p-6 rounded-2xl border ${color} flex flex-col h-full`}>
+            <span className="text-xs uppercase tracking-widest font-bold opacity-60 mb-3">{label}</span>
+            <p className="text-base font-medium leading-relaxed opacity-90">{text}</p>
         </div>
     )
 }

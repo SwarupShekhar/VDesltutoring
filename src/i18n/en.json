@@ -15,7 +15,7 @@
         "getStarted": "Get Started",
         "dashboard": "Dashboard",
         "signOut": "Sign out",
-        "startAssessment": "Start Assessment",
+        "startReflection": "Start Reflection",
         "signInToPractice": "Sign In to Practice",
         "createAccount": "Create Account",
         "language": "Language",
@@ -24,7 +24,7 @@
     "hero": {
         "headline": "Stop translating in your head.<br /><span>Start speaking like yourself.</span>",
         "subtext": "The boutique approach to fluency. For professionals who feel stuck in the silence between thought and speech.",
-        "ctaAssessment": "Start Your Assessment",
+        "ctaReflection": "Start Your Reflection",
         "ctaMethod": "Our Methodology"
     },
     "problems": {

@@ -37,7 +37,8 @@ Output JSON format:
   ],
   "refinements": [
     { "original": "Student phrase", "better": "Smoother version", "explanation": "Why this flow is more natural." }
-  ]
+  ],
+  "next_step": "A concise, actionable challenge for next time (e.g., 'Try pausing before answering to gather thought' or 'Practice using transition words like However')."
 }
 `
 
@@ -68,7 +69,14 @@ export async function POST(req: Request) {
           vocabulary: "I'm ready to learn new words with you."
         },
         patterns: ["I'm listening to find your unique speaking patterns.", "Tell me more so I can give you a reflection."],
-        refinements: []
+        refinements: [],
+        metrics: {
+          wordCount: transcript ? transcript.split(' ').length : 0,
+          fillerCount: 0,
+          fillerPercentage: 0,
+          uniqueWords: 0
+        },
+        next_step: "Just click 'Start' and tell me about your day. I'm listening."
       });
     }
 
@@ -86,6 +94,26 @@ export async function POST(req: Request) {
     if (!content) throw new Error("No content from OpenAI")
 
     const report = JSON.parse(content)
+
+    // Calculate "Invisible Progress" Metrics locally
+    const words = transcript.trim().split(/\s+/);
+    const wordCount = words.length;
+
+    // Simple regex for common fillers (can be expanded)
+    const fillerRegex = /\b(um|uh|like|you know|i mean|sort of|kind of)\b/gi;
+    const matches = transcript.match(fillerRegex);
+    const fillerCount = matches ? matches.length : 0;
+
+    // Unique words (vocabulary diversity dummy metric)
+    const uniqueWords = new Set(words.map((w: string) => w.toLowerCase())).size;
+
+    // Attach to report
+    report.metrics = {
+      wordCount,
+      fillerCount,
+      fillerPercentage: wordCount > 0 ? Math.round((fillerCount / wordCount) * 100) : 0,
+      uniqueWords
+    };
 
     return NextResponse.json(report)
   } catch (error) {

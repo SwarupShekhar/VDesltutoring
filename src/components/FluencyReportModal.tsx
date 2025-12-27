@@ -13,6 +13,7 @@ interface Report {
     }
     patterns: string[]
     refinements: Array<{ original: string; better: string; explanation: string }>
+    next_step?: string
 }
 
 interface FluencyReportModalProps {
@@ -106,15 +107,29 @@ export function FluencyReportModal({ report, isOpen, onClose, isLoading }: Fluen
                                 </div>
                             </div>
                         )}
+
+                        {/* NEXT STEP CHALLENGE (New) */}
+                        {report.next_step && (
+                            <div className="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-white dark:to-slate-200 text-white dark:text-slate-900 p-8 rounded-3xl shadow-xl mt-8">
+                                <h3 className="text-sm font-bold uppercase tracking-widest opacity-70 mb-2">Your Next Mission</h3>
+                                <p className="text-2xl font-serif font-bold mb-6 leading-tight">
+                                    {report.next_step}
+                                </p>
+                                <button onClick={onClose} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-8 py-3 rounded-full font-medium transition-transform hover:scale-105 active:scale-95 shadow-lg">
+                                    Ready for one more?
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="text-center py-10 text-slate-500 dark:text-gray-400">
                         <p>No reflection data available yet.</p>
                         <p className="text-sm mt-2">Share more thoughts so I can discover your patterns.</p>
                     </div>
-                )}
-            </motion.div>
-        </div>
+                )
+                }
+            </motion.div >
+        </div >
     )
 }
 

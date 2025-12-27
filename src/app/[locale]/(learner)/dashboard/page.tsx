@@ -109,47 +109,90 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
 
         {/* 2. FLUENCY JOURNEY (Timeline) */}
         <div className="lg:col-span-2">
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle>Fluency Journey</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {timeline.length > 0 ? (
-                <div className="relative pl-4 pt-2">
-                  {/* Vertical Line */}
-                  <div className="absolute left-[21px] top-4 bottom-4 w-[2px] bg-slate-100 dark:bg-slate-800" />
+          <div className="grid grid-cols-1 gap-6">
 
-                  <div className="space-y-8">
-                    {timeline.map((item, idx) => (
-                      <div key={item.id} className="relative flex items-start gap-6 group">
-                        {/* Dot */}
-                        <div className={`z-10 w-3 h-3 mt-1.5 rounded-full border-2 ${idx === timeline.length - 1 ? 'bg-green-500 border-green-500 ring-4 ring-green-100 dark:ring-green-900/30' : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600'}`} />
+            {/* Invisible Progress Stats (New) */}
+            {aiSessions.length > 1 && (() => {
+              const current = aiSessions[0].report?.metrics || { wordCount: 0, fillerPercentage: 0 };
+              const previous = aiSessions[1].report?.metrics || { wordCount: 0, fillerPercentage: 0 };
 
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start">
-                            <h4 className={`font-medium ${idx === timeline.length - 1 ? 'text-slate-900 dark:text-white text-lg' : 'text-slate-500 dark:text-slate-400'}`}>
-                              {idx === timeline.length - 1 ? 'Current Stage' : item.date}
-                            </h4>
-                            {idx === timeline.length - 1 && <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-green-200">Latest</Badge>}
-                          </div>
-                          <p className={`mt-1 ${idx === timeline.length - 1 ? 'text-slate-700 dark:text-gray-300' : 'text-slate-400 dark:text-gray-500 line-through decoration-slate-300'}`}>
-                            {item.label}
-                          </p>
-                        </div>
+              const spokeMore = previous.wordCount > 0 ? Math.round(((current.wordCount - previous.wordCount) / previous.wordCount) * 100) : 0;
+              const fillerImprovement = previous.fillerPercentage - current.fillerPercentage;
+
+              return (
+                <div className="grid grid-cols-2 gap-4">
+                  <Card className="bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-100 dark:border-emerald-900/20">
+                    <CardContent className="p-4 flex items-center gap-4">
+                      <div className="p-3 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                       </div>
-                    ))}
+                      <div>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">Volume</p>
+                        <p className="text-slate-900 dark:text-white font-serif font-bold text-lg">
+                          {spokeMore > 0 ? `+${spokeMore}% more words` : `${Math.abs(spokeMore)}% less words`}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-blue-50/50 dark:bg-blue-900/10 border-blue-100 dark:border-blue-900/20">
+                    <CardContent className="p-4 flex items-center gap-4">
+                      <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                      </div>
+                      <div>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wide">Clarity</p>
+                        <p className="text-slate-900 dark:text-white font-serif font-bold text-lg">
+                          {fillerImprovement > 0 ? `${fillerImprovement}% less fillers` : 'Stable flow'}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )
+            })()}
+
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle>Fluency Journey</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {timeline.length > 0 ? (
+                  <div className="relative pl-4 pt-2">
+                    {/* Vertical Line */}
+                    <div className="absolute left-[21px] top-4 bottom-4 w-[2px] bg-slate-100 dark:bg-slate-800" />
+
+                    <div className="space-y-8">
+                      {timeline.map((item, idx) => (
+                        <div key={item.id} className="relative flex items-start gap-6 group">
+                          {/* Dot */}
+                          <div className={`z-10 w-3 h-3 mt-1.5 rounded-full border-2 ${idx === timeline.length - 1 ? 'bg-green-500 border-green-500 ring-4 ring-green-100 dark:ring-green-900/30' : 'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600'}`} />
+
+                          <div className="flex-1">
+                            <div className="flex justify-between items-start">
+                              <h4 className={`font-medium ${idx === timeline.length - 1 ? 'text-slate-900 dark:text-white text-lg' : 'text-slate-500 dark:text-slate-400'}`}>
+                                {idx === timeline.length - 1 ? 'Current Stage' : item.date}
+                              </h4>
+                              {idx === timeline.length - 1 && <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-green-200">Latest</Badge>}
+                            </div>
+                            <p className={`mt-1 ${idx === timeline.length - 1 ? 'text-slate-700 dark:text-gray-300' : 'text-slate-400 dark:text-gray-500 line-through decoration-slate-300'}`}>
+                              {item.label}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-48 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
-                  <p className="text-slate-500 dark:text-slate-400 mb-4">Your journey begins with your first conversation.</p>
-                  <Link href="/ai-tutor">
-                    <Button variant="outline">Start Session</Button>
-                  </Link>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-48 bg-slate-50 dark:bg-slate-900/50 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
+                    <p className="text-slate-500 dark:text-slate-400 mb-4">Your journey begins with your first conversation.</p>
+                    <Link href="/ai-tutor">
+                      <Button variant="outline">Start Session</Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 

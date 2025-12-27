@@ -8,6 +8,7 @@ import { FloatingConversation } from '@/components/FloatingConversation';
 import { TutorCard } from '@/components/TutorCard';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, MessageCircle, Zap, Users } from 'lucide-react';
+import { SituationalGateway } from '@/components/SituationalGateway';
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
 
 const tutors = [
@@ -67,6 +68,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         <section id="practice">
           <FluencyMirror />
         </section>
+
+        {/* 2.5 SITUATIONS (Identity Mirror) */}
+        <SituationalGateway />
 
 
 

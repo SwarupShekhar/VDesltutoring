@@ -168,5 +168,103 @@
         "noHistory": "Bạn chưa có lịch sử buổi học nào",
         "tutor": "Gia sư",
         "notAssigned": "Chưa phân công"
+    },
+    "intermediatePlateau": {
+        "headline": "Bức Tường Vô Hình",
+        "subtext": "Tại sao bạn cảm thấy kẹt ở mức 'Nâng cao' nhưng nghe như người mới bắt đầu.",
+        "trap": {
+            "title": "Vòng Lặp Dịch Thuật",
+            "desc": "Bộ não của bạn kiểm tra ngữ pháp từng từ trước khi bạn nói. Điều này tạo ra sự ngập ngừng."
+        },
+        "flow": {
+            "title": "Tiếp Thu Trực Tiếp",
+            "desc": "Bỏ qua bộ kiểm soát. Kết nối suy nghĩ trực tiếp với âm thanh."
+        }
+    },
+    "audioTransformation": {
+        "headline": "Nghe sự thay đổi.",
+        "subtext": "Sự khác biệt giữa tiếng Anh 'đúng' và tiếng Anh 'trôi chảy'.",
+        "week1": "Tuần 1",
+        "week12": "Tuần 12",
+        "label": "Phát để nghe"
+    },
+    "dailyRoutine": {
+        "headline": "20 Phút Mỗi Ngày",
+        "subtext": "Trôi chảy là một thói quen sinh học, không phải môn học thuật.",
+        "steps": [
+            {
+                "title": "Hấp thụ",
+                "time": "10 phút",
+                "desc": "Nghe một mẫu nhịp điệu cụ thể."
+            },
+            {
+                "title": "Phản ánh",
+                "time": "5 phút",
+                "desc": "Ghi âm một suy nghĩ ngắn sử dụng mẫu đó."
+            },
+            {
+                "title": "Củng cố",
+                "time": "Giấc ngủ",
+                "desc": "Bộ não của bạn tự kết nối lại trong khi nghỉ ngơi."
+            }
+        ]
+    },
+    "situationalGateway": {
+        "headline": "Bạn sử dụng tiếng Anh ở đâu?",
+        "subtext": "Chúng tôi không cung cấp khóa học. Chúng tôi xây dựng lộ trình nói quanh cuộc sống thực của bạn.",
+        "defaultCta": "Tiếng Anh của bạn không cần sửa chữa — nó cần sự trôi chảy.",
+        "button": "Tìm lộ trình nói của bạn",
+        "meta": "2–3 phút · Không ngữ pháp · Chỉ nói",
+        "loading": {
+            "headline": "Đang tìm nhịp điệu nói của bạn...",
+            "subtext": "Đang chuẩn bị không gian cá nhân của bạn"
+        },
+        "cards": [
+            {
+                "category": "Công việc",
+                "items": [
+                    "Cuộc họp",
+                    "Thuyết trình",
+                    "Phỏng vấn",
+                    "Email",
+                    "Đàm phán"
+                ],
+                "ctaText": "Hãy làm cho giọng nói của bạn rõ ràng trong các cuộc họp."
+            },
+            {
+                "category": "Cuộc sống hàng ngày",
+                "items": [
+                    "Du lịch",
+                    "Trò chuyện",
+                    "Kết bạn",
+                    "Cuộc gọi",
+                    "Sống ở nước ngoài"
+                ],
+                "ctaText": "Hãy làm cho tiếng Anh hàng ngày cảm thấy tự nhiên."
+            },
+            {
+                "category": "Kỳ thi & Mục tiêu",
+                "items": [
+                    "IELTS",
+                    "TOEFL",
+                    "Đại học",
+                    "Nhập cư",
+                    "Thay đổi nghề nghiệp"
+                ],
+                "ctaText": "Hãy chuẩn bị khả năng nói của bạn cho bài kiểm tra thực tế."
+            },
+            {
+                "category": "Lĩnh vực chuyên môn",
+                "items": [
+                    "CNTT",
+                    "Y tế",
+                    "Kỹ thuật",
+                    "Tài chính",
+                    "Bán hàng",
+                    "Luật"
+                ],
+                "ctaText": "Hãy làm cho tiếng Anh chuyên nghiệp cảm thấy dễ dàng."
+            }
+        ]
     }
 }

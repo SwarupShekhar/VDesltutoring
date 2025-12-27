@@ -168,5 +168,103 @@
         "noHistory": "Aún no tienes historial de sesiones",
         "tutor": "Tutor",
         "notAssigned": "No asignado"
+    },
+    "intermediatePlateau": {
+        "headline": "El Muro Invisible",
+        "subtext": "Por qué te sientes atrapado en 'Avanzado' pero suenas como un principiante.",
+        "trap": {
+            "title": "El Bucle de Traducción",
+            "desc": "Tu cerebro monitorea la gramática de cada palabra antes de hablar. Esto crea vacilación."
+        },
+        "flow": {
+            "title": "Adquisición Directa",
+            "desc": "Evitando el monitor. Conectando el pensamiento directamente con el sonido."
+        }
+    },
+    "audioTransformation": {
+        "headline": "Escucha el cambio.",
+        "subtext": "La diferencia entre inglés 'correcto' e inglés 'fluido'.",
+        "week1": "Semana 1",
+        "week12": "Semana 12",
+        "label": "Reproducir para escuchar"
+    },
+    "dailyRoutine": {
+        "headline": "Los 20 Diarios",
+        "subtext": "La fluidez es un hábito biológico, no una materia académica.",
+        "steps": [
+            {
+                "title": "Absorber",
+                "time": "10 min",
+                "desc": "Escucha un patrón rítmico específico."
+            },
+            {
+                "title": "Reflexionar",
+                "time": "5 min",
+                "desc": "Graba un pensamiento corto usando el patrón."
+            },
+            {
+                "title": "Consolidar",
+                "time": "Dormir",
+                "desc": "Tu cerebro se reconecta durante el descanso."
+            }
+        ]
+    },
+    "situationalGateway": {
+        "headline": "¿Dónde usas el inglés?",
+        "subtext": "No te damos un curso. Construimos un camino de habla alrededor de tu vida real.",
+        "defaultCta": "Tu inglés no necesita reparación — necesita fluidez.",
+        "button": "Encuentra tu camino de habla",
+        "meta": "2–3 minutos · Sin gramática · Solo hablar",
+        "loading": {
+            "headline": "Encontrando tu ritmo de habla...",
+            "subtext": "Preparando tu espacio personalizado"
+        },
+        "cards": [
+            {
+                "category": "Trabajo",
+                "items": [
+                    "Reuniones",
+                    "Presentaciones",
+                    "Entrevistas",
+                    "Correos",
+                    "Negociaciones"
+                ],
+                "ctaText": "Hagamos tu voz clara en reuniones."
+            },
+            {
+                "category": "Vida Diaria",
+                "items": [
+                    "Viajes",
+                    "Charlas",
+                    "Hacer amigos",
+                    "Llamadas",
+                    "Vivir fuera"
+                ],
+                "ctaText": "Hagamos que el inglés diario se sienta natural."
+            },
+            {
+                "category": "Exámenes y Metas",
+                "items": [
+                    "IELTS",
+                    "TOEFL",
+                    "Universidad",
+                    "Inmigración",
+                    "Cambio de carrera"
+                ],
+                "ctaText": "Preparemos tu habla para la prueba real."
+            },
+            {
+                "category": "Campos Especializados",
+                "items": [
+                    "TI",
+                    "Salud",
+                    "Ingeniería",
+                    "Finanzas",
+                    "Ventas",
+                    "Derecho"
+                ],
+                "ctaText": "Hagamos que el inglés profesional se sienta sin esfuerzo."
+            }
+        ]
     }
 }

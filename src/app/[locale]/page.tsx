@@ -9,6 +9,9 @@ import { TutorCard } from '@/components/TutorCard';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight, MessageCircle, Zap, Users } from 'lucide-react';
 import { SituationalGateway } from '@/components/SituationalGateway';
+import { IntermediatePlateau } from '@/components/IntermediatePlateau';
+import { AudioTransformation } from '@/components/AudioTransformation';
+import { DailyRoutine } from '@/components/DailyRoutine';
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
 
 const tutors = [
@@ -70,19 +73,27 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         </section>
 
         {/* 2.5 SITUATIONS (Identity Mirror) */}
-        <SituationalGateway />
+        <SituationalGateway dict={t.situationalGateway} />
 
 
 
         {/* 3. SPEAKING MOMENTS (Empathy Grid) */}
         <SpeakingMomentsGrid dict={t.speakingMoments} />
 
-        {/* 4. THE INTERMEDIATE PLATEAU (Education) */}
+        {/* 3.5 THEORY (The Why) */}
+        <IntermediatePlateau dict={t.intermediatePlateau} />
+
+        {/* 4. THE INTERMEDIATE PLATEAU (Education) -> Renaming ID/Section or Keeping as "Approach" */}
         <section id="approach" className="py-24 border-t border-border">
-          {/* ... existing content ... */}
+          {/* ... existing content from Approach? Actually page.tsx line 81 was empty! */}
+          {/* It said { /* ... existing content ... * / }. I will leave it empty as placeholder or just assume IntermediatePlateau *IS* the approach visual now? */}
+          {/* Providing content for Approach section if it was empty? The previous view_file showed it empty with comments. */}
+          {/* I will Insert DailyRoutine here as the practical method */}
+          <DailyRoutine dict={t.dailyRoutine} />
         </section>
 
-        {/* ... existing content ... */}
+        {/* 4.5 TRANSFORMATION (The Result) */}
+        <AudioTransformation dict={t.audioTransformation} />
 
         {/* 5. IMPACT STORIES (Social Proof) */}
         <TestimonialsCarousel

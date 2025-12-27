@@ -193,5 +193,103 @@
         "noHistory": "Du hast noch keinen Sitzungsverlauf",
         "tutor": "Tutor",
         "notAssigned": "Nicht zugewiesen"
+    },
+    "intermediatePlateau": {
+        "headline": "Die unsichtbare Mauer",
+        "subtext": "Warum Sie sich 'fortgeschritten' fühlen, aber wie ein Anfänger klingen.",
+        "trap": {
+            "title": "Die Übersetzungsschleife",
+            "desc": "Ihr Gehirn prüft jedes Wort auf Grammatik, bevor Sie sprechen. Das erzeugt Zögern."
+        },
+        "flow": {
+            "title": "Direkte Aneignung",
+            "desc": "Den Monitor umgehen. Gedanken direkt mit Klang verbinden."
+        }
+    },
+    "audioTransformation": {
+        "headline": "Hören Sie den Unterschied.",
+        "subtext": "Der Unterschied zwischen 'korrektem' Englisch und 'fließendem' Englisch.",
+        "week1": "Woche 1",
+        "week12": "Woche 12",
+        "label": "Zum Anhören abspielen"
+    },
+    "dailyRoutine": {
+        "headline": "Die täglichen 20",
+        "subtext": "Fließend sprechen ist eine biologische Gewohnheit, kein akademisches Fach.",
+        "steps": [
+            {
+                "title": "Aufnehmen",
+                "time": "10 min",
+                "desc": "Hören Sie sich ein bestimmtes rhythmisches Muster an."
+            },
+            {
+                "title": "Reflektieren",
+                "time": "5 min",
+                "desc": "Nehmen Sie einen kurzen Gedanken mit diesem Muster auf."
+            },
+            {
+                "title": "Verfestigen",
+                "time": "Schlaf",
+                "desc": "Ihr Gehirn vernetzt sich während der Ruhephase neu."
+            }
+        ]
+    },
+    "situationalGateway": {
+        "headline": "Wo nutzen Sie Englisch?",
+        "subtext": "Wir geben Ihnen keinen Kurs. Wir bauen einen Sprechpfad um Ihr echtes Leben.",
+        "defaultCta": "Ihr Englisch muss nicht repariert werden – es braucht Fluss.",
+        "button": "Finden Sie Ihren Sprechpfad",
+        "meta": "2–3 Minuten · Keine Grammatik · Nur Sprechen",
+        "loading": {
+            "headline": "Finde Ihren Sprech-Rhythmus...",
+            "subtext": "Bereite Ihren persönlichen Raum vor"
+        },
+        "cards": [
+            {
+                "category": "Arbeit",
+                "items": [
+                    "Meetings",
+                    "Präsentationen",
+                    "Vorstellungsgespräche",
+                    "E-Mails",
+                    "Verhandlungen"
+                ],
+                "ctaText": "Lassen Sie uns Ihre Stimme in Meetings klar machen."
+            },
+            {
+                "category": "Alltag",
+                "items": [
+                    "Reisen",
+                    "Smalltalk",
+                    "Freunde finden",
+                    "Telefonate",
+                    "Im Ausland leben"
+                ],
+                "ctaText": "Lassen Sie uns Alltags-Englisch natürlich machen."
+            },
+            {
+                "category": "Prüfungen & Ziele",
+                "items": [
+                    "IELTS",
+                    "TOEFL",
+                    "Universität",
+                    "Einwanderung",
+                    "Karrierewechsel"
+                ],
+                "ctaText": "Lassen Sie uns Ihr Sprechen für den echten Test vorbereiten."
+            },
+            {
+                "category": "Fachgebiete",
+                "items": [
+                    "IT",
+                    "Gesundheitswesen",
+                    "Ingenieurwesen",
+                    "Finanzen",
+                    "Vertrieb",
+                    "Recht"
+                ],
+                "ctaText": "Lassen Sie uns professionelles Englisch mühelos machen."
+            }
+        ]
     }
 }

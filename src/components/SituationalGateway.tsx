@@ -6,30 +6,7 @@ import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 
-const situations = [
-    {
-        category: "Work",
-        items: ["Meetings", "Presentations", "Interviews", "Emails", "Negotiations"],
-        ctaText: "Let’s make your voice clear in meetings."
-    },
-    {
-        category: "Daily Life",
-        items: ["Travel", "Small talk", "Making friends", "Phone calls", "Living abroad"],
-        ctaText: "Let’s make everyday English feel natural."
-    },
-    {
-        category: "Exams & Goals",
-        items: ["IELTS", "TOEFL", "University", "Immigration", "Career change"],
-        ctaText: "Let’s prepare your speaking for the real test."
-    },
-    {
-        category: "Specialist Fields",
-        items: ["IT", "Healthcare", "Engineering", "Finance", "Sales", "Law"],
-        ctaText: "Let’s make professional English feel effortless."
-    }
-];
-
-export function SituationalGateway() {
+export function SituationalGateway({ dict }: { dict: any }) {
     const { isSignedIn } = useUser();
     const params = useParams();
     const router = useRouter(); // Create router instance
@@ -38,8 +15,8 @@ export function SituationalGateway() {
     const [isNavigating, setIsNavigating] = useState(false);
 
     const activeCtaText = hoveredCategory
-        ? situations.find(s => s.category === hoveredCategory)?.ctaText
-        : "Your English doesn’t need fixing — it needs flow.";
+        ? dict.cards.find((s: any) => s.category === hoveredCategory)?.ctaText
+        : dict.defaultCta;
 
     const handleCtaClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -66,14 +43,14 @@ export function SituationalGateway() {
                             transition={{ duration: 0.5 }}
                         >
                             <div className="text-center mb-16">
-                                <h2 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">Where do you use English?</h2>
+                                <h2 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">{dict.headline}</h2>
                                 <p className="text-slate-500 dark:text-slate-400 font-light max-w-xl mx-auto text-lg">
-                                    We don’t give you a course. We build a speaking path around your real life.
+                                    {dict.subtext}
                                 </p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                                {situations.map((group, idx) => (
+                                {dict.cards.map((group: any, idx: number) => (
                                     <motion.div
                                         key={group.category}
                                         initial={{ opacity: 0, y: 20 }}
@@ -105,7 +82,7 @@ export function SituationalGateway() {
 
                                                 {/* List Items */}
                                                 <ul className="space-y-2 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-200">
-                                                    {group.items.map((item) => (
+                                                    {group.items.map((item: string) => (
                                                         <li key={item} className="text-sm font-light tracking-wide text-slate-600 dark:text-slate-300">
                                                             {item}
                                                         </li>
@@ -151,11 +128,11 @@ export function SituationalGateway() {
                                     } : {}}
                                     className="bg-blue-600 hover:bg-blue-500 text-white text-lg font-medium px-10 py-4 rounded-xl shadow-xl shadow-blue-500/10 transition-all"
                                 >
-                                    Find your speaking path →
+                                    {dict.button} →
                                 </motion.button>
 
                                 <p className="mt-6 text-sm text-slate-400 dark:text-slate-500 font-light tracking-wide">
-                                    2–3 minutes · No grammar · Just speaking
+                                    {dict.meta}
                                 </p>
                             </motion.div>
                         </motion.div>
@@ -173,10 +150,10 @@ export function SituationalGateway() {
                                 className="w-24 h-24 rounded-full bg-blue-500/10 blur-xl mb-8"
                             />
                             <h3 className="text-2xl font-serif font-bold text-slate-800 dark:text-white mb-2">
-                                Finding your speaking rhythm...
+                                {dict.loading.headline}
                             </h3>
                             <p className="text-slate-500 dark:text-slate-400">
-                                Preparing your personalized space
+                                {dict.loading.subtext}
                             </p>
                         </motion.div>
                     )}

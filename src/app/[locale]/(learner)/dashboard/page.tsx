@@ -67,11 +67,18 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
           <h1 className="text-3xl font-serif font-bold text-gray-900 dark:text-white mb-1">{t.learnerTitle || 'Learner Dashboard'}</h1>
           <p className="text-slate-500 dark:text-slate-400">Welcome back, {me.credits > 0 ? 'Professional' : 'Guest'}.</p>
         </div>
-        <Button className="rounded-full px-6">
-          <a href={`/${locale}/sessions/book`} className="text-white no-underline">
-            {t.bookSession || 'Book a new session'}
-          </a>
-        </Button>
+        <div className="flex gap-4 items-center">
+          <Button variant="outline" className="hidden sm:flex rounded-full px-6">
+            <a href={`/${locale}/sessions/book`} className="no-underline">
+              {t.bookSession || 'Book a Tutor'}
+            </a>
+          </Button>
+          <Button className="rounded-full px-8 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:scale-105 transition-transform">
+            <Link href="/ai-tutor" className="no-underline">
+              {t.startAiSession || 'Start AI Audit'}
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* IDENTITY & TIMELINE ROW */}

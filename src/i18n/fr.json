@@ -192,7 +192,9 @@
     },
     "dashboard": {
         "learnerTitle": "Tableau de bord de l'apprenant",
-        "bookSession": "Réserver une nouvelle session",
+        "bookSession": "Réserver un tuteur",
+        "startAiSession": "Lancer l'audit IA",
+        "startPractice": "Pratiquer l'oral",
         "creditsRemaining": "Crédits restants",
         "nextSession": "Prochaine session",
         "noUpcoming": "Aucune session à venir",

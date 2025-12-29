@@ -192,7 +192,9 @@
     },
     "dashboard": {
         "learnerTitle": "Learner Dashboard",
-        "bookSession": "Book a new session",
+        "bookSession": "Book a Tutor",
+        "startAiSession": "Start AI Audit",
+        "startPractice": "Practice Speaking",
         "creditsRemaining": "Credits Remaining",
         "nextSession": "Next Session",
         "noUpcoming": "No upcoming sessions",

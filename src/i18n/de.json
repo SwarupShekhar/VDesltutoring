@@ -192,7 +192,9 @@
     },
     "dashboard": {
         "learnerTitle": "Lernenden-Dashboard",
-        "bookSession": "Neue Sitzung buchen",
+        "bookSession": "Tutor buchen",
+        "startAiSession": "AI-Audit starten",
+        "startPractice": "Sprechen üben",
         "creditsRemaining": "Verbleibende Credits",
         "nextSession": "Nächste Sitzung",
         "noUpcoming": "Keine anstehenden Sitzungen",

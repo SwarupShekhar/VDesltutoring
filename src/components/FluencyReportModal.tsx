@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion"
+import Link from "next/link"
 import { X, CheckCircle, AlertTriangle, BookOpen, Sparkles, MessageCircle, Zap, Globe, Quote } from "lucide-react"
 
 interface Report {
@@ -251,12 +252,12 @@ export function FluencyReportModal({ report, isOpen, onClose, isLoading }: Fluen
                                                     {report.next_step}
                                                 </p>
                                             </div>
-                                            <button
-                                                onClick={onClose}
-                                                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-10 py-5 rounded-full font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-2xl hover:bg-blue-50 dark:hover:bg-slate-800"
+                                            <Link
+                                                href="/ai-tutor"
+                                                className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white px-10 py-5 rounded-full font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-2xl hover:bg-blue-50 dark:hover:bg-slate-800 text-center no-underline"
                                             >
                                                 Start Practice
-                                            </button>
+                                            </Link>
                                         </div>
                                     </motion.div>
                                 )}

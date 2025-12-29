@@ -196,6 +196,8 @@ model fluency_snapshots {
   pronunciation         Int
   grammar_scaffold      Int
   translation_thinking Int
+  wpm                   Int      @default(0)
+  word_count            Int      @default(0)
 
   created_at DateTime @default(now())
 }

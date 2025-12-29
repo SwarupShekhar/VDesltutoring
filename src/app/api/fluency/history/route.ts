@@ -34,10 +34,11 @@ export async function GET() {
             }
         }
 
-        // All fluency snapshots
+        // All fluency snapshots (limit to 100 for performance)
         const snapshots = await prisma.fluency_snapshots.findMany({
             where: { user_id: user.id },
-            orderBy: { created_at: "asc" }
+            orderBy: { created_at: "asc" },
+            take: 100
         })
 
         // Pattern totals
@@ -62,7 +63,7 @@ export async function GET() {
             .sort((a, b) => b.score - a.score)
 
         // Timeline (daily)
-        const timelineMap = new Map<string, { date: string; hesitation: number; fillers: number }>()
+        const timelineMap = new Map<string, { date: string; hesitation: number; fillers: number; wpmSum: number; count: number }>()
 
         snapshots.forEach((s) => {
             const day = s.created_at.toISOString().slice(0, 10)
@@ -70,23 +71,32 @@ export async function GET() {
                 timelineMap.set(day, {
                     date: day,
                     hesitation: 0,
-                    fillers: 0
+                    fillers: 0,
+                    wpmSum: 0,
+                    count: 0
                 })
             }
 
             const d = timelineMap.get(day)!
             d.hesitation += s.hesitation
             d.fillers += s.fillers
+            d.wpmSum += s.wpm || 0
+            d.count += 1
         })
 
-        const timeline = Array.from(timelineMap.values())
+        const timeline = Array.from(timelineMap.values()).map(d => ({
+            date: d.date,
+            hesitation: d.hesitation,
+            fillers: d.fillers,
+            wpm: Math.round(d.wpmSum / d.count)
+        }))
 
         // Recent speaking moments
         const recent = snapshots.slice(-5).map((s) => ({
             time: s.created_at.toLocaleTimeString(),
             hesitation: s.hesitation,
             fillers: s.fillers,
-            wpm: 0 // WPM is not tracked in snapshots anymore
+            wpm: s.wpm || 0
         }))
 
         return NextResponse.json({

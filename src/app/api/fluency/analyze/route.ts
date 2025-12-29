@@ -170,7 +170,9 @@ export async function POST(req: Request) {
                 fillers: fillerCount,
                 pronunciation: PATTERNS.PRONUNCIATION,
                 grammar_scaffold: PATTERNS.GRAMMAR_SCAFFOLD,
-                translation_thinking: PATTERNS.TRANSLATION_THINKING
+                translation_thinking: PATTERNS.TRANSLATION_THINKING,
+                wpm: wpm,
+                word_count: wordCount
             }
         })
 

@@ -197,11 +197,26 @@ export default function AITutor() {
 
                     setProcessing(true)
 
-                    // Text → AI
+                    // 1) Analyze fluency patterns
+                    const fluencyRes = await fetch("/api/fluency/analyze", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            transcript: dg.transcript,
+                            duration: 3 // since MediaRecorder chunks ~3s
+                        })
+                    })
+
+                    const fluency = await fluencyRes.json()
+
+                    // 2) Send transcript + fluency to AI
                     const aiResponseRaw = await fetch("/api/ai", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ transcript: dg.transcript })
+                        body: JSON.stringify({
+                            transcript: dg.transcript,
+                            fluency: fluency
+                        })
                     })
 
                     if (!aiResponseRaw.ok) {

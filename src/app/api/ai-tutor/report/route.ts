@@ -1,44 +1,33 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server"
 import OpenAI from "openai"
+import { generateDrills } from "@/lib/fluencyTrainer"
 
 const REPORT_PROMPT = `
 You are a warm, supportive English fluency coach. Analyze the student transcript.
-Generate a structured JSON reflection.
 
 Rules:
 - NEVER use words like "Score", "Grade", "Test", "Mistake", "Wrong", "Error", "Bad".
 - Use words like "Pattern", "Insight", "Observation", "Refinement", "Style".
-- Tone: Encouraging, specific, psychological safety.
-- Instead of scoring, describe the *behavior* or *habit*.
-- Assign a "Speaking Identity" based on their style.
+- Tone: Encouraging, psychologically safe.
+- Instead of judging, describe habits.
+- Assign a "Speaking Identity".
 
-Identity Options:
-1. "The Thoughtful Speaker" (Pauses often, values accuracy over speed)
-2. "The Flow Builder" (Good rhythm, occasional grammar slips)
-3. "The Rapid Thinker" (Fast ideas, sometimes stumbles on words)
-4. "The Translator" (Hesitates as if translating from native language)
-5. "The Storyteller" (Engaging narrative, focuses on message over form)
+Identity options:
+1. The Thoughtful Speaker
+2. The Flow Builder
+3. The Rapid Thinker
+4. The Translator
+5. The Storyteller
 
-Output JSON format:
+Output valid JSON in this format:
 {
-  "identity": {
-    "archetype": "The Thoughtful Speaker",
-    "description": "You value accuracy. You tend to pause to find the perfect word before speaking."
-  },
-  "insights": {
-    "fluency": "Description of their speaking pace and flow (1 sentence).",
-    "grammar": "Description of their structural choices (1 sentence).",
-    "vocabulary": "Description of their word variety and precision (1 sentence)."
-  },
-  "patterns": [
-    "You tend to [behavior]...",
-    "Your speaking style is [adjective]...",
-    "I noticed you [pattern]..."
-  ],
+  "identity": { "archetype": "", "description": "" },
+  "insights": { "fluency": "", "grammar": "", "vocabulary": "" },
+  "patterns": [],
   "refinements": [
-    { "original": "Student phrase", "better": "Smoother version", "explanation": "Why this flow is more natural." }
+    { "original": "", "better": "", "explanation": "" }
   ],
-  "next_step": "A concise, actionable challenge for next time (e.g., 'Try pausing before answering to gather thought' or 'Practice using transition words like However')."
+  "next_step": ""
 }
 `
 
@@ -47,10 +36,7 @@ export async function POST(req: Request) {
     const apiKey = process.env.OPENAI_API_KEY
     if (!apiKey) {
       console.error("Missing OPENAI_API_KEY")
-      return NextResponse.json(
-        { error: "Server configuration error: Missing API Key" },
-        { status: 500 }
-      )
+      return NextResponse.json({ error: "Server misconfigured" }, { status: 500 })
     }
 
     const openai = new OpenAI({ apiKey })
@@ -58,26 +44,34 @@ export async function POST(req: Request) {
     const { transcript } = await req.json()
 
     if (!transcript || transcript.length < 50) {
-      return NextResponse.json({
+      const empty = {
         identity: {
           archetype: "The Explorer",
-          description: "You are just starting to explore your voice. Keep speaking to reveal your true style."
+          description: "You are just starting to reveal your speaking style."
         },
         insights: {
-          fluency: "Keep speaking! I need a bit more to hear your style.",
-          grammar: "I'm listening for your sentence structures.",
-          vocabulary: "I'm ready to learn new words with you."
+          fluency: "I need a bit more speech to hear your flow.",
+          grammar: "I'm still learning your structure.",
+          vocabulary: "Tell me more so I can hear your word choices."
         },
-        patterns: ["I'm listening to find your unique speaking patterns.", "Tell me more so I can give you a reflection."],
+        patterns: [
+          "You are beginning to open up.",
+          "Your voice is just starting to emerge."
+        ],
         refinements: [],
+        next_step: "Keep speaking naturally. Tell me more about your day."
+      }
+
+      return NextResponse.json({
+        ...empty,
+        drills: generateDrills(empty.patterns),
         metrics: {
-          wordCount: transcript ? transcript.split(' ').length : 0,
+          wordCount: transcript?.split(" ").length || 0,
           fillerCount: 0,
           fillerPercentage: 0,
           uniqueWords: 0
-        },
-        next_step: "Just click 'Start' and tell me about your day. I'm listening."
-      });
+        }
+      })
     }
 
     const completion = await openai.chat.completions.create({
@@ -87,37 +81,59 @@ export async function POST(req: Request) {
         { role: "user", content: `TRANSCRIPT:\n${transcript}` }
       ],
       response_format: { type: "json_object" },
-      temperature: 0.3,
+      temperature: 0.3
     })
 
     const content = completion.choices[0].message.content
-    if (!content) throw new Error("No content from OpenAI")
+    if (!content) throw new Error("Empty OpenAI response")
 
     const report = JSON.parse(content)
 
-    // Calculate "Invisible Progress" Metrics locally
-    const words = transcript.trim().split(/\s+/);
-    const wordCount = words.length;
+    // -------- Metrics (local, deterministic) ----------
+    const words = transcript.trim().split(/\s+/)
+    const wordCount = words.length
 
-    // Simple regex for common fillers (can be expanded)
-    const fillerRegex = /\b(um|uh|like|you know|i mean|sort of|kind of)\b/gi;
-    const matches = transcript.match(fillerRegex);
-    const fillerCount = matches ? matches.length : 0;
+    const fillerRegex = /\b(um|uh|like|you know|i mean|sort of|kind of)\b/gi
+    const fillers = transcript.match(fillerRegex) || []
+    const fillerCount = fillers.length
 
-    // Unique words (vocabulary diversity dummy metric)
-    const uniqueWords = new Set(words.map((w: string) => w.toLowerCase())).size;
+    const uniqueWords = new Set(words.map((w: string) => w.toLowerCase())).size
 
-    // Attach to report
-    report.metrics = {
+    const metrics = {
       wordCount,
       fillerCount,
-      fillerPercentage: wordCount > 0 ? Math.round((fillerCount / wordCount) * 100) : 0,
+      fillerPercentage: wordCount ? Math.round((fillerCount / wordCount) * 100) : 0,
       uniqueWords
-    };
+    }
 
-    return NextResponse.json(report)
-  } catch (error) {
-    console.error("Report generation failed:", error)
-    return NextResponse.json({ error: "Failed to generate report" }, { status: 500 })
+    // -------- Fluency drills ----------
+    const drills = generateDrills(report.patterns || [])
+
+    return NextResponse.json({
+      ...report,
+      drills,
+      metrics
+    })
+
+  } catch (error: any) {
+    console.error("Fluency report failed:", error)
+
+    // Safe fallback so UI never breaks
+    return NextResponse.json({
+      identity: {
+        archetype: "The Speaker",
+        description: "Your voice is developing."
+      },
+      insights: {
+        fluency: "Keep speaking to reveal your style.",
+        grammar: "Your structure is forming.",
+        vocabulary: "Your word choices are growing."
+      },
+      patterns: ["Your fluency is still emerging."],
+      refinements: [],
+      next_step: "Keep talking — your fluency grows with use.",
+      drills: [],
+      metrics: { wordCount: 0, fillerCount: 0, fillerPercentage: 0, uniqueWords: 0 }
+    })
   }
 }

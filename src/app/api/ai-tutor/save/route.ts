@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
-import { currentUser } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
     try {
-        const user = await currentUser();
-        if (!user) {
+        const { userId: clerkId } = await auth();
+        if (!clerkId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
 
         // Find local user by Clerk ID
         const dbUser = await prisma.users.findUnique({
-            where: { clerkId: user.id },
+            where: { clerkId: clerkId },
         });
 
         if (!dbUser) {

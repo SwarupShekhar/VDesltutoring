@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
+import { prisma } from "@/lib/prisma"
 
 const FILLER_WORDS = [
     "um",
@@ -19,7 +20,19 @@ const MIN_WPM_THRESHOLD = 100
 
 export async function POST(req: Request) {
     try {
-        const { userId } = await auth()
+        const { userId: clerkId } = await auth()
+
+        if (!clerkId) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const user = await prisma.users.findUnique({
+            where: { clerkId: clerkId }
+        })
+
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 })
+        }
 
         const body = await req.json()
         const { transcript, duration = 1, deepgram } = body
@@ -147,6 +160,21 @@ export async function POST(req: Request) {
         }
 
         // ------------------------------------------------------------------
+        // 8️⃣ Save Snapshot
+        // ------------------------------------------------------------------
+
+        await prisma.fluency_snapshots.create({
+            data: {
+                user_id: user.id, // ✅ Correct UUID
+                hesitation: PATTERNS.HESITATION,
+                fillers: fillerCount,
+                pronunciation: PATTERNS.PRONUNCIATION,
+                grammar_scaffold: PATTERNS.GRAMMAR_SCAFFOLD,
+                translation_thinking: PATTERNS.TRANSLATION_THINKING
+            }
+        })
+
+        // ------------------------------------------------------------------
         // Final response
         // ------------------------------------------------------------------
 
@@ -154,6 +182,7 @@ export async function POST(req: Request) {
             success: true,
             transcript,
             corrected: correction,
+            patterns: rankedPatterns, // Top-level for easy consumption by AI API
             analysis: {
                 wpm,
                 fillers: foundFillers,

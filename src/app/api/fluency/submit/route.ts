@@ -4,10 +4,18 @@ import { prisma } from "@/lib/prisma"
 
 export async function POST(req: Request) {
     try {
-        const { userId } = await auth()
+        const { userId: clerkId } = await auth()
 
-        if (!userId) {
+        if (!clerkId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+        }
+
+        const user = await prisma.users.findUnique({
+            where: { clerkId: clerkId }
+        })
+
+        if (!user) {
+            return NextResponse.json({ error: "User not found" }, { status: 404 })
         }
 
         const body = await req.json()
@@ -19,7 +27,7 @@ export async function POST(req: Request) {
 
         await prisma.fluency_sessions.create({
             data: {
-                user_clerk_id: userId,
+                user_clerk_id: user.clerkId!,
                 average_score: average,
                 rounds
             }

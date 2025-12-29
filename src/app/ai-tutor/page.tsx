@@ -203,7 +203,8 @@ export default function AITutor() {
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             transcript: dg.transcript,
-                            duration: 3 // since MediaRecorder chunks ~3s
+                            duration: 3, // since MediaRecorder chunks ~3s
+                            deepgram: dg.result // Crucial for hesitation/timing analysis
                         })
                     })
 

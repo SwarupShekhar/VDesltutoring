@@ -24,7 +24,10 @@ export async function POST(req: Request) {
         const transcript =
             result?.results?.channels?.[0]?.alternatives?.[0]?.transcript || ""
 
-        return NextResponse.json({ transcript })
+        return NextResponse.json({
+            transcript,
+            result // Include full result for downstream timing/confidence analysis
+        })
     } catch (err) {
         console.error("Deepgram error", err)
         return NextResponse.json({ error: "Transcription failed" }, { status: 500 })

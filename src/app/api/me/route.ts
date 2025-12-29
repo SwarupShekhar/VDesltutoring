@@ -1,18 +1,18 @@
-import { auth } from '@clerk/nextjs/server'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { apiSuccess, ApiErrors } from '@/lib/api-response'
 
 export async function GET() {
   try {
     // 1. Authenticate user
-    const { userId } = await auth()
-    if (!userId) {
+    const clerkUser = await currentUser()
+    if (!clerkUser) {
       return ApiErrors.unauthorized()
     }
 
     // 2. Get user from database with required fields only
-    const user = await prisma.users.findUnique({
-      where: { clerkId: userId },
+    let dbUser = await prisma.users.findUnique({
+      where: { clerkId: clerkUser.id },
       select: {
         id: true,
         role: true,
@@ -25,19 +25,47 @@ export async function GET() {
       },
     })
 
-    if (!user) {
+    // 3. Auto-registration if user doesn't exist locally
+    if (!dbUser) {
+      console.log('Auto-registering user:', clerkUser.id)
+      dbUser = await prisma.users.create({
+        data: {
+          clerkId: clerkUser.id,
+          email: clerkUser.emailAddresses[0]?.emailAddress || '',
+          full_name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'New User',
+          role: 'LEARNER',
+          student_profiles: {
+            create: {
+              credits: 0
+            }
+          }
+        },
+        select: {
+          id: true,
+          role: true,
+          is_active: true,
+          student_profiles: {
+            select: {
+              credits: true,
+            },
+          },
+        }
+      })
+    }
+
+    if (!dbUser) {
       return ApiErrors.userNotFound()
     }
 
-    // 3. Return only the required fields
+    // 4. Return only the required fields
     return apiSuccess({
       data: {
-        id: user.id,
-        role: user.role,
-        is_active: user.is_active,
+        id: dbUser.id,
+        role: dbUser.role,
+        is_active: dbUser.is_active,
         // Include credits for learners
-        ...(user.role === 'LEARNER' && user.student_profiles && {
-          credits: user.student_profiles.credits,
+        ...(dbUser.role === 'LEARNER' && dbUser.student_profiles && {
+          credits: dbUser.student_profiles.credits,
         }),
       },
     })

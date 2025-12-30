@@ -1,57 +1,97 @@
 
-import { NextResponse } from "next/server"
-import { createClient } from "@deepgram/sdk"
+import { NextResponse } from "next/server";
+import { TextToSpeechClient } from "@google-cloud/text-to-speech";
 
-const deepgram = createClient(process.env.DEEPGRAM_API_KEY!)
+// Initialize Google Cloud TTS Client
+// Automatically uses GOOGLE_APPLICATION_CREDENTIALS from env
+const googleClient = new TextToSpeechClient();
 
 export async function POST(req: Request) {
     try {
-        const { text } = await req.json()
+        const { text } = await req.json();
 
         if (!text) {
-            return NextResponse.json({ error: "Text is required" }, { status: 400 })
+            return NextResponse.json({ error: "Text is required" }, { status: 400 });
         }
 
-        // Strip emojis to prevent reading them aloud
-        // Regex matches common emoji ranges
+        // Strip emojis
         const cleanText = text.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
 
-        // Use Deepgram Aura for TTS
-        const response = await deepgram.speak.request(
-            { text: cleanText },
-            {
-                model: "aura-asteria-en", // A nice natural voice
-                encoding: "mp3",
+        let audioBase64: string;
+
+        try {
+            // 1. Try ElevenLabs
+            console.log("[TTS] Attempting ElevenLabs...");
+            audioBase64 = await elevenLabsTTS(cleanText);
+            console.log("[TTS] ElevenLabs success.");
+        } catch (elevenError) {
+            // 2. Fallback to Google Cloud TTS
+            console.error("[TTS] ElevenLabs failed:", elevenError);
+            console.log("[TTS] Falling back to Google Cloud TTS...");
+
+            try {
+                audioBase64 = await googleTTS(cleanText);
+                console.log("[TTS] Google Cloud TTS success.");
+            } catch (googleError) {
+                console.error("[TTS] Google Cloud TTS failed:", googleError);
+                throw new Error("All TTS providers failed.");
             }
-        )
-
-        const stream = await response.getStream()
-
-        if (!stream) {
-            throw new Error("Error getting stream from Deepgram")
         }
 
-        const buffer = await getBufferFromStream(stream)
-        const audioBase64 = buffer.toString("base64")
-
-        return NextResponse.json({ audio: audioBase64 })
+        return NextResponse.json({ audio: audioBase64 });
 
     } catch (error) {
-        console.error("TTS Error:", error)
-        return NextResponse.json({ error: "Failed to generate speech" }, { status: 500 })
+        console.error("TTS Fatal Error:", error);
+        return NextResponse.json({ error: "Failed to generate speech" }, { status: 500 });
     }
 }
 
-// Helper to convert web stream to buffer
-async function getBufferFromStream(stream: ReadableStream): Promise<Buffer> {
-    const reader = stream.getReader()
-    const chunks: Uint8Array[] = []
+// --- ElevenLabs Helper ---
+async function elevenLabsTTS(text: string): Promise<string> {
+    const apiKey = process.env.ELEVENLABS_API_KEY;
+    if (!apiKey) throw new Error("Missing ELEVENLABS_API_KEY");
 
-    while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        chunks.push(value)
+    const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Rachel
+    const modelId = "eleven_multilingual_v2";
+
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "xi-api-key": apiKey,
+        },
+        body: JSON.stringify({
+            text,
+            model_id: modelId,
+            voice_settings: {
+                stability: 0.5,
+                similarity_boost: 0.75,
+            },
+        }),
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`ElevenLabs API Error: ${response.status} ${response.statusText} - ${errorBody}`);
     }
 
-    return Buffer.concat(chunks)
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer).toString("base64");
+}
+
+// --- Google Cloud TTS Helper ---
+async function googleTTS(text: string): Promise<string> {
+    const request = {
+        input: { text },
+        voice: { languageCode: "en-US", name: "en-US-Neural2-F" }, // Premium Studio voice
+        audioConfig: { audioEncoding: "MP3" as const },
+    };
+
+    const [response] = await googleClient.synthesizeSpeech(request);
+
+    if (!response.audioContent) {
+        throw new Error("Google Cloud TTS returned empty audio content.");
+    }
+
+    return Buffer.from(response.audioContent).toString("base64");
 }

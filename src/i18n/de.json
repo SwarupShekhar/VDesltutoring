@@ -1,7 +1,7 @@
 {
     "nav": {
         "brandSubtitle": "Sprechen ohne zu übersetzen",
-        "approach": "Ansatz",
+        "approach": "Unsere Methode",
         "practice": "Üben",
         "pricing": "Preise",
         "about": "Über uns",
@@ -9,7 +9,7 @@
             "title": "Über Natural Fluency",
             "p1": "<strong class=\"text-foreground\">Wir sind Linguisten, Schauspieler und Führungskräfte.</strong> Wir haben Natural Fluency aufgebaut, weil wir sahen, wie brillante Profis in englischsprachigen Räumen schrumpften.",
             "p2": "Die traditionelle ESL-Industrie behandelt Sprache wie Mathe: Regeln auswendig lernen, und du bekommst die Antwort. Aber Sprechen ist keine Mathe. Es ist Musik. Es ist Rhythmus, Timing und Selbstvertrauen.",
-            "p3": "Unsere Methodik basiert auf \"Interaktiver Empathie\"—der Wissenschaft, wie menschliche Verbindung Leistungsangst überwindet. Wir bringen Ihnen nicht nur Wörter bei; wir bringen Ihnen bei, wie man Raum hält."
+            "p3": "Unsere Methodik basiert auf \"Interaktiver Empathie\" - der Wissenschaft, wie menschliche Verbindung Leistungsangst überwindet. Wir bringen Ihnen nicht nur Wörter bei; wir bringen Ihnen bei, wie man Raum hält."
         },
         "signIn": "Anmelden",
         "getStarted": "Loslegen",
@@ -124,7 +124,7 @@
                 "title": "Unerwartet gefragt werden",
                 "description": "Wenn Sie die Frage verstehen, aber Ihr Kopf leer ist.",
                 "example": "“Was denken Sie über diese Idee?”",
-                "reframe": "Sie brauchen keine Antwort — Sie brauchen einen Einstieg."
+                "reframe": "Sie brauchen keine Antwort - Sie brauchen einen Einstieg."
             },
             {
                 "id": "disagree_politely",
@@ -303,5 +303,42 @@
                 "ctaText": "Lassen Sie uns professionelles Englisch mühelos machen."
             }
         ]
+    },
+    "fluencyEngine": {
+        "title": "Die Fluency Engine",
+        "subtitle": "Traditionelles Lernen behandelt Englisch als Daten. Wir behandeln es als biologischen Reflex.",
+        "title1": "Die meisten scheitern nicht an Englisch",
+        "desc1": "Sie kennen die Grammatik. Sie kennen die Wörter. Aber wenn sie sprechen, zögert ihr Gehirn, übersetzt und friert ein. Traditionelle Kurse fügen mehr Regeln hinzu – was es schlimmer macht.",
+        "content1": "Wörter frieren ein, wenn Druck entsteht.",
+        "title2": "Fluss ist kein Wissen. Es ist ein Reflex.",
+        "desc2": "Sprechen ist eine automatische Reaktion. Genau wie Autofahren oder Musizieren. Sie denken nicht nach – Sie reagieren. Die Fluency Engine trainiert diesen Reflex in Echtzeit.",
+        "content2_p1": "🧠 Wissen → ❌",
+        "content2_p2": "⚡ Reflex → Fluss",
+        "title3": "Live-Reflextraining",
+        "desc3": "Während Sie sprechen, hört das System auf Ihre Pausen, Zögerungen und Ihren Fluss. Es reagiert sofort, genau wie ein echter Tutor. Dies trainiert Ihr Gehirn, ohne einzufrieren zu sprechen.",
+        "content3_p1": "🎙 Sie sprechen",
+        "content3_p2": "⚙ Fluency Engine",
+        "content3_p3": "💬 Echtzeit-Reaktion",
+        "title4": "Musterbasiertes Coaching",
+        "desc4": "Wir sagen nicht „falsch“. Wir erkennen Gewohnheiten. Pausieren. Neustarten. Übersetzen im Kopf. Diese Muster blockieren den Fluss – und das trainieren wir um.",
+        "content4_p1": "ZÖGERN",
+        "content4_p2": "FÜLLWÖRTER",
+        "content4_p3": "ÜBERSETZUNG",
+        "content4_p4": "→ Umtrainiert",
+        "title5": "Emotionale Sicherheit",
+        "desc5": "Ihr AI-Tutor urteilt nie. Er sagt nie „falsch“. Er hält Sie im Gespräch. Dies nimmt die Angst – den wahren Feind des Redeflusses.",
+        "content5_p1": "Keine Angst.",
+        "content5_p2": "Keine Scham.",
+        "content5_p3": "Nur Sprechen.",
+        "title6": "Situativer Fluss",
+        "desc6": "Sie lernen kein ‚Englisch‘. Sie lernen, wie man in Meetings, Interviews, auf Reisen und im täglichen Leben spricht. Ihr Tutor simuliert echte Situationen, damit Ihr Gehirn es in die Realität überträgt.",
+        "content6_p1": "Interview",
+        "content6_p2": "Meetings",
+        "content6_p3": "Smalltalk",
+        "content6_p4": "Reisen",
+        "title7": "Warum das funktioniert",
+        "desc7": "Andere Systeme trainieren das Gedächtnis. Die Fluency Engine trainiert Zögern, Timing, Selbstvertrauen und Fluss – die Dinge, die tatsächlich entscheiden, ob Sie sprechen können.",
+        "content7_p1": "Wir unterrichten kein Englisch.",
+        "content7_p2": "Wir trainieren das Sprechen."
     }
 }

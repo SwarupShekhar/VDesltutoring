@@ -1,15 +1,57 @@
 {
     "nav": {
         "brandSubtitle": "Speak without translating",
-        "approach": "Approach",
+        "approach": "Our Method",
         "practice": "Practice",
         "pricing": "Pricing",
         "about": "About Us",
         "aboutPage": {
-            "title": "About Natural Fluency",
-            "p1": "<strong class=\"text-foreground\">We are linguists, actors, and executives.</strong> We built Natural Fluency because we saw brilliant professionals shrinking in English-speaking rooms.",
-            "p2": "The traditional ESL industry treats language like math: memorize the rules, and you'll get the answer. But speaking isn't math. It's music. It's rhythm, timing, and confidence.",
-            "p3": "Our methodology is based on \"Interactive Empathy\"—the science of how human connection overrides performance anxiety. We don't just teach you words; we teach you how to hold space."
+            "hero": {
+                "title": "We don’t teach English.<br/>We train people to speak.",
+                "subtitle": "Most English learners don’t struggle with knowledge. They struggle with pressure, hesitation, and confidence.<br/>We built this platform to fix that."
+            },
+            "sections": [
+                {
+                    "id": "problem",
+                    "label": "The Real Problem",
+                    "title": "“I know English… but I can’t speak.”",
+                    "content": "This is what almost every learner tells us.<br/><br/>They know:<br/>• Grammar<br/>• Vocabulary<br/>• Rules<br/><br/>But when it’s time to speak:<br/>• Their mind freezes<br/>• They hesitate<br/>• They translate<br/>• They lose flow<br/><br/>Traditional learning systems respond by adding more:<br/>• Grammar<br/>• Exercises<br/>• Reading<br/><br/>That doesn’t fix speaking.<br/>It makes it worse."
+                },
+                {
+                    "id": "reason",
+                    "label": "Why We Exist",
+                    "title": "To help people speak without fear.",
+                    "content": "Natural Flow was created for one reason.<br/><br/>We realized something simple:<br/><br/>Speaking is not a knowledge problem.<br/>It is a reflex problem.<br/><br/>And reflexes are built by:<br/>• Repetition<br/>• Timing<br/>• Emotional safety<br/>• Real conversation<br/><br/>Not textbooks.<br/><br/>So instead of building another course,<br/>we built a Fluency Engine."
+                },
+                {
+                    "id": "difference",
+                    "label": "What Makes Us Different",
+                    "title": "We don’t correct English.<br/>We rewire speaking behavior.",
+                    "content": "Most platforms ask:<br/>“Do you know the correct sentence?”<br/><br/>We ask:<br/>“Can you say it out loud when it matters?”<br/><br/>Our system listens to how you speak:<br/>• Hesitations<br/>• Fillers<br/>• Restarts<br/>• Pauses<br/>• Flow<br/><br/>And coaches you the same way a human tutor would:<br/>• Calm<br/>• Supportive<br/>• Real-time<br/>• Without judgment"
+                },
+                {
+                    "id": "philosophy",
+                    "label": "The Human Philosophy",
+                    "title": "People only become fluent when they feel safe enough to speak.",
+                    "content": "We designed this platform around one belief.<br/><br/>That’s why our AI:<br/>• Never says “wrong”<br/>• Never criticizes<br/>• Never shames<br/><br/>It says:<br/>• “Try this instead.”<br/>• “That was good - let’s smooth it.”<br/>• “Keep going.”<br/><br/>Because confidence is built through motion, not perfection."
+                },
+                {
+                    "id": "audience",
+                    "label": "Who We Serve",
+                    "title": "For anyone who wants their English to feel like their own voice.",
+                    "content": "Natural Flow is built for people who:<br/><br/>• Understand English but freeze when speaking<br/>• Need English for work, interviews, or life<br/>• Feel embarrassed making mistakes<br/>• Want to sound natural, not robotic<br/><br/>From students to professionals to immigrants."
+                },
+                {
+                    "id": "vision",
+                    "label": "Where We Are Going",
+                    "title": "Fluency-first language platform",
+                    "content": "We are building the world’s first place where:<br/>• You speak<br/>• You’re understood<br/>• You’re coached<br/>• You grow<br/><br/>Not by memorizing,<br/>but by becoming a speaker."
+                }
+            ],
+            "final": {
+                "title": "Natural Flow is not about learning English.",
+                "subtitle": "It’s about becoming someone who can speak it."
+            }
         },
         "signIn": "Sign in",
         "getStarted": "Get Started",
@@ -20,6 +62,237 @@
         "createAccount": "Create Account",
         "language": "Language",
         "interfaceOnly": "Interface only. Learning content remains in English."
+    },
+    "methodPage": {
+        "hero": {
+            "title": "The Fluency Engine™",
+            "subtitle": "“Most people don’t fail at English.<br/>They fail at speaking under pressure.”"
+        },
+        "section1": {
+            "label": "The Hidden Problem",
+            "title": "Cognitive Overload",
+            "content": "Most learners believe their problem is Grammar, Vocabulary, or Accent. But when they speak in real life, something else happens: Their brain Hesitates, Translates, Freezes, and Loses flow. They know what to say. They just can’t say it fast enough. Traditional courses respond by adding more grammar, more rules, and more words. This increases mental load - and makes speaking even harder. Fluency doesn’t break because of ignorance. It breaks because of cognitive overload under pressure."
+        },
+        "section2": {
+            "label": "Speaking Is Not Knowledge",
+            "title": "The Reflex Gap",
+            "content": "Reading and speaking use different parts of the brain. You can know English and still not be able to speak English. Because: Speaking is not memory. Speaking is a reflex. Reflexes are trained through Timing, Repetition, Feedback, and Emotional safety. Not through Explanations, Rules, or Textbooks. That’s why people who study for years still freeze when a real human speaks to them."
+        },
+        "section3": {
+            "label": "Introducing the Fluency Engine™",
+            "title": "Rewiring, Not Correcting",
+            "content": "The Fluency Engine™ is not a course. It is a speaking system that retrains how your brain produces English. It listens to your pauses, your filler words, your timing, your rhythm, and your hesitation patterns. And adjusts the conversation in real time. You are not corrected. You are rewired."
+        },
+        "section4": {
+            "label": "Our Four Core Principles",
+            "title": "Principles of Flow",
+            "cards": [
+                {
+                    "title": "1) Live Reflex Training",
+                    "content": "You don’t become fluent by reading. You become fluent by Speaking, Hearing yourself, and Adjusting in the moment. Your Fluency Engine listens as you speak and responds instantly. This trains Speed, Flow, and Automaticity. Not memory. It builds the speaking reflex."
+                },
+                {
+                    "title": "2) Pattern-Based Coaching",
+                    "content": "Other platforms say: “You made a grammar mistake.” We say: “You paused here,” “You restarted here,” “You hesitated before this word.” These are habits, not errors. We don’t fix English. We fix how you speak English. This is why your progress is permanent."
+                },
+                {
+                    "title": "3) Emotional Safety",
+                    "content": "People don’t freeze because they don’t know English. They freeze because they fear Sounding stupid, Being judged, or Being corrected. Your tutor never says Wrong, Incorrect, or Bad. It says: “Try this instead,” “That was good, let’s smooth it,” “Keep going.” Safety creates fluency."
+                },
+                {
+                    "title": "4) Situational Fluency",
+                    "content": "You don’t want “English.” You want Interviews, Meetings, Travel, Small talk, and Presentations. Your tutor practices these exact situations. So your brain learns: “I can speak in THIS moment.” That’s how confidence transfers to real life."
+                }
+            ]
+        },
+        "section5": {
+            "label": "Why This Is Different From Traditional Audio-Based Methods",
+            "title": "Memory vs. Identity",
+            "content": "Traditional audio-based programs train memory. We train Hesitation, Timing, Flow, Confidence, and Speaking identity. They ask: “Can you remember this phrase?” We ask: “Can you speak without freezing?” That is what real fluency is."
+        },
+        "final": {
+            "label": "The Shift",
+            "content": "Most platforms make you feel: “I need to study more.” The Fluency Engine makes you feel: “I can speak right now.” That is the difference."
+        }
+    },
+    "howItWorksPage": {
+        "hero": {
+            "title": "How It Works",
+            "subtitle": "A simple way to go from \"I know English\" to \"I can speak English\"",
+            "description": "You don’t need to study more. You need to practice speaking in the right way.<br/>Here’s exactly what happens when you use Natural Flow."
+        },
+        "steps": [
+            {
+                "step": "Step 1",
+                "title": "You speak",
+                "description": "You click Start. You see your AI tutor. You just start talking.",
+                "details": [
+                    "Your day",
+                    "Your work",
+                    "A topic",
+                    "Anything"
+                ],
+                "footer": "There is no test. No pressure. Just a conversation."
+            },
+            {
+                "step": "Step 2",
+                "title": "The AI listens",
+                "description": "While you talk, the AI is quietly listening to:",
+                "details": [
+                    "Your pauses",
+                    "Your \"uh\", \"um\", \"well\"",
+                    "When you stop and restart",
+                    "Your rhythm and timing"
+                ],
+                "footer": "It is not judging you. It is learning how you speak."
+            },
+            {
+                "step": "Step 3",
+                "title": "Your patterns are detected",
+                "description": "The system looks for habits, not mistakes. For example:",
+                "details": [
+                    "Do you pause before speaking?",
+                    "Do you think too long?",
+                    "Do you translate in your head?",
+                    "Do you rush or freeze?"
+                ],
+                "footer": "These are called fluency patterns. They are what block confident speaking."
+            },
+            {
+                "step": "Step 4",
+                "title": "Your tutor adapts",
+                "description": "Now the magic part. Your AI tutor changes how it talks to you based on your patterns.",
+                "subsections": [
+                    {
+                        "title": "If you hesitate:",
+                        "content": "It slows down and encourages you."
+                    },
+                    {
+                        "title": "If you use many fillers:",
+                        "content": "It models smoother sentences."
+                    },
+                    {
+                        "title": "If you freeze:",
+                        "content": "It gives you gentle starters."
+                    }
+                ],
+                "footer": "You are not taught. You are guided."
+            },
+            {
+                "step": "Step 5",
+                "title": "You improve by speaking",
+                "description": "You do not memorize rules. You do not do exercises. You improve by:",
+                "details": [
+                    "Talking",
+                    "Trying",
+                    "Hearing better versions",
+                    "Trying again"
+                ],
+                "footer": "This builds a speaking reflex - the same way you learned your first language."
+            },
+            {
+                "step": "Step 6",
+                "title": "Your progress is tracked",
+                "description": "After every session, we save:",
+                "details": [
+                    "Your hesitation level",
+                    "Your flow",
+                    "Your filler use",
+                    "Your speaking style"
+                ],
+                "quote": "“I am freezing less. I am speaking more.”",
+                "footer": "You don’t feel progress. You see it."
+            }
+        ],
+        "final": {
+            "label": "Why this works",
+            "title": "Most people don’t fail at English.",
+            "subtitle": "They fail at speaking under pressure.",
+            "listTitle": "Natural Flow trains:",
+            "list": [
+                "Confidence",
+                "Timing",
+                "Flow",
+                "Speaking identity"
+            ],
+            "conclusion": "Not just words. That’s why people finally start talking."
+        }
+    },
+    "pricingPage": {
+        "hero": {
+            "title": "Choose your speaking path",
+            "subtitle": "Every plan gives you access to the Fluency Engine.<br/>The difference is how deep you go."
+        },
+        "plans": {
+            "basic": {
+                "title": "Basic",
+                "price": "$19",
+                "period": "/ month",
+                "tagline": "Start speaking",
+                "features": [
+                    "AI Tutor (limited sessions)",
+                    "Fluency feedback",
+                    "Speaking history",
+                    "Daily conversation scenarios"
+                ],
+                "button": "Start with Basic"
+            },
+            "standard": {
+                "title": "Standard",
+                "price": "$39",
+                "period": "/ month",
+                "tagline": "Build confidence",
+                "badge": "Most Popular",
+                "features": [
+                    "Unlimited AI Tutor",
+                    "Full Fluency Engine",
+                    "Situations: work, travel, interviews",
+                    "Weekly speaking challenges",
+                    "Progress tracking"
+                ],
+                "button": "Start with Standard"
+            },
+            "premium": {
+                "title": "Premium",
+                "price": "$79",
+                "period": "/ month",
+                "tagline": "Speak naturally",
+                "features": [
+                    "Priority AI tutor",
+                    "Personalized speaking roadmap",
+                    "Pronunciation & hesitation drills",
+                    "Industry-specific scenarios",
+                    "Advanced fluency reports"
+                ],
+                "button": "Go Premium"
+            }
+        },
+        "enterprise": {
+            "title": "Enterprise",
+            "description": "For companies, universities, and training teams who want their people to speak English confidently in real situations.",
+            "button": "Contact Sales"
+        },
+        "trust": "You are not paying for lessons. You are paying for a system that trains how you speak."
+    },
+    "checkoutPage": {
+        "title": "Checkout",
+        "selectedPlan": "You selected:",
+        "perMonth": "/ month",
+        "form": {
+            "name": "Full Name",
+            "email": "Email Address",
+            "cardNumber": "Card Number",
+            "expiry": "MM / YY",
+            "cvv": "CVV"
+        },
+        "button": "Start My Fluency Journey",
+        "modal": {
+            "title": "Payments are not enabled yet.",
+            "subtitle": "You’re early. That’s good.",
+            "description": "Enter your email and we’ll invite you when this launches.",
+            "emailPlaceholder": "Enter your email",
+            "button": "Join Early Access"
+        }
     },
     "hero": {
         "headline": "Stop translating in your head.<br /><span>Start speaking like yourself.</span>",
@@ -124,7 +397,7 @@
                 "title": "Being asked unexpectedly",
                 "description": "When you understand the question but your mind goes blank.",
                 "example": "“What do you think about this idea?”",
-                "reframe": "You don’t need an answer — you need an entry."
+                "reframe": "You don’t need an answer - you need an entry."
             },
             {
                 "id": "disagree_politely",
@@ -249,7 +522,7 @@
     "situationalGateway": {
         "headline": "Where do you use English?",
         "subtext": "We don’t give you a course. We build a speaking path around your real life.",
-        "defaultCta": "Your English doesn’t need fixing — it needs flow.",
+        "defaultCta": "Your English doesn’t need fixing - it needs flow.",
         "button": "Find your speaking path",
         "meta": "2–3 minutes · No grammar · Just speaking",
         "loading": {
@@ -303,5 +576,42 @@
                 "ctaText": "Let’s make professional English feel effortless."
             }
         ]
+    },
+    "fluencyEngine": {
+        "title": "The Fluency Engine",
+        "subtitle": "Traditional learning treats English as data. We treat it as a biological reflex.",
+        "title1": "Most people don’t fail at English",
+        "desc1": "They know grammar. They know words. But when they speak, their brain hesitates, translates, and freezes. Traditional courses add more rules - which makes it worse.",
+        "content1": "Words freeze when pressure hits.",
+        "title2": "Fluency is not knowledge. It is a reflex.",
+        "desc2": "Speaking is an automatic reaction. Just like driving or playing music. You don’t think - you respond. The Fluency Engine trains this reflex in real time.",
+        "content2_p1": "🧠 Knowledge → ❌",
+        "content2_p2": "⚡ Reflex → Fluency",
+        "title3": "Live Reflex Training",
+        "desc3": "While you speak, the system listens to your pauses, hesitations, and flow. It reacts instantly, just like a real tutor. This trains your brain to speak without freezing.",
+        "content3_p1": "🎙 You speak",
+        "content3_p2": "⚙ Fluency Engine",
+        "content3_p3": "💬 Real-time response",
+        "title4": "Pattern-Based Coaching",
+        "desc4": "We don’t say “wrong”. We detect habits. Pausing. Restarting. Translating in your head. These patterns are what block fluency - and this is what we retrain.",
+        "content4_p1": "HESITATION",
+        "content4_p2": "FILLERS",
+        "content4_p3": "TRANSLATION",
+        "content4_p4": "→ Retrained",
+        "title5": "Emotional Safety",
+        "desc5": "Your AI tutor never judges. It never says ‘wrong’. It keeps you talking. This removes fear - which is the real enemy of fluency.",
+        "content5_p1": "No fear.",
+        "content5_p2": "No shame.",
+        "content5_p3": "Just speaking.",
+        "title6": "Situational Fluency",
+        "desc6": "You don’t learn ‘English’. You learn how to speak in meetings, interviews, travel, and daily life. Your tutor simulates real situations so your brain transfers it to reality.",
+        "content6_p1": "Interview",
+        "content6_p2": "Meetings",
+        "content6_p3": "Small Talk",
+        "content6_p4": "Travel",
+        "title7": "Why this works",
+        "desc7": "Other systems train memory. The Fluency Engine trains hesitation, timing, confidence, and flow - the things that actually decide whether you can speak.",
+        "content7_p1": "We don’t teach English.",
+        "content7_p2": "We train speaking."
     }
 }

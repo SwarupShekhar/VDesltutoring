@@ -1,7 +1,7 @@
 {
     "nav": {
         "brandSubtitle": "Parlez sans traduire",
-        "approach": "Approche",
+        "approach": "Notre Méthode",
         "practice": "Pratique",
         "pricing": "Tarifs",
         "about": "À propos",
@@ -9,7 +9,7 @@
             "title": "À propos de Natural Fluency",
             "p1": "<strong class=\"text-foreground\">Nous sommes des linguistes, des acteurs et des cadres.</strong> Nous avons créé Natural Fluency parce que nous avons vu des professionnels brillants se recroqueviller dans des salles anglophones.",
             "p2": "L'industrie ESL traditionnelle traite la langue comme des mathématiques : mémorisez les règles et vous obtiendrez la réponse. Mais parler n'est pas des mathématiques. C'est de la musique. C'est le rythme, le timing et la confiance.",
-            "p3": "Notre méthodologie est basée sur \"l'Empathie Interactive\"—la science de la façon dont la connexion humaine surpasse l'anxiété de performance. Nous ne vous enseignons pas seulement des mots ; nous vous apprenons à occuper l'espace."
+            "p3": "Notre méthodologie est basée sur \"l'Empathie Interactive\" - la science de la façon dont la connexion humaine surpasse l'anxiété de performance. Nous ne vous enseignons pas seulement des mots ; nous vous apprenons à occuper l'espace."
         },
         "signIn": "Se connecter",
         "getStarted": "Commencer",
@@ -124,7 +124,7 @@
                 "title": "Être interrogé de manière inattendue",
                 "description": "Quand vous comprenez la question mais votre esprit devient vide.",
                 "example": "“What do you think about this idea?”",
-                "reframe": "Vous n'avez pas besoin d'une réponse — vous avez besoin d'une entrée."
+                "reframe": "Vous n'avez pas besoin d'une réponse - vous avez besoin d'une entrée."
             },
             {
                 "id": "disagree_politely",
@@ -249,7 +249,7 @@
     "situationalGateway": {
         "headline": "Où utilisez-vous l'anglais ?",
         "subtext": "Nous ne vous donnons pas un cours. Nous construisons un chemin d'expression autour de votre vie réelle.",
-        "defaultCta": "Votre anglais n'a pas besoin de réparation — il a besoin de fluidité.",
+        "defaultCta": "Votre anglais n'a pas besoin de réparation - il a besoin de fluidité.",
         "button": "Trouvez votre chemin d'expression",
         "meta": "2–3 minutes · Pas de grammaire · Juste parler",
         "loading": {
@@ -303,5 +303,42 @@
                 "ctaText": "Rendons l'anglais professionnel sans effort."
             }
         ]
+    },
+    "fluencyEngine": {
+        "title": "Le Moteur de Fluidité",
+        "subtitle": "L'apprentissage traditionnel traite l'anglais comme des données. Nous le traitons comme un réflexe biologique.",
+        "title1": "La plupart n'échouent pas en anglais",
+        "desc1": "Ils connaissent la grammaire. Ils connaissent les mots. Mais quand ils parlent, leur cerveau hésite, traduit et se fige. Les cours traditionnels ajoutent plus de règles, ce qui empire les choses.",
+        "content1": "Les mots se figent sous la pression.",
+        "title2": "La fluidité n'est pas une connaissance. C'est un réflexe.",
+        "desc2": "Parler est une réaction automatique. Comme conduire ou jouer de la musique. Vous ne pensez pas, vous répondez. Le Fluency Engine entraîne ce réflexe en temps réel.",
+        "content2_p1": "🧠 Connaissance → ❌",
+        "content2_p2": "⚡ Réflexe → Fluidité",
+        "title3": "Entraînement de Réflexe en Direct",
+        "desc3": "Pendant que vous parlez, le système écoute vos pauses, hésitations et votre flux. Il réagit instantanément, comme un vrai tuteur. Cela entraîne votre cerveau à parler sans se figer.",
+        "content3_p1": "🎙 Vous parlez",
+        "content3_p2": "⚙ Fluency Engine",
+        "content3_p3": "💬 Réponse en temps réel",
+        "title4": "Coaching Basé sur les Modèles",
+        "desc4": "Nous ne disons pas « faux ». Nous détectons les habitudes. Pauser. Recommencer. Traduire dans sa tête. Ces modèles bloquent la fluidité, et c'est ce que nous réentraînons.",
+        "content4_p1": "HÉSITATION",
+        "content4_p2": "REMPLISSAGE",
+        "content4_p3": "TRADUCTION",
+        "content4_p4": "→ Réentraîné",
+        "title5": "Sécurité Émotionnelle",
+        "desc5": "Votre tuteur IA ne juge jamais. Il ne dit jamais « faux ». Il vous fait parler. Cela élimine la peur, qui est le véritable ennemi de la fluidité.",
+        "content5_p1": "Pas de peur.",
+        "content5_p2": "Pas de honte.",
+        "content5_p3": "Juste parler.",
+        "title6": "Fluidité Situationnelle",
+        "desc6": "Vous n'apprenez pas l'« anglais ». Vous apprenez à parler en réunion, en entretien, en voyage et dans la vie quotidienne. Votre tuteur simule des situations réelles pour que votre cerveau le transfère à la réalité.",
+        "content6_p1": "Entretien",
+        "content6_p2": "Réunions",
+        "content6_p3": "Discussion",
+        "content6_p4": "Voyage",
+        "title7": "Pourquoi ça marche",
+        "desc7": "D'autres systèmes entraînent la mémoire. Le Fluency Engine entraîne l'hésitation, le timing, la confiance et le flux - les choses qui décident réellement si vous pouvez parler.",
+        "content7_p1": "Nous n'enseignons pas l'anglais.",
+        "content7_p2": "Nous entraînons la parole."
     }
 }

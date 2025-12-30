@@ -30,7 +30,7 @@ const QUESTIONS = [
 const EMPATHY_PROMPTS = [
     "Many fluent speakers pause here too.",
     "It’s normal to think before starting.",
-    "There’s no rush — this mirrors real conversation."
+    "There’s no rush - this mirrors real conversation."
 ];
 
 type Role = 'BUFFER' | 'STANCE' | 'EVENT' | 'CAUSE';
@@ -45,7 +45,7 @@ interface SentenceVariant {
 const SENTENCE_VARIANTS: SentenceVariant[] = [
     {
         id: "delay_explanation",
-        fullSentence: "That’s a fair question — I think the delay happened because we had to revise the initial plan.",
+        fullSentence: "That’s a fair question - I think the delay happened because we had to revise the initial plan.",
         fragments: [
             "because we had to revise the initial plan",
             "I think",
@@ -75,7 +75,7 @@ const SENTENCE_VARIANTS: SentenceVariant[] = [
     },
     {
         id: "issue_explanation",
-        fullSentence: "Let me explain — we ran into an issue when the requirements changed.",
+        fullSentence: "Let me explain - we ran into an issue when the requirements changed.",
         fragments: [
             "when the requirements changed",
             "we ran into an issue",
@@ -238,9 +238,9 @@ export const FluencyMirror = () => {
 
         // hesitationTime is in ms. 
         if (hesitationTime < 2000) {
-            setHesitationPreamble("You’re willing to start quickly — we can help you shape that flow.");
+            setHesitationPreamble("You’re willing to start quickly - we can help you shape that flow.");
         } else if (hesitationTime > 6000) {
-            setHesitationPreamble("You’re careful before you speak — that’s not a flaw.");
+            setHesitationPreamble("You’re careful before you speak - that’s not a flaw.");
         } else {
             setHesitationPreamble(null);
         }
@@ -326,7 +326,7 @@ export const FluencyMirror = () => {
                                         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                                         className="text-muted-foreground font-medium"
                                     >
-                                        Take your time — there’s no perfect order here.
+                                        Take your time - there’s no perfect order here.
                                     </motion.p>
                                 )}
                                 {!hasInteracted && empathyMessage && (

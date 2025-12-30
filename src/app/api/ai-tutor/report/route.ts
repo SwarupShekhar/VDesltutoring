@@ -131,7 +131,7 @@ export async function POST(req: Request) {
       },
       patterns: ["Your fluency is still emerging."],
       refinements: [],
-      next_step: "Keep talking — your fluency grows with use.",
+      next_step: "Keep talking - your fluency grows with use.",
       drills: [],
       metrics: { wordCount: 0, fillerCount: 0, fillerPercentage: 0, uniqueWords: 0 }
     })

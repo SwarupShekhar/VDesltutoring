@@ -1,53 +1,53 @@
 {
     "nav": {
         "brandSubtitle": "Nói không cần dịch",
-        "approach": "Phương pháp",
-        "practice": "Luyện tập",
-        "pricing": "Bảng giá",
-        "about": "Về chúng tôi",
+        "approach": "Phương Pháp Của Chúng Tôi",
+        "practice": "Thực hành",
+        "pricing": "Giá cả",
+        "about": "Giới thiệu",
         "signIn": "Đăng nhập",
         "getStarted": "Bắt đầu",
         "dashboard": "Bảng điều khiển",
         "signOut": "Đăng xuất",
         "startAssessment": "Bắt đầu đánh giá",
-        "signInToPractice": "Đăng nhập để luyện tập",
+        "signInToPractice": "Đăng nhập để thực hành",
         "createAccount": "Tạo tài khoản",
         "language": "Ngôn ngữ",
         "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh."
     },
     "aboutPage": {
         "title": "Về Natural Fluency",
-        "p1": "<strong class=\"text-foreground\">Chúng tôi là những nhà ngôn ngữ học, diễn viên và giám đốc điều hành.</strong> Chúng tôi xây dựng Natural Fluency vì chúng tôi thấy những chuyên gia xuất sắc thu mình lại trong các phòng nói tiếng Anh.",
-        "p2": "Ngành công nghiệp ESL truyền thống coi ngôn ngữ như toán học: ghi nhớ các quy tắc và bạn sẽ có câu trả lời. Nhưng nói không phải là toán học. Đó là âm nhạc. Đó là nhịp điệu, thời gian và sự tự tin.",
-        "p3": "Phương pháp của chúng tôi dựa trên \"Sự đồng cảm tương tác\"—khoa học về cách kết nối con người vượt qua nỗi lo âu về hiệu suất. Chúng tôi không chỉ dạy bạn từ ngữ; chúng tôi dạy bạn cách làm chủ không gian."
+        "p1": "<strong class=\"text-foreground\">Chúng tôi là những nhà ngôn ngữ học, diễn viên và giám đốc điều hành.</strong> Chúng tôi xây dựng Natural Fluency vì chúng tôi thấy những chuyên gia xuất sắc bị thu mình trong các phòng họp nói tiếng Anh.",
+        "p2": "Ngành công nghiệp ESL truyền thống coi ngôn ngữ giống như toán học: ghi nhớ các quy tắc và bạn sẽ có câu trả lời. Nhưng nói không phải là toán học. Nó là âm nhạc. Nó là nhịp điệu, thời gian và sự tự tin.",
+        "p3": "Phương pháp luận của chúng tôi dựa trên \"Sự thấu cảm tương tác\" - khoa học về cách kết nối giữa con người vượt qua nỗi lo lắng về hiệu suất. Chúng tôi không chỉ dạy bạn từ vựng; chúng tôi dạy bạn cách làm chủ không gian."
     },
     "hero": {
         "headline": "Ngừng dịch trong đầu.<br /><span>Bắt đầu nói như chính bạn.</span>",
-        "subtext": "Phương pháp tiếp cận chuyên biệt để trôi chảy. Dành cho các chuyên gia cảm thấy mắc kẹt trong sự im lặng giữa suy nghĩ và lời nói.",
-        "ctaReflection": "Bắt đầu suy ngẫm của bạn",
+        "subtext": "Phương pháp tiếp cận boutique cho sự trôi chảy. Dành cho các chuyên gia cảm thấy bị mắc kẹt trong sự im lặng giữa suy nghĩ và lời nói.",
+        "ctaReflection": "Bắt đầu suy ngẫm",
         "ctaMethod": "Phương pháp của chúng tôi"
     },
     "problems": {
         "label": "Vấn đề",
         "headline": "Tại sao các ứng dụng không thể dạy bạn điều này.",
-        "p1": "Hầu hết các ứng dụng ngôn ngữ dạy bạn <strong>từ vựng</strong> (nói gì). Nhưng trong một cuộc họp thực tế, bạn không gặp khó khăn vì thiếu từ.",
-        "p2": "Bạn gặp khó khăn vì <strong>áp lực</strong>.",
-        "p3": "Khi rủi ro tăng cao, não bạn quay về trạng thái an toàn: <span class=\"text-foreground italic\">dịch từ tiếng mẹ đẻ</span>. Sự chậm trễ này là thứ giết chết sự tự tin của bạn, không phải ngữ pháp.",
+        "p1": "Hầu hết các ứng dụng dạy bạn <strong>từ vựng</strong> (nói gì). Nhưng trong một cuộc họp thực tế, bạn không thất bại vì thiếu từ.",
+        "p2": "Bạn thất bại vì <strong>áp lực</strong>.",
+        "p3": "Khi rủi ro cao, não bạn quay về sự an toàn: <span class=\"text-foreground italic\">dịch từ ngôn ngữ mẹ đẻ</span>. Sự chậm trễ này là thứ giết chết sự tự tin của bạn, không phải ngữ pháp.",
         "simulationLabel": "Mô phỏng áp lực thời gian thực",
         "you": "Bạn"
     },
     "features": {
         "dialogues": {
             "title": "Đối thoại có cấu trúc",
-            "desc": "Không có những cuộc trò chuyện ngẫu nhiên. Mỗi buổi học đều có mục tiêu chính xác."
+            "desc": "Không nói chuyện phiếm ngẫu nhiên. Mỗi phiên đều có mục tiêu chính xác."
         },
         "feedback": {
             "title": "Phản hồi tức thì",
-            "desc": "Sự sửa lỗi mang lại cảm giác hỗ trợ, không phải chỉ trích."
+            "desc": "Sửa lỗi mang lại cảm giác hỗ trợ, không chỉ trích."
         },
         "match": {
-            "title": "Ghép đôi theo sự phù hợp",
-            "desc": "Chúng tôi ghép bạn với những người cố vấn phù hợp với phong cách chuyên nghiệp của bạn."
+            "title": "Ghép đôi theo sự ăn ý",
+            "desc": "Chúng tôi ghép bạn với những cố vấn phù hợp với phong cách chuyên nghiệp của bạn."
         }
     },
     "testimonials": {
@@ -63,51 +63,16 @@
                 "quote": "My English was 'good enough', but I wasn't connecting. Now I can joke, interrupt, and lead with nuance.",
                 "author": "Marco R.",
                 "role": "Tech Lead, São Paulo"
-            },
-            {
-                "quote": "The 'Timing Problems' concept changed everything. I realized I wasn't bad at English, I was just slow at processing.",
-                "author": "Hiroshi T.",
-                "role": "Investment Banker, Tokyo"
-            },
-            {
-                "quote": "Just 4 weeks in, my CEO asked if I had lived abroad. I haven't. I just stopped translating in my head.",
-                "author": "Camille D.",
-                "role": "Marketing Director, Paris"
-            },
-            {
-                "quote": "My accent is still there, but my hesitation is gone. People listen to me differently now.",
-                "author": "Lars J.",
-                "role": "Architect, Copenhagen"
-            },
-            {
-                "quote": "I used to dread Q&A sessions. Now they are my favorite part of the presentation.",
-                "author": "Priya S.",
-                "role": "Lead Developer, Bangalore"
-            },
-            {
-                "quote": "Finally found a mentor who doesn't just correct my grammar, but helps me find my rhythm. My meetings are 100% more productive now.",
-                "author": "Alex M.",
-                "role": "Founder & CEO, London"
-            },
-            {
-                "quote": "I used to prepare scripts for every call. Now I just show up and speak. The freedom is incredible.",
-                "author": "Sofia L.",
-                "role": "UX Designer, Stockholm"
-            },
-            {
-                "quote": "The psychological approach to fluency is what I was missing. It's not about the language, it's about the confidence.",
-                "author": "Luca B.",
-                "role": "Data Scientist, Milan"
             }
         ]
     },
     "speakingMoments": {
         "headline": "Những khoảnh khắc nói tiếng Anh cảm thấy khó khăn nhất",
-        "subtext": "Đây không phải là vấn đề ngữ pháp. Chúng là vấn đề thời gian.",
+        "subtext": "Đây không phải là vấn đề ngữ pháp. Đây là vấn đề về thời gian.",
         "modal": {
-            "whyHard": "Tại sao điều này cảm thấy khó",
+            "whyHard": "Tại sao điều này cảm thấy khó khăn",
             "whyHardDesc": "Bạn đang cố gắng chuẩn bị mọi thứ trước khi nói.",
-            "reframeLabel": "Khung tư duy dòng chảy tự nhiên",
+            "reframeLabel": "Tái định hình Natural Flow",
             "practice": "Thực hành khoảnh khắc này",
             "teach": "Xem cách chúng tôi dạy điều này"
         },
@@ -115,28 +80,28 @@
             {
                 "id": "explain_delay",
                 "title": "Giải thích sự chậm trễ",
-                "description": "Khi bạn biết điều gì đã xảy ra nhưng gặp khó khăn khi bắt đầu giải thích.",
+                "description": "Khi bạn biết chuyện gì đã xảy ra nhưng gặp khó khăn khi bắt đầu giải thích.",
                 "example": "“Can you explain why this was delayed?”",
-                "reframe": "Bắt đầu quan trọng hơn là giải thích hoàn hảo."
+                "reframe": "Bắt đầu quan trọng hơn một lời giải thích hoàn hảo."
             },
             {
                 "id": "unexpected_question",
                 "title": "Bị hỏi bất ngờ",
-                "description": "Khi bạn hiểu câu hỏi nhưng tâm trí bạn trống rỗng.",
+                "description": "Khi bạn hiểu câu hỏi nhưng đầu óc trống rỗng.",
                 "example": "“What do you think about this idea?”",
-                "reframe": "Bạn không cần câu trả lời — bạn cần sự nhập cuộc."
+                "reframe": "Bạn không cần câu trả lời - bạn cần một lời mở đầu."
             },
             {
                 "id": "disagree_politely",
-                "title": "Không đồng ý một cách lịch sự",
-                "description": "Khi bạn muốn không đồng ý nhưng sợ nghe có vẻ thô lỗ.",
+                "title": "Phản đối lịch sự",
+                "description": "Khi bạn muốn phản đối nhưng sợ nghe có vẻ thô lỗ.",
                 "example": "“I’m not sure I agree with that.”",
                 "reframe": "Giọng điệu đến từ nhịp độ, không phải từ vựng."
             },
             {
                 "id": "clarify_mistake",
-                "title": "Làm rõ sự hiểu lầm",
-                "description": "Khi có gì đó không ổn và bạn cần giải thích bản thân.",
+                "title": "Làm rõ hiểu lầm",
+                "description": "Khi có gì đó sai và bạn cần giải thích bản thân.",
                 "example": "“Let me clarify what I meant.”",
                 "reframe": "Nói sớm ngăn chặn áp lực."
             },
@@ -145,45 +110,45 @@
                 "title": "Tham gia cuộc trò chuyện muộn",
                 "description": "Khi cuộc thảo luận đã diễn ra nhanh chóng.",
                 "example": "“Can I add something here?”",
-                "reframe": "Chiếm lĩnh không gian là một kỹ năng."
+                "reframe": "Chiếm lấy không gian là một kỹ năng."
             },
             {
                 "id": "thinking_mid_sentence",
-                "title": "Mất câu nói giữa chừng",
-                "description": "Khi bạn bắt đầu nói và quên mất những gì bạn muốn nói.",
+                "title": "Mất mạch suy nghĩ giữa chừng",
+                "description": "Khi bạn bắt đầu nói và quên mất mình định nói gì.",
                 "example": "“What I was trying to say is…”",
-                "reframe": "Tạm dừng tự tin giữ cho dòng chảy sống động."
+                "reframe": "Tạm dừng một cách tự tin giữ cho dòng chảy tiếp tục."
             }
         ]
     },
     "tutors": {
         "headline": "Cố vấn, không chỉ là giáo viên.",
-        "subtext": "Các chuyên gia được tuyển chọn hiểu rõ tâm lý của việc trình bày.",
+        "subtext": "Các chuyên gia được lựa chọn kỹ lưỡng, hiểu rõ tâm lý của hiệu suất.",
         "viewAll": "Xem tất cả giảng viên"
     },
     "roadmap": {
         "headline": "Một quy trình được xây dựng cho sự trôi chảy",
         "audit": {
             "title": "Kiểm toán",
-            "desc": "Chúng tôi phân tích các mẫu ngập ngừng của bạn để tạo hồ sơ."
+            "desc": "Chúng tôi phân tích các kiểu do dự của bạn để tạo hồ sơ của bạn."
         },
         "plan": {
             "title": "Lộ trình",
             "desc": "Một kế hoạch tùy chỉnh để lấp đầy các khoảng trống xử lý cụ thể của bạn."
         },
         "immersion": {
-            "title": "Đắm mình sâu sắc",
-            "desc": "Các cuộc trò chuyện được hướng dẫn nơi sự im lặng là an toàn và sự tiến bộ được cảm nhận."
+            "title": "Đắm mình sâu",
+            "desc": "Các cuộc trò chuyện có hướng dẫn nơi sự im lặng là an toàn và sự tiến bộ được cảm nhận."
         }
     },
     "faq": {
         "headline": "Câu hỏi thường gặp",
         "q1": "Cái này có dành cho người mới bắt đầu không?",
-        "a1": "Không. Natural Flow được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp, những người đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin.",
-        "q2": "Việc lên lịch hoạt động như thế nào?",
-        "a2": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian thực của họ. Không yêu cầu các khung giờ cố định hàng tuần.",
+        "a1": "Không. Natural Flow được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin.",
+        "q2": "Lịch trình hoạt động như thế nào?",
+        "a2": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian rảnh của họ. Không yêu cầu các khung giờ cố định hàng tuần.",
         "q3": "Nếu tôi không hợp với cố vấn thì sao?",
-        "a3": "Sự phù hợp là tất cả. Nếu không khí không đúng trong buổi đầu tiên, chúng tôi sẽ tìm người khác cho bạn miễn phí."
+        "a3": "Sự ăn ý là tất cả. Nếu không hợp trong buổi đầu tiên, chúng tôi sẽ tìm người khác cho bạn miễn phí."
     },
     "ctaBottom": {
         "headline": "Sẵn sàng tìm lại dòng chảy của bạn?",
@@ -192,28 +157,30 @@
     },
     "dashboard": {
         "learnerTitle": "Bảng điều khiển học viên",
-        "bookSession": "Đặt buổi học mới",
-        "creditsRemaining": "Số dư tín dụng",
+        "bookSession": "Đặt lịch với gia sư",
+        "startAiSession": "Bắt đầu kiểm toán AI",
+        "startPractice": "Luyện nói",
+        "creditsRemaining": "Tín chỉ còn lại",
         "nextSession": "Buổi học tiếp theo",
-        "noUpcoming": "Không có buổi học sắp tới",
-        "yourProgress": "Tiến độ của bạn",
+        "noUpcoming": "Không có buổi học nào sắp tới",
+        "yourProgress": "Tiến bộ của bạn",
         "confidenceSpeaking": "Sự tự tin khi nói",
         "confidenceListening": "Sự tự tin khi nghe",
         "history": "Lịch sử buổi học",
         "noHistory": "Bạn chưa có lịch sử buổi học nào",
         "tutor": "Gia sư",
-        "notAssigned": "Chưa phân công"
+        "notAssigned": "Chưa được phân công"
     },
     "intermediatePlateau": {
-        "headline": "Bức Tường Vô Hình",
-        "subtext": "Tại sao bạn cảm thấy kẹt ở mức 'Nâng cao' nhưng nghe như người mới bắt đầu.",
+        "headline": "Bức tường vô hình",
+        "subtext": "Tại sao bạn cảm thấy 'Nâng cao' nhưng nghe như người mới bắt đầu.",
         "trap": {
-            "title": "Vòng Lặp Dịch Thuật",
-            "desc": "Bộ não của bạn kiểm tra ngữ pháp từng từ trước khi bạn nói. Điều này tạo ra sự ngập ngừng."
+            "title": "Vòng lặp dịch thuật",
+            "desc": "Não bạn kiểm tra ngữ pháp từng từ trước khi nói. Điều này tạo ra sự do dự."
         },
         "flow": {
-            "title": "Tiếp Thu Trực Tiếp",
-            "desc": "Bỏ qua bộ kiểm soát. Kết nối suy nghĩ trực tiếp với âm thanh."
+            "title": "Tiếp thu trực tiếp",
+            "desc": "Bỏ qua bộ giám sát. Kết nối suy nghĩ trực tiếp với âm thanh."
         }
     },
     "audioTransformation": {
@@ -224,8 +191,8 @@
         "label": "Phát để nghe"
     },
     "dailyRoutine": {
-        "headline": "20 Phút Mỗi Ngày",
-        "subtext": "Trôi chảy là một thói quen sinh học, không phải môn học thuật.",
+        "headline": "20 phút mỗi ngày",
+        "subtext": "Sự trôi chảy là một thói quen sinh học, không phải môn học.",
         "steps": [
             {
                 "title": "Hấp thụ",
@@ -239,20 +206,20 @@
             },
             {
                 "title": "Củng cố",
-                "time": "Giấc ngủ",
-                "desc": "Bộ não của bạn tự kết nối lại trong khi nghỉ ngơi."
+                "time": "Ngủ",
+                "desc": "Não bạn kết nối lại trong khi nghỉ ngơi."
             }
         ]
     },
     "situationalGateway": {
         "headline": "Bạn sử dụng tiếng Anh ở đâu?",
-        "subtext": "Chúng tôi không cung cấp khóa học. Chúng tôi xây dựng lộ trình nói quanh cuộc sống thực của bạn.",
-        "defaultCta": "Tiếng Anh của bạn không cần sửa chữa — nó cần sự trôi chảy.",
+        "subtext": "Chúng tôi không đưa cho bạn một khóa học. Chúng tôi xây dựng lộ trình nói chuyện xoay quanh cuộc sống thực của bạn.",
+        "defaultCta": "Tiếng Anh của bạn không cần sửa chữa - nó cần sự trôi chảy.",
         "button": "Tìm lộ trình nói của bạn",
         "meta": "2–3 phút · Không ngữ pháp · Chỉ nói",
         "loading": {
             "headline": "Đang tìm nhịp điệu nói của bạn...",
-            "subtext": "Đang chuẩn bị không gian cá nhân của bạn"
+            "subtext": "Đang chuẩn bị không gian cá nhân hóa"
         },
         "cards": [
             {
@@ -267,7 +234,7 @@
                 "ctaText": "Hãy làm cho giọng nói của bạn rõ ràng trong các cuộc họp."
             },
             {
-                "category": "Cuộc sống hàng ngày",
+                "category": "Đời sống hàng ngày",
                 "items": [
                     "Du lịch",
                     "Trò chuyện",
@@ -275,7 +242,7 @@
                     "Cuộc gọi",
                     "Sống ở nước ngoài"
                 ],
-                "ctaText": "Hãy làm cho tiếng Anh hàng ngày cảm thấy tự nhiên."
+                "ctaText": "Hãy làm cho tiếng Anh hàng ngày trở nên tự nhiên."
             },
             {
                 "category": "Kỳ thi & Mục tiêu",
@@ -301,5 +268,42 @@
                 "ctaText": "Hãy làm cho tiếng Anh chuyên nghiệp cảm thấy dễ dàng."
             }
         ]
+    },
+    "fluencyEngine": {
+        "title": "Động cơ trôi chảy",
+        "subtitle": "Học tập truyền thống coi tiếng Anh là dữ liệu. Chúng tôi coi đó là một phản xạ sinh học.",
+        "title1": "Hầu hết mọi người không thất bại ở tiếng Anh",
+        "desc1": "Họ biết ngữ pháp. Họ biết từ vựng. Nhưng khi nói, não họ chần chừ, dịch và đóng băng. Các khóa học truyền thống thêm nhiều quy tắc - làm mọi thứ tệ hơn.",
+        "content1": "Từ ngữ đóng băng khi áp lực ập đến.",
+        "title2": "Trôi chảy không phải là kiến thức. Nó là phản xạ.",
+        "desc2": "Nói là một phản ứng tự động. Giống như lái xe hay chơi nhạc. Bạn không suy nghĩ - bạn phản hồi. Fluency Engine rèn luyện phản xạ này trong thời gian thực.",
+        "content2_p1": "🧠 Kiến thức → ❌",
+        "content2_p2": "⚡ Phản xạ → Trôi chảy",
+        "title3": "Rèn luyện phản xạ trực tiếp",
+        "desc3": "Trong khi bạn nói, hệ thống lắng nghe những khoảng dừng, sự chần chừ và dòng chảy của bạn. Nó phản hồi ngay lập tức, giống như một gia sư thực thụ. Điều này rèn luyện não bạn nói mà không bị đóng băng.",
+        "content3_p1": "🎙 Bạn nói",
+        "content3_p2": "⚙ Fluency Engine",
+        "content3_p3": "💬 Phản hồi thời gian thực",
+        "title4": "Huấn luyện dựa trên mô hình",
+        "desc4": "Chúng tôi không nói “sai”. Chúng tôi phát hiện thói quen. Tạm dừng. Bắt đầu lại. Dịch trong đầu. Những mô hình này chặn sự trôi chảy - và đây là những gì chúng tôi rèn luyện lại.",
+        "content4_p1": "CHẦN CHỪ",
+        "content4_p2": "TỪ ĐỆM",
+        "content4_p3": "DỊCH THUẬT",
+        "content4_p4": "→ Được rèn luyện lại",
+        "title5": "An toàn cảm xúc",
+        "desc5": "Gia sư AI của bạn không bao giờ phán xét. Nó không bao giờ nói ‘sai’. Nó giữ bạn tiếp tục nói. Điều này loại bỏ nỗi sợ hãi - kẻ thù thực sự của sự trôi chảy.",
+        "content5_p1": "Không sợ hãi.",
+        "content5_p2": "Không xấu hổ.",
+        "content5_p3": "Chỉ nói thôi.",
+        "title6": "Trôi chảy theo tình huống",
+        "desc6": "Bạn không học ‘tiếng Anh’. Bạn học cách nói trong các cuộc họp, phỏng vấn, du lịch và cuộc sống hàng ngày. Gia sư của bạn mô phỏng các tình huống thực tế để não bạn chuyển nó vào thực tế.",
+        "content6_p1": "Phỏng vấn",
+        "content6_p2": "Cuộc họp",
+        "content6_p3": "Chuyện phiếm",
+        "content6_p4": "Du lịch",
+        "title7": "Tại sao nó hiệu quả",
+        "desc7": "Các hệ thống khác rèn luyện trí nhớ. Fluency Engine rèn luyện sự chần chừ, thời gian, sự tự tin và dòng chảy - những thứ thực sự quyết định liệu bạn có thể nói hay không.",
+        "content7_p1": "Chúng tôi không dạy tiếng Anh.",
+        "content7_p2": "Chúng tôi rèn luyện kỹ năng nói."
     }
 }

@@ -1,8 +1,9 @@
 import { HomeNavbar } from "@/components/HomeNavbar";
 import { getDictionary, type Locale } from "@/i18n/getDictionary";
-import { AboutPageContent } from "@/components/AboutPageContent";
+import { CheckoutPageContent } from "@/components/CheckoutPageContent";
+import { Suspense } from "react";
 
-export default async function AboutPage({ params }: { params: Promise<{ locale: Locale }> }) {
+export default async function CheckoutPage({ params }: { params: Promise<{ locale: Locale }> }) {
     const { locale } = await params;
     const dict = await getDictionary(locale);
 
@@ -12,11 +13,13 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
             {/* Background Ambience */}
             <div className="fixed inset-0 pointer-events-none">
-                <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-electric/5 rounded-full blur-[120px] opacity-30" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-electric/5 rounded-full blur-[120px] opacity-30" />
             </div>
 
             <main className="relative z-10 container mx-auto px-6 pt-32 pb-32">
-                <AboutPageContent dict={dict.nav.aboutPage} />
+                <Suspense fallback={<div>Loading...</div>}>
+                    <CheckoutPageContent dict={dict.checkoutPage} />
+                </Suspense>
             </main>
         </div>
     );

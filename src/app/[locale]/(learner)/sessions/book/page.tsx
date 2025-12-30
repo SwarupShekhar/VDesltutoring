@@ -54,7 +54,7 @@ export default function BookSessionPage({ params }: { params: { locale: string }
         // Force details into the error message for visibility
         const errorMessage = data.details
           ? `${data.error} - Details: ${JSON.stringify(data.details)}`
-          : data.error || 'Booking failed — please try another time';
+          : data.error || 'Booking failed - please try another time';
         throw new Error(errorMessage);
       }
 

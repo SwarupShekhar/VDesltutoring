@@ -1,7 +1,7 @@
 {
     "nav": {
         "brandSubtitle": "Habla sin traducir",
-        "approach": "Enfoque",
+        "approach": "Nuestro Método",
         "practice": "Práctica",
         "pricing": "Precios",
         "about": "Nosotros",
@@ -19,7 +19,7 @@
         "title": "Sobre Natural Fluency",
         "p1": "<strong class=\"text-foreground\">Somos lingüistas, actores y ejecutivos.</strong> Construimos Natural Fluency porque vimos a profesionales brillantes encogerse en salas de habla inglesa.",
         "p2": "La industria tradicional de ESL trata el idioma como matemáticas: memoriza las reglas y obtendrás la respuesta. Pero hablar no es matemáticas. Es música. Es ritmo, tiempo y confianza.",
-        "p3": "Nuestra metodología se basa en la \"Empatía Interactiva\"—la ciencia de cómo la conexión humana anula la ansiedad por el rendimiento. No solo te enseñamos palabras; te enseñamos cómo mantener el espacio."
+        "p3": "Nuestra metodología se basa en la \"Empatía Interactiva\" - la ciencia de cómo la conexión humana anula la ansiedad por el rendimiento. No solo te enseñamos palabras; te enseñamos cómo mantener el espacio."
     },
     "hero": {
         "headline": "Deja de traducir en tu cabeza.<br /><span>Empieza a hablar como tú mismo.</span>",
@@ -89,7 +89,7 @@
                 "title": "Ser preguntado inesperadamente",
                 "description": "Cuando entiendes la pregunta pero tu mente se queda en blanco.",
                 "example": "“What do you think about this idea?”",
-                "reframe": "No necesitas una respuesta — necesitas una entrada."
+                "reframe": "No necesitas una respuesta - necesitas una entrada."
             },
             {
                 "id": "disagree_politely",
@@ -212,7 +212,7 @@
     "situationalGateway": {
         "headline": "¿Dónde usas el inglés?",
         "subtext": "No te damos un curso. Construimos un camino de habla alrededor de tu vida real.",
-        "defaultCta": "Tu inglés no necesita reparación — necesita fluidez.",
+        "defaultCta": "Tu inglés no necesita reparación - necesita fluidez.",
         "button": "Encuentra tu camino de habla",
         "meta": "2–3 minutos · Sin gramática · Solo hablar",
         "loading": {
@@ -266,5 +266,42 @@
                 "ctaText": "Hagamos que el inglés profesional se sienta sin esfuerzo."
             }
         ]
+    },
+    "fluencyEngine": {
+        "title": "El Motor de Fluidez",
+        "subtitle": "El aprendizaje tradicional trata el inglés como datos. Nosotros lo tratamos como un reflejo biológico.",
+        "title1": "La mayoría no falla en inglés",
+        "desc1": "Conocen la gramática. Conocen las palabras. Pero al hablar, su cerebro duda, traduce y se congela. Los cursos tradicionales añaden más reglas, lo que lo empeora.",
+        "content1": "Las palabras se congelan bajo presión.",
+        "title2": "La fluidez no es conocimiento. Es un reflejo.",
+        "desc2": "Hablar es una reacción automática. Como conducir o tocar música. No piensas, respondes. El Fluency Engine entrena este reflejo en tiempo real.",
+        "content2_p1": "🧠 Conocimiento → ❌",
+        "content2_p2": "⚡ Reflejo → Fluidez",
+        "title3": "Entrenamiento de Reflejos en Vivo",
+        "desc3": "Mientras hablas, el sistema escucha tus pausas, dudas y flujo. Reacciona al instante, como un tutor real. Esto entrena a tu cerebro para hablar sin congelarse.",
+        "content3_p1": "🎙 Tú hablas",
+        "content3_p2": "⚙ Fluency Engine",
+        "content3_p3": "💬 Respuesta en tiempo real",
+        "title4": "Coaching Basado en Patrones",
+        "desc4": "No decimos “incorrecto”. Detectamos hábitos. Pausar. Reiniciar. Traducir en tu cabeza. Estos patrones bloquean la fluidez, y esto es lo que reentrenamos.",
+        "content4_p1": "DUDA",
+        "content4_p2": "MULETILLAS",
+        "content4_p3": "TRADUCCIÓN",
+        "content4_p4": "→ Reentrenado",
+        "title5": "Seguridad Emocional",
+        "desc5": "Tu tutor de IA nunca juzga. Nunca dice “incorrecto”. Te mantiene hablando. Esto elimina el miedo, que es el verdadero enemigo de la fluidez.",
+        "content5_p1": "Sin miedo.",
+        "content5_p2": "Sin vergüenza.",
+        "content5_p3": "Solo hablar.",
+        "title6": "Fluidez Situacional",
+        "desc6": "No aprendes ‘inglés’. Aprendes a hablar en reuniones, entrevistas, viajes y la vida diaria. Tu tutor simula situaciones reales para que tu cerebro lo transfiera a la realidad.",
+        "content6_p1": "Entrevista",
+        "content6_p2": "Reuniones",
+        "content6_p3": "Charla",
+        "content6_p4": "Viajes",
+        "title7": "Por qué funciona",
+        "desc7": "Otros sistemas entrenan la memoria. El Fluency Engine entrena la duda, el tiempo, la confianza y el flujo: las cosas que realmente deciden si puedes hablar.",
+        "content7_p1": "No enseñamos inglés.",
+        "content7_p2": "Entrenamos el habla."
     }
 }

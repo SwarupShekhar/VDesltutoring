@@ -17,7 +17,7 @@ const SPEAKING_MOMENTS = [
         title: "Being asked unexpectedly",
         description: "When you understand the question but your mind goes blank.",
         example: "“What do you think about this idea?”",
-        reframe: "You don’t need an answer — you need an entry."
+        reframe: "You don’t need an answer - you need an entry."
     },
     {
         id: "disagree_politely",

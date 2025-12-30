@@ -146,7 +146,7 @@ export async function POST(req: Request) {
         let type: "neutral" | "pacing" | "filler" | "fluency" = "neutral"
 
         if (PATTERNS.HESITATION > 3) {
-            suggestion = "Try starting sentences faster — your ideas are ready."
+            suggestion = "Try starting sentences faster - your ideas are ready."
             type = "fluency"
         } else if (PATTERNS.FILLER_OVERUSE > 5) {
             suggestion = "Silence is okay. Let your thought arrive before speaking."

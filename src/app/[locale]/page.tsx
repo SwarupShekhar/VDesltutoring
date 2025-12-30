@@ -12,7 +12,12 @@ import { SituationalGateway } from '@/components/SituationalGateway';
 import { IntermediatePlateau } from '@/components/IntermediatePlateau';
 import { AudioTransformation } from '@/components/AudioTransformation';
 import { DailyRoutine } from '@/components/DailyRoutine';
+import { FluencyReflexSection } from '@/components/FluencyReflexSection';
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
+
+import { currentUser } from '@clerk/nextjs/server';
+import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
+import { AITutorButton } from '@/components/AITutorButton';
 
 const tutors = [
   { name: "Sarah J.", specialty: "Business English", style: "Former HR Director. Helps you navigate interviews and presentations." },
@@ -24,13 +29,21 @@ const tutors = [
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
+  const user = await currentUser();
+  const isLoggedIn = !!user;
 
   const t = dict;
+
+  // Clean headline for Text Effect (remove HTML tags)
+  const headlineText = t.hero.headline.replace(/<[^>]*>/g, ' ');
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-electric/30 selection:text-electric-foreground relative">
       <FloatingConversation />
       <HomeNavbar dict={t.nav} locale={locale} />
+
+      {/* AI Tutor Floating Button */}
+      <AITutorButton isLoggedIn={isLoggedIn} locale={locale} />
 
       <main className="relative z-10">
         {/* 1. HERO SECTION */}
@@ -39,21 +52,21 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-electric/10 rounded-full blur-[120px] pointer-events-none opacity-50" />
 
 
-          <div className="w-full max-w-6xl mx-auto text-center relative z-10 glass-card p-8 md:p-12 rounded-3xl bg-background/20 backdrop-blur-md border border-white/10 shadow-2xl">
-            {/* Use dangerouslySetInnerHTML for headline to support <br/> and <span> spans if present in JSON 
-                OR assume JSON has HTML. The provided JSON has HTML tags.
-            */}
-            <h1
-              className="font-serif text-5xl md:text-7xl font-medium tracking-tight mb-8 leading-[1.1] text-foreground"
-              dangerouslySetInnerHTML={{ __html: t.hero.headline }}
-            />
+          <div className="w-full max-w-7xl mx-auto text-center relative z-10 glass-card p-8 md:p-12 rounded-3xl bg-background/20 backdrop-blur-md border border-white/10 shadow-2xl">
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 font-light">
+            <div className="mb-8">
+              <TextGenerateEffect
+                words={headlineText}
+                className="font-serif text-5xl md:text-7xl font-medium tracking-tight leading-[1.1] text-foreground text-center"
+              />
+            </div>
+
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 font-light">
               {t.hero.subtext}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href={`/${locale}/sign-up`}>
+              <Link href={isLoggedIn ? `/${locale}/practice` : `/${locale}/sign-in`}>
                 <Button size="lg" className="rounded-full bg-electric hover:bg-electric/90 text-white font-medium px-8 h-12 text-base shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all hover:scale-105">
                   {t.hero.ctaReflection}
                 </Button>
@@ -66,6 +79,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
             </div>
           </div>
         </section>
+
+        {/* 1.5 FLUENCY ENGINE (Sticky Scroll Reveal) */}
+        <FluencyReflexSection dict={t.fluencyEngine} />
 
         {/* 2. THE FLUENCY MIRROR (Unified Activity) */}
         <section id="practice">
@@ -214,7 +230,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
           <div className="max-w-3xl">
             <h2 className="font-serif text-4xl md:text-6xl mb-8 leading-tight">{t.ctaBottom.headline}</h2>
             <div className="flex flex-col gap-6 items-center">
-              <Link href={`/${locale}/sign-up`}>
+              <Link href={isLoggedIn ? `/${locale}/book/session` : `/${locale}/sign-in`}>
                 <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium px-12 h-16 text-lg tracking-wide shadow-2xl">
                   {t.ctaBottom.button}
                 </Button>

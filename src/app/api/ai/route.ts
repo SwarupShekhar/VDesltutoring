@@ -51,7 +51,7 @@ Like a private tutor in a quiet library.
 
         const text =
             response.choices[0]?.message?.content ||
-            "That was good — try telling me that again a little more smoothly."
+            "That was good - try telling me that again a little more smoothly."
 
         return NextResponse.json({ response: text })
     } catch (err: any) {
@@ -66,7 +66,7 @@ Like a private tutor in a quiet library.
         if (isQuotaError) {
             return NextResponse.json({
                 response:
-                    "I'm temporarily out of credits, but I can still hear you. Keep speaking — you're doing great.",
+                    "I'm temporarily out of credits, but I can still hear you. Keep speaking - you're doing great.",
             })
         }
 

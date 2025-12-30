@@ -157,7 +157,7 @@ function SessionContent() {
 
                 {/* Bottom coaching bar */}
                 <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/10 backdrop-blur-md px-6 py-3 rounded-full text-sm border border-white/5 shadow-lg">
-                    🎧 Focus on speaking smoothly — not perfectly
+                    🎧 Focus on speaking smoothly - not perfectly
                 </div>
             </div>
 

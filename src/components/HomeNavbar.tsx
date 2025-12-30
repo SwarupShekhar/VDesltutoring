@@ -8,6 +8,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/Button';
+import { LanguageSelector } from '@/components/LanguageSelector';
 import { Menu, X, ChevronDown, User, CreditCard, Info, LogOut, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BubbleText } from '@/components/BubbleText';
@@ -61,7 +62,8 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   };
 
   const navLinks = [
-    { label: t.approach || 'Approach', href: '#approach' },
+    { label: t.approach || 'Our Method', href: `/${locale}/method` },
+    { label: t.howItWorks || 'How It Works', href: `/${locale}/how-it-works` },
     { label: t.practice || 'Practice', href: `/${locale}/practice`, onClick: handlePracticeClick },
     { label: t.pricing || 'Pricing', href: `/${locale}/pricing` },
     { label: t.about || 'About Us', href: `/${locale}/about` },
@@ -108,19 +110,8 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
             {/* RIGHT: ACTIONS */}
             <div className="hidden md:flex items-center gap-6">
               {/* Language Switcher Desktop */}
-              <div className="flex items-center gap-2 border-r border-gray-200 dark:border-white/10 pr-4">
-                {locales.map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => switchLocale(l)}
-                    className={`text-xs font-medium uppercase transition-colors ${locale === l
-                      ? 'text-electric font-bold'
-                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
-                      }`}
-                  >
-                    {l}
-                  </button>
-                ))}
+              <div className="border-r border-gray-200 dark:border-white/10 pr-4">
+                <LanguageSelector currentLocale={locale} />
               </div>
 
               <ThemeToggle />
@@ -214,19 +205,9 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
             <div className="flex flex-col gap-6 text-center">
               {/* Mobile Language Switcher */}
-              <div className="flex justify-center gap-4 mb-4">
-                {locales.map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => { switchLocale(l); setMobileMenuOpen(false); }}
-                    className={`text-sm font-medium uppercase p-2 rounded-lg ${locale === l
-                      ? 'bg-electric text-white'
-                      : 'bg-muted text-muted-foreground'
-                      }`}
-                  >
-                    {l}
-                  </button>
-                ))}
+              {/* Mobile Language Switcher */}
+              <div className="flex justify-center mb-8">
+                <LanguageSelector currentLocale={locale} />
               </div>
 
               <Link href={user ? `/${locale}/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>

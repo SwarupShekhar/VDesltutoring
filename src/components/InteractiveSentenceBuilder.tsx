@@ -22,7 +22,7 @@ interface Scene {
 const SCENES: Scene[] = [
   {
     context: "You're in a meeting. Everyone is waiting.",
-    thought: "You know what you want to say — but you're not sure how to start.",
+    thought: "You know what you want to say - but you're not sure how to start.",
     phrases: [
       { text: "Um…" },
       { text: "I just wanted to" },

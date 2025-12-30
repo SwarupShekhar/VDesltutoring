@@ -13,15 +13,17 @@ const Dropdown = ({ trigger, children, align = 'right' }: DropdownProps) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, []);
 
@@ -32,12 +34,11 @@ const Dropdown = ({ trigger, children, align = 'right' }: DropdownProps) => {
       <div onClick={toggleDropdown} className="cursor-pointer">
         {trigger}
       </div>
-      
+
       {isOpen && (
-        <div 
-          className={`absolute mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50 ${
-            align === 'right' ? 'right-0 origin-top-right' : 'left-0 origin-top-left'
-          }`}
+        <div
+          className={`absolute mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-[100] ${align === 'right' ? 'right-0 origin-top-right' : 'left-0 origin-top-left'
+            }`}
         >
           <div className="py-1" role="menu">
             {children}
@@ -56,14 +57,14 @@ interface DropdownItemProps extends React.HTMLAttributes<HTMLDivElement> {
 const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
   ({ className = '', variant = 'default', asChild = false, children, ...props }, ref) => {
     const baseClasses = 'block px-4 py-2 text-sm cursor-pointer transition-colors';
-    
+
     const variantClasses = {
       default: 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700',
       destructive: 'text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20',
     };
-    
+
     const classes = `${baseClasses} ${variantClasses[variant]} ${className}`;
-    
+
     if (asChild) {
       return (
         <div ref={ref} className={classes} role="menuitem" {...props}>
@@ -71,7 +72,7 @@ const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
         </div>
       );
     }
-    
+
     return <div ref={ref} className={classes} role="menuitem" {...props}>{children}</div>;
   }
 );

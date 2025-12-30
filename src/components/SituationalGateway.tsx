@@ -57,7 +57,7 @@ export function SituationalGateway({ dict }: { dict: any }) {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.5, delay: idx * 0.1 }}
-                                        className="w-full aspect-square cursor-default"
+                                        className="w-full min-h-[320px] cursor-default"
                                         onMouseEnter={() => setHoveredCategory(group.category)}
                                         onMouseLeave={() => setHoveredCategory(null)}
                                         whileHover={{ scale: 1.02 }}
@@ -65,15 +65,29 @@ export function SituationalGateway({ dict }: { dict: any }) {
                                         {/* Styled Card Container */}
                                         <div className={`group relative w-full h-full rounded-2xl overflow-hidden shadow-xl bg-white dark:bg-slate-900 transition-all duration-300 ${hoveredCategory === group.category ? 'shadow-blue-500/20 ring-2 ring-blue-500/50 dark:ring-blue-400/50' : ''}`}>
 
-                                            {/* 1. FRONT CONTENT (Initial View) */}
-                                            <div className="absolute inset-0 flex items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.23,1,0.320,1)] group-hover:-translate-y-[30%] group-hover:opacity-0 p-6 text-center">
+                                            {/* 1. FRONT CONTENT (Desktop: Initial View, Mobile: Header) */}
+                                            <div className="absolute inset-0 md:flex flex-col items-center justify-center transition-all duration-700 ease-[cubic-bezier(0.23,1,0.320,1)] md:group-hover:-translate-y-[30%] md:group-hover:opacity-0 p-6 text-center z-10 hidden">
                                                 <p className="text-3xl md:text-3xl font-serif font-medium text-slate-800 dark:text-slate-100 tracking-tight">
                                                     {group.category}
                                                 </p>
                                             </div>
 
-                                            {/* 2. HOVER CONTENT (Slide Up) */}
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white transition-all duration-700 ease-[cubic-bezier(0.23,1,0.320,1)] translate-y-[96%] group-hover:translate-y-0">
+                                            {/* Mobile-Optimized Layout (Static Stack) */}
+                                            <div className="flex md:hidden flex-col h-full bg-slate-50 dark:bg-slate-800 p-6">
+                                                <p className="text-2xl font-serif font-medium mb-4 text-slate-900 dark:text-slate-100">
+                                                    {group.category}
+                                                </p>
+                                                <ul className="space-y-2">
+                                                    {group.items.map((item: string) => (
+                                                        <li key={item} className="text-sm font-light tracking-wide text-slate-600 dark:text-slate-300">
+                                                            {item}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+
+                                            {/* 2. HOVER CONTENT (Desktop Only - Slide Up) */}
+                                            <div className="hidden md:flex absolute inset-0 flex-col items-center justify-center text-center p-6 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white transition-all duration-700 ease-[cubic-bezier(0.23,1,0.320,1)] translate-y-[96%] group-hover:translate-y-0">
 
                                                 {/* Heading in Overlay */}
                                                 <p className="text-xl font-serif font-medium mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100 text-slate-900 dark:text-slate-100">

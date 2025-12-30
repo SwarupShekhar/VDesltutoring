@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 
 interface LanguageSelectorProps {
     currentLocale: string;
+    align?: 'left' | 'right' | 'center';
 }
 
 const languages = [
@@ -18,7 +19,7 @@ const languages = [
     { code: "ja", name: "日本語", flag: "🇯🇵" },
 ];
 
-export function LanguageSelector({ currentLocale }: LanguageSelectorProps) {
+export function LanguageSelector({ currentLocale, align = 'right' }: LanguageSelectorProps) {
     const router = useRouter();
     const pathname = usePathname();
 
@@ -40,7 +41,7 @@ export function LanguageSelector({ currentLocale }: LanguageSelectorProps) {
                     <span className="uppercase">{currentLocale}</span>
                 </button>
             }
-            align="right"
+            align={align}
         >
             <div className="p-1 min-w-[180px]">
                 {languages.map((lang) => (
@@ -48,8 +49,8 @@ export function LanguageSelector({ currentLocale }: LanguageSelectorProps) {
                         key={lang.code}
                         onClick={() => switchLocale(lang.code)}
                         className={`flex items-center justify-between gap-3 px-3 py-2 rounded-md transition-colors ${currentLocale === lang.code
-                                ? "bg-electric/10 text-electric font-bold"
-                                : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                            ? "bg-electric/10 text-electric font-bold"
+                            : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                             }`}
                     >
                         <div className="flex items-center gap-3">

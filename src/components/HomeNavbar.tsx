@@ -207,7 +207,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
               {/* Mobile Language Switcher */}
               {/* Mobile Language Switcher */}
               <div className="flex justify-center mb-8">
-                <LanguageSelector currentLocale={locale} />
+                <LanguageSelector currentLocale={locale} align="center" />
               </div>
 
               <Link href={user ? `/${locale}/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>

@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 interface DropdownProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
-  align?: 'left' | 'right';
+  align?: 'left' | 'right' | 'center';
 }
 
 const Dropdown = ({ trigger, children, align = 'right' }: DropdownProps) => {
@@ -27,7 +27,18 @@ const Dropdown = ({ trigger, children, align = 'right' }: DropdownProps) => {
     };
   }, []);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
+  const getAlignmentClasses = () => {
+    switch (align) {
+      case 'left': return 'left-0 origin-top-left';
+      case 'center': return 'left-1/2 -translate-x-1/2 origin-top';
+      case 'right': default: return 'right-0 origin-top-right';
+    }
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -37,8 +48,7 @@ const Dropdown = ({ trigger, children, align = 'right' }: DropdownProps) => {
 
       {isOpen && (
         <div
-          className={`absolute mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-[100] ${align === 'right' ? 'right-0 origin-top-right' : 'left-0 origin-top-left'
-            }`}
+          className={`absolute mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-[100] ${getAlignmentClasses()}`}
         >
           <div className="py-1" role="menu">
             {children}

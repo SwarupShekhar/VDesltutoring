@@ -36,7 +36,7 @@ export default function AITutor() {
 
     // Fetch LiveKit token
     useEffect(() => {
-        fetch("/api/livekit/token", { credentials: "include" })
+        fetch("/api/livekit/token?mode=ai", { credentials: "include" })
             .then(res => res.json())
             .then(data => setToken(data.token))
             .catch(console.error)

@@ -15,6 +15,9 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
+        const { searchParams } = new URL(req.url);
+        const mode = searchParams.get("mode");
+
         // 2. Query student_profiles and tutor_profiles
         const user = await prisma.users.findUnique({
             where: { clerkId },
@@ -29,43 +32,52 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        // 3. Query sessions table
         let session = null;
-        const validStatuses = ['SCHEDULED', 'LIVE'];
+        let roomName = "";
 
-        // If student_profile exists → match sessions.student_id
-        if (user.student_profiles) {
-            session = await prisma.sessions.findFirst({
-                where: {
-                    student_id: user.student_profiles.id,
-                    status: { in: validStatuses as any },
-                },
-                orderBy: { start_time: 'asc' },
-            });
+        // MODE: AI TUTOR (Bypass session check)
+        if (mode === "ai") {
+            roomName = `ai-practice-${user.id}-${Date.now()}`;
+        } else {
+            // MODE: HUMAN SESSION (Strict Check)
+            const validStatuses = ['SCHEDULED', 'LIVE'];
+
+            // If student_profile exists → match sessions.student_id
+            if (user.student_profiles) {
+                session = await prisma.sessions.findFirst({
+                    where: {
+                        student_id: user.student_profiles.id,
+                        status: { in: validStatuses as any },
+                    },
+                    orderBy: { start_time: 'asc' },
+                });
+            }
+
+            // If no student session found, AND tutor_profile exists → match sessions.tutor_id
+            if (!session && user.tutor_profiles) {
+                session = await prisma.sessions.findFirst({
+                    where: {
+                        tutor_id: user.tutor_profiles.id,
+                        status: { in: validStatuses as any },
+                    },
+                    orderBy: { start_time: 'asc' },
+                });
+            }
+
+            // If no session found → return 403
+            if (!session) {
+                console.warn(`LiveKit Token: No active session found for user ${user.id} (${user.email})`);
+                return NextResponse.json(
+                    { error: "No scheduled or live session found" },
+                    { status: 403 }
+                );
+            }
+
+            roomName = `session-${session.id}`;
         }
 
-        // If no student session found, AND tutor_profile exists → match sessions.tutor_id
-        if (!session && user.tutor_profiles) {
-            session = await prisma.sessions.findFirst({
-                where: {
-                    tutor_id: user.tutor_profiles.id,
-                    status: { in: validStatuses as any },
-                },
-                orderBy: { start_time: 'asc' },
-            });
-        }
-
-        // 4. If no session found → return 403
-        if (!session) {
-            console.warn(`LiveKit Token: No active session found for user ${user.id} (${user.email})`);
-            return NextResponse.json(
-                { error: "No scheduled or live session found" },
-                { status: 403 }
-            );
-        }
-
-        // 5. Create LiveKit room
-        const roomName = `session-${session.id}`;
+        // 5. Create LiveKit room (Conceptually)
+        // roomName is already set above
 
         // 6. Generate token
         const apiKey = process.env.LIVEKIT_API_KEY;

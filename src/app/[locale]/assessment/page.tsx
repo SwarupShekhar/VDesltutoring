@@ -1,4 +1,4 @@
-import { HomeNavbar } from '@/components/HomeNavbar';
+
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight } from 'lucide-react';
@@ -9,7 +9,7 @@ export default async function AssessmentPage({ params }: { params: Promise<{ loc
     const dict = await getDictionary(locale);
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <HomeNavbar dict={dict.nav} locale={locale} />
+
             <main className="container mx-auto px-6 py-32 max-w-3xl text-center">
                 <div className="w-16 h-16 bg-electric/10 rounded-full flex items-center justify-center mx-auto mb-8 text-electric">
                     <div className="w-3 h-3 bg-electric rounded-full animate-pulse" />

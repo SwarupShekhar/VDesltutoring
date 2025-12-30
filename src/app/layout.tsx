@@ -31,7 +31,7 @@ export default function RootLayout({
     return (
         <ClerkProvider>
             <html lang="en" suppressHydrationWarning>
-                <body suppressHydrationWarning className={`${inter.variable} ${dmSerif.variable} font-sans antialiased`}>
+                <body className={`${inter.variable} ${dmSerif.variable} font-sans antialiased`} suppressHydrationWarning>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                         {children}
                     </ThemeProvider>

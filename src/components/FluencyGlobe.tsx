@@ -1,11 +1,12 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { World } from "./ui/globe";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
-const World = dynamic(() => import("./ui/globe").then((m) => m.World), {
+// Dynamic import to avoid SSR issues with canvas
+const WorldComponent = dynamic(() => Promise.resolve(World), {
     ssr: false,
 });
 
@@ -17,10 +18,7 @@ export function FluencyGlobe() {
         setMounted(true);
     }, []);
 
-    // Color logic: User wants #062056 in light mode, and "as it is now" (or similar) in dark mode.
-    // Default dark was #0f172a.
     const globeColor = mounted && theme === 'light' ? "#062056" : "#0f172a";
-    // Ensure atmosphere matches or complements
     const atmosphereColor = mounted && theme === 'light' ? "#ffffff" : "#3b82f6";
 
     const globeConfig = {
@@ -28,439 +26,160 @@ export function FluencyGlobe() {
         globeColor: globeColor,
         showAtmosphere: true,
         atmosphereColor: atmosphereColor,
-        atmosphereAltitude: 0.15,
-        emissive: "#062056", // Use a dark blue emissive for markers/base
-        emissiveIntensity: 0.2,
-        shininess: 0.8,
-        polygonColor: "rgba(255,255,255,0.15)",
-        ambientLight: "#60a5fa",
+        atmosphereAltitude: 0.1,
+        emissive: "#06b6d4",
+        emissiveIntensity: 0.1,
+        shininess: 0.9,
+        polygonColor: "rgba(255,255,255,0.7)",
+        ambientLight: "#38bdf8",
         directionalLeftLight: "#ffffff",
         directionalTopLight: "#ffffff",
-        pointLight: "#93c5fd",
-        arcTime: 1600,
-        arcLength: 0.8,
+        pointLight: "#ffffff",
+        arcTime: 1000,
+        arcLength: 0.9,
         rings: 1,
-        maxRings: 2,
-        initialPosition: { lat: 20, lng: 0 },
+        maxRings: 3,
+        initialPosition: { lat: 22.3193, lng: 114.1694 },
         autoRotate: true,
-        autoRotateSpeed: 1, // Normalized speed
+        autoRotateSpeed: 0.5,
     };
-
-    // Warm human colors + Electric Blue accents
-    const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
 
     const sampleArcs = [
         {
             order: 1,
-            startLat: -19.885592,
-            startLng: -43.951191,
-            endLat: -22.9068,
-            endLng: -43.1729,
+            startLat: 37.7749,
+            startLng: -122.4194,
+            endLat: 51.5074,
+            endLng: -0.1278,
             arcAlt: 0.1,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 1,
-            startLat: 28.6139,
-            startLng: 77.209,
-            endLat: 3.139,
-            endLng: 101.6869,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 1,
-            startLat: -19.885592,
-            startLng: -43.951191,
-            endLat: -1.303396,
-            endLng: 36.852443,
-            arcAlt: 0.5,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
+            color: "#06b6d4",
         },
         {
             order: 2,
-            startLat: 1.3521,
-            startLng: 103.8198,
+            startLat: 51.5074,
+            startLng: -0.1278,
             endLat: 35.6762,
             endLng: 139.6503,
             arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 2,
-            startLat: 51.5072,
-            startLng: -0.1276,
-            endLat: 3.139,
-            endLng: 101.6869,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 2,
-            startLat: -15.785493,
-            startLng: -47.909029,
-            endLat: 36.162809,
-            endLng: -115.119411,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
+            color: "#3b82f6",
         },
         {
             order: 3,
-            startLat: -33.8688,
-            startLng: 151.2093,
-            endLat: 22.3193,
-            endLng: 114.1694,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 3,
-            startLat: 21.3099,
-            startLng: -157.8581,
-            endLat: 40.7128,
-            endLng: -74.006,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 3,
-            startLat: -6.2088,
-            startLng: 106.8456,
-            endLat: 51.5072,
-            endLng: -0.1276,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 4,
-            startLat: 11.986597,
-            startLng: 8.571831,
-            endLat: -15.595412,
-            endLng: -56.05918,
-            arcAlt: 0.5,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 4,
-            startLat: -34.6037,
-            startLng: -58.3816,
-            endLat: 22.3193,
-            endLng: 114.1694,
-            arcAlt: 0.7,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 4,
-            startLat: 51.5072,
-            startLng: -0.1276,
-            endLat: 48.8566,
-            endLng: -2.3522,
-            arcAlt: 0.1,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 5,
-            startLat: 14.5995,
-            startLng: 120.9842,
-            endLat: 51.5072,
-            endLng: -0.1276,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 5,
-            startLat: 1.3521,
-            startLng: 103.8198,
-            endLat: -33.8688,
-            endLng: 151.2093,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 5,
-            startLat: 34.0522,
-            startLng: -118.2437,
-            endLat: 48.8566,
-            endLng: -2.3522,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 6,
-            startLat: -15.432563,
-            startLng: 28.315853,
-            endLat: 1.094136,
-            endLng: -63.34546,
-            arcAlt: 0.7,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 6,
-            startLat: 37.5665,
-            startLng: 126.978,
-            endLat: 35.6762,
-            endLng: 139.6503,
-            arcAlt: 0.1,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 6,
-            startLat: 22.3193,
-            startLng: 114.1694,
-            endLat: 51.5072,
-            endLng: -0.1276,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 7,
-            startLat: -19.885592,
-            startLng: -43.951191,
-            endLat: -15.595412,
-            endLng: -56.05918,
-            arcAlt: 0.1,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 7,
-            startLat: 48.8566,
-            startLng: -2.3522,
-            endLat: 52.52,
-            endLng: 13.405,
-            arcAlt: 0.1,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 7,
-            startLat: 52.52,
-            startLng: 13.405,
-            endLat: 34.0522,
-            endLng: -118.2437,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 8,
-            startLat: -8.833221,
-            startLng: 13.264837,
-            endLat: -33.936138,
-            endLng: 18.436529,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 8,
-            startLat: 49.2827,
-            startLng: -123.1207,
-            endLat: 52.3676,
-            endLng: 4.9041,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 8,
-            startLat: 1.3521,
-            startLng: 103.8198,
-            endLat: 40.7128,
-            endLng: -74.006,
-            arcAlt: 0.5,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 9,
-            startLat: 51.5072,
-            startLng: -0.1276,
-            endLat: 34.0522,
-            endLng: -118.2437,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 9,
-            startLat: 22.3193,
-            startLng: 114.1694,
-            endLat: -22.9068,
-            endLng: -43.1729,
-            arcAlt: 0.7,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 9,
-            startLat: 1.3521,
-            startLng: 103.8198,
-            endLat: -34.6037,
-            endLng: -58.3816,
-            arcAlt: 0.5,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 10,
-            startLat: -22.9068,
-            startLng: -43.1729,
-            endLat: 28.6139,
-            endLng: 77.209,
-            arcAlt: 0.7,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 10,
-            startLat: 34.0522,
-            startLng: -118.2437,
-            endLat: 31.2304,
-            endLng: 121.4737,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 10,
-            startLat: -6.2088,
-            startLng: 106.8456,
-            endLat: 52.3676,
-            endLng: 4.9041,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 11,
-            startLat: 41.9028,
-            startLng: 12.4964,
-            endLat: 34.0522,
-            endLng: -118.2437,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 11,
-            startLat: -6.2088,
-            startLng: 106.8456,
-            endLat: 31.2304,
-            endLng: 121.4737,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 11,
-            startLat: 22.3193,
-            startLng: 114.1694,
-            endLat: 1.3521,
-            endLng: 103.8198,
-            arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 12,
-            startLat: 34.0522,
-            startLng: -118.2437,
-            endLat: 37.7749,
-            endLng: -122.4194,
-            arcAlt: 0.1,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 12,
             startLat: 35.6762,
             startLng: 139.6503,
+            endLat: -33.8688,
+            endLng: 151.2093,
+            arcAlt: 0.3,
+            color: "#6366f1",
+        },
+        {
+            order: 4,
+            startLat: -33.8688,
+            startLng: 151.2093,
+            endLat: 37.7749,
+            endLng: -122.4194,
+            arcAlt: 0.4,
+            color: "#06b6d4",
+        },
+        {
+            order: 5,
+            startLat: 19.4326,
+            startLng: -99.1332,
+            endLat: 48.8566,
+            endLng: 2.3522,
+            arcAlt: 0.1,
+            color: "#3b82f6",
+        },
+        {
+            order: 6,
+            startLat: 40.7128,
+            startLng: -74.006,
             endLat: 22.3193,
             endLng: 114.1694,
             arcAlt: 0.2,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
+            color: "#6366f1",
         },
         {
-            order: 12,
-            startLat: 22.3193,
-            startLng: 114.1694,
+            order: 7,
+            startLat: 52.5200,
+            startLng: 13.4050,
             endLat: 34.0522,
             endLng: -118.2437,
             arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
+            color: "#06b6d4",
         },
         {
-            order: 13,
-            startLat: 52.52,
-            startLng: 13.405,
-            endLat: 22.3193,
-            endLng: 114.1694,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 13,
-            startLat: 11.986597,
-            startLng: 8.571831,
-            endLat: 35.6762,
-            endLng: 139.6503,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 13,
-            startLat: -22.9068,
-            startLng: -43.1729,
-            endLat: -34.6037,
-            endLng: -58.3816,
-            arcAlt: 0.1,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
-        },
-        {
-            order: 14,
-            startLat: -33.936138,
-            startLng: 18.436529,
-            endLat: 21.395643,
-            endLng: 39.883798,
-            arcAlt: 0.3,
-            color: colors[Math.floor(Math.random() * (colors.length - 1))],
+            order: 8,
+            startLat: 1.3521,
+            startLng: 103.8198,
+            endLat: 55.7558,
+            endLng: 37.6173,
+            arcAlt: 0.4,
+            color: "#3b82f6",
         },
     ];
 
     return (
-        <div className="flex flex-row items-center justify-center py-32 bg-white dark:bg-slate-950 relative w-full overflow-hidden transition-colors duration-300">
-            <div className="max-w-7xl mx-auto w-full relative px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <section className="py-24 bg-slate-50 dark:bg-slate-950 overflow-hidden relative">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
 
-                {/* Left Content */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
-                    viewport={{ once: true }}
-                    className="relative z-10 p-6 md:p-0"
-                >
-                    <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[80px]" />
-
-                    <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white leading-tight relative">
-                        English is being spoken everywhere.
-                        <br />
-                        <span className="text-blue-600">Imperfectly.</span>
-                    </h2>
-
-                    <p className="mt-8 text-lg text-slate-600 dark:text-slate-300 max-w-lg leading-relaxed border-l-4 border-blue-500/20 pl-6">
-                        People around the world are practicing, hesitating, restarting,
-                        and finding their voice - just like you.
-                    </p>
-
-                    <p className="mt-6 text-slate-500 dark:text-slate-400 max-w-lg font-light text-lg">
-                        You don’t need perfect English to begin.<br />
-                        <span className="text-slate-900 dark:text-white font-medium">You just need a place where it’s safe to speak.</span>
-                    </p>
-
-                    <a
-                        href="/en/ai-tutor"
-                        className="inline-flex items-center gap-2 mt-10 px-8 py-4 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium hover:scale-105 transition-transform shadow-lg"
+            <div className="container mx-auto px-6 max-w-7xl relative z-10">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    {/* Text Content */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        className="md:pr-12"
                     >
-                        <span>Join the conversation</span>
-                        <span>→</span>
-                    </a>
-                </motion.div>
+                        <div className="inline-block px-3 py-1 mb-4 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold tracking-wide uppercase">
+                            Global Community
+                        </div>
+                        <h2 className="font-serif text-4xl md:text-5xl mb-6 text-slate-900 dark:text-white leading-tight">
+                            Speak English with the World.
+                        </h2>
+                        <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
+                            Join a global network of learners who are moving beyond memorization to true conversation.
+                            Our platform connects you with the patterns of English used worldwide.
+                        </p>
 
-                {/* Globe */}
-                <div className="relative w-full h-[425px] md:h-[510px] flex items-center justify-center">
-                    {/* Glow backing */}
-                    <div className="absolute inset-0 bg-blue-500/5 blur-[100px] rounded-full scale-75" />
-                    <div className="relative z-10 w-full">
-                        <World data={sampleArcs} globeConfig={globeConfig} />
-                    </div>
+                        <div className="border-l-4 border-blue-500/20 pl-6">
+                            <p className="text-lg text-slate-600 dark:text-slate-300 font-medium italic">
+                                "People around the world are practicing, hesitating, restarting,
+                                and finding their voice - just like you."
+                            </p>
+                        </div>
+
+                        <div className="mt-10 grid grid-cols-3 gap-6">
+                            <div>
+                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">12+</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">Timezones</div>
+                            </div>
+                            <div>
+                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">24/7</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">Availability</div>
+                            </div>
+                            <div>
+                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">100%</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">Immersion</div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Globe Visualization */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="relative h-[400px] md:h-[500px] w-full flex items-center justify-center p-8 lg:p-0"
+                    >
+                        <div className="absolute inset-0 bg-blue-500/5 blur-[100px] rounded-full" />
+                        <WorldComponent globeConfig={globeConfig} data={sampleArcs} />
+                    </motion.div>
                 </div>
-
             </div>
-        </div>
+        </section>
     );
 }

@@ -14,7 +14,8 @@ const isPublicRoute = createRouteMatcher([
     '/sign-in(.*)', // for redirect handling
     '/sign-up(.*)',
     '/:locale/about',
-    '/:locale/pricing',
+    '/:locale/method',
+    '/:locale/how-it-works',
     '/:locale/assessment', // Assessment might be public? User didn't specify, but often is.
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response

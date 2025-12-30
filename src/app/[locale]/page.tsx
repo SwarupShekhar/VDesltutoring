@@ -1,7 +1,6 @@
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { HomeNavbar } from '@/components/HomeNavbar';
 import { FluencyMirror } from '@/components/FluencyMirror';
 import { SpeakingMomentsGrid } from '@/components/SpeakingMomentsGrid';
 import { FloatingConversation } from '@/components/FloatingConversation';
@@ -41,7 +40,6 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-electric/30 selection:text-electric-foreground relative">
       <FloatingConversation />
-      <HomeNavbar dict={t.nav} locale={locale} />
 
       {/* AI Tutor Floating Button */}
       <AITutorButton isLoggedIn={isLoggedIn} locale={locale} />

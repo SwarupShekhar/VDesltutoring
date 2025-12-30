@@ -6,6 +6,8 @@ import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google'
 import '../globals.css'
 import { BrowserExtensionFix } from '@/components/BrowserExtensionFix'
 import { GlobalHeader } from '@/components/GlobalHeader'
+import { HomeNavbar } from '@/components/HomeNavbar'
+import { Footer } from '@/components/Footer'
 import { getDictionary } from '@/i18n/getDictionary'
 import type { Locale } from '@/i18n/getDictionary'
 
@@ -42,9 +44,13 @@ export default async function RootLayout({
 
   return (
     <>
-      <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen`}>
+      <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}>
         <BrowserExtensionFix />
-        {children}
+        <HomeNavbar dict={dict.nav} locale={locale} />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer dict={dict.footer} locale={locale} />
       </div>
     </>
   )

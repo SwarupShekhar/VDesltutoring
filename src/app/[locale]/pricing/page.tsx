@@ -1,4 +1,4 @@
-import { HomeNavbar } from "@/components/HomeNavbar";
+
 import { getDictionary, type Locale } from "@/i18n/getDictionary";
 import { PricingPageContent } from "@/components/PricingPageContent";
 
@@ -8,7 +8,7 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
 
     return (
         <div className="min-h-screen bg-background text-foreground selection:bg-electric/30 selection:text-electric-foreground relative overflow-hidden font-sans">
-            <HomeNavbar dict={dict.nav} locale={locale} />
+
 
             {/* Background Ambience */}
             <div className="fixed inset-0 pointer-events-none">

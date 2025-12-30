@@ -18,6 +18,7 @@ import { getDictionary, type Locale } from '@/i18n/getDictionary';
 import { currentUser } from '@clerk/nextjs/server';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 import { AITutorButton } from '@/components/AITutorButton';
+import { FluencyGlobe } from '@/components/FluencyGlobe';
 
 const tutors = [
   { name: "Sarah J.", specialty: "Business English", style: "Former HR Director. Helps you navigate interviews and presentations." },
@@ -90,6 +91,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
         {/* 2.5 SITUATIONS (Identity Mirror) */}
         <SituationalGateway dict={t.situationalGateway} />
+
+        {/* 2.75 FLUENCY GLOBE (Global Context) */}
+        <FluencyGlobe />
 
 
 

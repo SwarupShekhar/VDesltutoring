@@ -161,7 +161,7 @@ export function FluencyReportModal({ report, isOpen, onClose, isLoading }: Fluen
                                                     </div>
                                                     <h3 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-white mb-4 leading-tight">{report.identity.archetype}</h3>
                                                     <p className="text-lg md:text-xl text-slate-700 dark:text-slate-200 leading-relaxed font-light">{report.identity.description}</p>
-                                                    <div className="mt-4 text-sm font-medium opacity-60 italic">— {theme.description}</div>
+                                                    <div className="mt-4 text-sm font-medium opacity-60 italic">- {theme.description}</div>
                                                 </div>
                                             </div>
                                         </motion.div>

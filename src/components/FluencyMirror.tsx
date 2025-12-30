@@ -50,10 +50,10 @@ const SENTENCE_VARIANTS: SentenceVariant[] = [
             "because we had to revise the initial plan",
             "I think",
             "the delay happened",
-            "That’s a fair question —"
+            "That’s a fair question -"
         ],
         roleMap: {
-            "That’s a fair question —": "BUFFER",
+            "That’s a fair question -": "BUFFER",
             "I think": "STANCE",
             "the delay happened": "EVENT",
             "because we had to revise the initial plan": "CAUSE"
@@ -79,10 +79,10 @@ const SENTENCE_VARIANTS: SentenceVariant[] = [
         fragments: [
             "when the requirements changed",
             "we ran into an issue",
-            "Let me explain —"
+            "Let me explain -"
         ],
         roleMap: {
-            "Let me explain —": "BUFFER",
+            "Let me explain -": "BUFFER",
             "we ran into an issue": "EVENT",
             "when the requirements changed": "CAUSE"
         }

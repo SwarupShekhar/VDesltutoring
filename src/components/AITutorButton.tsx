@@ -39,7 +39,7 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
 
             <style jsx>{`
                 .loader {
-                    --size: 400px;
+                    --size: 320px;
                     --duration: 2.5s;
                     --logo-color: grey;
                     --background: linear-gradient(

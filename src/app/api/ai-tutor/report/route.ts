@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
-import OpenAI from "openai"
 import { generateDrills } from "@/lib/fluencyTrainer"
+import { geminiService } from "@/lib/gemini-service"
 
 const REPORT_PROMPT = `
 You are a warm, supportive English fluency coach. Analyze the student transcript.
@@ -33,14 +33,6 @@ Output valid JSON in this format:
 
 export async function POST(req: Request) {
   try {
-    const apiKey = process.env.OPENAI_API_KEY
-    if (!apiKey) {
-      console.error("Missing OPENAI_API_KEY")
-      return NextResponse.json({ error: "Server misconfigured" }, { status: 500 })
-    }
-
-    const openai = new OpenAI({ apiKey })
-
     const { transcript } = await req.json()
 
     if (!transcript || transcript.length < 50) {
@@ -74,20 +66,9 @@ export async function POST(req: Request) {
       })
     }
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: REPORT_PROMPT },
-        { role: "user", content: `TRANSCRIPT:\n${transcript}` }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.3
-    })
-
-    const content = completion.choices[0].message.content
-    if (!content) throw new Error("Empty OpenAI response")
-
-    const report = JSON.parse(content)
+    // Prepare full prompt for Gemini
+    const fullPrompt = `${REPORT_PROMPT}\n\nTRANSCRIPT:\n${transcript}`
+    const report = await geminiService.generateRawJson(fullPrompt)
 
     // -------- Metrics (local, deterministic) ----------
     const words = transcript.trim().split(/\s+/)

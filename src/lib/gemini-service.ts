@@ -111,6 +111,27 @@ export class GeminiService {
     }
 
     /**
+     * Generic method for raw text generation
+     */
+    async generateRawText(prompt: string): Promise<string> {
+        return this.executeWithFallback(prompt, false);
+    }
+
+    /**
+     * Generic method for raw JSON generation
+     */
+    async generateRawJson(prompt: string): Promise<any> {
+        const jsonStr = await this.executeWithFallback(prompt, true);
+        try {
+            const cleanJson = jsonStr.replace(/```json/g, "").replace(/```/g, "").trim();
+            return JSON.parse(cleanJson);
+        } catch (e) {
+            console.error("Failed to parse Raw JSON:", e);
+            throw new Error("Invalid JSON response from AI");
+        }
+    }
+
+    /**
      * Core execution logic with Model Fallback & Retry
      */
     private async executeWithFallback(prompt: string, jsonMode: boolean): Promise<string> {

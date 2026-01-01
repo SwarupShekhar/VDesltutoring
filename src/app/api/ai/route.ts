@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server"
-import OpenAI from "openai"
-
-const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY!,
-})
+import { geminiService } from "@/lib/gemini-service"
 
 export async function POST(req: Request) {
     try {
@@ -40,39 +36,18 @@ Calm, warm, professional.
 Like a private tutor in a quiet library.
 `
 
-        const response = await client.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-                { role: "system", content: SYSTEM_PROMPT },
-                { role: "user", content: transcript },
-            ],
-            temperature: 0.6,
-        })
-
-        const text =
-            response.choices[0]?.message?.content ||
-            "That was good - try telling me that again a little more smoothly."
+        // Prepare full prompt for Gemini
+        const fullPrompt = `${SYSTEM_PROMPT}\n\nStudent: ${transcript}\nTutor:`
+        const text = await geminiService.generateRawText(fullPrompt)
 
         return NextResponse.json({ response: text })
     } catch (err: any) {
         console.error("AI Error:", err)
 
-        // Graceful fallback for quota / billing issues
-        const isQuotaError =
-            err.status === 429 ||
-            err.code === "insufficient_quota" ||
-            err.message?.toLowerCase().includes("quota")
+        // Graceful fallback for quota / billing issues or other errors
+        const text = "I'm temporarily out of credits, but I can still hear you. Keep speaking - you're doing great."
 
-        if (isQuotaError) {
-            return NextResponse.json({
-                response:
-                    "I'm temporarily out of credits, but I can still hear you. Keep speaking - you're doing great.",
-            })
-        }
-
-        return NextResponse.json(
-            { error: "AI failed", detail: err.message },
-            { status: 500 }
-        )
+        // Return fallback on error to never break the flow
+        return NextResponse.json({ response: text })
     }
 }

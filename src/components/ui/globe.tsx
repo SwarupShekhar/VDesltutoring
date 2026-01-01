@@ -53,7 +53,7 @@ export function World({ globeConfig, data }: { globeConfig: any; data: any[] }) 
             theta: 0.3,
             dark: 1,
             diffuse: 1.2,
-            mapSamples: 16000,
+            mapSamples: 10000,
             mapBrightness: 6,
             baseColor: globeConfig.globeColor ? hexToRgb(globeConfig.globeColor) : [0.3, 0.3, 0.3],
             markerColor: globeConfig.emissive ? hexToRgb(globeConfig.emissive) : [0.1, 0.8, 1],

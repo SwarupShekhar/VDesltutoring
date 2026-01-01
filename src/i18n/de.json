@@ -6,10 +6,52 @@
         "pricing": "Preise",
         "about": "Über uns",
         "aboutPage": {
-            "title": "Über Natural Fluency",
-            "p1": "<strong class=\"text-foreground\">Wir sind Linguisten, Schauspieler und Führungskräfte.</strong> Wir haben Natural Fluency aufgebaut, weil wir sahen, wie brillante Profis in englischsprachigen Räumen schrumpften.",
-            "p2": "Die traditionelle ESL-Industrie behandelt Sprache wie Mathe: Regeln auswendig lernen, und du bekommst die Antwort. Aber Sprechen ist keine Mathe. Es ist Musik. Es ist Rhythmus, Timing und Selbstvertrauen.",
-            "p3": "Unsere Methodik basiert auf \"Interaktiver Empathie\" - der Wissenschaft, wie menschliche Verbindung Leistungsangst überwindet. Wir bringen Ihnen nicht nur Wörter bei; wir bringen Ihnen bei, wie man Raum hält."
+            "hero": {
+                "title": "Wir unterrichten kein Englisch.<br/>Wir trainieren Menschen zu sprechen.",
+                "subtitle": "Die meisten Englischlerner kämpfen nicht mit Wissen. Sie kämpfen mit Druck, Zögern und Selbstvertrauen.<br/>Wir haben diese Plattform gebaut, um das zu beheben."
+            },
+            "sections": [
+                {
+                    "id": "problem",
+                    "label": "Das wahre Problem",
+                    "title": "„Ich kann Englisch… aber ich kann nicht sprechen.“",
+                    "content": "Das ist, was fast jeder Lerner uns sagt.<br/><br/>Sie wissen:<br/>• Grammatik<br/>• Vokabeln<br/>• Regeln<br/><br/>Aber wenn es Zeit ist zu sprechen:<br/>• Friert ihr Verstand ein<br/>• Zögern sie<br/>• Übersetzen sie<br/>• Verlieren sie den Fluss<br/><br/>Traditionelle Lernsysteme reagieren, indem sie mehr hinzufügen:<br/>• Grammatik<br/>• Übungen<br/>• Lesen<br/><br/>Das behebt das Sprechen nicht.<br/>Es macht es schlimmer."
+                },
+                {
+                    "id": "reason",
+                    "label": "Warum wir existieren",
+                    "title": "Um Menschen zu helfen, ohne Angst zu sprechen.",
+                    "content": "Natural Flow wurde aus einem Grund geschaffen.<br/><br/>Wir haben etwas Einfaches erkannt:<br/><br/>Sprechen ist kein Wissensproblem.<br/>Es ist ein Reflexproblem.<br/><br/>Und Reflexe werden aufgebaut durch:<br/>• Wiederholung<br/>• Timing<br/>• Emotionale Sicherheit<br/>• Echte Konversation<br/><br/>Nicht durch Lehrbücher.<br/><br/>Also haben wir statt eines weiteren Kurses<br/>eine Fluency Engine gebaut."
+                },
+                {
+                    "id": "difference",
+                    "label": "Was uns unterscheidet",
+                    "title": "Wir korrigieren kein Englisch.<br/>Wir vernetzen das Sprechverhalten neu.",
+                    "content": "Die meisten Plattformen fragen:<br/>„Kennen Sie den korrekten Satz?“<br/><br/>Wir fragen:<br/>„Können Sie ihn laut sagen, wenn es darauf ankommt?“<br/><br/>Unser System hört zu, wie Sie sprechen:<br/>• Zögern<br/>• Füllwörter<br/>• Neustarts<br/>• Pausen<br/>• Fluss<br/><br/>Und coacht Sie so, wie es ein menschlicher Tutor tun würde:<br/>• Ruhig<br/>• Unterstützend<br/>• In Echtzeit<br/>• Ohne Urteil"
+                },
+                {
+                    "id": "philosophy",
+                    "label": "Die menschliche Philosophie",
+                    "title": "Menschen werden nur fließend, wenn sie sich sicher genug fühlen zu sprechen.",
+                    "content": "Wir haben diese Plattform um einen Glauben herum entworfen.<br/><br/>Deshalb sagt unsere KI:<br/>• Nie „falsch“<br/>• Kritisiert nie<br/>• Beschämt nie<br/><br/>Sie sagt:<br/>• „Versuchen Sie stattdessen das.“<br/>• „Das war gut - machen wir es geschmeidiger.“<br/>• „Weiter so.“<br/><br/>Denn Selbstvertrauen wird durch Bewegung aufgebaut, nicht durch Perfektion."
+                },
+                {
+                    "id": "audience",
+                    "label": "Wen wir bedienen",
+                    "title": "Für jeden, der möchte, dass sich sein Englisch wie seine eigene Stimme anfühlt.",
+                    "content": "Natural Flow ist für Menschen gebaut, die:<br/><br/>• Englisch verstehen, aber beim Sprechen einfrieren<br/>• Englisch für Arbeit, Interviews oder das Leben brauchen<br/>• Sich schämen, Fehler zu machen<br/>• Natürlich klingen wollen, nicht roboterhaft<br/><br/>Von Studenten über Profis bis hin zu Einwanderern."
+                },
+                {
+                    "id": "vision",
+                    "label": "Wohin wir gehen",
+                    "title": "Plattform, die Fluency an erste Stelle setzt",
+                    "content": "Wir bauen den weltweit ersten Ort, an dem:<br/>• Sie sprechen<br/>• Sie verstanden werden<br/>• Sie gecoacht werden<br/>• Sie wachsen<br/><br/>Nicht durch Auswendiglernen,<br/>sondern indem Sie ein Sprecher werden."
+                }
+            ],
+            "final": {
+                "title": "Bei Natural Flow geht es nicht darum, Englisch zu lernen.",
+                "subtitle": "Es geht darum, jemand zu werden, der es sprechen kann."
+            }
         },
         "signIn": "Anmelden",
         "getStarted": "Loslegen",
@@ -184,6 +226,109 @@
         "a2": "Sie buchen Sitzungen direkt bei Ihrem gewählten Mentor basierend auf dessen Verfügbarkeit. Keine festen wöchentlichen Slots.",
         "q3": "Was ist, wenn ich mich mit meinem Mentor nicht verstehe?",
         "a3": "Chemie ist alles. Wenn es in der ersten Sitzung nicht passt, finden wir kostenlos jemand anderen für Sie."
+    },
+    "howItWorksPage": {
+        "hero": {
+            "title": "Wie es funktioniert",
+            "subtitle": "Ein einfacher Weg von \"Ich kann Englisch\" zu \"Ich spreche Englisch\"",
+            "description": "Sie müssen nicht mehr lernen. Sie müssen das Sprechen auf die richtige Weise üben.<br/>Hier ist genau das, was passiert, wenn Sie Natural Flow nutzen."
+        },
+        "steps": [
+            {
+                "step": "Schritt 1",
+                "title": "Sie sprechen",
+                "description": "Sie klicken auf Start. Sie sehen Ihren AI-Tutor. Sie fangen einfach an zu reden.",
+                "details": [
+                    "Ihr Tag",
+                    "Ihre Arbeit",
+                    "Ein Thema",
+                    "Irgendetwas"
+                ],
+                "footer": "Es gibt keinen Test. Keinen Druck. Nur ein Gespräch."
+            },
+            {
+                "step": "Schritt 2",
+                "title": "Die KI hört zu",
+                "description": "Während Sie sprechen, hört die KI leise zu:",
+                "details": [
+                    "Ihre Pausen",
+                    "Ihre \"eh\", \"hm\", \"naja\"",
+                    "Wann Sie stoppen und neu anfangen",
+                    "Ihr Rhythmus und Timing"
+                ],
+                "footer": "Sie verurteilt Sie nicht. Sie lernt, wie Sie sprechen."
+            },
+            {
+                "step": "Schritt 3",
+                "title": "Ihre Muster werden erkannt",
+                "description": "Das System sucht nach Gewohnheiten, nicht nach Fehlern. Zum Beispiel:",
+                "details": [
+                    "Machen Sie eine Pause, bevor Sie sprechen?",
+                    "Denken Sie zu lange nach?",
+                    "Übersetzen Sie im Kopf?",
+                    "Eilen Sie oder frieren Sie ein?"
+                ],
+                "footer": "Das nennt man Flüssigkeitsmuster. Sie blockieren das selbstbewusste Sprechen."
+            },
+            {
+                "step": "Schritt 4",
+                "title": "Ihr Tutor passt sich an",
+                "description": "Jetzt der magische Teil. Ihr KI-Tutor ändert seine Sprechweise basierend auf Ihren Mustern.",
+                "subsections": [
+                    {
+                        "title": "Wenn Sie zögern:",
+                        "content": "Er verlangsamt sich und ermutigt Sie."
+                    },
+                    {
+                        "title": "Wenn Sie viele Füllwörter benutzen:",
+                        "content": "Er modelliert flüssigere Sätze."
+                    },
+                    {
+                        "title": "Wenn Sie einfrieren:",
+                        "content": "Er gibt Ihnen sanfte Einstiegshilfen."
+                    }
+                ],
+                "footer": "Sie werden nicht unterrichtet. Sie werden geführt."
+            },
+            {
+                "step": "Schritt 5",
+                "title": "Sie verbessern sich durch Sprechen",
+                "description": "Sie lernen keine Regeln auswendig. Sie machen keine Übungen. Sie verbessern sich durch:",
+                "details": [
+                    "Sprechen",
+                    "Versuchen",
+                    "Bessere Versionen hören",
+                    "Nochmals versuchen"
+                ],
+                "footer": "Dies baut einen Sprechreflex auf - so wie Sie Ihre erste Sprache gelernt haben."
+            },
+            {
+                "step": "Schritt 6",
+                "title": "Ihr Fortschritt wird verfolgt",
+                "description": "Nach jeder Sitzung speichern wir:",
+                "details": [
+                    "Ihr Zögerungsniveau",
+                    "Ihren Fluss",
+                    "Ihre Füllwortnutzung",
+                    "Ihren Sprechstil"
+                ],
+                "quote": "“Ich friere weniger ein. Ich spreche mehr.”",
+                "footer": "Sie fühlen den Fortschritt nicht. Sie sehen ihn."
+            }
+        ],
+        "final": {
+            "label": "Warum das funktioniert",
+            "title": "Die meisten scheitern nicht an Englisch.",
+            "subtitle": "Sie scheitern am Sprechen unter Druck.",
+            "listTitle": "Natural Flow trainiert:",
+            "list": [
+                "Selbstvertrauen",
+                "Timing",
+                "Fluss",
+                "Sprechidentität"
+            ],
+            "conclusion": "Nicht nur Worte. Deshalb fangen die Leute endlich an zu reden."
+        }
     },
     "ctaBottom": {
         "headline": "Bereit, Ihren Flow zu finden?",

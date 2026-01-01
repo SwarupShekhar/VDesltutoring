@@ -1,4 +1,6 @@
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
+import DynamicText from '@/components/ui/dynamic-text';
+import { FAQSection } from '@/components/FAQSection';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { FluencyMirror } from '@/components/FluencyMirror';
@@ -53,6 +55,10 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
           <div className="w-full max-w-7xl mx-auto text-center relative z-10 glass-card p-8 md:p-12 rounded-3xl bg-background/20 backdrop-blur-md border border-white/10 shadow-2xl">
 
+            <div className="mb-4 flex justify-center">
+              <DynamicText />
+            </div>
+
             <div className="mb-8">
               <TextGenerateEffect
                 words={headlineText}
@@ -91,7 +97,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         <SituationalGateway dict={t.situationalGateway} />
 
         {/* 2.75 FLUENCY GLOBE (Global Context) */}
-        <FluencyGlobe />
+        <FluencyGlobe dict={t.fluencyGlobe} />
 
 
 
@@ -206,26 +212,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
 
         {/* 8. METHODOLOGY FAQ */}
-        <section className="py-24 bg-muted/20 border-t border-border">
-          <div className="container mx-auto px-6 max-w-4xl">
-            <div className="text-center mb-16">
-              <h2 className="font-serif text-3xl md:text-4xl mb-4">{t.faq.headline}</h2>
-            </div>
-
-            <div className="space-y-4">
-              {[
-                { q: t.faq.q1, a: t.faq.a1 },
-                { q: t.faq.q2, a: t.faq.a2 },
-                { q: t.faq.q3, a: t.faq.a3 }
-              ].map((item, i) => (
-                <div key={i} className="bg-background border border-border p-6 rounded-2xl">
-                  <h3 className="font-bold text-lg mb-2 text-foreground">{item.q}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{item.a}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <FAQSection content={t.faq} />
 
         {/* 9. FINAL CTA */}
         <section className="py-32 flex justify-center text-center px-6">

@@ -613,5 +613,25 @@
         "desc7": "Other systems train memory. The Fluency Engine trains hesitation, timing, confidence, and flow - the things that actually decide whether you can speak.",
         "content7_p1": "We don’t teach English.",
         "content7_p2": "We train speaking."
+    },
+    "fluencyGlobe": {
+        "tag": "Global Community",
+        "headline": "Speak English with the World.",
+        "subtext": "Join a global network of learners who are moving beyond memorization to true conversation. Our platform connects you with the patterns of English used worldwide.",
+        "quote": "“People around the world are practicing, hesitating, restarting, and finding their voice - just like you.”",
+        "stats": {
+            "timezones": {
+                "value": "12+",
+                "label": "Timezones"
+            },
+            "availability": {
+                "value": "24/7",
+                "label": "Availability"
+            },
+            "immersion": {
+                "value": "100%",
+                "label": "Immersion"
+            }
+        }
     }
 }

@@ -1,8 +1,8 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { World } from "./ui/globe";
 import { useTheme } from "next-themes";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import dynamic from "next/dynamic";
 
 // Dynamic import to avoid SSR issues with canvas
@@ -10,9 +10,24 @@ const WorldComponent = dynamic(() => Promise.resolve(World), {
     ssr: false,
 });
 
-export function FluencyGlobe() {
+export function FluencyGlobe({ dict }: { dict?: any }) {
     const { theme } = useTheme();
+    const containerRef = useRef(null);
+    const isInView = useInView(containerRef, { amount: 0.1, once: true });
     const [mounted, setMounted] = useState(false);
+
+    // Fallback if dict is missing (though it should be passed)
+    const t = dict || {
+        tag: "Global Community",
+        headline: "Speak English with the World.",
+        subtext: "Join a global network of learners who are moving beyond memorization to true conversation. Our platform connects you with the patterns of English used worldwide.",
+        quote: "“People around the world are practicing, hesitating, restarting, and finding their voice - just like you.”",
+        stats: {
+            timezones: { value: "12+", label: "Timezones" },
+            availability: { value: "24/7", label: "Availability" },
+            immersion: { value: "100%", label: "Immersion" }
+        }
+    };
 
     useEffect(() => {
         setMounted(true);
@@ -134,41 +149,40 @@ export function FluencyGlobe() {
                         className="md:pr-12"
                     >
                         <div className="inline-block px-3 py-1 mb-4 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold tracking-wide uppercase">
-                            Global Community
+                            {t.tag}
                         </div>
                         <h2 className="font-serif text-4xl md:text-5xl mb-6 text-slate-900 dark:text-white leading-tight">
-                            Speak English with the World.
+                            {t.headline}
                         </h2>
                         <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
-                            Join a global network of learners who are moving beyond memorization to true conversation.
-                            Our platform connects you with the patterns of English used worldwide.
+                            {t.subtext}
                         </p>
 
                         <div className="border-l-4 border-blue-500/20 pl-6">
                             <p className="text-lg text-slate-600 dark:text-slate-300 font-medium italic">
-                                "People around the world are practicing, hesitating, restarting,
-                                and finding their voice - just like you."
+                                {t.quote}
                             </p>
                         </div>
 
                         <div className="mt-10 grid grid-cols-3 gap-6">
                             <div>
-                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">12+</div>
-                                <div className="text-sm text-slate-500 dark:text-slate-400">Timezones</div>
+                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{t.stats.timezones.value}</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">{t.stats.timezones.label}</div>
                             </div>
                             <div>
-                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">24/7</div>
-                                <div className="text-sm text-slate-500 dark:text-slate-400">Availability</div>
+                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{t.stats.availability.value}</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">{t.stats.availability.label}</div>
                             </div>
                             <div>
-                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">100%</div>
-                                <div className="text-sm text-slate-500 dark:text-slate-400">Immersion</div>
+                                <div className="text-3xl font-bold text-slate-900 dark:text-white mb-1">{t.stats.immersion.value}</div>
+                                <div className="text-sm text-slate-500 dark:text-slate-400">{t.stats.immersion.label}</div>
                             </div>
                         </div>
                     </motion.div>
 
                     {/* Globe Visualization */}
                     <motion.div
+                        ref={containerRef}
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
@@ -176,7 +190,7 @@ export function FluencyGlobe() {
                         className="relative h-[400px] md:h-[500px] w-full flex items-center justify-center p-8 lg:p-0"
                     >
                         <div className="absolute inset-0 bg-blue-500/5 blur-[100px] rounded-full" />
-                        <WorldComponent globeConfig={globeConfig} data={sampleArcs} />
+                        {isInView && <WorldComponent globeConfig={globeConfig} data={sampleArcs} />}
                     </motion.div>
                 </div>
             </div>

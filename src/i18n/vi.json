@@ -13,13 +13,55 @@
         "signInToPractice": "Đăng nhập để thực hành",
         "createAccount": "Tạo tài khoản",
         "language": "Ngôn ngữ",
-        "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh."
-    },
-    "aboutPage": {
-        "title": "Về Natural Fluency",
-        "p1": "<strong class=\"text-foreground\">Chúng tôi là những nhà ngôn ngữ học, diễn viên và giám đốc điều hành.</strong> Chúng tôi xây dựng Natural Fluency vì chúng tôi thấy những chuyên gia xuất sắc bị thu mình trong các phòng họp nói tiếng Anh.",
-        "p2": "Ngành công nghiệp ESL truyền thống coi ngôn ngữ giống như toán học: ghi nhớ các quy tắc và bạn sẽ có câu trả lời. Nhưng nói không phải là toán học. Nó là âm nhạc. Nó là nhịp điệu, thời gian và sự tự tin.",
-        "p3": "Phương pháp luận của chúng tôi dựa trên \"Sự thấu cảm tương tác\" - khoa học về cách kết nối giữa con người vượt qua nỗi lo lắng về hiệu suất. Chúng tôi không chỉ dạy bạn từ vựng; chúng tôi dạy bạn cách làm chủ không gian."
+        "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh.",
+        "aboutPage": {
+            "hero": {
+                "title": "Chúng tôi không dạy tiếng Anh.<br/>Chúng tôi đào tạo mọi người nói.",
+                "subtitle": "Hầu hết người học tiếng Anh không gặp khó khăn về kiến thức. Họ gặp khó khăn với áp lực, sự do dự và sự tự tin.<br/>Chúng tôi xây dựng nền tảng này để khắc phục điều đó."
+            },
+            "sections": [
+                {
+                    "id": "problem",
+                    "label": "Vấn đề thực sự",
+                    "title": "“Tôi biết tiếng Anh… nhưng tôi không thể nói.”",
+                    "content": "Đây là điều mà hầu hết mọi người học nói với chúng tôi.<br/><br/>Họ biết:<br/>• Ngữ pháp<br/>• Từ vựng<br/>• Quy tắc<br/><br/>Nhưng khi đến lúc nói:<br/>• Tâm trí họ đóng băng<br/>• Họ do dự<br/>• Họ dịch<br/>• Họ mất dòng chảy<br/><br/>Các hệ thống học tập truyền thống phản ứng bằng cách thêm vào:<br/>• Ngữ pháp<br/>• Bài tập<br/>• Đọc<br/><br/>Điều đó không sửa lỗi nói.<br/>Nó làm cho nó tồi tệ hơn."
+                },
+                {
+                    "id": "reason",
+                    "label": "Tại sao chúng tôi tồn tại",
+                    "title": "Để giúp mọi người nói mà không sợ hãi.",
+                    "content": "Natural Flow được tạo ra vì một lý do.<br/><br/>Chúng tôi nhận ra một điều đơn giản:<br/><br/>Nói không phải là vấn đề kiến thức.<br/>Đó là vấn đề phản xạ.<br/><br/>Và phản xạ được xây dựng bởi:<br/>• Sự lặp lại<br/>• Thời gian<br/>• An toàn cảm xúc<br/>• Cuộc trò chuyện thực tế<br/><br/>Không phải sách giáo khoa.<br/><br/>Vì vậy, thay vì xây dựng một khóa học khác,<br/>chúng tôi đã xây dựng một Công cụ Trôi chảy."
+                },
+                {
+                    "id": "difference",
+                    "label": "Điều gì làm chúng tôi khác biệt",
+                    "title": "Chúng tôi không sửa tiếng Anh.<br/>Chúng tôi kết nối lại hành vi nói.",
+                    "content": "Hầu hết các nền tảng hỏi:<br/>“Bạn có biết câu đúng không?”<br/><br/>Chúng tôi hỏi:<br/>“Bạn có thể nói to khi cần thiết không?”<br/><br/>Hệ thống của chúng tôi lắng nghe cách bạn nói:<br/>• Sự do dự<br/>• Từ đệm<br/>• Khởi động lại<br/>• Khoảng dừng<br/>• Dòng chảy<br/><br/>Và huấn luyện bạn giống như một gia sư con người sẽ làm:<br/>• Bình tĩnh<br/>• Hỗ trợ<br/>• Thời gian thực<br/>• Không phán xét"
+                },
+                {
+                    "id": "philosophy",
+                    "label": "Triết lý con người",
+                    "title": "Mọi người chỉ trở nên trôi chảy khi họ cảm thấy đủ an toàn để nói.",
+                    "content": "Chúng tôi thiết kế nền tảng này xung quanh một niềm tin.<br/><br/>Đó là lý do tại sao AI của chúng tôi:<br/>• Không bao giờ nói “sai”<br/>• Không bao giờ chỉ trích<br/>• Không bao giờ làm xấu hổ<br/><br/>Nó nói:<br/>• “Hãy thử cái này thay thế.”<br/>• “Điều đó tốt - hãy làm cho nó mượt mà hơn.”<br/>• “Tiếp tục đi.”<br/><br/>Bởi vì sự tự tin được xây dựng thông qua chuyển động, không phải sự hoàn hảo."
+                },
+                {
+                    "id": "audience",
+                    "label": "Chúng tôi phục vụ ai",
+                    "title": "Dành cho bất kỳ ai muốn tiếng Anh của họ cảm thấy như giọng nói của chính họ.",
+                    "content": "Natural Flow được xây dựng cho những người:<br/><br/>• Hiểu tiếng Anh nhưng đóng băng khi nói<br/>• Cần tiếng Anh cho công việc, phỏng vấn hoặc cuộc sống<br/>• Cảm thấy xấu hổ khi mắc lỗi<br/>• Muốn nghe tự nhiên, không phải robot<br/><br/>Từ sinh viên đến chuyên gia đến người nhập cư."
+                },
+                {
+                    "id": "vision",
+                    "label": "Nơi chúng tôi đang đi",
+                    "title": "Nền tảng ngôn ngữ ưu tiên sự trôi chảy",
+                    "content": "Chúng tôi đang xây dựng nơi đầu tiên trên thế giới nơi:<br/>• Bạn nói<br/>• Bạn được hiểu<br/>• Bạn được huấn luyện<br/>• Bạn phát triển<br/><br/>Không phải bằng cách ghi nhớ,<br/>mà bằng cách trở thành một người nói."
+                }
+            ],
+            "final": {
+                "title": "Natural Flow không phải là về việc học tiếng Anh.",
+                "subtitle": "Đó là về việc trở thành một người có thể nói nó."
+            }
+        }
     },
     "hero": {
         "headline": "Ngừng dịch trong đầu.<br /><span>Bắt đầu nói như chính bạn.</span>",
@@ -149,6 +191,109 @@
         "a2": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian rảnh của họ. Không yêu cầu các khung giờ cố định hàng tuần.",
         "q3": "Nếu tôi không hợp với cố vấn thì sao?",
         "a3": "Sự ăn ý là tất cả. Nếu không hợp trong buổi đầu tiên, chúng tôi sẽ tìm người khác cho bạn miễn phí."
+    },
+    "howItWorksPage": {
+        "hero": {
+            "title": "Cách thức hoạt động",
+            "subtitle": "Một cách đơn giản để đi từ \"Tôi biết tiếng Anh\" đến \"Tôi có thể nói tiếng Anh\"",
+            "description": "Bạn không cần học nhiều hơn. Bạn cần thực hành nói đúng cách.<br/>Đây chính xác là những gì xảy ra khi bạn sử dụng Natural Flow."
+        },
+        "steps": [
+            {
+                "step": "Bước 1",
+                "title": "Bạn nói",
+                "description": "Bạn nhấp vào Bắt đầu. Bạn thấy gia sư AI của mình. Bạn chỉ cần bắt đầu nói chuyện.",
+                "details": [
+                    "Một ngày của bạn",
+                    "Công việc của bạn",
+                    "Một chủ đề",
+                    "Bất cứ điều gì"
+                ],
+                "footer": "Không có bài kiểm tra. Không áp lực. Chỉ là một cuộc trò chuyện."
+            },
+            {
+                "step": "Bước 2",
+                "title": "AI lắng nghe",
+                "description": "Trong khi bạn nói, AI đang lặng lẽ lắng nghe:",
+                "details": [
+                    "Những khoảng dừng của bạn",
+                    "Những tiếng \"uh\", \"um\", \"well\" của bạn",
+                    "Khi bạn dừng lại và bắt đầu lại",
+                    "Nhịp điệu và thời gian của bạn"
+                ],
+                "footer": "Nó không phán xét bạn. Nó đang học cách bạn nói."
+            },
+            {
+                "step": "Bước 3",
+                "title": "Các mẫu của bạn được phát hiện",
+                "description": "Hệ thống tìm kiếm thói quen, không phải lỗi. Ví dụ:",
+                "details": [
+                    "Bạn có dừng lại trước khi nói không?",
+                    "Bạn có suy nghĩ quá lâu không?",
+                    "Bạn có dịch trong đầu không?",
+                    "Bạn có vội vàng hay đóng băng không?"
+                ],
+                "footer": "Đây được gọi là các mẫu trôi chảy. Chúng là những gì ngăn cản việc nói tự tin."
+            },
+            {
+                "step": "Bước 4",
+                "title": "Gia sư của bạn thích nghi",
+                "description": "Bây giờ là phần kỳ diệu. Gia sư AI của bạn thay đổi cách nói chuyện với bạn dựa trên các mẫu của bạn.",
+                "subsections": [
+                    {
+                        "title": "Nếu bạn do dự:",
+                        "content": "Nó chậm lại và khuyến khích bạn."
+                    },
+                    {
+                        "title": "Nếu bạn sử dụng nhiều từ đệm:",
+                        "content": "Nó mô hình hóa các câu trôi chảy hơn."
+                    },
+                    {
+                        "title": "Nếu bạn đóng băng:",
+                        "content": "Nó cung cấp cho bạn những khởi đầu nhẹ nhàng."
+                    }
+                ],
+                "footer": "Bạn không được dạy. Bạn được hướng dẫn."
+            },
+            {
+                "step": "Bước 5",
+                "title": "Bạn cải thiện bằng cách nói",
+                "description": "Bạn không ghi nhớ các quy tắc. Bạn không làm bài tập. Bạn cải thiện bằng cách:",
+                "details": [
+                    "Nói",
+                    "Cố gắng",
+                    "Nghe các phiên bản tốt hơn",
+                    "Cố gắng lại"
+                ],
+                "footer": "Điều này xây dựng phản xạ nói - giống như cách bạn học ngôn ngữ đầu tiên của mình."
+            },
+            {
+                "step": "Bước 6",
+                "title": "Tiến trình của bạn được theo dõi",
+                "description": "Sau mỗi phiên, chúng tôi lưu:",
+                "details": [
+                    "Mức độ do dự của bạn",
+                    "Dòng chảy của bạn",
+                    "Cách sử dụng từ đệm của bạn",
+                    "Phong cách nói của bạn"
+                ],
+                "quote": "“Tôi ít đóng băng hơn. Tôi nói nhiều hơn.”",
+                "footer": "Bạn không cảm thấy sự tiến bộ. Bạn nhìn thấy nó."
+            }
+        ],
+        "final": {
+            "label": "Tại sao điều này hiệu quả",
+            "title": "Hầu hết mọi người không thất bại ở tiếng Anh.",
+            "subtitle": "Họ thất bại khi nói dưới áp lực.",
+            "listTitle": "Natural Flow rèn luyện:",
+            "list": [
+                "Sự tự tin",
+                "Thời gian",
+                "Dòng chảy",
+                "Bản sắc nói"
+            ],
+            "conclusion": "Không chỉ là lời nói. Đó là lý do tại sao mọi người cuối cùng cũng bắt đầu nói chuyện."
+        }
     },
     "ctaBottom": {
         "headline": "Sẵn sàng tìm lại dòng chảy của bạn?",

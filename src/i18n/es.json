@@ -13,13 +13,55 @@
         "signInToPractice": "Iniciar sesión para practicar",
         "createAccount": "Crear cuenta",
         "language": "Idioma",
-        "interfaceOnly": "Solo interfaz. El contenido de aprendizaje permanece en inglés."
-    },
-    "aboutPage": {
-        "title": "Sobre Natural Fluency",
-        "p1": "<strong class=\"text-foreground\">Somos lingüistas, actores y ejecutivos.</strong> Construimos Natural Fluency porque vimos a profesionales brillantes encogerse en salas de habla inglesa.",
-        "p2": "La industria tradicional de ESL trata el idioma como matemáticas: memoriza las reglas y obtendrás la respuesta. Pero hablar no es matemáticas. Es música. Es ritmo, tiempo y confianza.",
-        "p3": "Nuestra metodología se basa en la \"Empatía Interactiva\" - la ciencia de cómo la conexión humana anula la ansiedad por el rendimiento. No solo te enseñamos palabras; te enseñamos cómo mantener el espacio."
+        "interfaceOnly": "Solo interfaz. El contenido de aprendizaje permanece en inglés.",
+        "aboutPage": {
+            "hero": {
+                "title": "No enseñamos inglés.<br/>Entrenamos a la gente a hablar.",
+                "subtitle": "La mayoría de los estudiantes de inglés no luchan con el conocimiento. Luchan con la presión, la duda y la confianza.<br/>Construimos esta plataforma para arreglar eso."
+            },
+            "sections": [
+                {
+                    "id": "problem",
+                    "label": "El Problema Real",
+                    "title": "“Sé inglés… pero no puedo hablar.”",
+                    "content": "Esto es lo que casi todos los estudiantes nos dicen.<br/><br/>Saben:<br/>• Gramática<br/>• Vocabulario<br/>• Reglas<br/><br/>Pero cuando es hora de hablar:<br/>• Su mente se congela<br/>• Dudan<br/>• Traducen<br/>• Pierden el flujo<br/><br/>Los sistemas de aprendizaje tradicionales responden añadiendo más:<br/>• Gramática<br/>• Ejercicios<br/>• Lectura<br/><br/>Eso no arregla el habla.<br/>Lo empeora."
+                },
+                {
+                    "id": "reason",
+                    "label": "Por Qué Existimos",
+                    "title": "Para ayudar a la gente a hablar sin miedo.",
+                    "content": "Natural Flow fue creado por una razón.<br/><br/>Nos dimos cuenta de algo simple:<br/><br/>Hablar no es un problema de conocimiento.<br/>Es un problema de reflejos.<br/><br/>Y los reflejos se construyen mediante:<br/>• Repetición<br/>• Tiempo<br/>• Seguridad emocional<br/>• Conversación real<br/><br/>No libros de texto.<br/><br/>Así que en lugar de construir otro curso,<br/>construimos un Motor de Fluidez."
+                },
+                {
+                    "id": "difference",
+                    "label": "Lo Que Nos Hace Diferentes",
+                    "title": "No corregimos el inglés.<br/>Recableamos el comportamiento al hablar.",
+                    "content": "La mayoría de las plataformas preguntan:<br/>“¿Sabes la frase correcta?”<br/><br/>Nosotros preguntamos:<br/>“¿Puedes decirla en voz alta cuando importa?”<br/><br/>Nuestro sistema escucha cómo hablas:<br/>• Dudas<br/>• Muletillas<br/>• Reinicios<br/>• Pausas<br/>• Flujo<br/><br/>Y te entrena de la misma manera que lo haría un tutor humano:<br/>• Con calma<br/>• Con apoyo<br/>• En tiempo real<br/>• Sin juicios"
+                },
+                {
+                    "id": "philosophy",
+                    "label": "La Filosofía Humana",
+                    "title": "La gente solo se vuelve fluida cuando se siente lo suficientemente segura para hablar.",
+                    "content": "Diseñamos esta plataforma en torno a una creencia.<br/><br/>Es por eso que nuestra IA:<br/>• Nunca dice “incorrecto”<br/>• Nunca critica<br/>• Nunca avergüenza<br/><br/>Dice:<br/>• “Prueba esto en su lugar.”<br/>• “Eso estuvo bien - suavicémoslo.”<br/>• “Sigue adelante.”<br/><br/>Porque la confianza se construye a través del movimiento, no de la perfección."
+                },
+                {
+                    "id": "audience",
+                    "label": "A Quién Servimos",
+                    "title": "Para cualquiera que quiera que su inglés se sienta como su propia voz.",
+                    "content": "Natural Flow está construido para personas que:<br/><br/>• Entienden inglés pero se congelan al hablar<br/>• Necesitan inglés para el trabajo, entrevistas o la vida<br/>• Se sienten avergonzados al cometer errores<br/>• Quieren sonar naturales, no robóticos<br/><br/>Desde estudiantes hasta profesionales e inmigrantes."
+                },
+                {
+                    "id": "vision",
+                    "label": "Hacia Dónde Vamos",
+                    "title": "Plataforma de idiomas centrada en la fluidez",
+                    "content": "Estamos construyendo el primer lugar del mundo donde:<br/>• Hablas<br/>• Eres entendido<br/>• Eres entrenado<br/>• Creces<br/><br/>No memorizando,<br/>sino convirtiéndote en un hablante."
+                }
+            ],
+            "final": {
+                "title": "Natural Flow no trata sobre aprender inglés.",
+                "subtitle": "Trata sobre convertirse en alguien que puede hablarlo."
+            }
+        }
     },
     "hero": {
         "headline": "Deja de traducir en tu cabeza.<br /><span>Empieza a hablar como tú mismo.</span>",
@@ -149,6 +191,109 @@
         "a2": "Reservas sesiones directamente con tu mentor elegido según su disponibilidad en vivo. No se requieren espacios semanales fijos.",
         "q3": "¿Qué pasa si no conecto con mi mentor?",
         "a3": "La química lo es todo. Si la vibra no es correcta en tu primera sesión, te buscaremos a otra persona gratis."
+    },
+    "howItWorksPage": {
+        "hero": {
+            "title": "Cómo Funciona",
+            "subtitle": "Una forma sencilla de pasar de \"Sé inglés\" a \"Puedo hablar inglés\"",
+            "description": "No necesitas estudiar más. Necesitas practicar el habla de la manera correcta.<br/>Esto es exactamente lo que sucede cuando usas Natural Flow."
+        },
+        "steps": [
+            {
+                "step": "Paso 1",
+                "title": "Tú hablas",
+                "description": "Haces clic en Empezar. Ves a tu tutor de IA. Simplemente empiezas a hablar.",
+                "details": [
+                    "Tu día",
+                    "Tu trabajo",
+                    "Un tema",
+                    "Cualquier cosa"
+                ],
+                "footer": "No hay examen. Sin presión. Solo una conversación."
+            },
+            {
+                "step": "Paso 2",
+                "title": "La IA escucha",
+                "description": "Mientras hablas, la IA escucha silenciosamente:",
+                "details": [
+                    "Tus pausas",
+                    "Tus \"eh\", \"um\", \"bueno\"",
+                    "Cuando paras y reinicias",
+                    "Tu ritmo y tiempo"
+                ],
+                "footer": "No te está juzgando. Está aprendiendo cómo hablas."
+            },
+            {
+                "step": "Paso 3",
+                "title": "Se detectan tus patrones",
+                "description": "El sistema busca hábitos, no errores. Por ejemplo:",
+                "details": [
+                    "¿Haces una pausa antes de hablar?",
+                    "¿Piensas demasiado tiempo?",
+                    "¿Traduces en tu cabeza?",
+                    "¿Te apresuras o te congelas?"
+                ],
+                "footer": "Estos se llaman patrones de fluidez. Son los que bloquean el habla segura."
+            },
+            {
+                "step": "Paso 4",
+                "title": "Tu tutor se adapta",
+                "description": "Ahora la parte mágica. Tu tutor de IA cambia cómo te habla basándose en tus patrones.",
+                "subsections": [
+                    {
+                        "title": "Si dudas:",
+                        "content": "Reduce la velocidad y te anima."
+                    },
+                    {
+                        "title": "Si usas muchas muletillas:",
+                        "content": "Modela oraciones más fluidas."
+                    },
+                    {
+                        "title": "Si te congelas:",
+                        "content": "Te da inicios suaves."
+                    }
+                ],
+                "footer": "No se te enseña. Se te guía."
+            },
+            {
+                "step": "Paso 5",
+                "title": "Mejoras hablando",
+                "description": "No memorizas reglas. No haces ejercicios. Mejoras al:",
+                "details": [
+                    "Hablar",
+                    "Intentar",
+                    "Escuchar mejores versiones",
+                    "Intentar de nuevo"
+                ],
+                "footer": "Esto construye un reflejo de habla - de la misma manera que aprendiste tu primer idioma."
+            },
+            {
+                "step": "Paso 6",
+                "title": "Se rastrea tu progreso",
+                "description": "Después de cada sesión, guardamos:",
+                "details": [
+                    "Tu nivel de vacilación",
+                    "Tu flujo",
+                    "Tu uso de muletillas",
+                    "Tu estilo de habla"
+                ],
+                "quote": "“Me congelo menos. Hablo más.”",
+                "footer": "No sientes el progreso. Lo ves."
+            }
+        ],
+        "final": {
+            "label": "Por qué funciona",
+            "title": "La mayoría no falla en inglés.",
+            "subtitle": "Fallan al hablar bajo presión.",
+            "listTitle": "Natural Flow entrena:",
+            "list": [
+                "Confianza",
+                "Tiempo",
+                "Flujo",
+                "Identidad al hablar"
+            ],
+            "conclusion": "No solo palabras. Es por eso que la gente finalmente comienza a hablar."
+        }
     },
     "ctaBottom": {
         "headline": "¿Listo para encontrar tu flujo?",

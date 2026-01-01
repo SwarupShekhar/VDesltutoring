@@ -35,7 +35,16 @@ export async function POST(req: Request) {
   try {
     const { transcript } = await req.json()
 
-    if (!transcript || transcript.length < 50) {
+    // Filter out AI speech to check if STUDENT actually spoke
+    const studentText = transcript
+      ?.split("\n")
+      .filter((line: string) => !line.startsWith("ASSISTANT:"))
+      .join(" ")
+      .trim() || ""
+
+    const uniqueWordCount = new Set(studentText.split(/\s+/).filter((w: string) => w.length > 0)).size
+
+    if (!studentText || studentText.length < 10 || uniqueWordCount < 3) {
       const empty = {
         identity: {
           archetype: "The Explorer",
@@ -61,7 +70,7 @@ export async function POST(req: Request) {
           wordCount: transcript?.split(" ").length || 0,
           fillerCount: 0,
           fillerPercentage: 0,
-          uniqueWords: 0
+          uniqueWords: uniqueWordCount
         }
       })
     }

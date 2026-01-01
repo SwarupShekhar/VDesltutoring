@@ -165,6 +165,7 @@ export const TestimonialsCarousel = ({ stories, headline, subtext }: { stories: 
                         <button
                             onClick={handlePrev}
                             disabled={!isTransitioning}
+                            aria-label="Previous testimonial"
                             className="p-4 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-90"
                         >
                             <ChevronLeft size={28} className="text-slate-600 dark:text-slate-300" />
@@ -174,6 +175,7 @@ export const TestimonialsCarousel = ({ stories, headline, subtext }: { stories: 
                         <button
                             onClick={handleNext}
                             disabled={!isTransitioning}
+                            aria-label="Next testimonial"
                             className="p-4 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 shadow-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-90"
                         >
                             <ChevronRight size={28} className="text-slate-600 dark:text-slate-300" />

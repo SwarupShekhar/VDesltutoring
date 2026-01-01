@@ -10,7 +10,7 @@
  * @github: https://github.com/kokonut-labs/kokonutui
  */
 
-import { AnimatePresence, motion, useInView } from "motion/react";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
 interface Greeting {
@@ -77,34 +77,21 @@ const DynamicText = () => {
             aria-label="Rapid greetings in different languages"
             className="flex min-h-[60px] items-center justify-center gap-1 pt-4"
         >
-            <div className="relative flex h-16 w-60 items-center justify-center overflow-visible">
-                {isAnimating ? (
-                    <AnimatePresence mode="popLayout">
-                        <motion.div
-                            animate={textVariants.visible}
-                            aria-live="off"
-                            className="absolute flex items-center gap-2 font-medium text-2xl text-gray-800 dark:text-gray-200"
-                            exit={textVariants.exit}
-                            initial={textVariants.hidden}
-                            key={currentIndex}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                        >
-                            <div
-                                aria-hidden="true"
-                                className="h-2 w-2 rounded-full bg-black dark:bg-white"
-                            />
-                            {greetings[currentIndex].text}
-                        </motion.div>
-                    </AnimatePresence>
-                ) : (
-                    <div className="flex items-center gap-2 font-medium text-2xl text-gray-800 dark:text-gray-200">
-                        <div
-                            aria-hidden="true"
-                            className="h-2 w-2 rounded-full bg-black dark:bg-white"
-                        />
-                        {greetings[greetings.length - 1].text}
-                    </div>
-                )}
+            <div className="relative flex h-16 w-60 items-center justify-center overflow-hidden">
+                <motion.div
+                    key={currentIndex}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute flex items-center gap-2 font-medium text-2xl text-gray-800 dark:text-gray-200"
+                >
+                    <div
+                        aria-hidden="true"
+                        className="h-2 w-2 rounded-full bg-black dark:bg-white"
+                    />
+                    {greetings[currentIndex].text}
+                </motion.div>
             </div>
         </section>
     );

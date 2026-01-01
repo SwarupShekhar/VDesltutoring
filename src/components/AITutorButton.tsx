@@ -21,7 +21,12 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
     };
 
     return (
-        <div onClick={handleClick} className="fixed bottom-[-110px] left-[-110px] md:bottom-[-80px] md:left-[-80px] z-[100] cursor-pointer scale-[0.4] md:scale-[0.6] hover:scale-[0.45] md:hover:scale-[0.65] transition-transform duration-300">
+        <button
+            type="button"
+            onClick={handleClick}
+            aria-label="Open AI Tutor"
+            className="fixed bottom-[-110px] left-[-110px] md:bottom-[-80px] md:left-[-80px] z-[100] cursor-pointer scale-[0.4] md:scale-[0.6] hover:scale-[0.45] md:hover:scale-[0.65] transition-transform duration-300 bg-transparent border-none p-0"
+        >
             <div className="loader">
                 <div style={{ "--i": 1, "--inset": "44%" } as React.CSSProperties} className="box">
                     <div className="logo">
@@ -114,6 +119,7 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
                     100% { fill: #3B82F6; color: #3B82F6; }
                 }
             `}</style>
-        </div>
+        </button>
     );
 };
+

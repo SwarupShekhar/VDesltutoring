@@ -1,25 +1,24 @@
-import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 import DynamicText from '@/components/ui/dynamic-text';
 import { FAQSection } from '@/components/FAQSection';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { FluencyMirror } from '@/components/FluencyMirror';
 import { SpeakingMomentsGrid } from '@/components/SpeakingMomentsGrid';
 import { FloatingConversation } from '@/components/FloatingConversation';
 import { TutorCard } from '@/components/TutorCard';
 import { Button } from '@/components/ui/Button';
-import { ArrowRight, MessageCircle, Zap, Users } from 'lucide-react';
-import { SituationalGateway } from '@/components/SituationalGateway';
+import { ArrowRight } from 'lucide-react';
 import { IntermediatePlateau } from '@/components/IntermediatePlateau';
-import { AudioTransformation } from '@/components/AudioTransformation';
 import { DailyRoutine } from '@/components/DailyRoutine';
-import { FluencyReflexSection } from '@/components/FluencyReflexSection';
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
-
 import { currentUser } from '@clerk/nextjs/server';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 import { AITutorButton } from '@/components/AITutorButton';
+import { FluencyMirror } from '@/components/FluencyMirror';
+import { SituationalGateway } from '@/components/SituationalGateway';
+import { FluencyReflexSection } from '@/components/FluencyReflexSection';
+import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
+import { AudioTransformation } from '@/components/AudioTransformation';
 import { FluencyGlobe } from '@/components/FluencyGlobe';
+
 
 const tutors = [
   { name: "Sarah J.", specialty: "Business English", style: "Former HR Director. Helps you navigate interviews and presentations." },
@@ -59,11 +58,14 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
               <DynamicText />
             </div>
 
-            <div className="mb-8">
-              <TextGenerateEffect
-                words={headlineText}
-                className="font-serif text-5xl md:text-7xl font-medium tracking-tight leading-[1.1] text-foreground text-center"
-              />
+            <div className="mb-8 relative">
+              <h1 className="sr-only">{headlineText}</h1>
+              <div aria-hidden="true">
+                <TextGenerateEffect
+                  words={headlineText}
+                  className="font-serif text-5xl md:text-7xl font-medium tracking-tight leading-[1.1] text-foreground text-center"
+                />
+              </div>
             </div>
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 font-light">

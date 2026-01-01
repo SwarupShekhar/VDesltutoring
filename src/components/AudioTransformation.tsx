@@ -153,6 +153,7 @@ export function AudioTransformation({ dict }: { dict: any }) {
                     <div className="flex justify-center">
                         <button
                             onClick={togglePlay}
+                            aria-label={isPlaying ? "Pause audio" : "Play audio"}
                             className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-transform active:scale-95 ${activeTab === 'week1' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' : 'bg-blue-600 text-white shadow-blue-500/30'}`}
                         >
                             {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" className="ml-1" />}

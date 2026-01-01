@@ -12,6 +12,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { Menu, X, ChevronDown, User, CreditCard, Info, LogOut, ShieldAlert } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BubbleText } from '@/components/BubbleText';
+import { GetStartedButton } from '@/components/GetStartedButton';
 
 export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   const { user, isLoaded } = useUser();
@@ -160,9 +161,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                     {t.signIn || 'Sign In'}
                   </Link>
                   <Link href={`/${locale}/sign-up`}>
-                    <Button size="sm" className="rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 border border-transparent hover:bg-slate-800 dark:hover:bg-slate-100 transition-all font-medium px-6">
-                      {t.getStarted || 'Get Started'}
-                    </Button>
+                    <GetStartedButton text={t.getStarted || 'Get Started'} />
                   </Link>
                 </div>
               )}
@@ -182,78 +181,80 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
             </div>
           </div>
         </div>
-      </nav>
+      </nav >
 
       {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-white dark:bg-slate-950 p-6 flex flex-col"
-          >
-            <div className="flex justify-between items-center mb-12">
-              <span className="font-serif text-2xl font-bold text-slate-900 dark:text-white">Natural Fluency</span>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-full bg-slate-100 dark:bg-white/5"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-6 text-center">
-              {/* Mobile Language Switcher */}
-              {/* Mobile Language Switcher */}
-              <div className="flex justify-center mb-8">
-                <LanguageSelector currentLocale={locale} align="center" />
+        {
+          mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-[60] bg-white dark:bg-slate-950 p-6 flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-12">
+                <span className="font-serif text-2xl font-bold text-slate-900 dark:text-white">Natural Fluency</span>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white rounded-full bg-slate-100 dark:bg-white/5"
+                >
+                  <X size={24} />
+                </button>
               </div>
 
-              <Link href={user ? `/${locale}/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
-                <div className="bg-electric/10 text-electric py-4 rounded-xl font-medium text-lg">
-                  {user ? (t.startReflection || 'Start Reflection') : (t.signInToPractice || 'Sign In to Practice')}
+              <div className="flex flex-col gap-6 text-center">
+                {/* Mobile Language Switcher */}
+                {/* Mobile Language Switcher */}
+                <div className="flex justify-center mb-8">
+                  <LanguageSelector currentLocale={locale} align="center" />
                 </div>
-              </Link>
 
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={(e) => {
-                    if (link.onClick) {
-                      link.onClick(e);
-                    }
-                    setMobileMenuOpen(false);
-                  }}
-                  className="text-xl font-serif text-slate-800 dark:text-slate-200 hover:text-electric transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-
-              <div className="h-px bg-gray-100 dark:bg-white/10 w-full my-2" />
-
-              {user ? (
-                <>
-                  {userRole === 'ADMIN' && (
-                    <Link href={`/${locale}/admin/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-electric">Admin Dashboard</Link>
-                  )}
-                  <Link href={`/${locale}/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.dashboard || 'Dashboard'}</Link>
-                  <Link href={`/${locale}/pricing`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.pricing || 'Pricing'}</Link>
-                  <SignOutButton>
-                    <button className="text-lg text-red-500 w-full">{t.signOut || 'Sign Out'}</button>
-                  </SignOutButton>
-                </>
-              ) : (
-                <Link href={`/${locale}/sign-up`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-900 dark:text-white">
-                  {t.createAccount || 'Create Account'}
+                <Link href={user ? `/${locale}/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
+                  <div className="bg-electric/10 text-electric py-4 rounded-xl font-medium text-lg">
+                    {user ? (t.startReflection || 'Start Reflection') : (t.signInToPractice || 'Sign In to Practice')}
+                  </div>
                 </Link>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+                {navLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    onClick={(e) => {
+                      if (link.onClick) {
+                        link.onClick(e);
+                      }
+                      setMobileMenuOpen(false);
+                    }}
+                    className="text-xl font-serif text-slate-800 dark:text-slate-200 hover:text-electric transition-colors"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+
+                <div className="h-px bg-gray-100 dark:bg-white/10 w-full my-2" />
+
+                {user ? (
+                  <>
+                    {userRole === 'ADMIN' && (
+                      <Link href={`/${locale}/admin/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-electric">Admin Dashboard</Link>
+                    )}
+                    <Link href={`/${locale}/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.dashboard || 'Dashboard'}</Link>
+                    <Link href={`/${locale}/pricing`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.pricing || 'Pricing'}</Link>
+                    <SignOutButton>
+                      <button className="text-lg text-red-500 w-full">{t.signOut || 'Sign Out'}</button>
+                    </SignOutButton>
+                  </>
+                ) : (
+                  <Link href={`/${locale}/sign-up`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-900 dark:text-white">
+                    {t.createAccount || 'Create Account'}
+                  </Link>
+                )}
+              </div>
+            </motion.div>
+          )
+        }
+      </AnimatePresence >
     </>
   );
 }

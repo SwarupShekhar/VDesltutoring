@@ -62,7 +62,7 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                 </div>
 
                 <div className="border-t border-slate-200 dark:border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-slate-400 text-sm">{t.copyright || '© 2024 Natural Flow'}</p>
+                    <p className="text-slate-400 text-sm">{t.copyright || '© 2024 Englivo'}</p>
                     <div className="flex gap-6 text-sm text-slate-400">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500"></div>

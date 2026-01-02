@@ -21,7 +21,7 @@
                     "id": "reason",
                     "label": "Why We Exist",
                     "title": "To help people speak without fear.",
-                    "content": "Natural Flow was created for one reason.<br/><br/>We realized something simple:<br/><br/>Speaking is not a knowledge problem.<br/>It is a reflex problem.<br/><br/>And reflexes are built by:<br/>• Repetition<br/>• Timing<br/>• Emotional safety<br/>• Real conversation<br/><br/>Not textbooks.<br/><br/>So instead of building another course,<br/>we built a Fluency Engine."
+                    "content": "Englivo was created for one reason.<br/><br/>We realized something simple:<br/><br/>Speaking is not a knowledge problem.<br/>It is a reflex problem.<br/><br/>And reflexes are built by:<br/>• Repetition<br/>• Timing<br/>• Emotional safety<br/>• Real conversation<br/><br/>Not textbooks.<br/><br/>So instead of building another course,<br/>we built a Fluency Engine."
                 },
                 {
                     "id": "difference",
@@ -39,7 +39,7 @@
                     "id": "audience",
                     "label": "Who We Serve",
                     "title": "For anyone who wants their English to feel like their own voice.",
-                    "content": "Natural Flow is built for people who:<br/><br/>• Understand English but freeze when speaking<br/>• Need English for work, interviews, or life<br/>• Feel embarrassed making mistakes<br/>• Want to sound natural, not robotic<br/><br/>From students to professionals to immigrants."
+                    "content": "Englivo is built for people who:<br/><br/>• Understand English but freeze when speaking<br/>• Need English for work, interviews, or life<br/>• Feel embarrassed making mistakes<br/>• Want to sound natural, not robotic<br/><br/>From students to professionals to immigrants."
                 },
                 {
                     "id": "vision",
@@ -49,7 +49,7 @@
                 }
             ],
             "final": {
-                "title": "Natural Flow is not about learning English.",
+                "title": "Englivo is not about learning English.",
                 "subtitle": "It’s about becoming someone who can speak it."
             }
         },
@@ -119,7 +119,7 @@
         "hero": {
             "title": "How It Works",
             "subtitle": "A simple way to go from \"I know English\" to \"I can speak English\"",
-            "description": "You don’t need to study more. You need to practice speaking in the right way.<br/>Here’s exactly what happens when you use Natural Flow."
+            "description": "You don’t need to study more. You need to practice speaking in the right way.<br/>Here’s exactly what happens when you use Englivo."
         },
         "steps": [
             {
@@ -208,7 +208,7 @@
             "label": "Why this works",
             "title": "Most people don’t fail at English.",
             "subtitle": "They fail at speaking under pressure.",
-            "listTitle": "Natural Flow trains:",
+            "listTitle": "Englivo trains:",
             "list": [
                 "Confidence",
                 "Timing",
@@ -380,7 +380,7 @@
         "modal": {
             "whyHard": "Why this feels hard",
             "whyHardDesc": "You're trying to prepare everything before speaking.",
-            "reframeLabel": "Natural Flow Reframe",
+            "reframeLabel": "Englivo Reframe",
             "practice": "Practice this moment",
             "teach": "See how we teach this"
         },
@@ -452,7 +452,7 @@
     "faq": {
         "headline": "Frequently Asked Questions",
         "q1": "Is this for beginners?",
-        "a1": "No. Natural Flow is designed for intermediate to advanced professionals who already know grammar but struggle with fluency and confidence.",
+        "a1": "No. Englivo is designed for intermediate to advanced professionals who already know grammar but struggle with fluency and confidence.",
         "q2": "How does scheduling work?",
         "a2": "You book sessions directly with your chosen mentor based on their live availability. No fixed weekly slots required.",
         "q3": "What if I don't click with my mentor?",

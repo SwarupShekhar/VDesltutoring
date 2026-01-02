@@ -136,7 +136,7 @@ export const WhySpeakingFeelsHard = () => {
                             </div>
 
                             <h3 className="font-serif text-3xl md:text-5xl text-foreground">
-                                This is Natural Fluency.
+                                This is Englivo.
                             </h3>
                             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                                 When you stop managing the mechanics, the channel opens. <br />

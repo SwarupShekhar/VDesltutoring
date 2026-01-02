@@ -65,7 +65,7 @@ export function IntermediatePlateau({ dict }: { dict: any }) {
                         </div>
                     </div>
 
-                    {/* Path 2: Natural Flow */}
+                    {/* Path 2: Englivo */}
                     <div className="relative p-8 rounded-3xl bg-white dark:bg-slate-900 shadow-xl border border-blue-100 dark:border-blue-900/20">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500/20 to-blue-500/0" />
 

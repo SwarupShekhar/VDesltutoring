@@ -30,7 +30,7 @@
                     "id": "reason",
                     "label": "Por Qué Existimos",
                     "title": "Para ayudar a la gente a hablar sin miedo.",
-                    "content": "Natural Flow fue creado por una razón.<br/><br/>Nos dimos cuenta de algo simple:<br/><br/>Hablar no es un problema de conocimiento.<br/>Es un problema de reflejos.<br/><br/>Y los reflejos se construyen mediante:<br/>• Repetición<br/>• Tiempo<br/>• Seguridad emocional<br/>• Conversación real<br/><br/>No libros de texto.<br/><br/>Así que en lugar de construir otro curso,<br/>construimos un Motor de Fluidez."
+                    "content": "Englivo fue creado por una razón.<br/><br/>Nos dimos cuenta de algo simple:<br/><br/>Hablar no es un problema de conocimiento.<br/>Es un problema de reflejos.<br/><br/>Y los reflejos se construyen mediante:<br/>• Repetición<br/>• Tiempo<br/>• Seguridad emocional<br/>• Conversación real<br/><br/>No libros de texto.<br/><br/>Así que en lugar de construir otro curso,<br/>construimos un Motor de Fluidez."
                 },
                 {
                     "id": "difference",
@@ -48,7 +48,7 @@
                     "id": "audience",
                     "label": "A Quién Servimos",
                     "title": "Para cualquiera que quiera que su inglés se sienta como su propia voz.",
-                    "content": "Natural Flow está construido para personas que:<br/><br/>• Entienden inglés pero se congelan al hablar<br/>• Necesitan inglés para el trabajo, entrevistas o la vida<br/>• Se sienten avergonzados al cometer errores<br/>• Quieren sonar naturales, no robóticos<br/><br/>Desde estudiantes hasta profesionales e inmigrantes."
+                    "content": "Englivo está construido para personas que:<br/><br/>• Entienden inglés pero se congelan al hablar<br/>• Necesitan inglés para el trabajo, entrevistas o la vida<br/>• Se sienten avergonzados al cometer errores<br/>• Quieren sonar naturales, no robóticos<br/><br/>Desde estudiantes hasta profesionales e inmigrantes."
                 },
                 {
                     "id": "vision",
@@ -58,7 +58,7 @@
                 }
             ],
             "final": {
-                "title": "Natural Flow no trata sobre aprender inglés.",
+                "title": "Englivo no trata sobre aprender inglés.",
                 "subtitle": "Trata sobre convertirse en alguien que puede hablarlo."
             }
         }
@@ -114,7 +114,7 @@
         "modal": {
             "whyHard": "Por qué esto se siente difícil",
             "whyHardDesc": "Estás tratando de preparar todo antes de hablar.",
-            "reframeLabel": "Reencuadre de Flujo Natural",
+            "reframeLabel": "Reencuadre de Englivo",
             "practice": "Practicar este momento",
             "teach": "Mira cómo enseñamos esto"
         },
@@ -186,7 +186,7 @@
     "faq": {
         "headline": "Preguntas Frecuentes",
         "q1": "¿Es esto para principiantes?",
-        "a1": "No. Natural Flow está diseñado para profesionales de nivel intermedio a avanzado que ya conocen la gramática pero luchan con la fluidez y la confianza.",
+        "a1": "No. Englivo está diseñado para profesionales de nivel intermedio a avanzado que ya conocen la gramática pero luchan con la fluidez y la confianza.",
         "q2": "¿Cómo funciona la programación?",
         "a2": "Reservas sesiones directamente con tu mentor elegido según su disponibilidad en vivo. No se requieren espacios semanales fijos.",
         "q3": "¿Qué pasa si no conecto con mi mentor?",
@@ -196,7 +196,7 @@
         "hero": {
             "title": "Cómo Funciona",
             "subtitle": "Una forma sencilla de pasar de \"Sé inglés\" a \"Puedo hablar inglés\"",
-            "description": "No necesitas estudiar más. Necesitas practicar el habla de la manera correcta.<br/>Esto es exactamente lo que sucede cuando usas Natural Flow."
+            "description": "No necesitas estudiar más. Necesitas practicar el habla de la manera correcta.<br/>Esto es exactamente lo que sucede cuando usas Englivo."
         },
         "steps": [
             {
@@ -285,7 +285,7 @@
             "label": "Por qué funciona",
             "title": "La mayoría no falla en inglés.",
             "subtitle": "Fallan al hablar bajo presión.",
-            "listTitle": "Natural Flow entrena:",
+            "listTitle": "Englivo entrena:",
             "list": [
                 "Confianza",
                 "Tiempo",

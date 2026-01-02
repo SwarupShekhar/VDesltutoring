@@ -30,7 +30,7 @@
                     "id": "reason",
                     "label": "Tại sao chúng tôi tồn tại",
                     "title": "Để giúp mọi người nói mà không sợ hãi.",
-                    "content": "Natural Flow được tạo ra vì một lý do.<br/><br/>Chúng tôi nhận ra một điều đơn giản:<br/><br/>Nói không phải là vấn đề kiến thức.<br/>Đó là vấn đề phản xạ.<br/><br/>Và phản xạ được xây dựng bởi:<br/>• Sự lặp lại<br/>• Thời gian<br/>• An toàn cảm xúc<br/>• Cuộc trò chuyện thực tế<br/><br/>Không phải sách giáo khoa.<br/><br/>Vì vậy, thay vì xây dựng một khóa học khác,<br/>chúng tôi đã xây dựng một Công cụ Trôi chảy."
+                    "content": "Englivo được tạo ra vì một lý do.<br/><br/>Chúng tôi nhận ra một điều đơn giản:<br/><br/>Nói không phải là vấn đề kiến thức.<br/>Đó là vấn đề phản xạ.<br/><br/>Và phản xạ được xây dựng bởi:<br/>• Sự lặp lại<br/>• Thời gian<br/>• An toàn cảm xúc<br/>• Cuộc trò chuyện thực tế<br/><br/>Không phải sách giáo khoa.<br/><br/>Vì vậy, thay vì xây dựng một khóa học khác,<br/>chúng tôi đã xây dựng một Công cụ Trôi chảy."
                 },
                 {
                     "id": "difference",
@@ -48,7 +48,7 @@
                     "id": "audience",
                     "label": "Chúng tôi phục vụ ai",
                     "title": "Dành cho bất kỳ ai muốn tiếng Anh của họ cảm thấy như giọng nói của chính họ.",
-                    "content": "Natural Flow được xây dựng cho những người:<br/><br/>• Hiểu tiếng Anh nhưng đóng băng khi nói<br/>• Cần tiếng Anh cho công việc, phỏng vấn hoặc cuộc sống<br/>• Cảm thấy xấu hổ khi mắc lỗi<br/>• Muốn nghe tự nhiên, không phải robot<br/><br/>Từ sinh viên đến chuyên gia đến người nhập cư."
+                    "content": "Englivo được xây dựng cho những người:<br/><br/>• Hiểu tiếng Anh nhưng đóng băng khi nói<br/>• Cần tiếng Anh cho công việc, phỏng vấn hoặc cuộc sống<br/>• Cảm thấy xấu hổ khi mắc lỗi<br/>• Muốn nghe tự nhiên, không phải robot<br/><br/>Từ sinh viên đến chuyên gia đến người nhập cư."
                 },
                 {
                     "id": "vision",
@@ -58,7 +58,7 @@
                 }
             ],
             "final": {
-                "title": "Natural Flow không phải là về việc học tiếng Anh.",
+                "title": "Englivo không phải là về việc học tiếng Anh.",
                 "subtitle": "Đó là về việc trở thành một người có thể nói nó."
             }
         }
@@ -114,7 +114,7 @@
         "modal": {
             "whyHard": "Tại sao điều này cảm thấy khó khăn",
             "whyHardDesc": "Bạn đang cố gắng chuẩn bị mọi thứ trước khi nói.",
-            "reframeLabel": "Tái định hình Natural Flow",
+            "reframeLabel": "Tái định hình Englivo",
             "practice": "Thực hành khoảnh khắc này",
             "teach": "Xem cách chúng tôi dạy điều này"
         },
@@ -186,7 +186,7 @@
     "faq": {
         "headline": "Câu hỏi thường gặp",
         "q1": "Cái này có dành cho người mới bắt đầu không?",
-        "a1": "Không. Natural Flow được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin.",
+        "a1": "Không. Englivo được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin.",
         "q2": "Lịch trình hoạt động như thế nào?",
         "a2": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian rảnh của họ. Không yêu cầu các khung giờ cố định hàng tuần.",
         "q3": "Nếu tôi không hợp với cố vấn thì sao?",
@@ -196,7 +196,7 @@
         "hero": {
             "title": "Cách thức hoạt động",
             "subtitle": "Một cách đơn giản để đi từ \"Tôi biết tiếng Anh\" đến \"Tôi có thể nói tiếng Anh\"",
-            "description": "Bạn không cần học nhiều hơn. Bạn cần thực hành nói đúng cách.<br/>Đây chính xác là những gì xảy ra khi bạn sử dụng Natural Flow."
+            "description": "Bạn không cần học nhiều hơn. Bạn cần thực hành nói đúng cách.<br/>Đây chính xác là những gì xảy ra khi bạn sử dụng Englivo."
         },
         "steps": [
             {
@@ -285,7 +285,7 @@
             "label": "Tại sao điều này hiệu quả",
             "title": "Hầu hết mọi người không thất bại ở tiếng Anh.",
             "subtitle": "Họ thất bại khi nói dưới áp lực.",
-            "listTitle": "Natural Flow rèn luyện:",
+            "listTitle": "Englivo rèn luyện:",
             "list": [
                 "Sự tự tin",
                 "Thời gian",

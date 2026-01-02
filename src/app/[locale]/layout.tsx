@@ -5,10 +5,6 @@ import {
 import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google'
 import '../globals.css'
 import { BrowserExtensionFix } from '@/components/BrowserExtensionFix'
-import { GlobalHeader } from '@/components/GlobalHeader'
-import { HomeNavbar } from '@/components/HomeNavbar'
-import { Footer } from '@/components/Footer'
-import { getDictionary } from '@/i18n/getDictionary'
 import type { Locale } from '@/i18n/getDictionary'
 
 const geistSans = Geist({
@@ -27,8 +23,12 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Natural Fluency',
+  title: 'Englivo',
   description: 'The boutique approach to fluency.',
+  icons: {
+    icon: '/favicon.ico',
+    apple: 'https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png',
+  },
 }
 
 
@@ -40,17 +40,12 @@ export default async function RootLayout({
   params: Promise<{ locale: Locale }>
 }>) {
   const { locale } = await params
-  const dict = await getDictionary(locale)
 
   return (
     <>
       <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}>
         <BrowserExtensionFix />
-        <HomeNavbar dict={dict.nav} locale={locale} />
-        <main className="flex-grow">
-          {children}
-        </main>
-        <Footer dict={dict.footer} locale={locale} />
+        {children}
       </div>
     </>
   )

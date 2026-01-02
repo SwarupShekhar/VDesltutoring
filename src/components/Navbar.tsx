@@ -7,6 +7,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/Button';
+import { FontWeight } from '@/components/font-weight';
 
 interface NavItem {
   name: string;
@@ -42,8 +43,17 @@ export function Navbar({ role }: NavbarProps) {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="font-serif text-2xl font-bold text-slate-900 dark:text-white">
-                Natural Fluency
+              <Link href="/" className="flex items-center gap-2">
+                <img
+                  src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
+                  alt="Englivo Logo"
+                  className="h-8 w-auto"
+                />
+                <FontWeight
+                  text="Englivo"
+                  fontSize={28}
+                  className="text-slate-900 dark:text-white"
+                />
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -52,8 +62,8 @@ export function Navbar({ role }: NavbarProps) {
                   key={item.name}
                   href={item.href}
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${pathname === item.href
-                      ? 'border-indigo-500 text-gray-900 dark:text-white'
-                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'
+                    ? 'border-indigo-500 text-gray-900 dark:text-white'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:border-gray-300 dark:hover:border-gray-700 hover:text-gray-700 dark:hover:text-gray-300'
                     }`}
                 >
                   {item.name}

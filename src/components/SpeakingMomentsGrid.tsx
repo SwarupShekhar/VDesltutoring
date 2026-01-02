@@ -63,7 +63,7 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any }) => {
     const modalLabels = {
         whyHard: dict?.modal?.whyHard || "Why this feels hard",
         whyHardDesc: dict?.modal?.whyHardDesc || "You're trying to prepare everything before speaking.",
-        reframeLabel: dict?.modal?.reframeLabel || "Natural Fluency Reframe",
+        reframeLabel: dict?.modal?.reframeLabel || "Englivo Reframe",
         practice: dict?.modal?.practice || "Practice this moment",
         teach: dict?.modal?.teach || "See how we teach this"
     };

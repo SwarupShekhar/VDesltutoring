@@ -21,7 +21,7 @@
                     "id": "reason",
                     "label": "Pourquoi Nous Existons",
                     "title": "Pour aider les gens à parler sans peur.",
-                    "content": "Natural Flow a été créé pour une raison.<br/><br/>Nous avons réalisé quelque chose de simple :<br/><br/>Parler n'est pas un problème de connaissances.<br/>C'est un problème de réflexes.<br/><br/>Et les réflexes se construisent par :<br/>• La répétition<br/>• Le timing<br/>• La sécurité émotionnelle<br/>• La vraie conversation<br/><br/>Pas les manuels scolaires.<br/><br/>Donc au lieu de construire un autre cours,<br/>nous avons construit un Moteur de Fluidité."
+                    "content": "Englivo a été créé pour une raison.<br/><br/>Nous avons réalisé quelque chose de simple :<br/><br/>Parler n'est pas un problème de connaissances.<br/>C'est un problème de réflexes.<br/><br/>Et les réflexes se construisent par :<br/>• La répétition<br/>• Le timing<br/>• La sécurité émotionnelle<br/>• La vraie conversation<br/><br/>Pas les manuels scolaires.<br/><br/>Donc au lieu de construire un autre cours,<br/>nous avons construit un Moteur de Fluidité."
                 },
                 {
                     "id": "difference",
@@ -39,7 +39,7 @@
                     "id": "audience",
                     "label": "Qui Nous Servons",
                     "title": "Pour tous ceux qui veulent que leur anglais ressemble à leur propre voix.",
-                    "content": "Natural Flow est construit pour les gens qui :<br/><br/>• Comprennent l'anglais mais se figent en parlant<br/>• Ont besoin de l'anglais pour le travail, les entretiens ou la vie<br/>• Se sentent gênés de faire des erreurs<br/>• Veulent avoir l'air naturel, pas robotique<br/><br/>Des étudiants aux professionnels en passant par les immigrants."
+                    "content": "Englivo est construit pour les gens qui :<br/><br/>• Comprennent l'anglais mais se figent en parlant<br/>• Ont besoin de l'anglais pour le travail, les entretiens ou la vie<br/>• Se sentent gênés de faire des erreurs<br/>• Veulent avoir l'air naturel, pas robotique<br/><br/>Des étudiants aux professionnels en passant par les immigrants."
                 },
                 {
                     "id": "vision",
@@ -49,7 +49,7 @@
                 }
             ],
             "final": {
-                "title": "Natural Flow ne concerne pas l'apprentissage de l'anglais.",
+                "title": "Englivo ne concerne pas l'apprentissage de l'anglais.",
                 "subtitle": "Il s'agit de devenir quelqu'un qui peut le parler."
             }
         },
@@ -149,7 +149,7 @@
         "modal": {
             "whyHard": "Pourquoi cela semble difficile",
             "whyHardDesc": "Vous essayez de tout préparer avant de parler.",
-            "reframeLabel": "Recadrage du Flux Naturel",
+            "reframeLabel": "Recadrage de Englivo",
             "practice": "Pratiquer ce moment",
             "teach": "Voir comment nous enseignons cela"
         },
@@ -221,7 +221,7 @@
     "faq": {
         "headline": "Questions Fréquentes",
         "q1": "Est-ce pour les débutants ?",
-        "a1": "Non. Natural Fluency est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance.",
+        "a1": "Non. Englivo est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance.",
         "q2": "Comment fonctionne la planification ?",
         "a2": "Vous réservez des sessions directement avec votre mentor choisi en fonction de sa disponibilité en direct. Pas de créneaux hebdomadaires fixes requis.",
         "q3": "Et si je ne m'entends pas avec mon mentor ?",
@@ -231,7 +231,7 @@
         "hero": {
             "title": "Comment ça marche",
             "subtitle": "Un moyen simple de passer de \"Je connais l'anglais\" à \"Je peux parler anglais\"",
-            "description": "Vous n'avez pas besoin d'étudier plus. Vous avez besoin de pratiquer la parole de la bonne manière.<br/>Voici exactement ce qui se passe lorsque vous utilisez Natural Flow."
+            "description": "Vous n'avez pas besoin d'étudier plus. Vous avez besoin de pratiquer la parole de la bonne manière.<br/>Voici exactement ce qui se passe lorsque vous utilisez Englivo."
         },
         "steps": [
             {
@@ -320,7 +320,7 @@
             "label": "Pourquoi ça marche",
             "title": "La plupart des gens n'échouent pas en anglais.",
             "subtitle": "Ils échouent à parler sous pression.",
-            "listTitle": "Natural Flow entraîne :",
+            "listTitle": "Englivo entraîne :",
             "list": [
                 "Confiance",
                 "Timing",

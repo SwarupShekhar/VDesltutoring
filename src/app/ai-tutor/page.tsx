@@ -235,10 +235,15 @@ export default function AITutor() {
 
                     const ai = await aiResponseRaw.json()
 
-                    setAiResponse(ai.response)
+                    // Personality Injection (Req D)
+                    const cues = ["Nice.", "Good.", "That works.", "Okay.", "I hear you.", "Great.", "Interesting."]
+                    const randomCue = cues[Math.floor(Math.random() * cues.length)]
+                    const personalizedResponse = `${randomCue} ${ai.response}`
+
+                    setAiResponse(personalizedResponse)
 
                     // Gemini → Voice
-                    await speak(ai.response)
+                    await speak(personalizedResponse)
                 }
             }
 

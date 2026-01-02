@@ -181,7 +181,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
             {/* MOBILE TOGGLE */}
             <div className="md:hidden flex items-center gap-4">
-              <span className="text-xs font-bold uppercase text-electric">{locale}</span>
+              <LanguageSelector currentLocale={locale} />
               <ThemeToggle />
               <button
                 onClick={() => setMobileMenuOpen(true)}

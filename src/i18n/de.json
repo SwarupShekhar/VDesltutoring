@@ -391,6 +391,26 @@
             }
         ]
     },
+    "fluencyGlobe": {
+        "tag": "Globale Gemeinschaft",
+        "headline": "Sprechen Sie Englisch mit der Welt.",
+        "subtext": "Treten Sie einem globalen Netzwerk von Lernenden bei, die über das Auswendiglernen hinaus zu echten Gesprächen übergehen. Unsere Plattform verbindet Sie mit den Englischmustern, die weltweit verwendet werden.",
+        "quote": "„Überall auf der Welt üben, zögern, beginnen neu und finden ihre Stimme – genau wie Sie.“",
+        "stats": {
+            "timezones": {
+                "value": "12+",
+                "label": "Zeitzonen"
+            },
+            "availability": {
+                "value": "24/7",
+                "label": "Verfügbarkeit"
+            },
+            "immersion": {
+                "value": "100%",
+                "label": "Immersion"
+            }
+        }
+    },
     "situationalGateway": {
         "headline": "Wo nutzen Sie Englisch?",
         "subtext": "Wir geben Ihnen keinen Kurs. Wir bauen einen Sprechpfad um Ihr echtes Leben.",

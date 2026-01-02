@@ -448,5 +448,25 @@
         "desc7": "Otros sistemas entrenan la memoria. El Fluency Engine entrena la duda, el tiempo, la confianza y el flujo: las cosas que realmente deciden si puedes hablar.",
         "content7_p1": "No enseñamos inglés.",
         "content7_p2": "Entrenamos el habla."
+    },
+    "fluencyGlobe": {
+        "tag": "Comunidad Global",
+        "headline": "Habla inglés con el mundo.",
+        "subtext": "Únete a una red global de estudiantes que van más allá de la memorización hacia la conversación real. Nuestra plataforma te conecta con los patrones de inglés utilizados en todo el mundo.",
+        "quote": "“Personas de todo el mundo están practicando, dudando, reiniciando y encontrando su voz, igual que tú.”",
+        "stats": {
+            "timezones": {
+                "value": "12+",
+                "label": "Zonas horarias"
+            },
+            "availability": {
+                "value": "24/7",
+                "label": "Disponibilidad"
+            },
+            "immersion": {
+                "value": "100%",
+                "label": "Inmersión"
+            }
+        }
     }
 }

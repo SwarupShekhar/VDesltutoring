@@ -42,13 +42,18 @@ const Dropdown = ({ trigger, children, align = 'right' }: DropdownProps) => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <div onClick={toggleDropdown} className="cursor-pointer">
+      <div
+        onClick={toggleDropdown}
+        // Stop propagation of touch events to prevent immediate closing via document listener
+        onTouchStart={(e) => e.stopPropagation()}
+        className="cursor-pointer"
+      >
         {trigger}
       </div>
 
       {isOpen && (
         <div
-          className={`absolute mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-[100] ${getAlignmentClasses()}`}
+          className={`absolute mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-[1000] ${getAlignmentClasses()}`}
         >
           <div className="py-1" role="menu">
             {children}

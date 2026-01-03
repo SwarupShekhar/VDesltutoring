@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { generateDrills } from "@/lib/fluencyTrainer"
-import { openaiService } from "@/lib/openai-service"
+import { geminiService } from "@/lib/gemini-service"
 
 const REPORT_PROMPT = `
 You are a STERN, ANALYTICAL English fluency auditor. Analyze the student transcript.
@@ -37,9 +37,14 @@ export async function POST(req: Request) {
     // Filter out AI speech to check if STUDENT actually spoke
     const studentText = transcript
       ?.split("\n")
-      .filter((line: string) => !line.startsWith("ASSISTANT:"))
+      .filter((line: string) => !line.toUpperCase().startsWith("ASSISTANT:"))
+      .map((line: string) => line.replace(/^USER: /i, "")) // Strip prefix if present
       .join(" ")
       .trim() || ""
+
+    console.log("Report API received transcript length:", transcript?.length)
+    console.log("Filtered student text length:", studentText.length)
+    console.log("Filtered student text preview:", studentText.substring(0, 50))
 
     const uniqueWordCount = new Set(studentText.split(/\s+/).filter((w: string) => w.length > 0)).size
 
@@ -56,7 +61,7 @@ export async function POST(req: Request) {
       })
     }
 
-    const report = await openaiService.generateJsonReport(REPORT_PROMPT, transcript)
+    const report = await geminiService.generateReport(studentText)
 
     // -------- Metrics (Text Analysis) ----------
     const words = studentText.split(/\s+/)

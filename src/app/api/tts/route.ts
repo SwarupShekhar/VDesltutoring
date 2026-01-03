@@ -51,8 +51,12 @@ async function elevenLabsTTS(text: string): Promise<string> {
     const apiKey = process.env.ELEVENLABS_API_KEY;
     if (!apiKey) throw new Error("Missing ELEVENLABS_API_KEY");
 
-    const voiceId = "21m00Tcm4TlvDq8ikWAM"; // Rachel
-    const modelId = "eleven_multilingual_v2";
+    // Warmer, more natural voices:
+    // "EXAVITQu4vr4xnSDxMaL" - Sarah (warm, friendly female)
+    // "pNInz6obpgDQGcFmaJgB" - Adam (warm, conversational male)
+    // "21m00Tcm4TlvDq8ikWAM" - Rachel (neutral female - original)
+    const voiceId = "EXAVITQu4vr4xnSDxMaL"; // Sarah - warm and friendly
+    const modelId = "eleven_turbo_v2_5"; // Faster, more natural model
 
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
         method: "POST",
@@ -64,8 +68,10 @@ async function elevenLabsTTS(text: string): Promise<string> {
             text,
             model_id: modelId,
             voice_settings: {
-                stability: 0.5,
-                similarity_boost: 0.75,
+                stability: 0.4,           // Lower = more expressive (was 0.5)
+                similarity_boost: 0.8,    // Higher = more natural (was 0.75)
+                style: 0.3,               // Adds warmth and emotion
+                use_speaker_boost: true   // Enhances clarity and warmth
             },
         }),
     });
@@ -83,8 +89,19 @@ async function elevenLabsTTS(text: string): Promise<string> {
 async function googleTTS(text: string): Promise<string> {
     const request = {
         input: { text },
-        voice: { languageCode: "en-US", name: "en-US-Neural2-F" }, // Premium Studio voice
-        audioConfig: { audioEncoding: "MP3" as const },
+        // Warmer voices:
+        // "en-US-Neural2-F" - Female, neutral (original)
+        // "en-US-Neural2-H" - Female, warm and friendly
+        // "en-US-Journey-F" - Female, conversational and expressive
+        voice: {
+            languageCode: "en-US",
+            name: "en-US-Journey-F" // Most natural, conversational voice
+        },
+        audioConfig: {
+            audioEncoding: "MP3" as const,
+            pitch: 2.0,              // Slightly higher pitch = friendlier
+            speakingRate: 1.0        // Normal speed
+        },
     };
 
     const [response] = await googleClient.synthesizeSpeech(request);

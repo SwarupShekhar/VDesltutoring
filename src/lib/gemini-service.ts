@@ -31,28 +31,41 @@ const REPORT_PROMPT = `
 You are an expert English linguist. Analyze the following student transcript.
 Generate a structured JSON report.
 
+ARCHETYPES (Pick one that best fits the student):
+- "The Thoughtful Speaker" (Careful, slow, precise)
+- "The Flow Builder" (Improving rhythm, connecting ideas)
+- "The Rapid Thinker" (Fast but maybe unstructured)
+- "The Translator" (Thinking in native language first)
+- "The Storyteller" (Expressive, good narrative)
+- "The Explorer" (Experimenting with new words)
+
 Assessment Criteria:
-1. Fluency Score (0-100)
-2. Grammar Score (0-100)
-3. Vocabulary Score (0-100)
-4. Key Feedback (3 bullet points)
-5. Corrections: Identify 3 grammatical mistakes (if any). Format: "You said: [x] => Better: [y]"
+1. Identity: Choose an Archetype and write a 1-sentence description of their style.
+2. Insights: Write 1 short sentence of feedback for each: Fluency, Grammar, Vocabulary.
+3. Patterns: List 3 speaking patterns observed (positive or negative).
+4. Refinements: 3 corrections. "original" (what they said), "better" (natural version), "explanation".
+5. Next Step: One specific actionable goal.
 
 Output JSON exactly like this:
 {
-  "scores": {
-    "fluency": 85,
-    "grammar": 78,
-    "vocabulary": 80
+  "identity": {
+    "archetype": "The Flow Builder",
+    "description": "You are starting to link sentences together well."
   },
-  "feedback": [
-    "Good use of past tense.",
-    "Try to speak more confidently.",
-    "Watch out for subject-verb agreement."
+  "insights": {
+    "fluency": "Your pacing is steady, though you pause often to think.",
+    "grammar": "You generally use past tense correctly.",
+    "vocabulary": "Good use of basic nouns, try adding more adjectives."
+  },
+  "patterns": [
+    "Frequent use of 'uh' as a filler.",
+    "Strong sentence openers.",
+    "Tendency to drop articles (a/the)."
   ],
-  "corrections": [
-    { "original": "I go to store yesterday.", "correction": "I went to the store yesterday.", "explanation": "Use past tense." }
-  ]
+  "refinements": [
+    { "original": "I go store.", "better": "I went to the store.", "explanation": "Use past tense for completed actions." }
+  ],
+  "next_step": "Practice using transition words like 'however' and 'therefore'."
 }
 `;
 
@@ -86,14 +99,35 @@ export class GeminiService {
     }
 
     /**
+     * Drop-in replacement for OpenAIService.generateChatResponse
+     * Allows dynamic system prompts for Honest Coaching.
+     */
+    async generateChatResponse(systemPrompt: string, userMessage: string): Promise<string> {
+        if (!userMessage || userMessage.trim().length === 0) {
+            return "I didn't quite catch that.";
+        }
+
+        // Combine system prompt and user message for Gemini (which often prefers single-prompt context 
+        // if not using the chat history API, though raw generation works well for 1-turn VAD).
+        const fullPrompt = `${systemPrompt}\n\nUser: ${userMessage}\nTutor:`;
+        return this.executeWithFallback(fullPrompt, false);
+    }
+
+    /**
      * Generates a structured JSON report.
      */
     async generateReport(transcript: string): Promise<any> {
-        if (!transcript || transcript.length < 50) {
+        if (!transcript || transcript.length < 10) {
             return {
-                scores: { fluency: 0, grammar: 0, vocabulary: 0 },
-                feedback: ["Not enough data to generate a report.", "Try speaking more next time!"],
-                corrections: []
+                identity: { archetype: "The Explorer", description: "Not enough speech to analyze yet." },
+                insights: {
+                    fluency: "Keep speaking to get analysis.",
+                    grammar: "Keep speaking to get analysis.",
+                    vocabulary: "Keep speaking to get analysis."
+                },
+                patterns: ["Try to speak in full sentences."],
+                refinements: [],
+                next_step: "Speak a bit more in the next session!"
             };
         }
 

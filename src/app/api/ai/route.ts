@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
-import { openaiService } from "@/lib/openai-service"
+import { geminiService } from "@/lib/gemini-service"
 import { pickMicroLesson, getMicroLesson } from "@/lib/microLessonSelector"
 
 export async function POST(req: Request) {
     try {
-        const { transcript, fluency, metrics } = await req.json()
+        const { transcript, fluency, metrics, firstName = "Student" } = await req.json()
 
         if (!transcript || transcript.trim().length < 2) {
             return NextResponse.json({ response: "" })
@@ -21,66 +21,103 @@ export async function POST(req: Request) {
         const lessonType = pickMicroLesson({ pauseRatio, fillerRate, restartRate, wordCount })
         const activeLesson = getMicroLesson(lessonType)
 
-        // Determine coaching tone based on actual performance
-        const toneLabel = fluencyScore < 0.45 ? 'CRITICAL' : fluencyScore < 0.6 ? 'STRICT' : 'DIRECT'
-
-        // Build dynamic, honest coaching rules
-        const coachingRules: string[] = []
-
-        if (fluencyScore < 0.50) {
-            coachingRules.push('- Be STRICT. They are struggling. Do NOT sugarcoat.')
-            coachingRules.push('- Focus purely on fixing the flow. No small talk.')
+        // Determine Tone
+        let toneInstructions = ""
+        if (fluencyScore < 0.45) {
+            toneInstructions = "WARM + PATIENT. Be extra encouraging and supportive."
+        } else if (fluencyScore < 0.65) {
+            toneInstructions = "ENTHUSIASTIC + HELPFUL. Celebrate progress and guide gently."
+        } else {
+            toneInstructions = "EXCITED + CHALLENGING. Push them with energy and positivity."
         }
 
-        if (pauseRatio > 0.12) {
-            coachingRules.push(`- PAUSES are critical (${Math.round(pauseRatio * 100)}%). Tell them to "Keep going" or "Don't stop".`)
-        }
-
-        if (fillerRate > 0.05) {
-            coachingRules.push(`- FILLERS are excessive (${Math.round(fillerRate * 100)}%). Tell them to stop saying "uh/um/like".`)
-        }
-
-        if (restartRate > 0.1) {
-            coachingRules.push(`- RESTARTS are confusing (${Math.round(restartRate * 100)}%). Tell them to "Trust their first thought".`)
-        }
+        // Coaching Rules (Neuro-Bonding)
+        const specificRules: string[] = []
+        if (pauseRatio > 0.15) specificRules.push(`- PAUSES are noticeable (${Math.round(pauseRatio * 100)}%). Gently encourage ${firstName} to keep the flow going.`)
+        if (fillerRate > 0.08) specificRules.push(`- FILLERS are present (${Math.round(fillerRate * 100)}%). Help them find smoother transitions.`)
+        if (restartRate > 0.10) specificRules.push(`- RESTARTS happen (${Math.round(restartRate * 100)}%). Remind them to trust their instincts.`)
 
         // Add specific Micro-Lesson instruction to coaching rules
         if (activeLesson) {
-            coachingRules.unshift(`PRIORITY FOCUS: ${activeLesson.title}. Remind them: "${activeLesson.drill}"`)
+            specificRules.unshift(`PRIORITY FOCUS: ${activeLesson.title}. Remind them: "${activeLesson.drill}"`)
         }
 
-        // Build the system prompt with real data
         const SYSTEM_PROMPT = `
-You are a HIGH-PERFORMANCE ENGLISH COACH. You are NOT a friend. You are here to get results.
+You are Englivo — a friendly English speaking coach who genuinely cares about helping students.
+The student's name is: ${firstName}
 
-CURRENT METRICS:
-- Consistency: ${fluencyScore.toFixed(2)} (${toneLabel})
-- Pause Rate: ${Math.round(pauseRatio * 100)}% (Target: <10%)
-- Filler Rate: ${Math.round(fillerRate * 100)}% (Target: <5%)
+You are NOT a grammar teacher or a strict examiner. You are a supportive speaking partner.
+Your job: Help ${firstName} feel confident, speak smoothly, and enjoy the conversation.
 
-${activeLesson ? `DRILL IN PROGRESS: ${activeLesson.title}` : ''}
+CURRENT DATA:
+- Fluency Score: ${fluencyScore.toFixed(2)}
+- Coaching Style: ${toneInstructions}
 
-INSTRUCTIONS:
-1. **Be Concise**: 1 sentence limit usually. 2 max.
-2. **Be Critical**: If metric targets are missed, call it out immediately.
-   - Bad: "You're doing okay, but try to speak faster."
-   - Good: "Too many pauses. Speed up."
-   - Good: "Stop saying 'uh'. Just breathe."
-3. **No Fluff**: Never say "Great job", "I understand", "That's interesting".
-4. **Action-Oriented**: Give a direct command or a challenge question.
+COACHING RULES:
+1. **Be Warm & Personal**: Use ${firstName}'s name naturally once per response with genuine warmth (e.g., "That's great, ${firstName}!" or "${firstName}, I love your energy!")
+2. **Encourage First**: Start with something positive before any correction
+3. **Keep it Light**: Max 1-2 sentences. Sound like a friendly conversation, not a lecture
+4. **Ask Engaging Questions**: Make them want to keep talking
 
-${coachingRules.length > 0 ? `CRITICAL ISSUES TO FLAGG:\n${coachingRules.join('\n')}` : '- Flow is decent. Push for more complex vocabulary.'}
+SPECIFIC GUIDANCE (use gently):
+${specificRules.join('\n')}
 
-Your goal: Force them to speak fluently through pressure and direct comparison to the standard.
+TONE EXAMPLES:
+- Low fluency: "Hey ${firstName}, you're doing great! Let's slow down and take it one thought at a time. What happened next?"
+- Medium fluency: "Nice, ${firstName}! I can feel your confidence growing. Tell me more about that!"
+- High fluency: "Wow ${firstName}, you're on fire! Let's push it even further—describe it in more detail!"
+
+NEVER say: "wrong", "incorrect", "grammar error", "you failed"
+INSTEAD say: "let's try", "how about", "you could say", "great start"
+
+ERROR CORRECTION:
+If ${firstName} makes grammar, vocabulary, or fluency errors, note them mentally but DON'T lecture.
+Instead, model the correct form naturally in your response.
+
+Return your response in this JSON format:
+{
+  "response": "your warm, conversational reply here",
+  "corrections": [
+    { "original": "exact error phrase from their speech", "corrected": "the correct version", "type": "grammar|vocabulary|fluency" }
+  ]
+}
+
+If there are no errors, return an empty corrections array.
+
+GOAL: Make ${firstName} feel excited, supported, and eager to speak more.
 `
+        const rawResponse = await geminiService.generateChatResponse(SYSTEM_PROMPT, transcript)
 
-        const text = await openaiService.generateChatResponse(SYSTEM_PROMPT, transcript)
+        // Try to parse as JSON first (for corrections), fallback to plain text
+        let response = rawResponse
+        let corrections = []
 
-        return NextResponse.json({ response: text })
+        try {
+            const parsed = JSON.parse(rawResponse)
+            if (parsed.response) {
+                response = parsed.response
+                corrections = parsed.corrections || []
+            }
+        } catch (e) {
+            // Not JSON, use raw response as-is
+            console.log("AI returned plain text (no corrections)")
+        }
+
+        return NextResponse.json({ response, corrections })
     } catch (err: any) {
         console.error("AI Error:", err)
-        // Fallback
-        const text = "Connection unstable. Keep speaking."
-        return NextResponse.json({ response: text })
+
+        let errorMessage = "Connection unstable. Keep speaking."
+
+        // Expose specific configuration errors to the user (via voice)
+        if (err.message && (err.message.includes("API_KEY") || err.message.includes("missing"))) {
+            errorMessage = "System Error: The Gemini API Key is missing. Please check your settings."
+        } else if (err.message) {
+            // For other errors, log them but maybe keep the response somewhat vague or helpful
+            // actually for now, let's speak the error if it helps debugging
+            errorMessage = `System Error: ${err.message}`
+        }
+
+        return NextResponse.json({ response: errorMessage })
     }
 }

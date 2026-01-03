@@ -6,12 +6,26 @@ import AIAvatar from "@/components/AIAvatar"
 import { HomeNavbar } from "@/components/HomeNavbar"
 import { VoiceVisualizer } from "@/components/VoiceVisualizer"
 import { FluencyReportModal } from "@/components/FluencyReportModal"
+import { ErrorCorrectionDisplay } from "@/components/ErrorCorrectionDisplay"
 import { useRouter } from "next/navigation"
+import { useUser } from "@clerk/nextjs"
 import { Mic, MicOff, Square, Play } from "lucide-react"
 
-type ChatMessage = { role: "user" | "assistant"; content: string; timestamp: Date }
+type ChatMessage = {
+    role: "user" | "assistant"
+    content: string
+    timestamp: Date
+    corrections?: Array<{
+        original: string
+        corrected: string
+        type: "grammar" | "vocabulary" | "fluency"
+    }>
+}
 
 export default function AITutor() {
+    const { user } = useUser()
+    const firstName = user?.firstName || "Student"
+
     const [token, setToken] = useState<string | null>(null)
     const [transcript, setTranscript] = useState("")
     const [aiResponse, setAiResponse] = useState("")
@@ -22,10 +36,13 @@ export default function AITutor() {
     const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null)
     const [chats, setChats] = useState<ChatMessage[]>([])
 
+    // Request Locking to prevent double-speak
+    const requestCounter = useRef(0)
+
     // Report State
     const [showReport, setShowReport] = useState(false)
     const [reportLoading, setReportLoading] = useState(false)
-    const [reportData, setReportData] = useState(null)
+    const [reportData, setReportData] = useState<any>(null)
 
     const mediaRecorder = useRef<MediaRecorder | null>(null)
     const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -81,25 +98,47 @@ export default function AITutor() {
 
         try {
             // 1. Generate Report
+            // Force wait for 1 second to ensure state settles
+            await new Promise(r => setTimeout(r, 1000))
+
             const fullTranscript = chats.map(c => `${c.role.toUpperCase()}: ${c.content}`).join("\n")
+
+            console.log("Generating report for transcript length:", fullTranscript.length)
+
             const reportRes = await fetch("/api/ai-tutor/report", {
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ transcript: fullTranscript })
             })
+
+            if (!reportRes.ok) {
+                const errText = await reportRes.text()
+                throw new Error(`Report API 500: ${errText}`)
+            }
+
             const report = await reportRes.json()
             setReportData(report)
 
             // 2. Save Session
             await fetch("/api/ai-tutor/save", {
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     messages: chats,
-                    duration: 300, // TODO: Track actual duration
+                    duration: 300,
                     report: report
                 })
             })
         } catch (e) {
-            console.error(e)
+            console.error("Report Generation Failed:", e)
+            // Fallback so user isn't stuck
+            setReportData({
+                identity: { archetype: "Analysis Failed", description: "We couldn't generate the full report due to a connection error." },
+                insights: { fluency: "N/A", grammar: "N/A", vocabulary: "N/A" },
+                patterns: ["Please try again later."],
+                refinements: [],
+                next_step: "Practice more to generate data."
+            })
         } finally {
             setReportLoading(false)
         }
@@ -183,14 +222,17 @@ export default function AITutor() {
             recorder.ondataavailable = async (e) => {
                 const blob = e.data
                 if (blob.size < 100) return
-
-                // Check if we are already disabled (session ended?)
                 if (!started) return
 
                 const base64 = await blobToBase64(blob)
 
-                // Speech → Text
                 console.log("Processing audio chunk...")
+                // Increment request ID to invalidate previous pending requests
+                const currentRequestId = ++requestCounter.current
+
+                // Set processing TRUE immediately to lock UI
+                setProcessing(true)
+
                 const dg = await fetch("/api/deepgram", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -202,15 +244,19 @@ export default function AITutor() {
 
                 console.log("Deepgram Transcript:", dg.transcript)
 
+                // If a newer request started while we were processing speech-to-text, abort this one
+                if (requestCounter.current !== currentRequestId) {
+                    console.log("Request obsolete (barge-in detected during STT). Ignoring.")
+                    return
+                }
+
                 if (dg.transcript && dg.transcript.trim().length > 1) {
                     setTranscript(dg.transcript)
                     setChats(prev => [...prev, { role: "user", content: dg.transcript, timestamp: new Date() }])
 
-                    setProcessing(true)
-
                     try {
-                        // 1) Analyze fluency
-                        const fluencyRes = await fetch("/api/fluency/analyze", {
+                        // 1) Analyze fluency (Parallel)
+                        const fluencyPromise = fetch("/api/fluency/analyze", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
@@ -218,8 +264,7 @@ export default function AITutor() {
                                 duration: 3,
                                 deepgram: dg.result
                             })
-                        })
-                        const fluency = await fluencyRes.json()
+                        }).then(r => r.json())
 
                         // 2) AI Response
                         const aiResponseRaw = await fetch("/api/ai", {
@@ -227,31 +272,46 @@ export default function AITutor() {
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 transcript: dg.transcript,
-                                fluency: fluency
+                                fluency: { metrics: { fluencyScore: 0.5 } }, // optimistic fluency for speed
+                                firstName: firstName
                             })
                         })
 
                         if (!aiResponseRaw.ok) throw new Error("AI API Failed")
                         const ai = await aiResponseRaw.json()
 
-                        // Personality Injection
-                        const cues = ["Interesting.", "I see.", "Go on.", "Right.", "Tell me more."]
-                        const randomCue = Math.random() > 0.7 ? cues[Math.floor(Math.random() * cues.length)] + " " : ""
-                        const personalizedResponse = `${randomCue}${ai.response}`
+                        // Check lock again before speaking
+                        if (requestCounter.current !== currentRequestId) {
+                            console.log("Request obsolete (barge-in detected during AI generation). Ignoring.")
+                            return
+                        }
 
-                        setAiResponse(personalizedResponse)
-                        await speak(personalizedResponse)
+                        // Store AI response with corrections
+                        const aiMessage = {
+                            role: "assistant" as const,
+                            content: ai.response,
+                            timestamp: new Date(),
+                            corrections: ai.corrections || []
+                        }
+                        setChats(prev => [...prev, aiMessage])
+
+                        setAiResponse(ai.response)
+                        await speak(ai.response)
 
                     } catch (err) {
                         console.error("AI/Fluency Pipeline Error:", err)
-                        setAiResponse("I'm having trouble connecting. Could you say that again?")
-                        setProcessing(false) // release lock
-                        await speak("I didn't quite catch that.")
+                        if (requestCounter.current === currentRequestId) {
+                            setAiResponse("I'm having trouble connecting. Could you say that again?")
+                            setProcessing(false)
+                            await speak("I didn't quite catch that.")
+                        }
                     }
                 } else {
                     console.log("Empty transcript, ignoring.")
-                    // Optional: If silence was long but no words, maybe prompt? 
-                    // For now, simply doing nothing lets the user try again naturally.
+                    // If we locked processing for an empty transcript, unlock it now
+                    if (requestCounter.current === currentRequestId) {
+                        setProcessing(false)
+                    }
                 }
             }
 
@@ -285,7 +345,10 @@ export default function AITutor() {
                         console.log("Barge-in detected! Stopping AI.")
                         audioRef.current?.pause()
                         setSpeaking(false)
-                        setProcessing(false) // Unlock processing if we interrupt
+                        setProcessing(false)
+
+                        // Increment request ID to kill any pending AI generation
+                        requestCounter.current++
                     }
 
                     if (recorder.state === "inactive") {
@@ -296,8 +359,8 @@ export default function AITutor() {
                 } else {
                     // Silence Logic
                     if (recorder.state === "recording") {
-                        // Wait 1.5s of silence before stopping (slightly longer for thought pauses)
-                        if (Date.now() - silenceStart > 1500) {
+                        // Increased silence timeout to 2.5s to prevent fragmentation
+                        if (Date.now() - silenceStart > 2500) {
                             console.log("Silence detected. Stopping recording...")
                             recorder.stop()
                             setListening(false)
@@ -403,9 +466,14 @@ export default function AITutor() {
                         <div className="flex justify-between items-start mb-4">
                             <span className="text-xs font-bold text-blue-400 dark:text-blue-400 uppercase tracking-widest">AI Tutor</span>
                         </div>
-                        <p className="text-xl font-light leading-relaxed text-blue-900 dark:text-blue-100">
-                            {aiResponse || <span className="text-blue-300 dark:text-gray-600 italic">...</span>}
-                        </p>
+                        <div>
+                            <p className="text-xl font-light leading-relaxed text-blue-900 dark:text-blue-100">
+                                {aiResponse || <span className="text-blue-300 dark:text-gray-600 italic">...</span>}
+                            </p>
+                            {chats.length > 0 && chats[chats.length - 1].role === "assistant" && (
+                                <ErrorCorrectionDisplay corrections={chats[chats.length - 1].corrections || []} />
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -442,13 +510,13 @@ export default function AITutor() {
             />
         </div>
     )
+}
 
-    function blobToBase64(blob: Blob): Promise<string> {
-        return new Promise(resolve => {
-            const reader = new FileReader()
-            reader.onloadend = () =>
-                resolve(reader.result?.toString().split(",")[1] || "")
-            reader.readAsDataURL(blob)
-        })
-    }
+function blobToBase64(blob: Blob): Promise<string> {
+    return new Promise(resolve => {
+        const reader = new FileReader()
+        reader.onloadend = () =>
+            resolve(reader.result?.toString().split(",")[1] || "")
+        reader.readAsDataURL(blob)
+    })
 }

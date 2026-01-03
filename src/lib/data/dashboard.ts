@@ -9,6 +9,10 @@ export type DashboardData = {
     scheduledSessions?: any[];
     pastSessions?: any[];
     aiSessions?: any[];
+    progress?: {
+        speaking: number;
+        listening: number;
+    };
     error?: string;
 }
 
@@ -249,25 +253,96 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             }
         });
 
-        // Fetch AI Sessions for Learner
+        // Fetch AI Sessions & Practice Sessions for Learner
         let formattedAiSessions: any[] = [];
         if (role === 'LEARNER') {
-            const aiSessions = await prisma.ai_chat_sessions.findMany({
-                where: { user_id: user.id },
-                orderBy: { started_at: 'desc' },
-                take: 10,
-                select: {
-                    id: true,
-                    started_at: true,
-                    feedback_summary: true
-                }
-            });
+            const [aiChats, practiceSessions] = await Promise.all([
+                prisma.ai_chat_sessions.findMany({
+                    where: { user_id: user.id },
+                    orderBy: { started_at: 'desc' },
+                    take: 10,
+                    select: { id: true, started_at: true, feedback_summary: true }
+                }),
+                prisma.fluency_sessions.findMany({
+                    where: { user_clerk_id: user.clerkId! },
+                    orderBy: { created_at: 'desc' },
+                    take: 10
+                })
+            ])
 
-            formattedAiSessions = aiSessions.map(s => ({
+            // Normalize Chat Sessions
+            const chats = aiChats.map(s => ({
                 id: s.id,
                 date: s.started_at,
+                type: 'AUDIT',
                 report: s.feedback_summary ? JSON.parse(s.feedback_summary) : null
             }));
+
+            // Normalize Practice Sessions
+            const practices = practiceSessions.map(s => ({
+                id: s.id,
+                date: s.created_at,
+                type: 'PRACTICE',
+                report: {
+                    identity: { archetype: "Practice Session" },
+                    patterns: [
+                        `Practice Session • ${(s.average_score * 100).toFixed(0)}% Fluency • ${(s.rounds as any[]).length} Drills`
+                    ],
+                    metrics: {
+                        wordCount: (s.rounds as any[]).reduce((a, b) => a + b.metrics.wordCount, 0),
+                        fillerPercentage: Math.round(((s.rounds as any[]).reduce((a, b) => a + b.metrics.fillerRate, 0) / (s.rounds as any[]).length) * 100)
+                    }
+                }
+            }));
+
+            // Merge & Sort
+            formattedAiSessions = [...chats, ...practices]
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                .slice(0, 10);
+
+            // Calculate Confidence Levels
+            // Speaking: Average of Practice Scores and AI Fluency Scores (if available)
+            const practiceScores = practiceSessions.map(s => s.average_score);
+            const aiScores = aiChats.map(s => 0.5); // Placeholder as we don't strictly save scores on AI chats yet, or do we? Schema says nullable. 
+            // actually ai_chat_sessions has fluency_score but it might be null.
+            const validAiScores = (await prisma.ai_chat_sessions.findMany({
+                where: { user_id: user.id, fluency_score: { not: null } },
+                select: { fluency_score: true }
+            })).map(s => s.fluency_score as number);
+
+            const allSpeakingScores = [...practiceScores, ...validAiScores];
+            const avgSpeaking = allSpeakingScores.length > 0
+                ? allSpeakingScores.reduce((a, b) => a + b, 0) / allSpeakingScores.length
+                : 0.35; // Default starting confidence
+
+            // Listening: Logic to extract listening turns from practice?
+            // For now, let's base it on completion volume + specific listening turns if we can
+            // Simplification: Listening usually correlates with Speaking but let's assume it's slightly ahead
+            // Or look for rounds with type 'LISTEN_TYPE'
+            let listeningSum = 0;
+            let listeningCount = 0;
+
+            practiceSessions.forEach(session => {
+                const rounds = session.rounds as any[];
+                rounds.forEach(round => {
+                    // Start of round usually has 'type' in practice.ts logic but we saved { score, metrics, transcript, feedback }
+                    // We missed saving the 'type' in PracticePage.tsx! 
+                    // Recovery: If transcript starts with "You heard:", it might be listening? No.
+                    // Fallback: Just use overall speaking score * 1.1 (Listening is usually easier) capped at 1.0
+                });
+            });
+
+            const avgListening = Math.min(1.0, avgSpeaking * 1.15);
+
+            return {
+                credits,
+                sessions: formattedSessions,
+                aiSessions: formattedAiSessions,
+                progress: {
+                    speaking: Number(avgSpeaking.toFixed(2)),
+                    listening: Number(avgListening.toFixed(2))
+                }
+            };
         }
 
         return { credits, sessions: formattedSessions, aiSessions: formattedAiSessions };

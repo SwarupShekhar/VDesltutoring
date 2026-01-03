@@ -114,7 +114,7 @@ export function SituationalGateway({ dict }: { dict: any }) {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3, duration: 0.8 }}
                                 viewport={{ once: true }}
-                                className="mt-20 text-center"
+                                className="mt-12 md:mt-20 text-center"
                             >
                                 <div className="h-8 mb-8">
                                     <AnimatePresence mode="wait">

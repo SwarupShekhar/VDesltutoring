@@ -1,13 +1,17 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@deepgram/sdk"
 
-const deepgram = createClient(process.env.DEEPGRAM_API_KEY!)
+const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY
 
 export async function POST(req: Request) {
     try {
-        const { audio, mimeType } = await req.json()
+        if (!DEEPGRAM_API_KEY) {
+            console.error("Deepgram API Key is missing")
+            return NextResponse.json({ error: "Server Configuration Error" }, { status: 500 })
+        }
 
-        const buffer = Buffer.from(audio, "base64")
+        const deepgram = createClient(DEEPGRAM_API_KEY)
+        const { audio, mimeType } = await req.json()
 
         const { result } = await deepgram.listen.prerecorded.transcribeFile(
             Buffer.from(audio, "base64"),

@@ -42,11 +42,11 @@ export default async function RootLayout({
   const { locale } = await params
 
   return (
-    <>
+    <ClerkProvider>
       <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}>
         <BrowserExtensionFix />
         {children}
       </div>
-    </>
+    </ClerkProvider>
   )
 }

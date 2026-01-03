@@ -30,7 +30,7 @@ export function ConversationalHero() {
           setCurrentMessageIndex(index);
           setIsTyping(true);
           setDisplayedText('');
-          
+
           // Simulate typing effect
           let charIndex = 0;
           const typeInterval = setInterval(() => {
@@ -42,7 +42,7 @@ export function ConversationalHero() {
               setIsTyping(false);
             }
           }, 40); // 40ms per character for a calm, human pace
-          
+
           timers.push(typeInterval);
         }, message.delay)
       );
@@ -60,7 +60,7 @@ export function ConversationalHero() {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
+    <div className="max-w-2xl mx-auto py-8 px-4 md:px-0">
       <div className="space-y-4">
         {CONVERSATION.map((message, index) => (
           <AnimatePresence key={message.id}>
@@ -73,11 +73,10 @@ export function ConversationalHero() {
                 className={`flex ${message.sender === 'learner' ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-xs md:max-w-md px-4 py-3 rounded-2xl ${
-                    message.sender === 'learner'
+                  className={`max-w-xs md:max-w-md px-4 py-3 rounded-2xl ${message.sender === 'learner'
                       ? 'bg-indigo-500 text-white rounded-br-none'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-none'
-                  }`}
+                    }`}
                 >
                   {index === currentMessageIndex && isTyping ? (
                     <div className="flex items-center">
@@ -97,7 +96,7 @@ export function ConversationalHero() {
             )}
           </AnimatePresence>
         ))}
-        
+
         {/* Typing indicator */}
         <AnimatePresence>
           {isTyping && currentMessageIndex !== null && currentMessageIndex < CONVERSATION.length - 1 && (

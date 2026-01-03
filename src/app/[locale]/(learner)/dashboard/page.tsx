@@ -10,6 +10,7 @@ import { DashboardError } from '@/components/DashboardError'
 
 
 import { getDashboardData } from '@/lib/data/dashboard';
+import { DailyInsightCard } from '@/components/DailyInsightCard';
 
 export default async function LearnerDashboard({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
@@ -19,6 +20,7 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
   let me = { credits: 0 };
   let sessions = [];
   let aiSessions: any[] = [];
+  let progress: { speaking: number; listening: number } | undefined;
   let error = null;
 
   try {
@@ -26,6 +28,7 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
     me.credits = data.credits || 0;
     sessions = data.sessions;
     aiSessions = data.aiSessions || [];
+    progress = data.progress;
   } catch (err) {
     console.error("Dashboard data fetch error:", err);
     error = err instanceof Error ? err.message : "Unknown error occurred";
@@ -80,6 +83,9 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
           </Button>
         </div>
       </div>
+
+      {/* DAILY INSIGHT */}
+      <DailyInsightCard />
 
       {/* IDENTITY & TIMELINE ROW */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -266,8 +272,8 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
             <CardTitle>{t.yourProgress || 'Your Progress'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <ConfidenceMeter label={t.confidenceSpeaking || "Speaking confidence"} initialLevel={0.35} />
-            <ConfidenceMeter label={t.confidenceListening || "Listening confidence"} initialLevel={0.45} />
+            <ConfidenceMeter label={t.confidenceSpeaking || "Speaking confidence"} initialLevel={progress?.speaking || 0.35} />
+            <ConfidenceMeter label={t.confidenceListening || "Listening confidence"} initialLevel={progress?.listening || 0.45} />
           </CardContent>
         </Card>
       </div>

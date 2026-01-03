@@ -3,7 +3,8 @@ export type MissionType =
     | "CONFIDENCE"
     | "ENDURANCE"
     | "CALM"
-    | "STORY";
+    | "STORY"
+    | "FLUENCY"; // NEW: Data-driven fluency missions
 
 export interface DailyMission {
     id: string;
@@ -18,7 +19,8 @@ export type MissionGoal =
     | { stars: number }
     | { turns: number }
     | { maxFillers: number; turns: number }
-    | { minWords: number };
+    | { minWords: number }
+    | { cumulativeFluency: number }; // NEW: Requires total fluency score >= value
 
 export interface MissionProgress {
     flow: number;
@@ -26,6 +28,7 @@ export interface MissionProgress {
     turns: number;
     fillers: number;
     words: number;
+    cumulativeFluency: number; // NEW: Tracks cumulative fluency score
 }
 
 const MISSIONS: DailyMission[] = [
@@ -63,6 +66,13 @@ const MISSIONS: DailyMission[] = [
         title: "Story Mode",
         description: "Speak in full, connected thoughts.",
         goal: { minWords: 60 }
+    },
+    {
+        id: "fluency",
+        type: "FLUENCY",
+        title: "Fluency Challenge",
+        description: "Maintain high fluency across multiple turns.",
+        goal: { cumulativeFluency: 3.5 } // Requires ~6 turns at 0.6 avg or ~7 at 0.5
     }
 ];
 
@@ -105,6 +115,11 @@ export function evaluateMission(
     if ("minWords" in goal) {
         const g = goal as unknown as { minWords: number };
         return progress.words >= g.minWords;
+    }
+
+    // NEW: Cumulative fluency score evaluation
+    if ("cumulativeFluency" in goal) {
+        return progress.cumulativeFluency >= goal.cumulativeFluency;
     }
 
     return false;

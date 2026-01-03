@@ -158,7 +158,14 @@ export default function AITutor() {
 
     const startRecording = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            // 1. Enable Echo Cancellation to prevent AI hearing itself
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true
+                }
+            })
             streamRef.current = stream
 
             const audioContext = new AudioContext()
@@ -175,11 +182,15 @@ export default function AITutor() {
 
             recorder.ondataavailable = async (e) => {
                 const blob = e.data
-                if (blob.size < 100) return // ignore tiny empty blobs
+                if (blob.size < 100) return
+
+                // Check if we are already disabled (session ended?)
+                if (!started) return
 
                 const base64 = await blobToBase64(blob)
 
                 // Speech → Text
+                console.log("Processing audio chunk...")
                 const dg = await fetch("/api/deepgram", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -189,92 +200,105 @@ export default function AITutor() {
                     })
                 }).then(r => r.json())
 
-                console.log("Deepgram:", dg)
+                console.log("Deepgram Transcript:", dg.transcript)
 
-                if (dg.transcript && dg.transcript.length > 2) {
+                if (dg.transcript && dg.transcript.trim().length > 1) {
                     setTranscript(dg.transcript)
                     setChats(prev => [...prev, { role: "user", content: dg.transcript, timestamp: new Date() }])
 
                     setProcessing(true)
 
-                    // 1) Analyze fluency patterns
-                    const fluencyRes = await fetch("/api/fluency/analyze", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            transcript: dg.transcript,
-                            duration: 3, // since MediaRecorder chunks ~3s
-                            deepgram: dg.result // Crucial for hesitation/timing analysis
+                    try {
+                        // 1) Analyze fluency
+                        const fluencyRes = await fetch("/api/fluency/analyze", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                transcript: dg.transcript,
+                                duration: 3,
+                                deepgram: dg.result
+                            })
                         })
-                    })
+                        const fluency = await fluencyRes.json()
 
-                    const fluency = await fluencyRes.json()
-
-                    // 2) Send transcript + fluency to AI
-                    const aiResponseRaw = await fetch("/api/ai", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            transcript: dg.transcript,
-                            fluency: fluency
+                        // 2) AI Response
+                        const aiResponseRaw = await fetch("/api/ai", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                transcript: dg.transcript,
+                                fluency: fluency
+                            })
                         })
-                    })
 
-                    if (!aiResponseRaw.ok) {
-                        let errorMessage = `AI API Error: ${aiResponseRaw.status}`
-                        try {
-                            const errorData = await aiResponseRaw.json()
-                            if (errorData.detail) errorMessage = errorData.detail
-                        } catch (e) {
-                            // ignore json parse error
-                        }
-                        setAiResponse(`Error: ${errorMessage}`)
-                        setProcessing(false)
-                        throw new Error(errorMessage)
+                        if (!aiResponseRaw.ok) throw new Error("AI API Failed")
+                        const ai = await aiResponseRaw.json()
+
+                        // Personality Injection
+                        const cues = ["Interesting.", "I see.", "Go on.", "Right.", "Tell me more."]
+                        const randomCue = Math.random() > 0.7 ? cues[Math.floor(Math.random() * cues.length)] + " " : ""
+                        const personalizedResponse = `${randomCue}${ai.response}`
+
+                        setAiResponse(personalizedResponse)
+                        await speak(personalizedResponse)
+
+                    } catch (err) {
+                        console.error("AI/Fluency Pipeline Error:", err)
+                        setAiResponse("I'm having trouble connecting. Could you say that again?")
+                        setProcessing(false) // release lock
+                        await speak("I didn't quite catch that.")
                     }
-
-                    const ai = await aiResponseRaw.json()
-
-                    // Personality Injection (Req D)
-                    const cues = ["Nice.", "Good.", "That works.", "Okay.", "I hear you.", "Great.", "Interesting."]
-                    const randomCue = cues[Math.floor(Math.random() * cues.length)]
-                    const personalizedResponse = `${randomCue} ${ai.response}`
-
-                    setAiResponse(personalizedResponse)
-
-                    // Gemini → Voice
-                    await speak(personalizedResponse)
+                } else {
+                    console.log("Empty transcript, ignoring.")
+                    // Optional: If silence was long but no words, maybe prompt? 
+                    // For now, simply doing nothing lets the user try again naturally.
                 }
             }
 
             let silenceStart = Date.now()
 
             const detectVoice = () => {
-                if (!analyser) return
+                if (!analyser || !started) {
+                    if (voiceDetectRef.current) cancelAnimationFrame(voiceDetectRef.current)
+                    return
+                }
 
                 analyser.getByteFrequencyData(data)
+                // specific frequency range (human voice) might be better, but avg is okay for simple VAD
                 const volume = data.reduce((a, b) => a + b, 0) / data.length
 
-                const THRESHOLD = 10
+                // Dynamic Threshold: If AI is speaking, raise threshold to prevent self-interruption (Barge-in requires shouting)
+                const BASE_THRESHOLD = 15 // Slightly higher base
+                const INTERRUPT_THRESHOLD = 40 // Much higher if AI is talking
 
-                if (volume > THRESHOLD) {
+                // Check if AI is currently speaking (via ref check to be safe)
+                const isAiSpeaking = audioRef.current && !audioRef.current.paused
+
+                const effectiveThreshold = isAiSpeaking ? INTERRUPT_THRESHOLD : BASE_THRESHOLD
+
+                if (volume > effectiveThreshold) {
                     // Speaking detected
                     silenceStart = Date.now()
 
-                    // Barge-in: User is speaking, stop AI immediately
-                    if (audioRef.current && !audioRef.current.paused) {
-                        audioRef.current.pause();
-                        setSpeaking(false);
+                    // Barge-in Logic
+                    if (isAiSpeaking) {
+                        console.log("Barge-in detected! Stopping AI.")
+                        audioRef.current?.pause()
+                        setSpeaking(false)
+                        setProcessing(false) // Unlock processing if we interrupt
                     }
 
                     if (recorder.state === "inactive") {
-                        recorder.start() // Record indefinitely until silence
+                        console.log("Voice started. Recording...")
+                        recorder.start()
                         setListening(true)
                     }
                 } else {
-                    // Silence logic
+                    // Silence Logic
                     if (recorder.state === "recording") {
-                        if (Date.now() - silenceStart > 1200) { // 1.2s of silence stops recording
+                        // Wait 1.5s of silence before stopping (slightly longer for thought pauses)
+                        if (Date.now() - silenceStart > 1500) {
+                            console.log("Silence detected. Stopping recording...")
                             recorder.stop()
                             setListening(false)
                         }
@@ -286,7 +310,7 @@ export default function AITutor() {
 
             detectVoice()
         } catch (err) {
-            console.error("Recording failed:", err)
+            console.error("Recording init failed:", err)
         }
     }
 

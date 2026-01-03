@@ -1,33 +1,32 @@
 import { NextResponse } from "next/server"
 import { generateDrills } from "@/lib/fluencyTrainer"
-import { geminiService } from "@/lib/gemini-service"
+import { openaiService } from "@/lib/openai-service"
 
 const REPORT_PROMPT = `
-You are a warm, supportive English fluency coach. Analyze the student transcript.
+You are a STERN, ANALYTICAL English fluency auditor. Analyze the student transcript.
 
 Rules:
-- NEVER use words like "Score", "Grade", "Test", "Mistake", "Wrong", "Error", "Bad".
-- Use words like "Pattern", "Insight", "Observation", "Refinement", "Style".
-- Tone: Encouraging, psychologically safe.
-- Instead of judging, describe habits.
-- Assign a "Speaking Identity".
+- DO NOT be "nice". Be accurate.
+- Use words like "Gap", "Inefficiency", "Latency", "Repetition".
+- Tone: Clinical, Professional, Objective.
+- Your job is to find the FLAWS so they can be fixed.
 
-Identity options:
-1. The Thoughtful Speaker
-2. The Flow Builder
-3. The Rapid Thinker
-4. The Translator
-5. The Storyteller
+Identity options (Assign based on flaws):
+1. The Hesitant Speaker (High pauses/restarts)
+2. The Repeater (High redundancy)
+3. The Searcher (Low vocabulary, high fillers)
+4. The Connector (Good logic, poor grammar)
+5. The Flow Master (Rare - only if perfect)
 
-Output valid JSON in this format:
+Output valid JSON:
 {
-  "identity": { "archetype": "", "description": "" },
-  "insights": { "fluency": "", "grammar": "", "vocabulary": "" },
-  "patterns": [],
+  "identity": { "archetype": "", "description": "Clinical description of their main struggle." },
+  "insights": { "fluency": "Critique of speed and gaps.", "grammar": "Critique of structure.", "vocabulary": "Critique of word choice." },
+  "patterns": ["List 3 specific bad habits found in the text"],
   "refinements": [
-    { "original": "", "better": "", "explanation": "" }
+    { "original": "", "better": "", "explanation": "Why the original was weak." }
   ],
-  "next_step": ""
+  "next_step": "One hard drill to fix the main flaw."
 }
 `
 
@@ -45,55 +44,33 @@ export async function POST(req: Request) {
     const uniqueWordCount = new Set(studentText.split(/\s+/).filter((w: string) => w.length > 0)).size
 
     if (!studentText || studentText.length < 10 || uniqueWordCount < 3) {
-      const empty = {
-        identity: {
-          archetype: "The Explorer",
-          description: "You are just starting to reveal your speaking style."
-        },
-        insights: {
-          fluency: "I need a bit more speech to hear your flow.",
-          grammar: "I'm still learning your structure.",
-          vocabulary: "Tell me more so I can hear your word choices."
-        },
-        patterns: [
-          "You are beginning to open up.",
-          "Your voice is just starting to emerge."
-        ],
-        refinements: [],
-        next_step: "Keep speaking naturally. Tell me more about your day."
-      }
-
+      // Return "Insufficient Data" instead of a placeholder report
       return NextResponse.json({
-        ...empty,
-        drills: generateDrills(empty.patterns),
-        metrics: {
-          wordCount: transcript?.split(" ").length || 0,
-          fillerCount: 0,
-          fillerPercentage: 0,
-          uniqueWords: uniqueWordCount
-        }
+        identity: { archetype: "No Data", description: "Not enough speech detected." },
+        insights: { fluency: "N/A", grammar: "N/A", vocabulary: "N/A" },
+        patterns: [],
+        refinements: [],
+        next_step: "Speak more next time.",
+        drills: [],
+        metrics: { wordCount: 0, fillerCount: 0, fillerPercentage: 0, uniqueWords: 0 }
       })
     }
 
-    // Prepare full prompt for Gemini
-    const fullPrompt = `${REPORT_PROMPT}\n\nTRANSCRIPT:\n${transcript}`
-    const report = await geminiService.generateRawJson(fullPrompt)
+    const report = await openaiService.generateJsonReport(REPORT_PROMPT, transcript)
 
-    // -------- Metrics (local, deterministic) ----------
-    const words = transcript.trim().split(/\s+/)
+    // -------- Metrics (Text Analysis) ----------
+    const words = studentText.split(/\s+/)
     const wordCount = words.length
 
     const fillerRegex = /\b(um|uh|like|you know|i mean|sort of|kind of)\b/gi
-    const fillers = transcript.match(fillerRegex) || []
+    const fillers = studentText.match(fillerRegex) || []
     const fillerCount = fillers.length
-
-    const uniqueWords = new Set(words.map((w: string) => w.toLowerCase())).size
 
     const metrics = {
       wordCount,
       fillerCount,
       fillerPercentage: wordCount ? Math.round((fillerCount / wordCount) * 100) : 0,
-      uniqueWords
+      uniqueWords: uniqueWordCount
     }
 
     // -------- Fluency drills ----------
@@ -107,23 +84,6 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     console.error("Fluency report failed:", error)
-
-    // Safe fallback so UI never breaks
-    return NextResponse.json({
-      identity: {
-        archetype: "The Speaker",
-        description: "Your voice is developing."
-      },
-      insights: {
-        fluency: "Keep speaking to reveal your style.",
-        grammar: "Your structure is forming.",
-        vocabulary: "Your word choices are growing."
-      },
-      patterns: ["Your fluency is still emerging."],
-      refinements: [],
-      next_step: "Keep talking - your fluency grows with use.",
-      drills: [],
-      metrics: { wordCount: 0, fillerCount: 0, fillerPercentage: 0, uniqueWords: 0 }
-    })
+    return NextResponse.json({ error: "Failed to generate report" }, { status: 500 })
   }
 }

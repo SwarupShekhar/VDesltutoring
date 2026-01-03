@@ -1,6 +1,6 @@
 export type PracticeTurn = {
     id: string
-    type: "LISTEN_REACT" | "PICK_SPEAK" | "FINISH_THOUGHT" | "QUICK_FIRE" | "ROLEPLAY"
+    type: "LISTEN_REACT" | "PICK_SPEAK" | "FINISH_THOUGHT" | "QUICK_FIRE" | "ROLEPLAY" | "QUICK_RESPONSE" | "OPINION" | "DEBATE" | "STORYTELLING" | "EXPLANATION" | "LISTEN_TYPE" | "COMPLETE_SENTENCE"
     prompt: string
     audioUrl?: string
     choices?: string[]

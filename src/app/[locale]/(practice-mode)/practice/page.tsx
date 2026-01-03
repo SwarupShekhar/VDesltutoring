@@ -1,13 +1,24 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Mic, Square, Star, Flame, Trophy, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/Button"
 import { PracticeTurn } from "@/lib/practice"
 import { getTodayMission, evaluateMission, DailyMission, MissionProgress } from "@/lib/dailyMission"
+import {
+    computeFluencyScore,
+    extractMetricsFromDeepgram,
+    scoreToStars,
+    getCoachingPoints,
+    FluencyMetrics
+} from "@/lib/fluencyScore"
+import { pickMicroLesson, getMicroLesson } from "@/lib/microLessonSelector"
+import { MicroLesson } from "@/lib/microLessons"
+import { getSkillProgress, incrementSkillProgress } from "@/lib/skillProgress"
 
-import { COMPREHENSION_BANK } from "@/lib/comprehensionBank"
+import { PracticeFeedback } from "./PracticeFeedback"
 
 // --- Helper: Stars Overlay Component ---
 function StarsOverlay({ stars, onComplete }: { stars: number, onComplete: () => void }) {
@@ -61,6 +72,7 @@ function MissionCard({ mission, progress, complete }: { mission: DailyMission, p
         if ("turns" in goal) return `${progress.turns}/${goal.turns} Turns`;
         if ("flow" in goal) return `${Math.round(progress.flow)}%/${goal.flow}% Flow`;
         if ("minWords" in goal) return `${progress.words}/${goal.minWords} Words`;
+        if ("cumulativeFluency" in goal) return `${progress.cumulativeFluency.toFixed(1)}/${goal.cumulativeFluency} Fluency`;
         return "";
     }
 
@@ -72,6 +84,7 @@ function MissionCard({ mission, progress, complete }: { mission: DailyMission, p
         if ("turns" in goal) return (progress.turns / goal.turns) * 100;
         if ("flow" in goal) return (progress.flow / goal.flow) * 100; // Rough approximation
         if ("minWords" in goal) return (progress.words / goal.minWords) * 100;
+        if ("cumulativeFluency" in goal) return (progress.cumulativeFluency / goal.cumulativeFluency) * 100;
         return 0;
     }
 
@@ -170,11 +183,10 @@ export default function PracticePage() {
     const [isProcessing, setIsProcessing] = useState(false)
     const [transcript, setTranscript] = useState("")
     const [feedback, setFeedback] = useState("")
+    const [microLesson, setMicroLesson] = useState<MicroLesson | null>(null)
+    const [skillLevel, setSkillLevel] = useState(1)
+    const [textInput, setTextInput] = useState("") // New state for Dictation/Comprehension
 
-    // Listening Challenge State
-    const [currentClip, setCurrentClip] = useState(
-        COMPREHENSION_BANK[Math.floor(Math.random() * COMPREHENSION_BANK.length)]
-    )
 
     // Gamification State
     const [stars, setStars] = useState(0)
@@ -193,9 +205,19 @@ export default function PracticePage() {
         stars: 0,
         turns: 0,
         fillers: 0,
-        words: 0
+        words: 0,
+        cumulativeFluency: 0
     })
     const [missionComplete, setMissionComplete] = useState(false)
+
+    // Polish State
+    const [lastScore, setLastScore] = useState(0)
+    const [currentMetrics, setCurrentMetrics] = useState<FluencyMetrics | null>(null)
+
+    // Session Batching State
+    const [sessionRounds, setSessionRounds] = useState<{ score: number; metrics: FluencyMetrics; transcript: string; feedback: string }[]>([])
+    const [isSessionFinished, setIsSessionFinished] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
 
     // Reward State
     const [missionCompleted, setMissionCompleted] = useState(false) // Trigger for overlay
@@ -207,10 +229,6 @@ export default function PracticePage() {
 
     const [error, setError] = useState<string | null>(null)
 
-    // Listening Challenge Logic
-    const [isListeningRecording, setIsListeningRecording] = useState(false)
-    const [listeningFeedback, setListeningFeedback] = useState<string | null>(null)
-    const [listeningSuccess, setListeningSuccess] = useState(false)
 
 
 
@@ -288,12 +306,21 @@ export default function PracticePage() {
     async function fetchNextTurn() {
         try {
             setError(null)
-            // Rotate Listening Clip
-            setCurrentClip(
-                COMPREHENSION_BANK[Math.floor(Math.random() * COMPREHENSION_BANK.length)]
-            )
+            // Rotate Listening Clip - REMOVED (Legacy)
 
-            const res = await fetch("/api/practice/turn")
+            // Get recent fluency score for adaptive difficulty
+            let avgFluencyScore = 0.5
+            try {
+                const history = JSON.parse(localStorage.getItem('fluency_history') || '[]')
+                if (history.length > 0) {
+                    const recentScores = history.slice(-5).map((h: any) => h.fluencyScore || 0.5)
+                    avgFluencyScore = recentScores.reduce((a: number, b: number) => a + b, 0) / recentScores.length
+                }
+            } catch (e) {
+                // Fallback to default
+            }
+
+            const res = await fetch(`/api/practice/turn?fluencyScore=${avgFluencyScore.toFixed(2)}`)
             if (!res.ok) {
                 const err = await res.text()
                 throw new Error(`Failed to load turn: ${res.status} ${err}`)
@@ -301,7 +328,13 @@ export default function PracticePage() {
             const data = await res.json()
             setTurn(data)
             setTranscript("")
+            setTextInput("") // Reset text input
+            setTurn(data)
+            setTranscript("")
+            setTextInput("") // Reset text input
             setFeedback("")
+            setCurrentMetrics(null) // Reset metrics
+            setMicroLesson(null)
             // Don't reset gamification state! (stars, streak, skill persist)
         } catch (err) {
             console.error("Fetch Next Turn Error:", err)
@@ -344,7 +377,7 @@ export default function PracticePage() {
 
     async function processAudio(blob: Blob, mimeType: string) {
         try {
-            // 1. STT
+            // 1. STT via Deepgram
             const base64 = await blobToBase64(blob)
             const dgRes = await fetch("/api/deepgram", {
                 method: "POST",
@@ -353,33 +386,58 @@ export default function PracticePage() {
             const { transcript, result: dgResult } = await dgRes.json()
             setTranscript(transcript)
 
-            // 2. Evaluate
-            const evalRes = await fetch("/api/practice/evaluate", {
-                method: "POST",
-                body: JSON.stringify({
-                    transcript,
-                    turn,
-                    fluency: {
-                        // In real app, extract actual hesitation count using timestamps
-                        HESITATION: 0,
-                        FILLER_OVERUSE: 0
-                    }
-                })
-            })
-            const evaluation = await evalRes.json()
+            // 2. Extract Real Fluency Metrics from Deepgram
+            // Estimate audio duration from Deepgram words
+            const words = dgResult?.results?.channels?.[0]?.alternatives?.[0]?.words || []
+            const audioDuration = words.length > 0
+                ? words[words.length - 1]?.end || 10
+                : 10
 
-            // 3. Update State & Rewards
-            // 3. Update State & Rewards
-            // Add supportive listening feedback if relevant
-            let finalFeedback = evaluation.feedback || "Good job!"
-            if (evaluation.stars >= 4) {
-                finalFeedback = `Nice — you caught that. Your listening is getting sharper. ${finalFeedback}`
+            const metrics = extractMetricsFromDeepgram(dgResult, audioDuration)
+            const fluencyScore = computeFluencyScore(metrics)
+            const stars = scoreToStars(fluencyScore)
+
+            // 3. Get Honest Coaching Points
+            const coachingPoints = getCoachingPoints(metrics)
+
+            // 4. Build Feedback Based on Actual Performance
+            let finalFeedback = ''
+
+            if (fluencyScore >= 0.75) {
+                finalFeedback = 'Excellent flow! You sound confident.'
+            } else if (fluencyScore >= 0.55) {
+                finalFeedback = coachingPoints[0] || 'Good effort. You are developing a steady rhythm.'
             } else {
-                finalFeedback = `Good try. Let’s listen again — your ear is still tuning. ${finalFeedback}`
+                finalFeedback = coachingPoints[0] || 'Your pauses are holding you back. Try starting faster.'
+            }
+
+            // Add specific metric callouts (Softer if score is high)
+            if (metrics.fillerRate > 0.08) {
+                finalFeedback += fluencyScore > 0.75 ? ' Try to reduce those few fillers.' : ' Your filler words are lowering your fluency.'
+            }
+            if (metrics.pauseRatio > 0.15) {
+                finalFeedback += fluencyScore > 0.75 ? ' Watch out for small pauses.' : ' Your pauses are breaking your flow.'
+            }
+
+            // Picks targeted micro-lesson if metrics show specific weakness
+            const lessonType = pickMicroLesson(metrics)
+            const lesson = getMicroLesson(lessonType)
+            setMicroLesson(lesson)
+
+            if (lesson) {
+                const progress = getSkillProgress(lesson.path)
+                setSkillLevel(progress.currentLevel)
             }
 
             setFeedback(finalFeedback)
-            handleRewards(evaluation.stars, evaluation.confidence, transcript)
+            setLastScore(fluencyScore)
+            setCurrentMetrics(metrics)
+
+            // Add to session rounds
+            const newRound = { score: fluencyScore, metrics, transcript, feedback: finalFeedback }
+            setSessionRounds(prev => [...prev, newRound])
+
+            handleRewards(stars, fluencyScore, transcript, metrics)
 
         } catch (err) {
             console.error("Processing failed", err)
@@ -389,115 +447,164 @@ export default function PracticePage() {
         }
     }
 
-    // --- Listening Challenge Recording Logic ---
-    async function startListeningRecording() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-            const recorder = new MediaRecorder(stream)
-            mediaRecorder.current = recorder
-            chunksRef.current = []
+    // --- SAVE SESSION LOGIC ---
+    useEffect(() => {
+        if (isSessionFinished && !isSaving && sessionRounds.length > 0) {
+            const saveSession = async () => {
+                setIsSaving(true)
+                try {
+                    const avgScore = sessionRounds.reduce((acc, r) => acc + r.score, 0) / sessionRounds.length
 
-            recorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunksRef.current.push(e.data)
+                    await fetch('/api/practice/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            rounds: sessionRounds,
+                            averageScore: avgScore
+                        })
+                    })
+                } catch (e) {
+                    console.error("Failed to save session", e)
+                }
             }
-
-            recorder.onstop = async () => {
-                const blob = new Blob(chunksRef.current, { type: "audio/webm" })
-                await processListeningAudio(blob, recorder.mimeType)
-                stream.getTracks().forEach(t => t.stop())
-            }
-
-            recorder.start()
-            setIsListeningRecording(true)
-        } catch (err) {
-            console.error("Mic access failed", err)
+            saveSession()
         }
+    }, [isSessionFinished, isSaving, sessionRounds])
+
+    // --- RENDER: SESSION SUMMARY ---
+    if (isSessionFinished) {
+        const avgScore = sessionRounds.reduce((acc, r) => acc + r.score, 0) / sessionRounds.length
+        const avgWpm = Math.round(sessionRounds.reduce((acc, r) => acc + (r.metrics.wpm || 0), 0) / sessionRounds.length)
+        const avgPauses = Math.round((sessionRounds.reduce((acc, r) => acc + r.metrics.pauseRatio, 0) / sessionRounds.length) * 100)
+
+        return (
+            <div className="min-h-screen bg-[#FDFBF7] dark:bg-slate-950 flex flex-col pt-20 px-4 md:px-8 max-w-7xl mx-auto font-sans">
+                <main className="flex-1 flex flex-col justify-center items-center">
+                    <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-3xl shadow-xl p-8 md:p-12 text-center border border-slate-100 dark:border-slate-800 space-y-8 animate-in zoom-in-95 duration-500">
+
+                        <div className="space-y-2">
+                            <div className="inline-block p-4 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-4">
+                                <CheckCircle className="w-12 h-12" />
+                            </div>
+                            <h1 className="text-4xl font-serif font-bold text-slate-900 dark:text-white">Session Complete</h1>
+                            <p className="text-slate-600 dark:text-slate-400">Great work! Here is your average performance.</p>
+                        </div>
+
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-3 gap-4 py-8 border-y border-slate-100 dark:border-slate-800">
+                            <div className="space-y-1">
+                                <p className="text-sm font-semibold uppercase text-slate-400 tracking-wider">Fluency</p>
+                                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{Math.round(avgScore * 100)}%</p>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-sm font-semibold uppercase text-slate-400 tracking-wider">Pace</p>
+                                <p className="text-3xl font-bold text-slate-800 dark:text-slate-200">{avgWpm} <span className="text-sm text-slate-400 font-normal">wpm</span></p>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-sm font-semibold uppercase text-slate-400 tracking-wider">Pauses</p>
+                                <p className={`text-3xl font-bold ${avgPauses < 15 ? 'text-green-500' : 'text-orange-500'}`}>{avgPauses}%</p>
+                            </div>
+                        </div>
+
+                        <Link href="/dashboard" prefetch={false}>
+                            <Button size="lg" className="w-full py-6 text-lg rounded-xl shadow-lg shadow-blue-500/20">
+                                Return to Dashboard
+                            </Button>
+                        </Link>
+                    </div>
+                </main>
+            </div>
+        )
     }
 
-    function stopListeningRecording() {
-        if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
-            mediaRecorder.current.stop()
-            setIsListeningRecording(false)
-            // setIsProcessing(true) // Optional: share processing state or add separate one
-        }
-    }
-
-    async function processListeningAudio(blob: Blob, mimeType: string) {
+    // --- Text Submission Logic (for Comprehension) ---
+    async function handleSubmitText() {
+        if (!textInput.trim() || !turn) return
+        setIsProcessing(true)
         try {
-            const base64 = await blobToBase64(blob)
-
-            // 1. STT
-            const dgRes = await fetch("/api/deepgram", {
-                method: "POST",
-                body: JSON.stringify({ audio: base64, mimeType })
-            })
-            const { transcript } = await dgRes.json()
-
-            // 2. Evaluate using same endpoint but as a "Listening Challenge" turn
-            const evalRes = await fetch("/api/practice/evaluate", {
+            // Evaluate text response (Grammar/Relevance)
+            const res = await fetch("/api/practice/evaluate", {
                 method: "POST",
                 body: JSON.stringify({
-                    transcript,
-                    turn: {
-                        prompt: currentClip.prompt, // Evaluate against the comprehension question
-                        type: "listening_challenge",
-                        situation: "listening_warmup"
-                    },
+                    transcript: textInput,
+                    turn,
                     fluency: { HESITATION: 0, FILLER_OVERUSE: 0 }
                 })
             })
-            const evaluation = await evalRes.json()
-
-            // 3. Handle Result
-            if (evaluation.stars > 0 || evaluation.success) {
-                setListeningSuccess(true)
-                setListeningFeedback("Correct! You understood the clip.")
-                handleRewards(1, 0.8, transcript) // Small reward: 1 star
-            } else {
-                setListeningSuccess(false)
-                setListeningFeedback("Not quite. Listen again and try to answer exactly.")
-            }
-
-        } catch (err) {
-            console.error("Listening Check Failed", err)
-            setListeningFeedback("Could not check answer.")
+            const data = await res.json()
+            setFeedback(data.feedback)
+            // Reward for writing (Treat as max fluency for scoring purposes to unify reward logic, or map differently)
+            // Since it's writing, we give stars based on AI evaluation
+            const stars = data.stars || 1 // Fallback
+            handleRewards(stars, 0.8, textInput)
+        } catch (e) {
+            console.error("Evaluation failed", e)
+            setFeedback("Could not check answer.")
+        } finally {
+            setIsProcessing(false)
         }
     }
 
-    // Updated handleRewards to accept transcript for word count
-    function handleRewards(newStars: number, confidence: number, text: string) {
-        // Update Stars
+
+    // Updated handleRewards using fluency score for data-driven rewards
+    function handleRewards(newStars: number, fluencyScore: number, text: string, metrics?: FluencyMetrics) {
+        // Update Stars (now based on real fluency score)
         setStars(newStars)
         updateProgress(newStars) // Update local stats
         if (newStars > 0) setShowStars(true)
 
-        // Update Streak
+        // Update Streak - Only increases when performance is good (stars >= 2)
+        // Resets on poor performance (stars = 1) to make streaks meaningful
         if (newStars >= 2) {
             setStreak(s => s + 1)
         } else {
-            setStreak(0)
+            setStreak(0) // Streak resets on low fluency
         }
 
-        // Update Skill Bar (Flow Meter)
-        // Weighted average: 85% history + 15% new confidence
+        // Update Skill Bar (Flow Meter) using actual fluency score
         let newSkill = 50
         setSkill(prev => {
-            const score = confidence * 100
+            const score = fluencyScore * 100
             newSkill = Math.min(100, Math.max(0, prev * 0.85 + score * 0.15))
             return newSkill
         })
+
+        // Save fluency data to localStorage for dashboard
+        try {
+            const fluencyData = {
+                timestamp: Date.now(),
+                fluencyScore,
+                stars: newStars,
+                metrics: metrics || null
+            }
+            const history = JSON.parse(localStorage.getItem('fluency_history') || '[]')
+            history.push(fluencyData)
+            // Keep last 50 entries
+            if (history.length > 50) history.shift()
+            localStorage.setItem('fluency_history', JSON.stringify(history))
+        } catch (e) {
+            console.error('Failed to save fluency history', e)
+        }
 
         // --- UPDATE MISSION PROGRESS ---
         if (mission && !missionComplete) {
             setMissionProgress((prev: MissionProgress) => {
                 const next = { ...prev }
 
-                // Accumulate stats
+                // Accumulate stats based on real fluency data
                 next.stars += newStars
                 next.turns += 1
                 next.flow = newSkill // Use current flow level
-                next.words += text.trim().split(/\s+/).length // Simple word count
-                // next.fillers += ... // (Needs deeper extraction)
+                next.words += text.trim().split(/\s+/).length
+
+                // Add cumulative fluency progress for new mission type
+                next.cumulativeFluency += fluencyScore
+
+                // Track filler count from metrics
+                if (metrics) {
+                    const wordCount = text.trim().split(/\s+/).length
+                    next.fillers += Math.round(metrics.fillerRate * wordCount)
+                }
 
                 // Check Completion
                 if (evaluateMission(mission, next) && !missionCompleted) {
@@ -542,6 +649,7 @@ export default function PracticePage() {
                 {/* Stars Overlay */}
                 {showStars && (
                     <StarsOverlay
+                        key="stars-overlay"
                         stars={stars}
                         onComplete={() => setShowStars(false)}
                     />
@@ -550,6 +658,7 @@ export default function PracticePage() {
                 {/* Mission Reward Overlay */}
                 {missionCompleted && reward && (
                     <RewardOverlay
+                        key="reward-overlay"
                         reward={reward}
                         onClose={() => setMissionCompleted(false)}
                     />
@@ -616,185 +725,146 @@ export default function PracticePage() {
 
 
             {/* 2️⃣ MIDDLE ZONE: Primary Speaking Loop (BIG) */}
-            <main className="flex-1 flex flex-col justify-center">
-                <div className="relative w-full max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-blue-900/5 border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <main className="flex-1 flex flex-col justify-center relative">
+                <AnimatePresence mode="wait">
+                    {!feedback ? (
+                        <motion.div
+                            key="challenge-card"
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="relative w-full max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-blue-900/5 border border-slate-100 dark:border-slate-800 overflow-hidden"
+                        >
 
-                    {/* Card Header & Mode Label */}
-                    <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500" />
-                    <div className="mt-6 text-center">
-                        <span className="inline-block py-1 px-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold uppercase tracking-[0.2em]">
-                            🗣️ Speaking Drill
-                        </span>
-                    </div>
-
-                    <div className="p-8 md:p-12 space-y-10 text-center">
-
-                        {/* Prompt */}
-                        <div className="space-y-4">
-                            <h1 className="text-3xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white leading-tight">
-                                {turn.prompt}
-                            </h1>
-                            <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">
-                                {turn.situation} • {turn.type.replace("_", " ")}
-                            </p>
-                        </div>
-
-                        {/* Interaction Area */}
-                        <div className="min-h-[140px] flex items-center justify-center">
-                            {transcript ? (
-                                <motion.p
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="text-2xl text-slate-700 dark:text-slate-300 font-light leading-relaxed"
-                                >
-                                    “{transcript}”
-                                </motion.p>
-                            ) : (
-                                <div className="space-y-3">
-                                    <p className="text-xl text-slate-400 font-light">
-                                        Tap the mic and speak naturally...
-                                    </p>
-                                    <p className="text-xs text-blue-500/80 font-medium">
-                                        This trains your speaking reflex, not your grammar.
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Controls */}
-                        <div className="flex flex-col items-center gap-8">
-                            {!isProcessing ? (
-                                <button
-                                    onClick={isRecording ? stopRecording : startRecording}
-                                    className={`group relative flex items-center justify-center w-24 h-24 rounded-full transition-all duration-300 shadow-2xl ${isRecording
-                                        ? "bg-red-500 scale-110 shadow-red-500/40"
-                                        : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:scale-105 shadow-blue-500/30"
-                                        }`}
-                                >
-                                    {isRecording && (
-                                        <span className="absolute inset-0 rounded-full border-[6px] border-red-500/30 animate-ping" />
-                                    )}
-                                    {isRecording ? (
-                                        <Square className="w-10 h-10 text-white fill-current" />
-                                    ) : (
-                                        <Mic className="w-10 h-10 text-white" />
-                                    )}
-                                </button>
-                            ) : (
-                                <div className="flex items-center gap-3 text-blue-600 font-bold animate-pulse text-lg">
-                                    <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                                    <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                                    <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                                    Analyzing Flow...
-                                </div>
-                            )}
-
-                            {/* Feedback & Next Button */}
-                            <AnimatePresence>
-                                {feedback && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        className="space-y-6 w-full max-w-md mx-auto"
-                                    >
-                                        <div className={`p-6 rounded-2xl border-l-4 shadow-sm ${stars >= 2
-                                            ? "bg-green-50/50 dark:bg-green-900/10 border-green-500 text-green-900 dark:text-green-100"
-                                            : "bg-orange-50/50 dark:bg-orange-900/10 border-orange-500 text-orange-900 dark:text-orange-100"
-                                            }`}>
-                                            <p className="text-lg font-medium leading-relaxed">{feedback}</p>
-                                        </div>
-
-                                        <Button size="lg" onClick={fetchNextTurn} className="w-full rounded-xl py-6 text-lg shadow-lg shadow-blue-500/20">
-                                            Next Challenge →
-                                        </Button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    </div>
-                </div>
-            </main>
-
-
-            {/* 3️⃣ BOTTOM ZONE: Listening Warm-up (Small) */}
-            <footer className="mt-8 flex justify-center pb-20">
-                <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-6">
-
-                    {/* Header */}
-                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-                        <div className="flex items-center gap-2">
-                            <span className="p-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-md text-blue-600 dark:text-blue-400 text-xs shadow-sm">🎧</span>
-                            <span className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
-                                Listening Challenge
-                            </span>
-                        </div>
-                        <span className="text-[10px] text-slate-400 font-medium">
-                            First listen, then answer.
-                        </span>
-                    </div>
-
-                    {/* Content */}
-                    <div className="space-y-4">
-                        <div className="flex flex-col gap-2">
-                            <p className="text-lg font-medium text-slate-900 dark:text-white leading-snug">
-                                {currentClip.title}
-                            </p>
-                            <p className="text-sm text-slate-500 font-medium">{currentClip.prompt}</p>
-                        </div>
-
-                        <audio
-                            controls
-                            src={currentClip.audioUrl}
-                            className="w-full h-10 accent-blue-600"
-                        />
-                    </div>
-
-                    {/* Interaction - Mic & Feedback */}
-                    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 flex items-center gap-4">
-                        {listeningFeedback ? (
-                            <div className="flex-1 flex items-center justify-between">
-                                <p className={`text-sm font-medium leading-snug ${listeningSuccess ? "text-green-600 dark:text-green-400" : "text-orange-600 dark:text-orange-400"}`}>
-                                    {listeningFeedback}
-                                </p>
-                                <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    className="h-8 w-8 p-0 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700"
-                                    onClick={() => {
-                                        setListeningFeedback(null)
-                                        setListeningSuccess(false)
-                                    }}
-                                >
-                                    ↺
-                                </Button>
+                            {/* Card Header & Mode Label */}
+                            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500" />
+                            <div className="mt-6 text-center">
+                                <span className="inline-block py-1 px-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold uppercase tracking-[0.2em]">
+                                    🗣️ Speaking Drill
+                                </span>
                             </div>
-                        ) : (
-                            <>
-                                <button
-                                    onClick={isListeningRecording ? stopListeningRecording : startListeningRecording}
-                                    disabled={isProcessing}
-                                    className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all ${isListeningRecording
-                                            ? "bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/30"
-                                            : "bg-white dark:bg-slate-700 text-blue-600 dark:text-blue-400 border border-slate-200 dark:border-slate-600 hover:border-blue-300 dark:hover:border-blue-500"
-                                        }`}
-                                >
-                                    {isListeningRecording ? <Square className="w-5 h-5 fill-current" /> : <Mic className="w-5 h-5" />}
-                                </button>
 
-                                <div className="flex-1">
-                                    <p className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">
-                                        {isListeningRecording ? "Listening..." : "Tap to Answer"}
-                                    </p>
-                                    <p className="text-[10px] text-slate-400">
-                                        {isListeningRecording ? "Speak clearly now" : "Tell me what you heard"}
+                            <div className="p-8 md:p-12 space-y-10 text-center">
+
+                                {/* Prompt */}
+                                <div className="space-y-4">
+                                    <h1 className="text-3xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white leading-tight">
+                                        {turn.prompt}
+                                    </h1>
+                                    <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">
+                                        {turn.situation} • {turn.type.replace("_", " ")}
                                     </p>
                                 </div>
-                            </>
-                        )}
-                    </div>
 
-                </div>
-            </footer>
+                                {/* Interaction Area */}
+                                <div className="min-h-[140px] flex items-center justify-center w-full">
+                                    {turn.type === 'LISTEN_TYPE' ? (
+                                        <div className="w-full max-w-lg space-y-6">
+                                            {turn.audioUrl && (
+                                                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
+                                                    <audio src={turn.audioUrl} controls className="w-full" />
+                                                </div>
+                                            )}
+                                            <textarea
+                                                value={textInput}
+                                                onChange={(e) => setTextInput(e.target.value)}
+                                                placeholder="Type exactly what you hear..."
+                                                className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-lg focus:ring-2 focus:ring-blue-500 outline-none min-h-[120px]"
+                                            />
+                                        </div>
+                                    ) : (
+                                        transcript ? (
+                                            <motion.p
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="text-2xl text-slate-700 dark:text-slate-300 font-light leading-relaxed"
+                                            >
+                                                “{transcript}”
+                                            </motion.p>
+                                        ) : (
+                                            <div className="space-y-3">
+                                                <p className="text-xl text-slate-400 font-light">
+                                                    {turn.type === 'COMPLETE_SENTENCE' ? "Tap to record your completion..." : "Tap the mic and speak naturally..."}
+                                                </p>
+                                                {turn.type !== 'COMPLETE_SENTENCE' && (
+                                                    <p className="text-xs text-blue-500/80 font-medium">
+                                                        This trains your speaking reflex, not your grammar.
+                                                    </p>
+                                                )}
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+
+                                {/* Controls */}
+                                <div className="flex flex-col items-center gap-8">
+                                    {turn.type === 'LISTEN_TYPE' ? (
+                                        <Button
+                                            onClick={handleSubmitText}
+                                            disabled={!textInput.trim() || isProcessing}
+                                            size="lg"
+                                            className="rounded-full px-8 py-6 text-lg w-full max-w-xs"
+                                        >
+                                            {isProcessing ? "Checking..." : "Submit Answer"}
+                                        </Button>
+                                    ) : !isProcessing ? (
+                                        <button
+                                            onClick={isRecording ? stopRecording : startRecording}
+                                            className={`group relative flex items-center justify-center w-24 h-24 rounded-full transition-all duration-300 shadow-2xl ${isRecording
+                                                ? "bg-red-500 scale-110 shadow-red-500/40"
+                                                : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:scale-105 shadow-blue-500/30"
+                                                }`}
+                                        >
+                                            {isRecording && (
+                                                <span className="absolute inset-0 rounded-full border-[6px] border-red-500/30 animate-ping" />
+                                            )}
+                                            {isRecording ? (
+                                                <Square className="w-10 h-10 text-white fill-current" />
+                                            ) : (
+                                                <Mic className="w-10 h-10 text-white" />
+                                            )}
+                                        </button>
+                                    ) : (
+                                        <div className="flex items-center gap-3 text-blue-600 font-bold animate-pulse text-lg">
+                                            <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                                            <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                                            <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                                            Analyzing Flow...
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </motion.div>
+                    ) : (
+                        <PracticeFeedback
+                            key="feedback-card"
+                            score={lastScore}
+                            feedback={feedback}
+                            metrics={currentMetrics || { speechSpeed: 0, pauseRatio: 0, fillerRate: 0, restartRate: 0, silenceRatio: 0, wordCount: 0, wpm: 0 }}
+                            microLesson={microLesson}
+                            hideMetrics={turn?.type === 'LISTEN_TYPE'}
+                            onNext={() => {
+                                if (sessionRounds.length >= 5) {
+                                    setIsSessionFinished(true)
+                                } else {
+                                    fetchNextTurn()
+                                }
+                            }}
+                            onDrill={() => {
+                                if (microLesson) {
+                                    incrementSkillProgress(microLesson.path)
+                                    // Don't count drills towards the 5-question limit, or do? Let's say yes for flow.
+                                    if (sessionRounds.length >= 5) {
+                                        setIsSessionFinished(true)
+                                    } else {
+                                        fetchNextTurn()
+                                    }
+                                }
+                            }}
+                        />
+                    )}
+                </AnimatePresence>
+            </main>
 
         </div>
     )

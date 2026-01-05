@@ -155,16 +155,16 @@ export function extractMetricsFromDeepgram(
     const fillerRate = wordCount > 0 ? fillerCount / wordCount : 0
 
     // --- 4. Calculate Speech Speed (normalized) ---
-    // Optimal range: 100-150 WPM for non-native speakers
+    // Optimal range: 120-160 WPM for natural speech
     const wpm = (wordCount / duration) * 60
 
     let speechSpeed: number
-    if (wpm >= 100 && wpm <= 150) {
+    if (wpm >= 120 && wpm <= 160) {
         speechSpeed = 1.0 // Optimal
-    } else if (wpm < 100) {
-        speechSpeed = Math.max(0, wpm / 100) // Penalize slow speech
+    } else if (wpm < 120) {
+        speechSpeed = Math.max(0, wpm / 120) // Penalize slow speech
     } else {
-        speechSpeed = Math.max(0, 1 - (wpm - 150) / 100) // Penalize too fast
+        speechSpeed = Math.max(0, 1 - (wpm - 160) / 100) // Penalize too fast
     }
 
     // --- 5. Calculate Silence Ratio ---
@@ -255,9 +255,8 @@ export function getCoachingPoints(metrics: FluencyMetrics): string[] {
  */
 export function normalizeWPM(wpm: number): number {
     if (wpm < 90) return 0.2
-    if (wpm < 120) return 0.4
-    if (wpm < 150) return 0.7
-    if (wpm < 180) return 1.0
+    if (wpm < 120) return 0.5
+    if (wpm <= 160) return 1.0 // 120-160 is optimal
     return 0.9 // Too fast = slight penalty
 }
 
@@ -534,10 +533,10 @@ export function computeEnglivoScoreWithCefr(metrics: FluencyMetrics): EnglivoSco
     const dimensions = calculateEnglivoDimensions(metrics)
     const englivoScore = calculateEnglivoScore(dimensions)
     const identity = getIdentityLevel(englivoScore)
-    
+
     // Compute CEFR mapping
     const cefr = computeCefr(metrics)
-    
+
     const raw: EnglivoRawMetrics = {
         pauseRatio: metrics.pauseRatio,
         fillerRate: metrics.fillerRate,
@@ -545,7 +544,7 @@ export function computeEnglivoScoreWithCefr(metrics: FluencyMetrics): EnglivoSco
         silenceRatio: metrics.silenceRatio,
         wpm: metrics.wpm
     }
-    
+
     return {
         englivoScore,
         identity,
@@ -571,17 +570,17 @@ export function getCefrAnalysis(level: CefrLevel, score: number): {
 } {
     const description = getCefrDescription(level)
     const range = getCefrRange(level)
-    
+
     // Determine next level and points needed
     let nextLevel: CefrLevel | null = null
     let pointsToNext: number | null = null
-    
+
     if (level === "A1") { nextLevel = "A2"; pointsToNext = 25 - score }
     else if (level === "A2") { nextLevel = "B1"; pointsToNext = 40 - score }
     else if (level === "B1") { nextLevel = "B2"; pointsToNext = 55 - score }
     else if (level === "B2") { nextLevel = "C1"; pointsToNext = 70 - score }
     else if (level === "C1") { nextLevel = "C2"; pointsToNext = 85 - score }
-    
+
     return {
         level,
         score,

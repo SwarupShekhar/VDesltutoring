@@ -131,7 +131,7 @@ export function PracticeFeedback({ score, feedback, metrics, microLesson, onNext
                         <MetricBar
                             label="Pace"
                             value={metrics.speechSpeed}
-                            target={130}
+                            target={140}
                             unit="wpm"
                             isBadIfHigh={false}
                         />

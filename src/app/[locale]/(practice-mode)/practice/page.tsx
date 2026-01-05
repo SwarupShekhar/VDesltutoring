@@ -20,6 +20,8 @@ import { MicroLesson } from "@/lib/microLessons"
 import { getSkillProgress, incrementSkillProgress } from "@/lib/skillProgress"
 
 import { PracticeFeedback } from "./PracticeFeedback"
+import { VoiceHUD } from "@/components/practice/VoiceHUD"
+import { Loader2, Music2, Sparkles, ArrowLeft } from "lucide-react"
 
 // --- Helper: Stars Overlay Component ---
 function StarsOverlay({ stars, onComplete }: { stars: number, onComplete: () => void }) {
@@ -227,6 +229,9 @@ export default function PracticePage() {
     const [missionCompleted, setMissionCompleted] = useState(false) // Trigger for overlay
     const [reward, setReward] = useState<string | null>(null)
 
+    // HUD State
+    const [audioStream, setAudioStream] = useState<MediaStream | null>(null)
+
     // Refs
     const mediaRecorder = useRef<MediaRecorder | null>(null)
     const chunksRef = useRef<Blob[]>([])
@@ -333,9 +338,6 @@ export default function PracticePage() {
             setTurn(data)
             setTranscript("")
             setTextInput("") // Reset text input
-            setTurn(data)
-            setTranscript("")
-            setTextInput("") // Reset text input
             setFeedback("")
             setCurrentMetrics(null) // Reset metrics
             setMicroLesson(null)
@@ -350,6 +352,7 @@ export default function PracticePage() {
     async function startRecording() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            setAudioStream(stream)
             const recorder = new MediaRecorder(stream)
             mediaRecorder.current = recorder
             chunksRef.current = []
@@ -362,12 +365,14 @@ export default function PracticePage() {
                 const blob = new Blob(chunksRef.current, { type: "audio/webm" })
                 await processAudio(blob, recorder.mimeType)
                 stream.getTracks().forEach(t => t.stop())
+                setAudioStream(null)
             }
 
             recorder.start()
             setIsRecording(true)
         } catch (err) {
             console.error("Mic access failed", err)
+            setError("Microphone access denied. Please allow camera/mic access to practice.")
         }
     }
 
@@ -646,230 +651,272 @@ export default function PracticePage() {
     )
 
     return (
-        <div className="min-h-screen py-6 px-4 space-y-8 max-w-5xl mx-auto flex flex-col">
+        <div className={`min-h-screen transition-colors duration-1000 relative overflow-hidden flex flex-col font-sans
+            ${isRecording ? "bg-indigo-50 dark:bg-indigo-950/20" :
+                isProcessing ? "bg-blue-50 dark:bg-blue-950/20" :
+                    "bg-[#FDFBF7] dark:bg-slate-950"}
+        `}>
+            {/* Glossy Background Elements */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <motion.div
+                    animate={{
+                        scale: isRecording ? [1, 1.2, 1] : 1,
+                        opacity: isRecording ? 0.3 : 0.1
+                    }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-indigo-200 dark:bg-indigo-500/20 rounded-full blur-[120px]"
+                />
+                <motion.div
+                    animate={{
+                        scale: isProcessing ? [1, 1.3, 1] : 1,
+                        opacity: isProcessing ? 0.2 : 0.05
+                    }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="absolute -bottom-[10%] -left-[10%] w-[50%] h-[50%] bg-blue-200 dark:bg-blue-500/10 rounded-full blur-[100px]"
+                />
+            </div>
 
-            {/* --- Rewards Overlays --- */}
+            {showStars && <StarsOverlay stars={stars} onComplete={() => setShowStars(false)} />}
             <AnimatePresence>
-                {/* Stars Overlay */}
-                {showStars && (
-                    <StarsOverlay
-                        key="stars-overlay"
-                        stars={stars}
-                        onComplete={() => setShowStars(false)}
-                    />
-                )}
-
-                {/* Mission Reward Overlay */}
                 {missionCompleted && reward && (
-                    <RewardOverlay
-                        key="reward-overlay"
-                        reward={reward}
-                        onClose={() => setMissionCompleted(false)}
-                    />
+                    <RewardOverlay reward={reward} onClose={() => setMissionCompleted(false)} />
                 )}
             </AnimatePresence>
 
-            {/* 1️⃣ TOP ZONE: Progress & Stats (Compact) */}
-            <header className="flex flex-wrap items-center justify-between gap-4 py-3 px-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md rounded-2xl border border-slate-200/50 dark:border-slate-800/50 shadow-sm">
-
-                {/* Left: Yesterday vs Today */}
-                <div className="flex items-center gap-4 text-xs font-medium">
-                    <div className="text-slate-500">
-                        <span className="opacity-60 mr-1.5">Yesterday</span>
-                        {lastSessionAvg ? `⭐ ${lastSessionAvg}` : "-"}
+            {/* Header Navigation */}
+            <header className="relative z-10 w-full px-6 py-6 flex justify-between items-center max-w-7xl mx-auto">
+                <Link href={`/dashboard`} className="flex items-center gap-2 group">
+                    <div className="p-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 group-hover:bg-slate-50 transition-colors">
+                        <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                     </div>
-                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
-                    <div className="text-blue-600 dark:text-blue-400">
-                        <span className="opacity-60 mr-1.5">Today</span>
-                        ⭐ {todayAvg || "0.0"}
-                    </div>
-                </div>
+                    <span className="font-bold text-slate-800 dark:text-slate-200">Exit Practice</span>
+                </Link>
 
-                {/* Center: Mission Status (if active) */}
-                {mission && (
-                    <div className="hidden sm:flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500">
-                        <span>{mission.title}</span>
-                        {missionComplete ? (
-                            <CheckCircle className="w-4 h-4 text-green-500" />
-                        ) : (
-                            <div className="w-20 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-blue-500 rounded-full transition-all duration-500"
-                                    style={{ width: `${(missionProgress.turns / (('turns' in mission.goal) ? mission.goal.turns : 5)) * 100}%` }}
-                                />
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* Right: Flow & Streak */}
-                <div className="flex items-center gap-6">
-                    {/* Skill Bar */}
-                    <div className="w-32 space-y-1">
-                        <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                            <span>Flow</span>
-                            <span>{skill.toFixed(0)}%</span>
-                        </div>
-                        <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                            <motion.div
-                                initial={{ width: 0 }}
-                                animate={{ width: `${skill}%` }}
-                                className="h-full bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Streak */}
-                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 rounded-full font-bold border border-orange-100 dark:border-orange-500/20 text-xs">
-                        <Flame className={`${streak > 0 ? "animate-pulse" : ""} w-4 h-4`} />
-                        <span>{streak}</span>
+                <div className="flex gap-4">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
+                        <Flame className="w-5 h-5 text-orange-500" />
+                        <span className="font-bold text-slate-900 dark:text-white">Day {streak}</span>
                     </div>
                 </div>
             </header>
 
-
-            {/* 2️⃣ MIDDLE ZONE: Primary Speaking Loop (BIG) */}
-            <main className="flex-1 flex flex-col justify-center relative">
+            <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 pb-12 max-w-4xl mx-auto w-full">
                 <AnimatePresence mode="wait">
-                    {!feedback ? (
+                    {error ? (
                         <motion.div
-                            key="challenge-card"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            className="relative w-full max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-blue-900/5 border border-slate-100 dark:border-slate-800 overflow-hidden"
+                            key="error"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="text-center p-8 bg-white dark:bg-slate-900 rounded-3xl shadow-xl border border-red-100 dark:border-red-900/30"
                         >
-
-                            {/* Card Header & Mode Label */}
-                            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500" />
-                            <div className="mt-6 text-center">
-                                <span className="inline-block py-1 px-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-[10px] font-extrabold uppercase tracking-[0.2em]">
-                                    🗣️ Speaking Drill
-                                </span>
-                            </div>
-
-                            <div className="p-8 md:p-12 space-y-10 text-center">
-
-                                {/* Prompt */}
-                                <div className="space-y-4">
-                                    <h1 className="text-3xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white leading-tight">
-                                        {turn.prompt}
-                                    </h1>
-                                    <p className="text-sm font-medium text-slate-400 uppercase tracking-widest">
-                                        {turn.situation} • {turn.type.replace("_", " ")}
-                                    </p>
-                                </div>
-
-                                {/* Interaction Area */}
-                                <div className="min-h-[140px] flex items-center justify-center w-full">
-                                    {turn.type === 'LISTEN_TYPE' ? (
-                                        <div className="w-full max-w-lg space-y-6">
-                                            {turn.audioUrl && (
-                                                <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
-                                                    <audio src={turn.audioUrl} controls className="w-full" />
-                                                </div>
-                                            )}
-                                            <textarea
-                                                value={textInput}
-                                                onChange={(e) => setTextInput(e.target.value)}
-                                                placeholder="Type exactly what you hear..."
-                                                className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-lg focus:ring-2 focus:ring-blue-500 outline-none min-h-[120px]"
-                                            />
-                                        </div>
-                                    ) : (
-                                        transcript ? (
-                                            <motion.p
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                className="text-2xl text-slate-700 dark:text-slate-300 font-light leading-relaxed"
-                                            >
-                                                “{transcript}”
-                                            </motion.p>
-                                        ) : (
-                                            <div className="space-y-3">
-                                                <p className="text-xl text-slate-400 font-light">
-                                                    {turn.type === 'COMPLETE_SENTENCE' ? "Tap to record your completion..." : "Tap the mic and speak naturally..."}
-                                                </p>
-                                                {turn.type !== 'COMPLETE_SENTENCE' && (
-                                                    <p className="text-xs text-blue-500/80 font-medium">
-                                                        This trains your speaking reflex, not your grammar.
-                                                    </p>
-                                                )}
-                                            </div>
-                                        )
-                                    )}
-                                </div>
-
-                                {/* Controls */}
-                                <div className="flex flex-col items-center gap-8">
-                                    {turn.type === 'LISTEN_TYPE' ? (
-                                        <Button
-                                            onClick={handleSubmitText}
-                                            disabled={!textInput.trim() || isProcessing}
-                                            size="lg"
-                                            className="rounded-full px-8 py-6 text-lg w-full max-w-xs"
-                                        >
-                                            {isProcessing ? "Checking..." : "Submit Answer"}
-                                        </Button>
-                                    ) : !isProcessing ? (
-                                        <button
-                                            onClick={isRecording ? stopRecording : startRecording}
-                                            className={`group relative flex items-center justify-center w-24 h-24 rounded-full transition-all duration-300 shadow-2xl ${isRecording
-                                                ? "bg-red-500 scale-110 shadow-red-500/40"
-                                                : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:scale-105 shadow-blue-500/30"
-                                                }`}
-                                        >
-                                            {isRecording && (
-                                                <span className="absolute inset-0 rounded-full border-[6px] border-red-500/30 animate-ping" />
-                                            )}
-                                            {isRecording ? (
-                                                <Square className="w-10 h-10 text-white fill-current" />
-                                            ) : (
-                                                <Mic className="w-10 h-10 text-white" />
-                                            )}
-                                        </button>
-                                    ) : (
-                                        <div className="flex items-center gap-3 text-blue-600 font-bold animate-pulse text-lg">
-                                            <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                                            <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                                            <div className="w-3 h-3 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-                                            Analyzing Flow...
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
+                            <p className="text-red-600 dark:text-red-400 font-medium mb-6">{error}</p>
+                            <Button onClick={() => window.location.reload()} className="rounded-full px-8">Try Refreshing</Button>
                         </motion.div>
                     ) : (
-                        <PracticeFeedback
-                            key="feedback-card"
-                            score={lastScore}
-                            feedback={feedback}
-                            metrics={currentMetrics || { speechSpeed: 0, pauseRatio: 0, fillerRate: 0, restartRate: 0, silenceRatio: 0, wordCount: 0, wpm: 0 }}
-                            microLesson={microLesson}
-                            hideMetrics={turn?.type === 'LISTEN_TYPE'}
-                            onNext={() => {
-                                if (sessionRounds.length >= 5) {
-                                    setIsSessionFinished(true)
-                                } else {
-                                    fetchNextTurn()
-                                }
-                            }}
-                            onDrill={() => {
-                                if (microLesson) {
-                                    incrementSkillProgress(microLesson.path)
-                                    // Don't count drills towards the 5-question limit, or do? Let's say yes for flow.
-                                    if (sessionRounds.length >= 5) {
-                                        setIsSessionFinished(true)
-                                    } else {
-                                        fetchNextTurn()
-                                    }
-                                }
-                            }}
-                        />
+                        <div className="w-full space-y-10">
+                            {/* Mission Tracker */}
+                            {mission && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                >
+                                    <MissionCard mission={mission} progress={missionProgress} complete={missionComplete} />
+                                </motion.div>
+                            )}
+
+                            {/* Main Challenge Card */}
+                            <div className="relative group">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-[2.5rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+                                <div className="relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-[2rem] p-8 md:p-12 shadow-2xl border border-white dark:border-slate-800 text-center space-y-8">
+
+                                    <AnimatePresence mode="wait">
+                                        {!isRecording && !isProcessing && feedback && (
+                                            <PracticeFeedback
+                                                key="feedback"
+                                                score={lastScore}
+                                                feedback={feedback}
+                                                metrics={currentMetrics!}
+                                                microLesson={microLesson}
+                                                hideMetrics={turn?.type === 'LISTEN_TYPE'}
+                                                onNext={() => {
+                                                    if (sessionRounds.length >= 5) {
+                                                        setIsSessionFinished(true)
+                                                    } else {
+                                                        fetchNextTurn()
+                                                    }
+                                                }}
+                                                onDrill={() => {
+                                                    if (microLesson) {
+                                                        incrementSkillProgress(microLesson.path)
+                                                        if (sessionRounds.length >= 5) {
+                                                            setIsSessionFinished(true)
+                                                        } else {
+                                                            fetchNextTurn()
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                        )}
+
+                                        {!isRecording && !isProcessing && !feedback && turn && (
+                                            <motion.div
+                                                key="challenge"
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, scale: 0.95 }}
+                                                className="space-y-8"
+                                            >
+                                                <div className="space-y-6">
+                                                    <span className="px-5 py-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full font-bold text-xs uppercase tracking-[0.2em]">
+                                                        {turn.type.replace("_", " ")}
+                                                    </span>
+                                                    <h2 className="text-3xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white leading-tight">
+                                                        {turn.prompt}
+                                                    </h2>
+                                                    <p className="text-lg text-slate-500 dark:text-slate-400 italic">
+                                                        {turn.situation}
+                                                    </p>
+                                                </div>
+
+                                                {turn.type === 'LISTEN_TYPE' ? (
+                                                    <div className="w-full max-w-lg mx-auto space-y-6">
+                                                        {turn.audioUrl && (
+                                                            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
+                                                                <audio src={turn.audioUrl} controls className="w-full" />
+                                                            </div>
+                                                        )}
+                                                        <textarea
+                                                            value={textInput}
+                                                            onChange={(e) => setTextInput(e.target.value)}
+                                                            placeholder="Type exactly what you hear..."
+                                                            className="w-full p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent text-lg focus:ring-2 focus:ring-blue-500 outline-none min-h-[120px]"
+                                                        />
+                                                        <Button
+                                                            onClick={handleSubmitText}
+                                                            disabled={!textInput.trim() || isProcessing}
+                                                            size="lg"
+                                                            className="rounded-full px-8 py-6 text-lg w-full max-w-xs mx-auto"
+                                                        >
+                                                            {isProcessing ? "Checking..." : "Submit Answer"}
+                                                        </Button>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <div className="pt-6">
+                                                            <VoiceHUD stream={audioStream} isRecording={isRecording} />
+                                                        </div>
+
+                                                        <div className="flex flex-col items-center gap-6">
+                                                            <motion.button
+                                                                whileHover={{ scale: 1.05 }}
+                                                                whileTap={{ scale: 0.95 }}
+                                                                onClick={startRecording}
+                                                                className="h-24 w-24 rounded-full bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white shadow-2xl shadow-indigo-600/30 ring-4 ring-indigo-600/10"
+                                                            >
+                                                                <Mic className="w-10 h-10" />
+                                                            </motion.button>
+                                                            <p className="font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                                                                <Music2 className="w-4 h-4" />
+                                                                Ready? Tap to speak
+                                                            </p>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </motion.div>
+                                        )}
+
+                                        {isRecording && (
+                                            <motion.div
+                                                key="recording"
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="space-y-12"
+                                            >
+                                                <div className="space-y-4">
+                                                    <div className="flex items-center justify-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold uppercase tracking-widest text-sm">
+                                                        <span className="relative flex h-3 w-3">
+                                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                                            <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                                                        </span>
+                                                        Live Analysis Active
+                                                    </div>
+                                                    <h2 className="text-2xl font-medium text-slate-600 dark:text-slate-400">Speak naturally...</h2>
+                                                </div>
+
+                                                <VoiceHUD stream={audioStream} isRecording={isRecording} />
+
+                                                <button
+                                                    onClick={stopRecording}
+                                                    className="group relative h-28 w-28 rounded-full flex items-center justify-center transition-all"
+                                                >
+                                                    <div className="absolute inset-0 bg-red-500 rounded-full animate-pulse opacity-20"></div>
+                                                    <div className="relative h-20 w-20 bg-red-600 dark:bg-red-500 rounded-full flex items-center justify-center text-white shadow-xl shadow-red-600/20 group-hover:scale-110 transition-transform">
+                                                        <Square className="w-8 h-8 fill-current" />
+                                                    </div>
+                                                </button>
+                                            </motion.div>
+                                        )}
+
+                                        {isProcessing && (
+                                            <motion.div
+                                                key="processing"
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                className="space-y-10 py-12"
+                                            >
+                                                <div className="flex justify-center">
+                                                    <div className="relative h-40 w-40 flex items-center justify-center">
+                                                        {[0, 1, 2].map((i) => (
+                                                            <motion.div
+                                                                key={i}
+                                                                initial={{ opacity: 0.5, scale: 0.8 }}
+                                                                animate={{
+                                                                    opacity: [0.5, 0.1, 0],
+                                                                    scale: [1, 1.8, 2.2]
+                                                                }}
+                                                                transition={{
+                                                                    duration: 3,
+                                                                    repeat: Infinity,
+                                                                    delay: i * 1,
+                                                                    ease: "easeOut"
+                                                                }}
+                                                                className="absolute inset-0 rounded-full border-2 border-indigo-400 dark:border-indigo-500"
+                                                            />
+                                                        ))}
+                                                        <motion.div
+                                                            animate={{ scale: [1, 1.1, 1] }}
+                                                            transition={{ duration: 2, repeat: Infinity }}
+                                                            className="relative z-10 h-20 w-20 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center shadow-lg"
+                                                        >
+                                                            <Sparkles className="w-8 h-8 text-white" />
+                                                        </motion.div>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <h2 className="text-3xl font-serif font-bold text-slate-900 dark:text-white">Analyzing your Flow...</h2>
+                                                    <p className="text-slate-500 animate-pulse">Our AI is mapping your fluency patterns.</p>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+                        </div>
                     )}
                 </AnimatePresence>
             </main>
 
+            {/* Finish Session Button */}
+            {!isSessionFinished && sessionRounds.length > 0 && (
+                <footer className="relative z-10 w-full p-8 max-w-7xl mx-auto flex justify-center">
+                    <button
+                        onClick={() => setIsSessionFinished(true)}
+                        className="px-8 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl font-bold text-slate-600 dark:text-slate-400 hover:text-red-500 hover:border-red-200 transition-all shadow-sm"
+                    >
+                        Finish Session & Review
+                    </button>
+                </footer>
+            )}
         </div>
     )
 }

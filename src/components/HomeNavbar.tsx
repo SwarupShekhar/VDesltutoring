@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { BubbleText } from '@/components/BubbleText';
 import { GetStartedButton } from '@/components/GetStartedButton';
 import { FontWeight } from '@/components/font-weight';
+import Image from 'next/image';
 
 export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   const { user, isLoaded } = useUser();
@@ -88,11 +89,16 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
             {/* LEFT: BRAND */}
             <Link href={`/${locale}`} className="flex-shrink-0 cursor-pointer group flex items-center gap-3" onClick={scrollToTop}>
-              <img
-                src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
-                alt="Englivo Logo"
-                className="h-10 w-auto"
-              />
+              <div className="relative h-10 w-10">
+                <Image
+                  src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
+                  alt="Englivo Logo"
+                  fill
+                  sizes="40px"
+                  priority
+                  className="object-contain"
+                />
+              </div>
               <div className="relative">
                 <FontWeight
                   text="Englivo"
@@ -207,11 +213,15 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
             >
               <div className="flex justify-between items-center mb-12">
                 <div className="flex items-center gap-2">
-                  <img
-                    src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
-                    alt="Englivo Logo"
-                    className="h-8 w-auto"
-                  />
+                  <div className="relative h-8 w-8">
+                    <Image
+                      src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
+                      alt="Englivo Logo"
+                      fill
+                      sizes="32px"
+                      className="object-contain"
+                    />
+                  </div>
                   <FontWeight
                     text="Englivo"
                     fontSize={24}

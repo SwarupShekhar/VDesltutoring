@@ -451,12 +451,40 @@
     },
     "faq": {
         "headline": "Frequently Asked Questions",
-        "q1": "Is this for beginners?",
-        "a1": "No. Englivo is designed for intermediate to advanced professionals who already know grammar but struggle with fluency and confidence.",
-        "q2": "How does scheduling work?",
-        "a2": "You book sessions directly with your chosen mentor based on their live availability. No fixed weekly slots required.",
-        "q3": "What if I don't click with my mentor?",
-        "a3": "Chemistry is everything. If the vibe isn't right in your first session, we'll find you someone else for free."
+        "items": [
+            {
+                "question": "Is Englivo for beginners?",
+                "answer": "No. Englivo is built for people who already know English but struggle to speak smoothly and confidently in real situations. If you know grammar but freeze, hesitate, or translate in your head - this is for you."
+            },
+            {
+                "question": "Do I need a tutor to use Englivo?",
+                "answer": "No. You can improve using the AI Tutor + Practice Engine alone. Tutors are optional and used when you want human conversation or exam-style speaking practice."
+            },
+            {
+                "question": "How is this different from other apps or AI chatbots?",
+                "answer": "Most tools teach what to say. Englivo trains how you speak - your pauses, timing, flow, and confidence. We don’t grade you. We detect your speaking patterns and help you change them in real time."
+            },
+            {
+                "question": "What happens when I click “Start”?",
+                "answer": "You speak. The AI listens. It measures your fluency habits (pauses, fillers, restarts). Then it gives you a specific drill to improve the weakest part of your speaking. You don’t study - you train."
+            },
+            {
+                "question": "What if I’m shy, nervous, or make mistakes?",
+                "answer": "That’s exactly who Englivo is for. The AI never judges or embarrasses you. It’s designed to feel like a safe practice space where you can speak freely and improve."
+            },
+            {
+                "question": "How do I know I’m improving?",
+                "answer": "You’ll see your Fluency Score, CEFR level, and skill radar change over time. You can also compare yesterday vs today to see real progress in pauses, flow, and confidence."
+            },
+            {
+                "question": "What if I don’t click with my mentor?",
+                "answer": "You can switch tutors anytime. Your progress is stored in Englivo, not with a single tutor, so you never lose momentum."
+            },
+            {
+                "question": "Is my voice or data shared?",
+                "answer": "No. Your recordings are used only to analyze and improve your fluency. They are never made public or shared with other users."
+            }
+        ]
     },
     "ctaBottom": {
         "headline": "Ready to find your flow?",

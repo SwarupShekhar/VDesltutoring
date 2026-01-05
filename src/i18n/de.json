@@ -220,12 +220,20 @@
     },
     "faq": {
         "headline": "Häufig gestellte Fragen",
-        "q1": "Ist das für Anfänger?",
-        "a1": "Nein. Englivo ist für fortgeschrittene Profis konzipiert, die Grammatik kennen, aber mit Redefluss und Selbstvertrauen kämpfen.",
-        "q2": "Wie funktioniert die Terminplanung?",
-        "a2": "Sie buchen Sitzungen direkt bei Ihrem gewählten Mentor basierend auf dessen Verfügbarkeit. Keine festen wöchentlichen Slots.",
-        "q3": "Was ist, wenn ich mich mit meinem Mentor nicht verstehe?",
-        "a3": "Chemie ist alles. Wenn es in der ersten Sitzung nicht passt, finden wir kostenlos jemand anderen für Sie."
+        "items": [
+            {
+                "question": "Ist das für Anfänger?",
+                "answer": "Nein. Englivo ist für fortgeschrittene Profis konzipiert, die Grammatik kennen, aber mit Redefluss und Selbstvertrauen kämpfen."
+            },
+            {
+                "question": "Wie funktioniert die Terminplanung?",
+                "answer": "Sie buchen Sitzungen direkt bei Ihrem gewählten Mentor basierend auf dessen Verfügbarkeit. Keine festen wöchentlichen Slots."
+            },
+            {
+                "question": "Was ist, wenn ich mich mit meinem Mentor nicht verstehe?",
+                "answer": "Chemie ist alles. Wenn es in der ersten Sitzung nicht passt, finden wir kostenlos jemand anderen für Sie."
+            }
+        ]
     },
     "howItWorksPage": {
         "hero": {

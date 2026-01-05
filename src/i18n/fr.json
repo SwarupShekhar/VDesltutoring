@@ -220,12 +220,20 @@
     },
     "faq": {
         "headline": "Questions Fréquentes",
-        "q1": "Est-ce pour les débutants ?",
-        "a1": "Non. Englivo est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance.",
-        "q2": "Comment fonctionne la planification ?",
-        "a2": "Vous réservez des sessions directement avec votre mentor choisi en fonction de sa disponibilité en direct. Pas de créneaux hebdomadaires fixes requis.",
-        "q3": "Et si je ne m'entends pas avec mon mentor ?",
-        "a3": "L'alchimie est tout. Si le courant ne passe pas lors de votre première session, nous vous trouverons quelqu'un d'autre gratuitement."
+        "items": [
+            {
+                "question": "Est-ce pour les débutants ?",
+                "answer": "Non. Englivo est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance."
+            },
+            {
+                "question": "Comment fonctionne la planification ?",
+                "answer": "Vous réservez des sessions directement avec votre tuteur choisi en fonction de sa disponibilité en direct. Pas de créneaux hebdomadaires fixes requis."
+            },
+            {
+                "question": "Et si je ne m'entends pas avec mon tuteur ?",
+                "answer": "L'alchimie est tout. Si le courant ne passe pas lors de votre première session, nous vous trouverons quelqu'un d'autre gratuitement."
+            }
+        ]
     },
     "howItWorksPage": {
         "hero": {

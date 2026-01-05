@@ -185,12 +185,20 @@
     },
     "faq": {
         "headline": "Câu hỏi thường gặp",
-        "q1": "Cái này có dành cho người mới bắt đầu không?",
-        "a1": "Không. Englivo được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin.",
-        "q2": "Lịch trình hoạt động như thế nào?",
-        "a2": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian rảnh của họ. Không yêu cầu các khung giờ cố định hàng tuần.",
-        "q3": "Nếu tôi không hợp với cố vấn thì sao?",
-        "a3": "Sự ăn ý là tất cả. Nếu không hợp trong buổi đầu tiên, chúng tôi sẽ tìm người khác cho bạn miễn phí."
+        "items": [
+            {
+                "question": "Cái này có dành cho người mới bắt đầu không?",
+                "answer": "Không. Englivo được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin."
+            },
+            {
+                "question": "Lịch trình hoạt động như thế nào?",
+                "answer": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian rảnh của họ. Không yêu cầu các khung giờ cố định hàng tuần."
+            },
+            {
+                "question": "Nếu tôi không hợp với cố vấn thì sao?",
+                "answer": "Sự ăn ý là tất cả. Nếu không hợp trong buổi đầu tiên, chúng tôi sẽ tìm người khác cho bạn miễn phí."
+            }
+        ]
     },
     "howItWorksPage": {
         "hero": {

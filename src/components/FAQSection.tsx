@@ -9,14 +9,21 @@ import {
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface FAQItem {
+    question: string;
+    answer: string;
+}
+
 interface FAQContent {
     headline: string;
-    q1: string;
-    a1: string;
-    q2: string;
-    a2: string;
-    q3: string;
-    a3: string;
+    items?: FAQItem[];
+    // Legacy support for q1, a1, etc.
+    q1?: string;
+    a1?: string;
+    q2?: string;
+    a2?: string;
+    q3?: string;
+    a3?: string;
 }
 
 interface FAQSectionProps {
@@ -24,23 +31,18 @@ interface FAQSectionProps {
 }
 
 export function FAQSection({ content }: FAQSectionProps) {
-    const items = [
-        {
-            id: "01",
-            title: content.q1,
-            content: content.a1,
-        },
-        {
-            id: "02",
-            title: content.q2,
-            content: content.a2,
-        },
-        {
-            id: "03",
-            title: content.q3,
-            content: content.a3,
-        },
-    ];
+    // Generate items from new array structure or legacy q1/a1 props
+    const rawItems = content.items || [
+        { question: content.q1 || "", answer: content.a1 || "" },
+        { question: content.q2 || "", answer: content.a2 || "" },
+        { question: content.q3 || "", answer: content.a3 || "" },
+    ].filter(item => item.question !== "");
+
+    const items = rawItems.map((item, index) => ({
+        id: (index + 1).toString().padStart(2, '0'),
+        title: item.question,
+        content: item.answer,
+    }));
 
     return (
         <section className="py-24 bg-muted/20 border-t border-border">

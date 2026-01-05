@@ -185,12 +185,20 @@
     },
     "faq": {
         "headline": "Preguntas Frecuentes",
-        "q1": "¿Es esto para principiantes?",
-        "a1": "No. Englivo está diseñado para profesionales de nivel intermedio a avanzado que ya conocen la gramática pero luchan con la fluidez y la confianza.",
-        "q2": "¿Cómo funciona la programación?",
-        "a2": "Reservas sesiones directamente con tu mentor elegido según su disponibilidad en vivo. No se requieren espacios semanales fijos.",
-        "q3": "¿Qué pasa si no conecto con mi mentor?",
-        "a3": "La química lo es todo. Si la vibra no es correcta en tu primera sesión, te buscaremos a otra persona gratis."
+        "items": [
+            {
+                "question": "¿Es esto para principiantes?",
+                "answer": "No. Englivo está diseñado para profesionales de nivel intermedio a avanzado que ya conocen la gramática pero luchan con la fluidez y la confianza."
+            },
+            {
+                "question": "¿Cómo funciona la programación?",
+                "answer": "Reservas sesiones directamente con tu mentor elegido según su disponibilidad en vivo. No se requieren espacios semanales fijos."
+            },
+            {
+                "question": "¿Qué pasa si no conecto con mi mentor?",
+                "answer": "La química lo es todo. Si la vibra no es correcta en tu primera sesión, te buscaremos a otra persona gratis."
+            }
+        ]
     },
     "howItWorksPage": {
         "hero": {

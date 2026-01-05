@@ -25,7 +25,7 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
             type="button"
             onClick={handleClick}
             aria-label="Open AI Tutor"
-            className="fixed bottom-[-110px] left-[-110px] md:bottom-[-80px] md:left-[-80px] z-[100] cursor-pointer scale-[0.4] md:scale-[0.6] hover:scale-[0.45] md:hover:scale-[0.65] transition-transform duration-300 bg-transparent border-none p-0"
+            className="fixed bottom-[-110px] left-[-110px] md:bottom-[-80px] md:left-[-80px] z-[100] cursor-pointer scale-[0.55] md:scale-[0.85] hover:scale-[0.6] md:hover:scale-[0.9] transition-transform duration-300 bg-transparent border-none p-0"
         >
             <div className="loader">
                 <div style={{ "--i": 1, "--inset": "44%" } as React.CSSProperties} className="box">
@@ -38,8 +38,6 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
                 <div style={{ "--i": 4, "--inset": "32%" } as React.CSSProperties} className="box" />
                 <div style={{ "--i": 5, "--inset": "28%" } as React.CSSProperties} className="box" />
                 <div style={{ "--i": 6, "--inset": "24%" } as React.CSSProperties} className="box" />
-                <div style={{ "--i": 7, "--inset": "20%" } as React.CSSProperties} className="box" />
-                <div style={{ "--i": 8, "--inset": "16%" } as React.CSSProperties} className="box" />
             </div>
 
             <style jsx>{`
@@ -62,22 +60,22 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
                     position: absolute;
                     background: var(--background);
                     border-radius: 50%;
-                    box-shadow:
-                        rgba(59, 130, 246, 0.5) 0px 10px 10px 0,
-                        inset rgba(59, 130, 246, 0.5) 0px 5px 10px -7px;
+                    border: 1px solid rgba(59, 130, 246, 0.3);
+                    box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
                     animation: ripple var(--duration) infinite ease-in-out;
                     inset: var(--inset);
                     animation-delay: calc(var(--i) * 0.15s);
                     z-index: calc(var(--i) * -1);
                     pointer-events: all;
-                    transition: all 0.3s ease;
+                    will-change: transform, opacity;
                 }
 
                 .loader .box:last-child {
-                    filter: blur(30px);
+                    opacity: 0.4;
                 }
                 .loader .box:not(:last-child):hover {
-                    filter: brightness(2.5) blur(5px);
+                    background: rgba(59, 130, 246, 0.35);
+                    box-shadow: 0 0 25px rgba(59, 130, 246, 0.2);
                 }
 
                 .loader .logo {
@@ -97,19 +95,15 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
                 @keyframes ripple {
                     0% {
                         transform: scale(1);
-                        box-shadow:
-                            rgba(59, 130, 246, 0.5) 0px 10px 10px 0,
-                            inset rgba(59, 130, 246, 0.5) 0px 5px 10px -7px;
+                        opacity: 1;
                     }
                     65% {
                         transform: scale(1.4);
-                        box-shadow: rgba(0, 0, 0, 0) 0px 0 0 0;
+                        opacity: 0.15;
                     }
                     100% {
                         transform: scale(1);
-                        box-shadow:
-                            rgba(59, 130, 246, 0.5) 0px 10px 10px 0,
-                            inset rgba(59, 130, 246, 0.5) 0px 5px 10px -7px;
+                        opacity: 1;
                     }
                 }
 

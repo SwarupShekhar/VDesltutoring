@@ -8,6 +8,7 @@ import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/Button';
 import { FontWeight } from '@/components/font-weight';
+import Image from 'next/image';
 
 interface NavItem {
   name: string;
@@ -44,11 +45,16 @@ export function Navbar({ role }: NavbarProps) {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center gap-2">
-                <img
-                  src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
-                  alt="Englivo Logo"
-                  className="h-8 w-auto"
-                />
+                <div className="relative h-8 w-8">
+                  <Image
+                    src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
+                    alt="Englivo Logo"
+                    fill
+                    sizes="32px"
+                    priority
+                    className="object-contain"
+                  />
+                </div>
                 <FontWeight
                   text="Englivo"
                   fontSize={28}

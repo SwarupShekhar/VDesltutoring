@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server"
 import { geminiService } from "@/lib/gemini-service"
-import { pickMicroLesson, getMicroLesson } from "@/lib/microLessonSelector"
+import { selectEnglivoLesson, getEnglivoLesson, getLessonReason } from "@/lib/englivoLessons"
+import {
+    computeEnglivoScore,
+    getWeakestDimension,
+    getStrongestDimension,
+    getDimensionCoachingMessage
+} from "@/lib/fluencyScore"
+import type { EnglivoAITutorInput } from "@/types/englivoTypes"
 
 export async function POST(req: Request) {
     try {
@@ -10,36 +17,58 @@ export async function POST(req: Request) {
             return NextResponse.json({ response: "" })
         }
 
-        // Extract fluency data for honest coaching
-        const fluencyScore = metrics?.fluencyScore ?? 0.5
-        const pauseRatio = metrics?.pauseRatio ?? 0
-        const fillerRate = metrics?.fillerRate ?? 0
-        const restartRate = metrics?.restartRate ?? 0
-        const wordCount = metrics?.wordCount ?? 0
+        // Compute Englivo score from metrics
+        const englivoData = metrics ? computeEnglivoScore(metrics) : null
 
-        // Determine active Micro-Lesson
-        const lessonType = pickMicroLesson({ pauseRatio, fillerRate, restartRate, wordCount })
-        const activeLesson = getMicroLesson(lessonType)
-
-        // Determine Tone
-        let toneInstructions = ""
-        if (fluencyScore < 0.45) {
-            toneInstructions = "WARM + PATIENT. Be extra encouraging and supportive."
-        } else if (fluencyScore < 0.65) {
-            toneInstructions = "ENTHUSIASTIC + HELPFUL. Celebrate progress and guide gently."
-        } else {
-            toneInstructions = "EXCITED + CHALLENGING. Push them with energy and positivity."
+        if (!englivoData) {
+            // Fallback if no metrics available
+            return NextResponse.json({
+                response: "I didn't catch that clearly. Could you try again?"
+            })
         }
 
-        // Coaching Rules (Neuro-Bonding)
+        const { englivoScore, identity, dimensions, raw } = englivoData
+
+        // Find weakest and strongest dimensions
+        const weakest = getWeakestDimension(dimensions)
+        const strongest = getStrongestDimension(dimensions)
+
+        // Determine active Micro-Lesson based on Englivo dimensions
+        const lessonKey = selectEnglivoLesson(dimensions, raw)
+        const activeLesson = lessonKey ? getEnglivoLesson(lessonKey) : null
+        const lessonReason = lessonKey ? getLessonReason(lessonKey, raw) : null
+
+        // Determine Tone based on identity level
+        let toneInstructions = ""
+        if (englivoScore < 40) {
+            toneInstructions = "WARM + PATIENT. This is a Hesitant Thinker. Be extra encouraging and supportive."
+        } else if (englivoScore < 55) {
+            toneInstructions = "ENCOURAGING + HELPFUL. This is a Careful Speaker. Celebrate progress and guide gently."
+        } else if (englivoScore < 70) {
+            toneInstructions = "ENTHUSIASTIC + MOTIVATING. This is Developing Flow. Push them with energy."
+        } else if (englivoScore < 85) {
+            toneInstructions = "EXCITED + CHALLENGING. This is a Confident Speaker. Challenge them to excel."
+        } else {
+            toneInstructions = "CELEBRATORY + INSPIRING. This is a Natural Speaker. Inspire them to maintain excellence."
+        }
+
+        // Coaching Rules (Dimension-Aware)
         const specificRules: string[] = []
-        if (pauseRatio > 0.15) specificRules.push(`- PAUSES are noticeable (${Math.round(pauseRatio * 100)}%). Gently encourage ${firstName} to keep the flow going.`)
-        if (fillerRate > 0.08) specificRules.push(`- FILLERS are present (${Math.round(fillerRate * 100)}%). Help them find smoother transitions.`)
-        if (restartRate > 0.10) specificRules.push(`- RESTARTS happen (${Math.round(restartRate * 100)}%). Remind them to trust their instincts.`)
+
+        // Focus on weakest dimension
+        if (dimensions[weakest] < 60) {
+            const message = getDimensionCoachingMessage(weakest, dimensions[weakest])
+            specificRules.push(`- WEAKEST DIMENSION: ${weakest.toUpperCase()} (${dimensions[weakest]}/100). ${message}`)
+        }
+
+        // Acknowledge strongest dimension
+        if (dimensions[strongest] > 75) {
+            specificRules.push(`- STRENGTH: ${firstName}'s ${strongest} is excellent (${dimensions[strongest]}/100). Acknowledge this!`)
+        }
 
         // Add specific Micro-Lesson instruction to coaching rules
-        if (activeLesson) {
-            specificRules.unshift(`PRIORITY FOCUS: ${activeLesson.title}. Remind them: "${activeLesson.drill}"`)
+        if (activeLesson && lessonReason) {
+            specificRules.unshift(`PRIORITY FOCUS: ${activeLesson.lesson.title}. ${lessonReason} Remind them: "${activeLesson.lesson.instruction}"`)
         }
 
         const SYSTEM_PROMPT = `
@@ -49,26 +78,36 @@ The student's name is: ${firstName}
 You are NOT a grammar teacher or a strict examiner. You are a supportive speaking partner.
 Your job: Help ${firstName} feel confident, speak smoothly, and enjoy the conversation.
 
-CURRENT DATA:
-- Fluency Score: ${fluencyScore.toFixed(2)}
+CURRENT ENGLIVO DATA:
+- Englivo Score: ${englivoScore}/100
+- Identity Level: ${identity}
 - Coaching Style: ${toneInstructions}
+- Dimensions:
+  * Flow: ${dimensions.flow}/100 (ability to maintain speaking flow)
+  * Confidence: ${dimensions.confidence}/100 (ability to commit to sentences)
+  * Clarity: ${dimensions.clarity}/100 (ability to speak without fillers)
+  * Speed: ${dimensions.speed}/100 (optimal speaking pace)
+  * Stability: ${dimensions.stability}/100 (ability to avoid long freezes)
 
 COACHING RULES:
 1. **Be Warm & Personal**: Use ${firstName}'s name naturally once per response with genuine warmth (e.g., "That's great, ${firstName}!" or "${firstName}, I love your energy!")
 2. **Encourage First**: Start with something positive before any correction
 3. **Keep it Light**: Max 1-2 sentences. Sound like a friendly conversation, not a lecture
 4. **Ask Engaging Questions**: Make them want to keep talking
+5. **Use Dimension Language**: Reference Flow, Confidence, Clarity, Speed, or Stability - NOT grammar or vocabulary
 
 SPECIFIC GUIDANCE (use gently):
 ${specificRules.join('\n')}
 
-TONE EXAMPLES:
-- Low fluency: "Hey ${firstName}, you're doing great! Let's slow down and take it one thought at a time. What happened next?"
-- Medium fluency: "Nice, ${firstName}! I can feel your confidence growing. Tell me more about that!"
-- High fluency: "Wow ${firstName}, you're on fire! Let's push it even further—describe it in more detail!"
+DIMENSION-BASED FEEDBACK EXAMPLES:
+- Low Flow: "Hey ${firstName}, your flow is breaking a bit. Try starting your next sentence faster!"
+- Low Confidence: "${firstName}, I notice you're restarting sentences. Trust your first thought!"
+- Low Clarity: "Your clarity could improve, ${firstName}. Pause silently instead of using 'um'."
+- Low Speed: "${firstName}, let's pick up the pace a bit. You've got this!"
+- Low Stability: "Keep the words flowing, ${firstName}. Don't freeze between thoughts!"
 
-NEVER say: "wrong", "incorrect", "grammar error", "you failed"
-INSTEAD say: "let's try", "how about", "you could say", "great start"
+NEVER say: "wrong", "incorrect", "grammar error", "you failed", "CEFR", "A2", "B1", "beginner"
+INSTEAD say: "let's try", "how about", "you could say", "great start", "your flow", "your confidence"
 
 ERROR CORRECTION:
 If ${firstName} makes grammar, vocabulary, or fluency errors, note them mentally but DON'T lecture.
@@ -84,7 +123,7 @@ Return your response in this JSON format:
 
 If there are no errors, return an empty corrections array.
 
-GOAL: Make ${firstName} feel excited, supported, and eager to speak more.
+GOAL: Make ${firstName} feel excited, supported, and eager to speak more. Focus on behavioral fluency (how they speak), not academic English.
 `
         const rawResponse = await geminiService.generateChatResponse(SYSTEM_PROMPT, transcript)
 

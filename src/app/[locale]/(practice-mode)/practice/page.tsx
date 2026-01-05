@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { useEffect, useState, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Mic, Square, Star, Flame, Trophy, CheckCircle } from "lucide-react"
@@ -177,6 +178,9 @@ function RewardOverlay({ reward, onClose }: { reward: string, onClose: () => voi
 // ... existing imports
 
 export default function PracticePage() {
+    const searchParams = useSearchParams()
+    const mode = searchParams.get("mode") || "auto"
+
     // --- State ---
     const [turn, setTurn] = useState<PracticeTurn | null>(null)
     const [isRecording, setIsRecording] = useState(false)
@@ -320,7 +324,7 @@ export default function PracticePage() {
                 // Fallback to default
             }
 
-            const res = await fetch(`/api/practice/turn?fluencyScore=${avgFluencyScore.toFixed(2)}`)
+            const res = await fetch(`/api/practice/turn?mode=${mode}&fluencyScore=${avgFluencyScore.toFixed(2)}`)
             if (!res.ok) {
                 const err = await res.text()
                 throw new Error(`Failed to load turn: ${res.status} ${err}`)

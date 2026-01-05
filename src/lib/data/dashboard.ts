@@ -1,5 +1,7 @@
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { computeSkillScores, type SkillMetrics, type CEFRProfile } from '@/engines/cefr/cefrEngine'
+import { computeFluencyScore, type FluencyMetrics } from '@/engines/fluency/fluencyScore'
 
 export type DashboardData = {
     credits?: number;
@@ -9,10 +11,7 @@ export type DashboardData = {
     scheduledSessions?: any[];
     pastSessions?: any[];
     aiSessions?: any[];
-    progress?: {
-        speaking: number;
-        listening: number;
-    };
+    cefrProfile?: any; // CEFRProfile type
     error?: string;
 }
 
@@ -300,48 +299,70 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 .slice(0, 10);
 
-            // Calculate Confidence Levels
-            // Speaking: Average of Practice Scores and AI Fluency Scores (if available)
-            const practiceScores = practiceSessions.map(s => s.average_score);
-            const aiScores = aiChats.map(s => 0.5); // Placeholder as we don't strictly save scores on AI chats yet, or do we? Schema says nullable. 
-            // actually ai_chat_sessions has fluency_score but it might be null.
-            const validAiScores = (await prisma.ai_chat_sessions.findMany({
-                where: { user_id: user.id, fluency_score: { not: null } },
-                select: { fluency_score: true }
-            })).map(s => s.fluency_score as number);
+            // CALCULATE REAL CEFR PROFILE
+            // ----------------------------------------------------------------
+            // 1. Aggregate metrics from last 5 sessions for stability
+            const recentSessions = practiceSessions.slice(0, 5);
+            let aggregatedMetrics: SkillMetrics = {
+                fluency: 0,
+                pronunciation: 0,
+                grammar: 0,
+                vocabulary: 0
+            };
+            let totalSpeakingTime = 0;
 
-            const allSpeakingScores = [...practiceScores, ...validAiScores];
-            const avgSpeaking = allSpeakingScores.length > 0
-                ? allSpeakingScores.reduce((a, b) => a + b, 0) / allSpeakingScores.length
-                : 0.35; // Default starting confidence
+            if (recentSessions.length > 0) {
+                // Calculate average metrics
+                let totalFluencyScore = 0;
+                let totalFillers = 0; // lower is better
+                let totalPauses = 0;  // lower is better
 
-            // Listening: Logic to extract listening turns from practice?
-            // For now, let's base it on completion volume + specific listening turns if we can
-            // Simplification: Listening usually correlates with Speaking but let's assume it's slightly ahead
-            // Or look for rounds with type 'LISTEN_TYPE'
-            let listeningSum = 0;
-            let listeningCount = 0;
+                // For now, we simulate pronunciation/grammar/vocab as we don't have deepgram phonemes stored yet
+                // In production, these would come from stored session analysis
 
-            practiceSessions.forEach(session => {
-                const rounds = session.rounds as any[];
-                rounds.forEach(round => {
-                    // Start of round usually has 'type' in practice.ts logic but we saved { score, metrics, transcript, feedback }
-                    // We missed saving the 'type' in PracticePage.tsx! 
-                    // Recovery: If transcript starts with "You heard:", it might be listening? No.
-                    // Fallback: Just use overall speaking score * 1.1 (Listening is usually easier) capped at 1.0
+                recentSessions.forEach(s => {
+                    const metrics = (s.rounds as any[]).reduce((acc, r) => ({
+                        wordCount: acc.wordCount + r.metrics.wordCount,
+                        duration: acc.duration + (r.metrics.duration || 0),
+                        fillerCount: acc.fillerCount + (r.metrics.fillerCount || 0)
+                    }), { wordCount: 0, duration: 0, fillerCount: 0 });
+
+                    // Estimate speaking time (avg 3s per word if duration missing)
+                    const duration = metrics.duration || (metrics.wordCount * 3);
+                    totalSpeakingTime += duration;
+
+                    totalFluencyScore += s.average_score;
+
+                    // Normalize metrics for skill computation
+                    if (metrics.wordCount > 0) {
+                        totalFillers += (metrics.fillerCount / metrics.wordCount);
+                    }
                 });
-            });
 
-            const avgListening = Math.min(1.0, avgSpeaking * 1.15);
+                const count = recentSessions.length;
+                const avgFluency = totalFluencyScore / count;
+                const avgFillerRate = totalFillers / count;
+
+                // Map to SkillMetrics (0-1 scale)
+                aggregatedMetrics = {
+                    fluency: avgFluency, // Directly from fluency engine
+                    // INFERENCE: High fluency usually correlates with other skills until we have specific engines
+                    pronunciation: Math.min(1, avgFluency * 0.9 + 0.1), // Placeholder inference
+                    grammar: Math.min(1, avgFluency * 0.85 + 0.15),     // Placeholder inference
+                    vocabulary: Math.min(1, avgFluency * 0.8 + 0.2)     // Placeholder inference
+                };
+
+                // Adjust based on specific signals if we had them (e.g. grammar error count)
+            }
+
+            // 2. Compute CEFR Profile
+            const cefrProfile = computeSkillScores(aggregatedMetrics, totalSpeakingTime);
 
             return {
                 credits,
                 sessions: formattedSessions,
                 aiSessions: formattedAiSessions,
-                progress: {
-                    speaking: Number(avgSpeaking.toFixed(2)),
-                    listening: Number(avgListening.toFixed(2))
-                }
+                cefrProfile
             };
         }
 

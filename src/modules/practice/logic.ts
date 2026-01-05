@@ -1,10 +1,14 @@
-import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
-import { PracticeTurn } from "@/lib/practice"
-import { getDifficultySettings, DifficultySettings } from "@/lib/adaptiveDifficulty"
+/**
+ * Practice Module - Logic
+ * 
+ * Core business logic for practice mode.
+ */
+
+import { getDifficultySettings } from '@/engines/coaching/adaptiveDifficulty'
+import type { PracticeItem, DifficultySettings } from './types'
 
 // Expanded practice library with difficulty levels
-const PRACTICE_LIBRARY: (PracticeTurn & { complexity: 'simple' | 'moderate' | 'complex' })[] = [
+export const PRACTICE_LIBRARY: PracticeItem[] = [
     // --- SIMPLE (for struggling users) ---
     {
         id: "simple-1",
@@ -171,6 +175,7 @@ const PRACTICE_LIBRARY: (PracticeTurn & { complexity: 'simple' | 'moderate' | 'c
         complexity: "complex",
         prompt: "Explain why environmental conservation is important.",
     },
+
     // --- SIMPLE (Comprehension & Completion) ---
     {
         id: "comp-daily-1",
@@ -263,54 +268,41 @@ const PRACTICE_LIBRARY: (PracticeTurn & { complexity: 'simple' | 'moderate' | 'c
     },
 ]
 
-export async function GET(request: Request) {
-    const { userId } = await auth()
+/**
+ * Get a practice turn based on fluency score
+ */
+export function getPracticeTurn(fluencyScore: number = 0.5): PracticeItem & { difficultySettings: Omit<DifficultySettings, 'complexity'> } {
+    const settings = getDifficultySettings(fluencyScore)
 
-    if (!userId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    // Filter prompts by complexity
+    const filteredPrompts = PRACTICE_LIBRARY.filter(p => p.complexity === settings.complexity)
 
-    // Get fluency score from query params (sent from client-side localStorage)
-    const { searchParams } = new URL(request.url)
-    const fluencyScoreParam = searchParams.get('fluencyScore')
-    const fluencyScore = fluencyScoreParam ? parseFloat(fluencyScoreParam) : 0.5
+    // Fallback to all prompts if no match
+    const pool = filteredPrompts.length > 0 ? filteredPrompts : PRACTICE_LIBRARY
 
-    // Get mode from query params
-    const mode = searchParams.get('mode') || 'auto'
-
-    // Get difficulty settings based on fluency score
-    const settings: DifficultySettings = getDifficultySettings(fluencyScore)
-
-    // Select pool based on mode
-    let pool = PRACTICE_LIBRARY
-
-    if (mode === "speed") {
-        pool = PRACTICE_LIBRARY.filter(p => p.type === "QUICK_RESPONSE")
-    } else if (mode === "pronunciation") {
-        pool = PRACTICE_LIBRARY.filter(p => p.type === "LISTEN_REACT")
-    } else if (mode === "grammar") {
-        pool = PRACTICE_LIBRARY.filter(p => p.type === "FINISH_THOUGHT" || p.type === "COMPLETE_SENTENCE")
-    } else if (mode === "vocabulary") {
-        pool = PRACTICE_LIBRARY.filter(p => p.type === "PICK_SPEAK")
-    } else if (mode === "auto") {
-        pool = PRACTICE_LIBRARY.filter(p => p.complexity === settings.complexity)
-    }
-
-    // Fallback if requested mode pool is empty
-    if (pool.length === 0) {
-        pool = PRACTICE_LIBRARY.filter(p => p.complexity === settings.complexity)
-    }
-
-    // Pick random turn from appropriate pool
+    // Pick random turn
     const turn = pool[Math.floor(Math.random() * pool.length)]
 
-    return NextResponse.json({
+    return {
         ...turn,
-        // Include difficulty metadata for UI
         difficultySettings: {
             level: settings.level,
             prepTime: settings.prepTime,
             promptSpeed: settings.promptSpeed
         }
-    })
+    }
+}
+
+/**
+ * Get all practice items for a specific complexity
+ */
+export function getPracticeItemsByComplexity(complexity: 'simple' | 'moderate' | 'complex'): PracticeItem[] {
+    return PRACTICE_LIBRARY.filter(p => p.complexity === complexity)
+}
+
+/**
+ * Get practice items by situation
+ */
+export function getPracticeItemsBySituation(situation: string): PracticeItem[] {
+    return PRACTICE_LIBRARY.filter(p => p.situation.toLowerCase() === situation.toLowerCase())
 }

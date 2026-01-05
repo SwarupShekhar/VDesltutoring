@@ -10,6 +10,9 @@ export async function GET() {
       return ApiErrors.unauthorized()
     }
 
+    const email = clerkUser.emailAddresses[0]?.emailAddress || ''
+    const IS_OWNER_ADMIN = email === 'swarupshekhar.vaidikedu@gmail.com'
+
     // 2. Get user from database with required fields only
     let dbUser = await prisma.users.findUnique({
       where: { clerkId: clerkUser.id },
@@ -33,10 +36,10 @@ export async function GET() {
           clerkId: clerkUser.id,
           email: clerkUser.emailAddresses[0]?.emailAddress || '',
           full_name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'New User',
-          role: 'LEARNER',
+          role: IS_OWNER_ADMIN ? 'ADMIN' : 'LEARNER',
           student_profiles: {
             create: {
-              credits: 0
+              credits: IS_OWNER_ADMIN ? 9999 : 0
             }
           }
         },
@@ -53,6 +56,10 @@ export async function GET() {
       })
     }
 
+    // 4. Double-check Admin status for owner
+    const finalRole = IS_OWNER_ADMIN ? 'ADMIN' : dbUser.role
+    const finalCredits = IS_OWNER_ADMIN ? 9999 : (dbUser.student_profiles?.credits || 0)
+
     if (!dbUser) {
       return ApiErrors.userNotFound()
     }
@@ -61,11 +68,11 @@ export async function GET() {
     return apiSuccess({
       data: {
         id: dbUser.id,
-        role: dbUser.role,
+        role: finalRole,
         is_active: dbUser.is_active,
         // Include credits for learners
-        ...(dbUser.role === 'LEARNER' && dbUser.student_profiles && {
-          credits: dbUser.student_profiles.credits,
+        ...((finalRole === 'LEARNER' || IS_OWNER_ADMIN) && {
+          credits: finalCredits,
         }),
       },
     })

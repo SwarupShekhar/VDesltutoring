@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '@clerk/nextjs';
+import { useUser, SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Avatar } from '@/components/ui/Avatar';
@@ -102,11 +102,11 @@ export function Navbar({ role }: NavbarProps) {
                   </Link>
                 </DropdownItem>
 
-                <DropdownItem>
-                  <Link href="/sign-out" className="block w-full text-left">
+                <SignOutButton>
+                  <DropdownItem className="text-red-600 dark:text-red-400">
                     Sign out
-                  </Link>
-                </DropdownItem>
+                  </DropdownItem>
+                </SignOutButton>
               </Dropdown>
             </div>
           </div>

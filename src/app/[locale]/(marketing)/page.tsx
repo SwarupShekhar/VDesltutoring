@@ -17,6 +17,7 @@ import { SituationalGateway } from '@/components/SituationalGateway';
 import { FluencyReflexSection } from '@/components/FluencyReflexSection';
 import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 import { AudioTransformation } from '@/components/AudioTransformation';
+import { FluencyEngineShowcase } from '@/components/FluencyEngineShowcase';
 import { FluencyGlobe } from '@/components/FluencyGlobe';
 
 
@@ -120,6 +121,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
         {/* 4.5 TRANSFORMATION (The Result) */}
         <AudioTransformation dict={t.audioTransformation} />
+
+        {/* 4.6 FLUENCY ENGINE SHOWCASE (New Section) */}
+        <FluencyEngineShowcase dict={t.fluencyShowcase} />
 
         {/* 5. IMPACT STORIES (Social Proof) */}
         <TestimonialsCarousel

@@ -661,5 +661,42 @@
                 "label": "Immersion"
             }
         }
+    },
+    "fluencyShowcase": {
+        "headline": "The Fluency Engine",
+        "subtext": "Englivo doesn’t guess how well you speak. It measures how your brain produces language in real time.",
+        "features": {
+            "pauseRatio": "Pause Ratio",
+            "fillerUsage": "Filler Usage",
+            "speakingSpeed": "Speaking Speed",
+            "fluencyScore": "Fluency Score",
+            "cefrMapping": "CEFR Mapping"
+        },
+        "featureCaption": "These signals are extracted directly from your voice.",
+        "livePanel": {
+            "title": "What Englivo Sees While You Speak",
+            "caption": "These numbers update every second while you talk.",
+            "metrics": {
+                "pauses": "Pauses",
+                "fillers": "Fillers",
+                "fluency": "Fluency"
+            }
+        },
+        "radar": {
+            "title": "Your Real English Level",
+            "caption": "Englivo maps your speaking data to the same CEFR levels used by universities."
+        },
+        "proof": {
+            "headline": "One session can change your speaking pattern",
+            "before": "Before",
+            "after": "After",
+            "week0": "Week 0",
+            "week1": "Week 1",
+            "caption": "Same person. Same topic. After one targeted fluency drill."
+        },
+        "cta": {
+            "button": "Start Your Fluency Check",
+            "subtext": "Speak for 30 seconds. See your real numbers."
+        }
     }
 }

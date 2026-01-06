@@ -223,15 +223,35 @@
         "items": [
             {
                 "question": "Ist das für Anfänger?",
-                "answer": "Nein. Englivo ist für fortgeschrittene Profis konzipiert, die Grammatik kennen, aber mit Redefluss und Selbstvertrauen kämpfen."
+                "answer": "Nein. Englivo ist für Personen gedacht, die bereits Englisch können, aber Schwierigkeiten haben, in echten Situationen flüssig und selbstbewusst zu sprechen. Wenn Sie Grammatik können, aber einfrieren, zögern oder im Kopf übersetzen - das ist für Sie."
             },
             {
-                "question": "Wie funktioniert die Terminplanung?",
-                "answer": "Sie buchen Sitzungen direkt bei Ihrem gewählten Mentor basierend auf dessen Verfügbarkeit. Keine festen wöchentlichen Slots."
+                "question": "Brauche ich einen Tutor, um Englivo zu nutzen?",
+                "answer": "Nein. Sie können sich allein mit dem AI Tutor + Practice Engine verbessern. Tutoren sind optional und werden genutzt, wenn Sie menschliche Konversation oder Prüfungstraining wünschen."
+            },
+            {
+                "question": "Wie unterscheidet sich das von anderen Apps oder KI-Chatbots?",
+                "answer": "Die meisten Tools lehren, was man sagen soll. Englivo trainiert, wie Sie sprechen - Ihre Pausen, Timing, Fluss und Selbstvertrauen. Wir benoten Sie nicht. Wir erkennen Ihre Sprechmuster und helfen Ihnen, sie in Echtzeit zu ändern."
+            },
+            {
+                "question": "Was passiert, wenn ich auf „Start“ klicke?",
+                "answer": "Sie sprechen. Die KI hört zu. Sie misst Ihre Fluency-Gewohnheiten (Pausen, Füllwörter, Neustarts). Dann gibt sie Ihnen eine gezielte Übung, um den schwächsten Teil Ihres Sprechens zu verbessern. Sie lernen nicht - Sie trainieren."
+            },
+            {
+                "question": "Was ist, wenn ich schüchtern oder nervös bin oder Fehler mache?",
+                "answer": "Genau dafür ist Englivo da. Die KI verurteilt oder blamiert Sie nie. Es ist als sicherer Übungsraum konzipiert, in dem Sie frei sprechen und sich verbessern können."
+            },
+            {
+                "question": "Wie weiß ich, dass ich mich verbessere?",
+                "answer": "Sie werden sehen, wie sich Ihr Fluency Score, GER-Level und Kompetenzradar mit der Zeit ändern. Sie können auch Gestern vs. Heute vergleichen, um echte Fortschritte bei Pausen, Fluss und Selbstvertrauen zu sehen."
             },
             {
                 "question": "Was ist, wenn ich mich mit meinem Mentor nicht verstehe?",
-                "answer": "Chemie ist alles. Wenn es in der ersten Sitzung nicht passt, finden wir kostenlos jemand anderen für Sie."
+                "answer": "Sie können den Tutor jederzeit wechseln. Ihr Fortschritt wird in Englivo gespeichert, nicht bei einem einzelnen Tutor, sodass Sie nie den Schwung verlieren."
+            },
+            {
+                "question": "Werden meine Stimme oder Daten geteilt?",
+                "answer": "Nein. Ihre Aufnahmen werden nur verwendet, um Ihre Flüssigkeit zu analysieren und zu verbessern. Sie werden niemals öffentlich gemacht oder mit anderen Nutzern geteilt."
             }
         ]
     },
@@ -511,7 +531,43 @@
         "content6_p4": "Reisen",
         "title7": "Warum das funktioniert",
         "desc7": "Andere Systeme trainieren das Gedächtnis. Die Fluency Engine trainiert Zögern, Timing, Selbstvertrauen und Fluss - die Dinge, die tatsächlich entscheiden, ob Sie sprechen können.",
-        "content7_p1": "Wir unterrichten kein Englisch.",
         "content7_p2": "Wir trainieren das Sprechen."
+    },
+    "fluencyShowcase": {
+        "headline": "Die Fluency Engine",
+        "subtext": "Englivo rät nicht, wie gut Sie sprechen. Es misst, wie Ihr Gehirn Sprache in Echtzeit produziert.",
+        "features": {
+            "pauseRatio": "Pausen-Verhältnis",
+            "fillerUsage": "Füllwörter-Nutzung",
+            "speakingSpeed": "Sprechgeschwindigkeit",
+            "fluencyScore": "Flüssigkeits-Score",
+            "cefrMapping": "GER-Einstufung"
+        },
+        "featureCaption": "Diese Signale werden direkt aus Ihrer Stimme extrahiert.",
+        "livePanel": {
+            "title": "Was Englivo sieht, während Sie sprechen",
+            "caption": "Diese Zahlen aktualisieren sich jede Sekunde.",
+            "metrics": {
+                "pauses": "Pausen",
+                "fillers": "Füllwörter",
+                "fluency": "Flüssigkeit"
+            }
+        },
+        "radar": {
+            "title": "Ihr echtes Englisch-Niveau",
+            "caption": "Englivo bildet Ihre Sprechdaten auf die gleichen GER-Level ab, die Universitäten nutzen."
+        },
+        "proof": {
+            "headline": "Eine Sitzung kann Ihr Sprechmuster ändern",
+            "before": "Vorher",
+            "after": "Nachher",
+            "week0": "Woche 0",
+            "week1": "Woche 1",
+            "caption": "Gleiche Person. Gleiches Thema. Nach einer gezielten Flüssigkeits-Übung."
+        },
+        "cta": {
+            "button": "Starten Sie Ihren Fluency-Check",
+            "subtext": "Sprechen Sie 30 Sekunden. Sehen Sie Ihre echten Zahlen."
+        }
     }
 }

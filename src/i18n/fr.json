@@ -223,15 +223,35 @@
         "items": [
             {
                 "question": "Est-ce pour les débutants ?",
-                "answer": "Non. Englivo est conçu pour les professionnels de niveau intermédiaire à avancé qui connaissent déjà la grammaire mais luttent avec la fluidité et la confiance."
+                "answer": "Non. Englivo est conçu pour les personnes qui connaissent déjà l'anglais mais peinent à parler avec fluidité et confiance dans des situations réelles. Si vous connaissez la grammaire mais figez, hésitez ou traduisez dans votre tête, c'est pour vous."
             },
             {
-                "question": "Comment fonctionne la planification ?",
-                "answer": "Vous réservez des sessions directement avec votre tuteur choisi en fonction de sa disponibilité en direct. Pas de créneaux hebdomadaires fixes requis."
+                "question": "Ai-je besoin d'un tuteur pour utiliser Englivo ?",
+                "answer": "Non. Vous pouvez progresser uniquement avec le Tuteur IA et le Moteur d'Entraînement. Les tuteurs sont optionnels et utilisés quand vous voulez une conversation humaine ou une préparation aux examens oraux."
             },
             {
-                "question": "Et si je ne m'entends pas avec mon tuteur ?",
-                "answer": "L'alchimie est tout. Si le courant ne passe pas lors de votre première session, nous vous trouverons quelqu'un d'autre gratuitement."
+                "question": "En quoi est-ce différent des autres applis ou chatbots IA ?",
+                "answer": "La plupart des outils enseignent quoi dire. Englivo entraîne comment vous parlez - vos pauses, votre timing, votre flux et votre confiance. Nous ne vous notons pas. Nous détectons vos schémas de parole et vous aidons à les changer en temps réel."
+            },
+            {
+                "question": "Que se passe-t-il quand je clique sur « Commencer » ?",
+                "answer": "Vous parlez. L'IA écoute. Elle mesure vos habitudes de fluidité (pauses, mots de remplissage, redémarrages). Puis elle vous donne un exercice spécifique pour améliorer la partie la plus faible de votre expression. Vous n'étudiez pas - vous vous entraînez."
+            },
+            {
+                "question": "Et si je suis timide, nerveux ou fais des erreurs ?",
+                "answer": "C'est exactement pour cela qu'Englivo est fait. L'IA ne vous juge et ne vous embarrasse jamais. Elle est conçue pour être un espace d'entraînement sûr où vous pouvez parler librement et vous améliorer."
+            },
+            {
+                "question": "Comment savoir si je progresse ?",
+                "answer": "Vous verrez votre Score de Fluidité, votre niveau CECRL et votre radar de compétences changer avec le temps. Vous pouvez aussi comparer hier et aujourd'hui pour voir les progrès réels en pauses, flux et confiance."
+            },
+            {
+                "question": "Et si le courant ne passe pas avec mon mentor ?",
+                "answer": "Vous pouvez changer de tuteur à tout moment. Vos progrès sont stockés dans Englivo, pas avec un seul tuteur, donc vous ne perdez jamais votre élan."
+            },
+            {
+                "question": "Ma voix ou mes données sont-elles partagées ?",
+                "answer": "Non. Vos enregistrements sont utilisés uniquement pour analyser et améliorer votre fluidité. Ils ne sont jamais rendus publics ni partagés avec d'autres utilisateurs."
             }
         ]
     },
@@ -512,6 +532,43 @@
                 "value": "100%",
                 "label": "Immersion"
             }
+        }
+    },
+    "fluencyShowcase": {
+        "headline": "Le Moteur de Fluidité",
+        "subtext": "Englivo ne devine pas votre niveau. Il mesure comment votre cerveau produit la langue en temps réel.",
+        "features": {
+            "pauseRatio": "Taux de Pauses",
+            "fillerUsage": "Mots de Remplissage",
+            "speakingSpeed": "Vitesse d'Élocution",
+            "fluencyScore": "Score de Fluidité",
+            "cefrMapping": "Niveau CECRL"
+        },
+        "featureCaption": "Ces signaux sont extraits directement de votre voix.",
+        "livePanel": {
+            "title": "Ce qu'Englivo Voit Quand Vous Parlez",
+            "caption": "Ces chiffres se mettent à jour chaque seconde.",
+            "metrics": {
+                "pauses": "Pauses",
+                "fillers": "Remplissage",
+                "fluency": "Fluidité"
+            }
+        },
+        "radar": {
+            "title": "Votre Vrai Niveau d'Anglais",
+            "caption": "Englivo mappe vos données sur les niveaux CECRL utilisés par les universités."
+        },
+        "proof": {
+            "headline": "Une session peut changer votre façon de parler",
+            "before": "Avant",
+            "after": "Après",
+            "week0": "Semaine 0",
+            "week1": "Semaine 1",
+            "caption": "Même personne. Même sujet. Après un exercice ciblé."
+        },
+        "cta": {
+            "button": "Commencer Votre Test de Fluidité",
+            "subtext": "Parlez pendant 30 secondes. Voyez vos vrais chiffres."
         }
     }
 }

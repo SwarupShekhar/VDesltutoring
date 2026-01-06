@@ -45,6 +45,24 @@ export async function POST(req: Request) {
             },
         });
 
+        // Update Coach Memory with latest insights
+        const analysis = report.insights || {}
+        const weakness = analysis.weakest_skill || 'general fluency'
+        const focus = analysis.recommended_focus || 'speaking confidence'
+
+        await prisma.users.update({
+            where: { id: dbUser.id },
+            data: {
+                coach_memory: {
+                    lastSessionDate: new Date(),
+                    lastWeakness: weakness,
+                    focusSkill: focus,
+                    lastSessionSummary: report.summary || `Worked on ${focus}`,
+                    lastImprovement: report.progress || "Completed a session"
+                }
+            } as any
+        });
+
         return NextResponse.json({ success: true, sessionId: session.id });
     } catch (error) {
         console.error('Failed to save session:', error);

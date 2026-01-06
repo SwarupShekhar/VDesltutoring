@@ -188,15 +188,35 @@
         "items": [
             {
                 "question": "Cái này có dành cho người mới bắt đầu không?",
-                "answer": "Không. Englivo được thiết kế cho các chuyên gia trình độ trung cấp đến cao cấp đã biết ngữ pháp nhưng gặp khó khăn với sự trôi chảy và tự tin."
+                "answer": "Không. Englivo được xây dựng cho những người đã biết tiếng Anh nhưng gặp khó khăn khi nói trôi chảy và tự tin trong các tình huống thực tế. Nếu bạn biết ngữ pháp nhưng bị đóng băng, do dự hoặc dịch trong đầu - cái này dành cho bạn."
             },
             {
-                "question": "Lịch trình hoạt động như thế nào?",
-                "answer": "Bạn đặt lịch trực tiếp với cố vấn đã chọn dựa trên thời gian rảnh của họ. Không yêu cầu các khung giờ cố định hàng tuần."
+                "question": "Tôi có cần gia sư để sử dụng Englivo không?",
+                "answer": "Không. Bạn có thể cải thiện chỉ bằng cách sử dụng Gia sư AI + Công cụ Luyện tập. Gia sư là tùy chọn và được sử dụng khi bạn muốn trò chuyện với người thật hoặc luyện nói theo kiểu thi cử."
+            },
+            {
+                "question": "Cái này khác gì so với các ứng dụng khác hoặc chatbot AI?",
+                "answer": "Hầu hết các công cụ dạy những gì cần nói. Englivo rèn luyện cách bạn nói - sự ngưng nghỉ, thời gian, dòng chảy và sự tự tin của bạn. Chúng tôi không chấm điểm bạn. Chúng tôi phát hiện các kiểu nói của bạn và giúp bạn thay đổi chúng trong thời gian thực."
+            },
+            {
+                "question": "Điều gì xảy ra khi tôi nhấp vào “Bắt đầu”?",
+                "answer": "Bạn nói. AI lắng nghe. Nó đo lường các thói quen trôi chảy của bạn (ngưng nghỉ, từ đệm, khởi động lại). Sau đó, nó đưa ra cho bạn một bài tập cụ thể để cải thiện phần yếu nhất trong khả năng nói của bạn. Bạn không học - bạn rèn luyện."
+            },
+            {
+                "question": "Nếu tôi nhút nhát, lo lắng hoặc mắc lỗi thì sao?",
+                "answer": "Đó chính xác là đối tượng mà Englivo hướng tới. AI không bao giờ phán xét hay làm bạn xấu hổ. Nó được thiết kế để cảm thấy như một không gian luyện tập an toàn, nơi bạn có thể nói chuyện tự do và cải thiện."
+            },
+            {
+                "question": "Làm sao tôi biết mình đang tiến bộ?",
+                "answer": "Bạn sẽ thấy Điểm số Trôi chảy, cấp độ CEFR và biểu đồ kỹ năng của mình thay đổi theo thời gian. Bạn cũng có thể so sánh ngày hôm qua với hôm nay để thấy sự tiến bộ thực sự về sự ngưng nghỉ, dòng chảy và sự tự tin."
             },
             {
                 "question": "Nếu tôi không hợp với cố vấn thì sao?",
-                "answer": "Sự ăn ý là tất cả. Nếu không hợp trong buổi đầu tiên, chúng tôi sẽ tìm người khác cho bạn miễn phí."
+                "answer": "Bạn có thể đổi gia sư bất cứ lúc nào. Sự tiến bộ của bạn được lưu trữ trong Englivo, không phải với một gia sư duy nhất, vì vậy bạn không bao giờ mất đà."
+            },
+            {
+                "question": "Giọng nói hoặc dữ liệu của tôi có được chia sẻ không?",
+                "answer": "Không. Các bản ghi âm của bạn chỉ được sử dụng để phân tích và cải thiện sự trôi chảy của bạn. Chúng không bao giờ được công khai hoặc chia sẻ với người dùng khác."
             }
         ]
     },
@@ -456,7 +476,43 @@
         "content6_p4": "Du lịch",
         "title7": "Tại sao nó hiệu quả",
         "desc7": "Các hệ thống khác rèn luyện trí nhớ. Fluency Engine rèn luyện sự chần chừ, thời gian, sự tự tin và dòng chảy - những thứ thực sự quyết định liệu bạn có thể nói hay không.",
-        "content7_p1": "Chúng tôi không dạy tiếng Anh.",
         "content7_p2": "Chúng tôi rèn luyện kỹ năng nói."
+    },
+    "fluencyShowcase": {
+        "headline": "Công Cụ Lưu Loát",
+        "subtext": "Englivo không đoán bạn nói tốt như thế nào. Nó đo lường cách não bộ của bạn tạo ra ngôn ngữ trong thời gian thực.",
+        "features": {
+            "pauseRatio": "Tỷ Lệ Ngưng Nghỉ",
+            "fillerUsage": "Sử Dụng Từ Đệm",
+            "speakingSpeed": "Tốc Độ Nói",
+            "fluencyScore": "Điểm Lưu Loát",
+            "cefrMapping": "Bản Đồ CEFR"
+        },
+        "featureCaption": "Những tín hiệu này được trích xuất trực tiếp từ giọng nói của bạn.",
+        "livePanel": {
+            "title": "Những Gì Englivo Thấy Khi Bạn Nói",
+            "caption": "Những con số này cập nhật mỗi giây khi bạn nói.",
+            "metrics": {
+                "pauses": "Ngưng Nghỉ",
+                "fillers": "Từ Đệm",
+                "fluency": "Lưu Loát"
+            }
+        },
+        "radar": {
+            "title": "Trình Độ Tiếng Anh Thực Của Bạn",
+            "caption": "Englivo ánh xạ dữ liệu nói của bạn tới cùng các cấp độ CEFR được sử dụng bởi các trường đại học."
+        },
+        "proof": {
+            "headline": "Một buổi học có thể thay đổi cách nói của bạn",
+            "before": "Trước",
+            "after": "Sau",
+            "week0": "Tuần 0",
+            "week1": "Tuần 1",
+            "caption": "Cùng một người. Cùng chủ đề. Sau một bài tập lưu loát có mục tiêu."
+        },
+        "cta": {
+            "button": "Bắt Đầu Kiểm Tra Lưu Loát",
+            "subtext": "Nói trong 30 giây. Xem những con số thực của bạn."
+        }
     }
 }

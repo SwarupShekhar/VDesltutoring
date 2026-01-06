@@ -2,11 +2,42 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, ArrowDown, ArrowUp } from 'lucide-react';
+import { PremiumMetricBar } from '@/components/PremiumMetricBar';
 
 const AUDIO_URLS = {
     week1: 'https://res.cloudinary.com/de8vvmpip/video/upload/v1766834998/hesitant_lbk3dc.mp3',
     week12: 'https://res.cloudinary.com/de8vvmpip/video/upload/v1766834997/fluent_ytmgoz.mp3'
+};
+
+const METRICS_DATA = {
+    pauses: {
+        id: 'pauses',
+        label: "Pauses",
+        before: 18,
+        after: 9,
+        unit: "%",
+        microcopy: "Your brain is responding faster.",
+        trend: 'down' as const
+    },
+    fillers: {
+        id: 'fillers',
+        label: "Fillers",
+        before: 11,
+        after: 5,
+        unit: "%",
+        microcopy: "Your thoughts are cleaner.",
+        trend: 'down' as const
+    },
+    fluency: {
+        id: 'fluency',
+        label: "Fluency",
+        before: 42,
+        after: 68,
+        unit: "",
+        microcopy: "Your speech is flowing.",
+        trend: 'up' as const
+    }
 };
 
 // Mock Waveform Bars
@@ -90,76 +121,95 @@ export function AudioTransformation({ dict }: { dict: any }) {
                     </p>
                 </div>
 
-                {/* Audio Player Container */}
-                <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl p-8 shadow-lg border border-slate-200 dark:border-white/10 relative overflow-hidden">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    {/* LEFT COLUMN: Audio Player (Existing) */}
+                    <div className="bg-slate-50 dark:bg-slate-900 rounded-3xl p-8 shadow-lg border border-slate-200 dark:border-white/10 relative overflow-hidden h-full flex flex-col justify-center">
 
-                    {/* Toggle Switch */}
-                    <div className="flex justify-center mb-12">
-                        <div className="bg-white dark:bg-slate-800 p-1.5 rounded-full shadow-sm inline-flex relative">
-                            {/* Sliding Background */}
-                            <motion.div
-                                className="absolute bg-blue-600 rounded-full h-[calc(100%-12px)] top-1.5 bottom-1.5"
-                                layoutId="activeTab"
-                                initial={false}
-                                animate={{
-                                    left: activeTab === 'week1' ? '6px' : '50%',
-                                    width: 'calc(50% - 9px)',
-                                    x: activeTab === 'week12' ? '3px' : '0'
-                                }}
-                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            />
+                        {/* Toggle Switch */}
+                        <div className="flex justify-center mb-12">
+                            <div className="bg-white dark:bg-slate-800 p-1.5 rounded-full shadow-sm inline-flex relative">
+                                {/* Sliding Background */}
+                                <motion.div
+                                    className="absolute bg-blue-600 rounded-full h-[calc(100%-12px)] top-1.5 bottom-1.5"
+                                    layoutId="activeTab"
+                                    initial={false}
+                                    animate={{
+                                        left: activeTab === 'week1' ? '6px' : '50%',
+                                        width: 'calc(50% - 9px)',
+                                        x: activeTab === 'week12' ? '3px' : '0'
+                                    }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                />
 
+                                <button
+                                    onClick={() => setActiveTab('week1')}
+                                    className={`relative z-10 px-8 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'week1' ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`}
+                                >
+                                    {dict.week1}
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('week12')}
+                                    className={`relative z-10 px-8 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'week12' ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`}
+                                >
+                                    {dict.week12}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Visualizer Area */}
+                        <div className="mb-12 flex flex-col items-center justify-center min-h-[120px]">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={activeTab}
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="w-full"
+                                >
+                                    <Waveform
+                                        isActive={isPlaying}
+                                        intensity={activeTab === 'week1' ? 'low' : 'high'}
+                                    />
+                                </motion.div>
+                            </AnimatePresence>
+
+                            {!isPlaying && (
+                                <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-4 animate-pulse">
+                                    {dict.label}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Play Control */}
+                        <div className="flex justify-center">
                             <button
-                                onClick={() => setActiveTab('week1')}
-                                className={`relative z-10 px-8 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'week1' ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`}
+                                onClick={togglePlay}
+                                aria-label={isPlaying ? "Pause audio" : "Play audio"}
+                                className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-transform active:scale-95 ${activeTab === 'week1' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' : 'bg-blue-600 text-white shadow-blue-500/30'}`}
                             >
-                                {dict.week1}
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('week12')}
-                                className={`relative z-10 px-8 py-2 rounded-full text-sm font-medium transition-colors ${activeTab === 'week12' ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`}
-                            >
-                                {dict.week12}
+                                {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" className="ml-1" />}
                             </button>
                         </div>
                     </div>
 
-                    {/* Visualizer Area */}
-                    <div className="mb-12 flex flex-col items-center justify-center min-h-[120px]">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={activeTab}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                transition={{ duration: 0.3 }}
-                                className="w-full"
-                            >
-                                <Waveform
-                                    isActive={isPlaying}
-                                    intensity={activeTab === 'week1' ? 'low' : 'high'}
-                                />
-                            </motion.div>
-                        </AnimatePresence>
-
-                        {!isPlaying && (
-                            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mt-4 animate-pulse">
-                                {dict.label}
+                    {/* RIGHT COLUMN: What Englivo Sees (PREMIUM UPGRADE) */}
+                    <div className="bg-white dark:bg-slate-950 rounded-3xl p-8 border border-slate-100 dark:border-white/5 shadow-sm h-full flex flex-col justify-center">
+                        <div className="mb-8">
+                            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">
+                                What Englivo Sees
+                            </h3>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">
+                                This is what changed after 30 seconds of Englivo training.
                             </p>
-                        )}
-                    </div>
+                        </div>
 
-                    {/* Play Control */}
-                    <div className="flex justify-center">
-                        <button
-                            onClick={togglePlay}
-                            aria-label={isPlaying ? "Pause audio" : "Play audio"}
-                            className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-transform active:scale-95 ${activeTab === 'week1' ? 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300' : 'bg-blue-600 text-white shadow-blue-500/30'}`}
-                        >
-                            {isPlaying ? <Pause size={28} fill="currentColor" /> : <Play size={28} fill="currentColor" className="ml-1" />}
-                        </button>
+                        <div className="space-y-8">
+                            <PremiumMetricBar item={METRICS_DATA.pauses} activeTab={activeTab} />
+                            <PremiumMetricBar item={METRICS_DATA.fillers} activeTab={activeTab} />
+                            <PremiumMetricBar item={METRICS_DATA.fluency} activeTab={activeTab} />
+                        </div>
                     </div>
-
                 </div>
             </div>
         </section>

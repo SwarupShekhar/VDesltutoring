@@ -22,6 +22,7 @@ model users {
   fluency_sessions  fluency_sessions[]  @relation("UserFluency")
   ai_chat_sessions  ai_chat_sessions[]
   fluency_snapshots fluency_snapshots[]
+  coach_memory      Json?
 }
 
 model packages {

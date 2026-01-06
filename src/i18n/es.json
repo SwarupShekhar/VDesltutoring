@@ -188,15 +188,35 @@
         "items": [
             {
                 "question": "¿Es esto para principiantes?",
-                "answer": "No. Englivo está diseñado para profesionales de nivel intermedio a avanzado que ya conocen la gramática pero luchan con la fluidez y la confianza."
+                "answer": "No. Englivo está diseñado para personas que ya saben inglés pero luchan por hablar con fluidez y confianza en situaciones reales. Si sabes gramática pero te congelas, dudas o traduces en tu cabeza, esto es para ti."
             },
             {
-                "question": "¿Cómo funciona la programación?",
-                "answer": "Reservas sesiones directamente con tu mentor elegido según su disponibilidad en vivo. No se requieren espacios semanales fijos."
+                "question": "¿Necesito un tutor para usar Englivo?",
+                "answer": "No. Puedes mejorar usando solo el Tutor de IA + Motor de Práctica. Los tutores son opcionales y se usan cuando quieres conversación humana o práctica de examen."
+            },
+            {
+                "question": "¿En qué se diferencia de otras apps o chatbots de IA?",
+                "answer": "La mayoría de las herramientas enseñan qué decir. Englivo entrena cómo hablas: tus pausas, tiempos, flujo y confianza. No te calificamos. Detectamos tus patrones de habla y te ayudamos a cambiarlos en tiempo real."
+            },
+            {
+                "question": "¿Qué pasa cuando hago clic en 'Empezar'?",
+                "answer": "Tú hablas. La IA escucha. Mide tus hábitos de fluidez (pausas, muletillas, reinicios). Luego te da un ejercicio específico para mejorar la parte más débil de tu habla. No estudias, entrenas."
+            },
+            {
+                "question": "¿Y si soy tímido, nervioso o cometo errores?",
+                "answer": "Para eso es exactamente Englivo. La IA nunca te juzga ni te avergüenza. Está diseñado para sentirse como un espacio de práctica seguro donde puedes hablar libremente y mejorar."
+            },
+            {
+                "question": "¿Cómo sé que estoy mejorando?",
+                "answer": "Verás tu Puntuación de Fluidez, nivel MCER y radar de habilidades cambiar con el tiempo. También puedes comparar ayer vs hoy para ver el progreso real en pausas, flujo y confianza."
             },
             {
                 "question": "¿Qué pasa si no conecto con mi mentor?",
-                "answer": "La química lo es todo. Si la vibra no es correcta en tu primera sesión, te buscaremos a otra persona gratis."
+                "answer": "Puedes cambiar de tutor en cualquier momento. Tu progreso se guarda en Englivo, no con un solo tutor, así que nunca pierdes el impulso."
+            },
+            {
+                "question": "¿Se comparten mi voz o mis datos?",
+                "answer": "No. Tus grabaciones se usan solo para analizar y mejorar tu fluidez. Nunca se hacen públicas ni se comparten con otros usuarios."
             }
         ]
     },
@@ -475,6 +495,43 @@
                 "value": "100%",
                 "label": "Inmersión"
             }
+        }
+    },
+    "fluencyShowcase": {
+        "headline": "El Motor de Fluidez",
+        "subtext": "Englivo no adivina qué tan bien hablas. Mide cómo tu cerebro produce el lenguaje en tiempo real.",
+        "features": {
+            "pauseRatio": "Ratio de Pausas",
+            "fillerUsage": "Uso de Muletillas",
+            "speakingSpeed": "Velocidad del Habla",
+            "fluencyScore": "Puntuación de Fluidez",
+            "cefrMapping": "Nivel MCER"
+        },
+        "featureCaption": "Estas señales se extraen directamente de tu voz.",
+        "livePanel": {
+            "title": "Lo que Englivo Ve Cuando Hablas",
+            "caption": "Estos números se actualizan cada segundo mientras hablas.",
+            "metrics": {
+                "pauses": "Pausas",
+                "fillers": "Muletillas",
+                "fluency": "Fluidez"
+            }
+        },
+        "radar": {
+            "title": "Tu Nivel Real de Inglés",
+            "caption": "Englivo mapea tus datos de habla a los mismos niveles MCER utilizados por las universidades."
+        },
+        "proof": {
+            "headline": "Una sesión puede cambiar tu patrón de habla",
+            "before": "Antes",
+            "after": "Después",
+            "week0": "Semana 0",
+            "week1": "Semana 1",
+            "caption": "Misma persona. Mismo tema. Después de un ejercicio de fluidez específico."
+        },
+        "cta": {
+            "button": "Comienza Tu Chequeo de Fluidez",
+            "subtext": "Habla durante 30 segundos. Ve tus números reales."
         }
     }
 }

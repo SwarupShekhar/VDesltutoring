@@ -7,11 +7,32 @@ import {
     getStrongestDimension,
     getDimensionCoachingMessage
 } from "@/lib/fluencyScore"
-import type { EnglivoAITutorInput } from "@/types/englivoTypes"
+import { auth } from '@clerk/nextjs/server'
+import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
     try {
-        const { transcript, fluency, metrics, firstName = "Student" } = await req.json()
+        const { transcript, fluency, metrics, firstName: reqName } = await req.json()
+        const { userId: clerkId } = await auth()
+
+        // Fetch User Context / Memory
+        let coachMemory: any = null
+        let firstName = reqName || "Student"
+
+        if (clerkId) {
+            try {
+                const user = await prisma.users.findUnique({
+                    where: { clerkId },
+                    select: { full_name: true, coach_memory: true } as any
+                })
+                if (user) {
+                    firstName = (user as any).full_name?.split(' ')[0] || firstName
+                    coachMemory = (user as any).coach_memory
+                }
+            } catch (e) {
+                console.warn("Failed to fetch user memory", e)
+            }
+        }
 
         if (!transcript || transcript.trim().length < 2) {
             return NextResponse.json({ response: "" })
@@ -71,12 +92,32 @@ export async function POST(req: Request) {
             specificRules.unshift(`PRIORITY FOCUS: ${activeLesson.lesson.title}. ${lessonReason} Remind them: "${activeLesson.lesson.instruction}"`)
         }
 
+        // Generate Memory Context
+        let memoryContext = ""
+        if (coachMemory) {
+            const { focusSkill, lastWeakness, lastSessionSummary } = coachMemory as any
+            if (lastWeakness || focusSkill) {
+                memoryContext = `
+PAST SESSION MEMORY (Crucial for Continuity):
+- Focus Skill: ${focusSkill || 'General Fluency'}
+- Last Weakness: ${lastWeakness || 'None'}
+- History: ${lastSessionSummary || 'None'}
+
+CONTINUITY INSTRUCTION:
+You MUST reference this memory in your first response to show you remember them. 
+Example: "Welcome back ${firstName}. Last time we worked on ${lastWeakness}. Let's see if we can improve that today."
+`
+            }
+        }
+
         const SYSTEM_PROMPT = `
 You are Englivo — a friendly English speaking coach who genuinely cares about helping students.
 The student's name is: ${firstName}
 
 You are NOT a grammar teacher or a strict examiner. You are a supportive speaking partner.
 Your job: Help ${firstName} feel confident, speak smoothly, and enjoy the conversation.
+
+${memoryContext}
 
 CURRENT ENGLIVO DATA:
 - Englivo Score: ${englivoScore}/100
@@ -90,11 +131,11 @@ CURRENT ENGLIVO DATA:
   * Stability: ${dimensions.stability}/100 (ability to avoid long freezes)
 
 COACHING RULES:
-1. **Be Warm & Personal**: Use ${firstName}'s name naturally once per response with genuine warmth (e.g., "That's great, ${firstName}!" or "${firstName}, I love your energy!")
-2. **Encourage First**: Start with something positive before any correction
-3. **Keep it Light**: Max 1-2 sentences. Sound like a friendly conversation, not a lecture
-4. **Ask Engaging Questions**: Make them want to keep talking
-5. **Use Dimension Language**: Reference Flow, Confidence, Clarity, Speed, or Stability - NOT grammar or vocabulary
+1. **Be Warm & Personal**: Use ${firstName}'s name naturally once per response with genuine warmth.
+2. **Encourage First**: Start with something positive before any correction.
+3. **Keep it Light**: Max 1-2 sentences. Sound like a friendly conversation, not a lecture.
+4. **Ask Engaging Questions**: Make them want to keep talking.
+5. **Use Dimension Language**: Reference Flow, Confidence, Clarity, Speed, or Stability - NOT grammar or vocabulary.
 
 SPECIFIC GUIDANCE (use gently):
 ${specificRules.join('\n')}
@@ -152,8 +193,6 @@ GOAL: Make ${firstName} feel excited, supported, and eager to speak more. Focus 
         if (err.message && (err.message.includes("API_KEY") || err.message.includes("missing"))) {
             errorMessage = "System Error: The Gemini API Key is missing. Please check your settings."
         } else if (err.message) {
-            // For other errors, log them but maybe keep the response somewhat vague or helpful
-            // actually for now, let's speak the error if it helps debugging
             errorMessage = `System Error: ${err.message}`
         }
 

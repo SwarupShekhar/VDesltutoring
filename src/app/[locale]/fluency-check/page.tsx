@@ -7,11 +7,15 @@ import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import {
     extractMetricsFromDeepgram,
-    computeFluencyScore,
+    computeEnglivoScoreWithCefr,
     FluencyMetrics
 } from "@/lib/fluencyScore"
+import { EnglivoScore } from "@/types/englivoTypes"
 import { pickMicroLesson, getMicroLesson } from "@/lib/microLessonSelector"
 import { MicroLesson } from "@/lib/microLessons"
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, Radar } from 'recharts'
+import { PremiumMetricBar } from '@/components/PremiumMetricBar'
+import { getDiagnosis, getReasoning, getProgressPrediction } from "@/lib/fluencyInterpretation"
 
 // --- Helper: Blob to Base64 ---
 async function blobToBase64(blob: Blob): Promise<string> {
@@ -47,8 +51,8 @@ export default function FluencyCheckPage() {
     const [elapsed, setElapsed] = useState(0)
 
     // Data
-    const [baselineMetrics, setBaselineMetrics] = useState<FluencyMetrics | null>(null)
-    const [drillMetrics, setDrillMetrics] = useState<FluencyMetrics | null>(null)
+    const [baselineData, setBaselineData] = useState<EnglivoScore | null>(null)
+    const [drillData, setDrillData] = useState<EnglivoScore | null>(null)
     const [weakness, setWeakness] = useState<MicroLesson | null>(null)
 
     // Refs
@@ -124,10 +128,10 @@ export default function FluencyCheckPage() {
             const duration = words.length > 0 ? words[words.length - 1]?.end || 10 : 10
 
             const metrics = extractMetricsFromDeepgram(dgResult, duration)
-            const score = computeFluencyScore(metrics)
+            const scoreData = computeEnglivoScoreWithCefr(metrics)
 
             if (step === "RECORD_BASELINE" || step === "ANALYZING") {
-                setBaselineMetrics(metrics)
+                setBaselineData(scoreData)
 
                 // Identify Weakness
                 const lessonType = pickMicroLesson(metrics)
@@ -139,10 +143,26 @@ export default function FluencyCheckPage() {
                 }
                 setWeakness(lesson)
 
+                // SAVE DIAGNOSIS TO MEMORY (The Loop)
+                const diagnosis = getDiagnosis(scoreData)
+                fetch('/api/user/coach-memory', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        focusSkill: lesson.title,
+                        lastWeakness: lesson.description, // e.g. "Long pauses before speaking"
+                        lastSessionSummary: `Baseline Check: ${scoreData.cefr?.level}. ${diagnosis}`,
+                        baseline: {
+                            cefr: scoreData.cefr?.level,
+                            score: scoreData.englivoScore
+                        }
+                    })
+                }).catch(err => console.error("Failed to save memory:", err))
+
                 // Fake analysis time for effect
                 setTimeout(() => setStep("REVEAL"), 2000)
             } else if (step === "RECORD_DRILL") {
-                setDrillMetrics(metrics)
+                setDrillData(scoreData)
                 setStep("COMPARISON")
             }
 
@@ -156,7 +176,11 @@ export default function FluencyCheckPage() {
     // --- Renders ---
 
     return (
-        <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-6 font-sans">
+        <div className="min-h-screen bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-6 font-sans relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-3xl rounded-full" />
+                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-emerald-500/5 blur-3xl rounded-full" />
+            </div>
             <div className="w-full max-w-lg mx-auto text-center space-y-8">
 
                 {/* PROGRESS BAR (Optional) */}
@@ -239,15 +263,15 @@ export default function FluencyCheckPage() {
                     )}
 
                     {/* STEP 4: REVEAL */}
-                    {step === "REVEAL" && baselineMetrics && (
+                    {step === "REVEAL" && baselineData && (
                         <motion.div
                             key="reveal"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
-                            className="space-y-8 text-left"
+                            className="space-y-8 w-full max-w-2xl"
                         >
-                            <div>
+                            <div className="text-center">
                                 <h1 className="text-3xl font-serif font-bold text-slate-900 dark:text-white mb-2">
                                     Your Speaking Style
                                 </h1>
@@ -256,26 +280,94 @@ export default function FluencyCheckPage() {
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                                    <div className="text-sm text-slate-500 mb-1">Pause Ratio</div>
-                                    <div className="text-2xl font-bold font-mono text-slate-800 dark:text-slate-200">{Math.round(baselineMetrics.pauseRatio * 100)}%</div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {/* METRICS COLUMN */}
+                                <div className="space-y-6 bg-white dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-white/5 shadow-sm">
+                                    <h3 className="font-semibold text-slate-900 dark:text-white mb-4">Real-time Signals</h3>
+                                    <PremiumMetricBar
+                                        item={{
+                                            id: 'pauses', label: 'Pauses',
+                                            before: baselineData.raw.pauseRatio * 100,
+                                            after: baselineData.raw.pauseRatio * 100,
+                                            unit: '%', trend: 'down'
+                                        }}
+                                        forceState="after"
+                                        showDelta={false}
+                                    />
+                                    <PremiumMetricBar
+                                        item={{
+                                            id: 'fillers', label: 'Fillers',
+                                            before: baselineData.raw.fillerRate * 100,
+                                            after: baselineData.raw.fillerRate * 100,
+                                            unit: '%', trend: 'down'
+                                        }}
+                                        forceState="after"
+                                        showDelta={false}
+                                    />
+                                    <PremiumMetricBar
+                                        item={{
+                                            id: 'fluency', label: 'Flow Score',
+                                            before: baselineData.englivoScore,
+                                            after: baselineData.englivoScore,
+                                            unit: '', trend: 'up'
+                                        }}
+                                        forceState="after"
+                                        showDelta={false}
+                                    />
                                 </div>
-                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                                    <div className="text-sm text-slate-500 mb-1">Fillers</div>
-                                    <div className="text-2xl font-bold font-mono text-slate-800 dark:text-slate-200">{Math.round(baselineMetrics.fillerRate * 100)}%</div>
-                                </div>
-                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                                    <div className="text-sm text-slate-500 mb-1">Restarts</div>
-                                    <div className="text-2xl font-bold font-mono text-slate-800 dark:text-slate-200">{Math.round(baselineMetrics.restartRate * 100)}%</div>
-                                </div>
-                                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
-                                    <div className="text-sm text-slate-500 mb-1">WPM</div>
-                                    <div className="text-2xl font-bold font-mono text-slate-800 dark:text-slate-200">{(baselineMetrics.speechSpeed * 100 + 40).toFixed(0)}</div>
-                                    {/* Approximation as raw WPM isn't in metrics, only normalized speed. Actually metrics has only normalized. 
-                                        I should add raw WPM to FluencyMetrics for this view? 
-                                        For now, keeping it abstract or just removing WPM if not accurate. 
-                                        Actually I will hide WPM for now and focus on flow metrics. */}
+
+                                {/* RADAR COLUMN */}
+                                <div className="bg-white dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-100 dark:border-white/5 shadow-sm flex flex-col items-center justify-center">
+                                    <h3 className="font-semibold text-slate-900 dark:text-white mb-2">English Profile</h3>
+
+                                    {/* A) DIAGNOSIS */}
+                                    <div className="mb-4 bg-orange-50 dark:bg-orange-900/10 p-3 rounded-lg border border-orange-100 dark:border-orange-900/20">
+                                        <p className="text-sm text-orange-800 dark:text-orange-200 font-medium leading-snug">
+                                            {getDiagnosis(baselineData)}
+                                        </p>
+                                    </div>
+
+                                    <div className="h-[200px] w-full relative">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <RadarChart cx="50%" cy="50%" outerRadius="70%" data={[
+                                                { subject: 'Flow', A: baselineData.dimensions.flow, fullMark: 100 },
+                                                { subject: 'Confidence', A: baselineData.dimensions.confidence, fullMark: 100 },
+                                                { subject: 'Clarity', A: baselineData.dimensions.clarity, fullMark: 100 },
+                                                { subject: 'Speed', A: baselineData.dimensions.speed, fullMark: 100 },
+                                                { subject: 'Stability', A: baselineData.dimensions.stability, fullMark: 100 },
+                                            ]}>
+                                                <PolarGrid stroke="#e2e8f0" strokeOpacity={0.5} />
+                                                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }} />
+                                                <Radar
+                                                    name="Level"
+                                                    dataKey="A"
+                                                    stroke="#3b82f6"
+                                                    strokeWidth={2}
+                                                    fill="#3b82f6"
+                                                    fillOpacity={0.2}
+                                                />
+                                            </RadarChart>
+                                        </ResponsiveContainer>
+                                    </div>
+
+                                    <div className="text-center space-y-3 mt-2 w-full">
+                                        <div className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full text-xs font-bold text-slate-600 dark:text-slate-300">
+                                            CEFR Level: <span className="text-blue-600 dark:text-blue-400 text-sm ml-1">{baselineData.cefr?.level || 'A2'}</span>
+                                        </div>
+
+                                        {/* B) REASONING */}
+                                        <p className="text-sm text-slate-600 dark:text-slate-300 font-medium">
+                                            {getReasoning(baselineData)}
+                                        </p>
+
+                                        {/* C) PROGRESS PREDICTION */}
+                                        <div className="pt-2 border-t border-slate-100 dark:border-white/5">
+                                            <p className="text-xs text-slate-400">
+                                                <TrendingUp className="w-3 h-3 inline mr-1 text-green-500" />
+                                                {getProgressPrediction(baselineData)}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -367,7 +459,7 @@ export default function FluencyCheckPage() {
                     )}
 
                     {/* STEP 7: COMPARISON */}
-                    {step === "COMPARISON" && baselineMetrics && drillMetrics && weakness && (
+                    {step === "COMPARISON" && baselineData && drillData && weakness && (
                         <motion.div
                             key="comparison"
                             initial={{ opacity: 0, scale: 0.9 }}
@@ -388,8 +480,8 @@ export default function FluencyCheckPage() {
                                     <div className="text-3xl font-bold text-slate-400">
                                         {/* Show meaningful metric based on weakness */}
                                         {weakness.type === 'START_FASTER' || weakness.type === 'STOP_RESTARTING'
-                                            ? `${Math.round(baselineMetrics.pauseRatio * 100)}%`
-                                            : `${Math.round(baselineMetrics.fillerRate * 100)}%`
+                                            ? `${Math.round(baselineData.raw.pauseRatio * 100)}%`
+                                            : `${Math.round(baselineData.raw.fillerRate * 100)}%`
                                         }
                                     </div>
                                     <div className="text-xs text-slate-400 mt-1">
@@ -401,8 +493,8 @@ export default function FluencyCheckPage() {
                                     <div className="relative text-sm text-green-600 font-bold mb-1">NOW</div>
                                     <div className="relative text-3xl font-bold text-green-600 dark:text-green-400">
                                         {weakness.type === 'START_FASTER' || weakness.type === 'STOP_RESTARTING'
-                                            ? `${Math.round(drillMetrics.pauseRatio * 100)}%`
-                                            : `${Math.round(drillMetrics.fillerRate * 100)}%`
+                                            ? `${Math.round(drillData.raw.pauseRatio * 100)}%`
+                                            : `${Math.round(drillData.raw.fillerRate * 100)}%`
                                         }
                                     </div>
                                     <div className="relative text-xs text-green-600/80 mt-1">

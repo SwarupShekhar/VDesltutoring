@@ -43,12 +43,18 @@ export default clerkMiddleware(async (auth, req) => {
     }
 
     // 2. Authentication Logic
+    const currentLocale = locales.find(
+        (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    ) || defaultLocale;
+
     if (isPublicRoute(req)) {
         // Allow access
         return NextResponse.next();
     } else {
-        // Protect private routes
-        await auth.protect();
+        // Protect private routes and redirect to custom sign-in
+        await auth.protect({
+            unauthenticatedUrl: `/${currentLocale}/sign-in`,
+        });
     }
 });
 

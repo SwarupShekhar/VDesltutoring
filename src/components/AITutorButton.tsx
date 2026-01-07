@@ -28,22 +28,22 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
             className="fixed bottom-[-110px] left-[-110px] md:bottom-[-80px] md:left-[-80px] z-[100] cursor-pointer scale-[0.55] md:scale-[0.85] hover:scale-[0.6] md:hover:scale-[0.9] transition-transform duration-300 bg-transparent border-none p-0"
         >
             <div className="loader">
-                <div style={{ "--i": 1, "--inset": "44%" } as React.CSSProperties} className="box">
+                <div style={{ "--i": 1, "--inset": "38%" } as React.CSSProperties} className="box">
                     <div className="logo">
                         <Image
                             src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767775742/chatbot_hi8due.png"
                             alt="AI Tutor"
-                            width={67}
-                            height={67}
+                            width={72}
+                            height={72}
                             className="drop-shadow-md"
                         />
                     </div>
                 </div>
-                <div style={{ "--i": 2, "--inset": "40%" } as React.CSSProperties} className="box" />
-                <div style={{ "--i": 3, "--inset": "36%" } as React.CSSProperties} className="box" />
-                <div style={{ "--i": 4, "--inset": "32%" } as React.CSSProperties} className="box" />
-                <div style={{ "--i": 5, "--inset": "28%" } as React.CSSProperties} className="box" />
-                <div style={{ "--i": 6, "--inset": "24%" } as React.CSSProperties} className="box" />
+                <div style={{ "--i": 2, "--inset": "34%" } as React.CSSProperties} className="box" />
+                <div style={{ "--i": 3, "--inset": "30%" } as React.CSSProperties} className="box" />
+                <div style={{ "--i": 4, "--inset": "26%" } as React.CSSProperties} className="box" />
+                <div style={{ "--i": 5, "--inset": "22%" } as React.CSSProperties} className="box" />
+                <div style={{ "--i": 6, "--inset": "18%" } as React.CSSProperties} className="box" />
             </div>
 
             <style jsx>{`

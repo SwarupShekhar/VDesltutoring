@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bot } from "lucide-react";
+import Image from "next/image";
 
 interface AITutorButtonProps {
     isLoggedIn: boolean;
@@ -30,7 +30,13 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
             <div className="loader">
                 <div style={{ "--i": 1, "--inset": "44%" } as React.CSSProperties} className="box">
                     <div className="logo">
-                        <Bot size={48} className="text-white drop-shadow-md svg" fill="currentColor" />
+                        <Image
+                            src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767775742/chatbot_hi8due.png"
+                            alt="AI Tutor"
+                            width={67}
+                            height={67}
+                            className="drop-shadow-md"
+                        />
                     </div>
                 </div>
                 <div style={{ "--i": 2, "--inset": "40%" } as React.CSSProperties} className="box" />
@@ -83,13 +89,7 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
                     inset: 0;
                     display: grid;
                     place-content: center;
-                    padding: 30%;
-                }
-
-                .loader .logo .svg {
-                    fill: var(--logo-color);
-                    width: 100%;
-                    animation: color-change var(--duration) infinite ease-in-out;
+                    /* padding removed to allow image to size properly */
                 }
 
                 @keyframes ripple {
@@ -105,12 +105,6 @@ export const AITutorButton = ({ isLoggedIn, locale }: AITutorButtonProps) => {
                         transform: scale(1);
                         opacity: 1;
                     }
-                }
-
-                @keyframes color-change {
-                    0% { fill: #3B82F6; color: #3B82F6; }
-                    50% { fill: white; color: white; }
-                    100% { fill: #3B82F6; color: #3B82F6; }
                 }
             `}</style>
         </button>

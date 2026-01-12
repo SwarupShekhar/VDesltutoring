@@ -330,24 +330,35 @@ async function joinSessionAndTranscribe(session: any) {
         });
 
         room.on(RoomEvent.ParticipantDisconnected, async (participant) => {
-            console.log(`Participant ${participant.identity} disconnected`);
-            // If a user leaves, end the session
-            // Logic: If remaining participants (excluding bot) < 2? 
-            // Or strict pairs: if anyone leaves, it's over.
+            console.log(`Participant ${participant.identity} disconnected from ${session.id}. Starting grace period.`);
 
-            // Check if we should end
-            // For now, strict ending:
-            await prisma.live_sessions.update({
-                where: { id: session.id },
-                data: {
-                    status: 'ended',
-                    ended_at: new Date()
+            // Wait for 15 seconds before ending to allow for blips/rejoins
+            setTimeout(async () => {
+                try {
+                    // Check LiveKit's truth again
+                    const participants = Array.from(room.remoteParticipants.values());
+                    const humanParticipants = participants.filter(p => !p.identity.startsWith('transcriber-bot-'));
+
+                    if (humanParticipants.length < 2) {
+                        console.log(`[Worker] Grace period ended for ${session.id}. Only ${humanParticipants.length} humans remain. Ending session.`);
+
+                        await prisma.live_sessions.update({
+                            where: { id: session.id },
+                            data: {
+                                status: 'ended',
+                                ended_at: new Date()
+                            }
+                        });
+
+                        room.disconnect();
+                        activeSessions.delete(session.id);
+                    } else {
+                        console.log(`[Worker] Participant re-joined ${session.id} during grace period. Session continues.`);
+                    }
+                } catch (err) {
+                    console.error(`Error in grace period cleanup for ${session.id}:`, err);
                 }
-            });
-
-            console.log(`Session ${session.id} marked as ended.`);
-            room.disconnect();
-            activeSessions.delete(session.id);
+            }, 15000); // 15s grace period
         });
 
         room.on(RoomEvent.TrackSubscribed, (track: RemoteTrack, publication: any, participant: any) => {

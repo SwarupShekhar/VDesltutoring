@@ -69,8 +69,10 @@ export async function POST(req: NextRequest) {
 
                 const sessionAge = new Date().getTime() - new Date(existingSession.started_at).getTime();
                 const isOld = sessionAge > 2 * 60 * 1000; // 2 minutes
+                const isVeryRecent = sessionAge < 30 * 1000; // 30 seconds
 
-                if (participants.length === 0) {
+                if (participants.length === 0 && !isVeryRecent) {
+                    // Only kill ghost sessions if they've had at least 30s to connect
                     console.log(`[Join] Found ghost session ${existingSession.id} (empty). Ending.`);
                     await prisma.live_sessions.update({
                         where: { id: existingSession.id },
@@ -78,20 +80,16 @@ export async function POST(req: NextRequest) {
                     });
                     existingSession = null;
                 } else if (participants.length < 2 && isOld) {
-                    // Stale session with just 1 person hanging on?
-                    // Let's kill it so they can find a NEW partner.
+                    // Stale session with just 1 person hanging on for too long
                     console.log(`[Join] Found stale session ${existingSession.id} (1 participant, old). Ending.`);
                     await prisma.live_sessions.update({
                         where: { id: existingSession.id },
                         data: { status: 'ended', ended_at: new Date() }
                     });
-                    // Also, we might want to KICK the existing participant from that room?
-                    // await livekit.deleteRoom(roomName); 
                     existingSession = null;
                 } else {
-                    // Valid active session (or recently started), let them rejoin
+                    // Valid active session, rejoin-able
                     const token = await createToken(roomName, dbUser.id);
-
                     return NextResponse.json({
                         matched: true,
                         sessionId: existingSession.id,
@@ -102,10 +100,11 @@ export async function POST(req: NextRequest) {
                     });
                 }
             } catch (e) {
-                if (existingSession) {
-                    // If room not found error
+                // If LiveKit room list failed (e.g. room doesn't exist), assume it's safe to kill IF not very recent
+                const sessionAge = new Date().getTime() - new Date(existingSession!.started_at).getTime();
+                if (sessionAge > 30 * 1000) {
                     await prisma.live_sessions.update({
-                        where: { id: existingSession.id },
+                        where: { id: existingSession!.id },
                         data: { status: 'ended', ended_at: new Date() }
                     });
                     existingSession = null;

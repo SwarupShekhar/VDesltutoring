@@ -16,21 +16,22 @@ export default function LivePracticePage() {
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
 
     const matchTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const pollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const roomRef = useRef<Room | null>(null);
+    const isMatchingRef = useRef(false);
 
     const startPractice = async () => {
         setError(null);
         setStatus("CHECKING_PERMISSIONS");
 
         try {
-            // 1. Check Permissions
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            // Close immediately, we just wanted to ask permission
             stream.getTracks().forEach(track => track.stop());
 
             setStatus("MATCHING");
             setMatchTime(0);
+            isMatchingRef.current = true;
 
-            // Start match timer for visual feedback
             if (matchTimerRef.current) clearInterval(matchTimerRef.current);
             matchTimerRef.current = setInterval(() => {
                 setMatchTime(prev => prev + 1);
@@ -40,35 +41,37 @@ export default function LivePracticePage() {
 
         } catch (err) {
             console.error("Permission denied:", err);
-            setError("Microphone permission is required to use this feature. Please allow access in your browser settings.");
+            setError("Microphone permission is required. Please allow access.");
             setStatus("IDLE");
+            isMatchingRef.current = false;
         }
     };
 
     const pollForMatch = useCallback(async () => {
-        if (!user) return;
+        if (!user || !isMatchingRef.current) return;
+
+        // Clear any existing poll timeout to prevent overlap
+        if (pollTimeoutRef.current) clearTimeout(pollTimeoutRef.current);
 
         try {
             const response = await fetch("/api/live-practice/join", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    goal: "Practice Speaking",
-                    fluency_score: 80,
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ goal: "Practice Speaking", fluency_score: 80 }),
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                console.error("Join queue failed:", response.status, errorData);
                 throw new Error(errorData.error || `Failed to join queue (${response.status})`);
             }
 
             const data = await response.json();
 
+            // Guard: If we stopped matching while request was in flight, ignore data
+            if (!isMatchingRef.current) return;
+
             if (data.matched) {
+                isMatchingRef.current = false;
                 setStatus("CONNECTING");
                 if (matchTimerRef.current) {
                     clearInterval(matchTimerRef.current);
@@ -77,37 +80,35 @@ export default function LivePracticePage() {
                 setCurrentSessionId(data.sessionId);
                 connectToLiveKit(data.roomName, data.token);
             } else if (data.waiting) {
-                // Poll again in 3 seconds
-                // Keep status as MATCHING
-                setTimeout(pollForMatch, 3000);
-            } else if (data.error) {
-                setError(data.error);
-                setStatus("IDLE");
+                pollTimeoutRef.current = setTimeout(pollForMatch, 3000);
             } else {
-                // Return to poll if unexpected
-                setTimeout(pollForMatch, 3000);
+                setError(data.error || "Unexpected response from server");
+                setStatus("IDLE");
+                isMatchingRef.current = false;
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error("Polling error:", err);
-            setError("Failed to connect to server. Retrying...");
-            // Non-fatal, retry once? Or fail.
-            // Let's reset for now to be safe against infinite loops
-            setStatus("IDLE");
-            if (matchTimerRef.current) clearInterval(matchTimerRef.current);
+            setError(err.message || "Connection error. Retrying...");
+            pollTimeoutRef.current = setTimeout(pollForMatch, 5000);
         }
     }, [user]);
 
     const connectToLiveKit = async (roomName: string, token: string) => {
         try {
             const liveKitUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
-            if (!liveKitUrl) {
-                throw new Error("Configuration error: LiveKit URL missing");
+            if (!liveKitUrl) throw new Error("LiveKit URL missing");
+
+            // Disconnect old room if any
+            if (roomRef.current) {
+                roomRef.current.disconnect();
             }
 
             const newRoom = new Room({
                 adaptiveStream: true,
                 dynacast: true,
             });
+
+            roomRef.current = newRoom;
 
             newRoom.on(RoomEvent.TrackSubscribed, (track, publication, participant) => {
                 if (track.kind === Track.Kind.Audio) {
@@ -117,8 +118,11 @@ export default function LivePracticePage() {
 
             newRoom.on(RoomEvent.Disconnected, () => {
                 console.log("Room disconnected");
-                setStatus("IDLE");
-                setRoom(null);
+                if (roomRef.current === newRoom) {
+                    setStatus("IDLE");
+                    setRoom(null);
+                    roomRef.current = null;
+                }
             });
 
             await newRoom.connect(liveKitUrl, token);
@@ -133,16 +137,20 @@ export default function LivePracticePage() {
             console.error("LiveKit connection error:", err);
             setError("Failed to connect to the call. Please try again.");
             setStatus("IDLE");
+            isMatchingRef.current = false;
         }
     };
 
     const endCall = async () => {
-        if (room) {
-            room.disconnect();
+        isMatchingRef.current = false;
+        if (pollTimeoutRef.current) clearTimeout(pollTimeoutRef.current);
+
+        if (roomRef.current) {
+            roomRef.current.disconnect();
+            roomRef.current = null;
             setRoom(null);
         }
 
-        // Explicitly tell backend to close session
         if (currentSessionId) {
             try {
                 await fetch('/api/live-practice/leave', {
@@ -171,12 +179,15 @@ export default function LivePracticePage() {
     // Cleanup on unmount
     useEffect(() => {
         return () => {
-            if (room) {
-                room.disconnect();
-            }
+            isMatchingRef.current = false;
+            if (pollTimeoutRef.current) clearTimeout(pollTimeoutRef.current);
             if (matchTimerRef.current) clearInterval(matchTimerRef.current);
+            if (roomRef.current) {
+                roomRef.current.disconnect();
+                roomRef.current = null;
+            }
         };
-    }, [room]);
+    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-900 p-4 font-sans">

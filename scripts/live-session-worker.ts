@@ -18,14 +18,7 @@ const LIVEKIT_URL = process.env.LIVEKIT_URL!;
 const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY!;
 const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET!;
 
-async function startWorker() {
-    console.log("Starting Live Session Worker...");
 
-    // Start polling or listening loop
-    setInterval(safeCheckForNewSessions, 5000);
-    // Also check for ended sessions to summarize
-    setInterval(safeCheckForEndedSessions, 10000);
-}
 
 // Global Error Handlers to prevent crash
 process.on('uncaughtException', (error) => {
@@ -39,6 +32,68 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Track active connections to avoid duplicates
 const activeSessions = new Set<string>();
+
+async function startWorker() {
+    console.log("Starting Live Session Worker...");
+
+    // 1. Sanity Check on Startup
+    await syncLiveSessions();
+
+    // Start polling or listening loop
+    setInterval(safeCheckForNewSessions, 5000);
+    // Also check for ended sessions to summarize
+    setInterval(safeCheckForEndedSessions, 10000);
+    // Cleanup stale queue entries
+    setInterval(cleanupQueue, 60 * 1000); // Every 1 minute
+}
+
+async function syncLiveSessions() {
+    console.log("Running startup sanity check on live sessions...");
+    // Find sessions marked 'live' or 'waiting' that might be zombies
+    // If we just restarted, we lost all track listeners. 
+    // We should assume ANY 'live' session in DB is now unmonitored.
+    // Ideally we'd try to reconnect, but for MVP it's safer to mark them as 'ended' 
+    // so users aren't stuck status-wise (they can just rejoin).
+
+    // Actually, 'waiting' sessions are fine (they are just in queue matched), 
+    // but 'live' sessions require Active Worker monitoring for transcription.
+    // If worker died, transcription died.
+
+    const zombies = await prisma.live_sessions.updateMany({
+        where: {
+            status: { in: ['live', 'waiting'] },
+            // Optional: Only kill if started > 10m ago? 
+            // For safety, let's just kill them to reset state.
+        },
+        data: {
+            status: 'ended',
+            ended_at: new Date()
+        }
+    });
+
+    console.log(`Sanity Check: Marked ${zombies.count} zombie sessions as ended.`);
+
+    // Also clear the queue? users might be waiting.
+    // Let's clean stale queue.
+    await cleanupQueue();
+}
+
+async function cleanupQueue() {
+    try {
+        const result = await prisma.live_queue.deleteMany({
+            where: {
+                joined_at: {
+                    lt: new Date(Date.now() - 60 * 1000) // Older than 60s
+                }
+            }
+        });
+        if (result.count > 0) {
+            console.log(`Cleaned up ${result.count} stale queue entries.`);
+        }
+    } catch (e) {
+        console.error("Queue cleanup error:", e);
+    }
+}
 
 async function safeCheckForNewSessions() {
     try {

@@ -279,7 +279,8 @@ model live_session_summary {
   user_id         String   @db.Uuid
   confidence_score Float   @default(0)
   fluency_score   Float    @default(0)
-  weakness_tags   String[]
+  weaknesses      Json     // Array of strings ["HESITATION", "SPEED"]
+  drill_plan      Json     // Array of objects [{exercise: "...", weakness: "..."}]
   created_at      DateTime @default(now()) @db.Timestamptz(6)
 
   session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)

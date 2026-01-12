@@ -185,101 +185,117 @@ async function checkForEndedSessions() {
     }
 }
 
+
 async function summarizeSession(session: any) {
     console.log(`Summarizing session ${session.id}...`);
 
-    // For each user in the session
-    // We assume 2 users usually
     const users = [session.user_a, session.user_b];
+    // Calculate duration
+    const durationMs = (session.ended_at ? new Date(session.ended_at).getTime() : Date.now()) - new Date(session.started_at).getTime();
+    const durationMinutes = Math.max(durationMs / 1000 / 60, 0.5);
 
     for (const userId of users) {
         // Find metrics for this user
-        const metrics = session.metrics.find((m: any) => m.user_id === userId);
+        let metrics: any = session.metrics.find((m: any) => m.user_id === userId);
 
+        // If no metrics, default to 0s to avoid crash
         if (!metrics) {
-            console.log(`No metrics for user ${userId} in session ${session.id}, skipping summary.`);
-            continue;
+            metrics = { speaking_time: 0, filler_count: 0, speech_rate: 0, word_count: 0, grammar_errors: 0 };
         }
 
-        // --- 1. Compute Scores ---
-        // Fluency Score = 100 - (Hesitations * 2) - (Grammar * 5)?
-        // Simple heuristic
-        let fluencyScore = 100 - (metrics.hesitation_count * 2) - (metrics.grammar_errors * 3);
-        if (fluencyScore < 0) fluencyScore = 0;
+        // --- 1. Confidence (Speaking Time) ---
+        // speaking_time assumed in seconds
+        const speakingRatio = (metrics.speaking_time / 60) / durationMinutes;
+        let confidenceScore = Math.min(Math.max((speakingRatio / 0.5), 0), 1) * 100;
 
-        let confidenceScore = 80; // Default placeholder, or based on speech_rate (avg is ~130wpm)
-        if (metrics.speech_rate < 100) confidenceScore -= 10;
-        if (metrics.hesitation_count > 5) confidenceScore -= 10;
+        // --- 2. Hesitation (Fillers) ---
+        const fillersPerMin = metrics.filler_count / durationMinutes;
+        let hesitationScore = 100 - Math.min(Math.max(fillersPerMin * 15, 0), 100);
 
+        // --- 3. Speed (WPM) ---
+        let wpm = metrics.speech_rate || 0;
+        if (wpm === 0 && metrics.speaking_time > 0) {
+            wpm = metrics.word_count / (metrics.speaking_time / 60);
+        }
+        const idealWpm = 130;
+        let speedScore = 100 - (Math.abs(wpm - idealWpm) / idealWpm) * 100;
+        speedScore = Math.min(Math.max(speedScore, 0), 100);
+
+        // --- 4. Grammar ---
+        const estimatedSentences = Math.max(metrics.word_count / 10, 1);
+        let grammarScore = 100 - ((metrics.grammar_errors / estimatedSentences) * 100);
+        grammarScore = Math.min(Math.max(grammarScore, 0), 100);
+
+        // --- Weighted Fluency Score ---
+        const fluencyScore = (
+            (0.30 * confidenceScore) +
+            (0.25 * hesitationScore) +
+            (0.25 * speedScore) +
+            (0.20 * grammarScore)
+        );
+
+        // --- Weakness Diagnosis ---
         const weaknesses: string[] = [];
+        if (hesitationScore < 60) weaknesses.push("HESITATION");
+        if (speedScore < 60) weaknesses.push("SPEED");
+        if (grammarScore < 70) weaknesses.push("GRAMMAR");
+        if (confidenceScore < 60) weaknesses.push("CONFIDENCE");
+        if (speakingRatio < 0.1) weaknesses.push("PASSIVITY");
 
-        // --- 2. Classify Weaknesses ---
-        if (metrics.hesitation_count > 5 || metrics.filler_count > 8) {
-            weaknesses.push("HESITATION");
-            await prisma.live_weaknesses.create({
-                data: {
-                    session_id: session.id,
-                    user_id: userId,
-                    tag: "HESITATION",
-                    severity: 0.8 // High
-                }
-            });
-        }
+        const topWeaknesses = weaknesses.slice(0, 3);
 
-        if (metrics.speech_rate < 100 && metrics.word_count > 10) { // Don't flag if they just didn't speak much
-            weaknesses.push("SPEED");
-            await prisma.live_weaknesses.create({
-                data: {
-                    session_id: session.id,
-                    user_id: userId,
-                    tag: "SPEED",
-                    severity: 0.7
-                }
-            });
-        }
-
-        // --- 3. Save Summary ---
-        // We need to manage the unique constraint on session_id for summary properly if we do per user per session?
-        // Schema definition: `session_id @unique` in `live_session_summary`.
-        // Wait, current schema allows only ONE summary for the WHOLE session?
-        // `user_id @db.Uuid` is a single field. So it implies a summary is for ONE user?
-        // But `session_id @unique` means 1 summary per session... capturing only 1 user?
-        // ERROR: Schema flaw. If 2 users are in a session, we need a summary for EACH.
-        // `live_session_summary` should probably be keyed by (session_id, user_id) or just allow multiple.
-        // Current Schema: `session_id String @unique`. This limits it to 1 row per session.
-        // I should fix this schema or work around it.
-        // Prompt says "For each user... Generate Personal Fluency Report".
-        // So I must fix the schema to allow multiple summaries per session (one per user).
-        // I will do a quick schema fix in next step if this fails or plan for it.
-        // For now, I will try to create and catch error if I can't.
-        // Actually, let's fix the logic: If schema is unique session_id, I can't store 2 users' summaries.
-        // I will update schema to remove `@unique` from session_id in `live_session_summary` and add composite unique.
-
-        // Skipping creation for now to avoid fatal error, or I'll just log it.
-        // Better: I will create it. If it fails, I know why.
-
-        // --- 4. Assign Exercises ---
-        if (weaknesses.length > 0) {
-            // Pick exercises
+        // --- Drill Plan ---
+        const drillPlan = [];
+        if (topWeaknesses.length > 0) {
             const drills = await prisma.fluency_exercises.findMany({
-                where: {
-                    weakness_tag: { in: weaknesses }
-                },
-                take: 3
+                where: { weakness_tag: { in: topWeaknesses } }
             });
-
-            const today = new Date();
-            for (const drill of drills) {
-                await prisma.user_daily_plan.create({
-                    data: {
-                        user_id: userId,
-                        exercise_id: drill.id,
-                        date: today,
-                        status: 'pending'
-                    }
-                });
+            for (const tag of topWeaknesses) {
+                const candidates = drills.filter((d: any) => d.weakness_tag === tag);
+                if (candidates.length > 0) {
+                    const pick = candidates[Math.floor(Math.random() * candidates.length)];
+                    drillPlan.push({
+                        weakness: tag,
+                        exercise: pick.prompt,
+                        difficulty: pick.difficulty
+                    });
+                }
             }
         }
+        // Fallback drill
+        if (drillPlan.length === 0) {
+            drillPlan.push({
+                weakness: "MAINTENANCE",
+                exercise: "Reflect on your conversation and identify one thing you did well.",
+                difficulty: "All"
+            });
+        }
+
+        // --- Save to DB ---
+        await prisma.live_session_summary.upsert({
+            where: {
+                session_id_user_id: {
+                    session_id: session.id,
+                    user_id: userId
+                }
+            },
+            update: {
+                confidence_score: Math.round(confidenceScore),
+                fluency_score: Math.round(fluencyScore),
+                weaknesses: topWeaknesses, // Now Json, so array of strings work directly if Prisma handles it (it expects array/object for JSON type)
+                drill_plan: drillPlan
+            },
+            create: {
+                session_id: session.id,
+                user_id: userId,
+                confidence_score: Math.round(confidenceScore),
+                fluency_score: Math.round(fluencyScore),
+                weaknesses: topWeaknesses,
+                drill_plan: drillPlan
+            }
+        });
+
+        console.log(`[Worker] Summarized for User ${userId}: Fluency ${fluencyScore.toFixed(1)}`);
     }
 }
 

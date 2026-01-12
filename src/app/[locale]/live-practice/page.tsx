@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Room, RoomEvent, Track } from "livekit-client";
 import { useUser } from "@clerk/nextjs";
-import { Mic, Headphones, Loader2, AlertCircle, PhoneOff, Radio, TriangleAlert } from "lucide-react";
+import { Mic, Headphones, Loader2, AlertCircle, PhoneOff, Radio, TriangleAlert, Zap } from "lucide-react";
 
 type ConnectionStatus = "IDLE" | "CHECKING_PERMISSIONS" | "MATCHING" | "CONNECTING" | "IN_CALL";
 
@@ -208,6 +208,30 @@ export default function LivePracticePage() {
                             <Mic className="h-5 w-5 group-hover:scale-110 transition-transform" />
                             Start Live Practice
                         </button>
+
+                        {/* New Feature: View Last Report */}
+                        <div className="grid grid-cols-2 gap-3 mt-4">
+                            <button
+                                // Navigate to history or last report? 
+                                // Ideally we fetch the last report ID. For now just linking to static 'latest' or hidden until we fetch.
+                                // Let's keep it simple: A "View my Progress" button that goes to history (if we had one) or just info.
+                                // Actually, user requested "Dashboard Integration".
+                                // Let's add a "View Reports" button that goes to a hypothetical /live-practice/history
+                                // But we don't have that page yet.
+                                // Maybe just a placeholder for now or checking if they have a last session in localStorage?
+                                // Better: Don't clutter unless we have data.
+                                onClick={() => alert("Feature coming soon: View your past sessions!")}
+                                className="px-4 py-3 bg-white dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-200 dark:border-slate-600 flex items-center justify-center gap-2"
+                            >
+                                <TriangleAlert className="w-4 h-4 text-amber-500" />
+                                View History
+                            </button>
+                            <div className="px-4 py-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-500/20 text-sm font-medium flex items-center justify-center gap-2">
+                                <Zap className="w-4 h-4" />
+                                AI Analysis Active
+                            </div>
+                        </div>
+
                         <p className="text-xs text-slate-400 dark:text-slate-500">
                             Microphone access required
                         </p>

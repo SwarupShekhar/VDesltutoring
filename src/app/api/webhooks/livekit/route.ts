@@ -48,6 +48,14 @@ export async function POST(req: NextRequest) {
             user_id: { in: [session.user_a, session.user_b] }
           }
         });
+
+        // Trigger Fluency Engine
+        try {
+          const { fluencyEngine } = await import('@/lib/fluency-engine');
+          await fluencyEngine.evaluateSession(session.id);
+        } catch (e) {
+          console.error(`[Webhook] Failed to run Fluency Engine for session ${session.id}:`, e);
+        }
       }
     }
 

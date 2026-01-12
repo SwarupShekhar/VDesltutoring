@@ -34,29 +34,72 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // 0. Check if user is already in an active session (Rejoin logic)
-        const activeSession = await prisma.live_sessions.findFirst({
+        // 2. Check if user is already in an active session (REJOIN LOGIC)
+        // CRITICAL FIX: Verify the session is *actually* active in LiveKit.
+        // The DB might say 'live', but verify existing room state.
+        let existingSession = await prisma.live_sessions.findFirst({
             where: {
                 OR: [
                     { user_a: dbUser.id },
                     { user_b: dbUser.id }
                 ],
-                ended_at: null,
                 status: { in: ['waiting', 'live'] }
+            },
+            include: {
+                user_a_rel: true,
+                user_b_rel: true
             }
         });
 
-        if (activeSession) {
-            // User is already in a session, return it to allow rejoin
-            const token = await createToken(activeSession.room_name, dbUser.id);
-            return NextResponse.json({
-                matched: true,
-                roomName: activeSession.room_name,
-                token,
-                sessionId: activeSession.id,
-                rejoined: true
-            });
+        if (existingSession) {
+            // Lazy Cleanup: Check LiveKit for truth
+            try {
+                const roomName = existingSession.room_name;
+                const participants = await livekit.listParticipants(roomName);
+
+                // If room is empty or doesn't exist (participants array empty), it's a ghost session.
+                // NOTE: If status is 'waiting', it might be just me waiting (1 participant? or 0 if I left). 
+                // But if I am calling /join, I am NOT in the room. So if participants.length == 0, nobody is there.
+                // Even if 1 person is there (the other guy), we can rejoin.
+                // But if 0 people, it's dead.
+                if (participants.length === 0) {
+                    console.log(`[Join] Found ghost session ${existingSession.id} (empty room). Ending it.`);
+                    await prisma.live_sessions.update({
+                        where: { id: existingSession.id },
+                        data: {
+                            status: 'ended',
+                            ended_at: new Date()
+                        }
+                    });
+                    existingSession = null; // Treat as if no session exists
+                } else {
+                    // Valid active session, let them rejoin
+                    const token = await createToken(roomName, dbUser.id);
+
+                    return NextResponse.json({
+                        matched: true,
+                        sessionId: existingSession.id,
+                        roomName: existingSession.room_name,
+                        token,
+                        partner: existingSession.user_a === dbUser.id ? existingSession.user_b_rel : existingSession.user_a_rel,
+                        isRestored: true
+                    });
+                }
+            } catch (e) {
+                if (existingSession) {
+                    console.warn(`[Join] Could not verify room ${existingSession.room_name}, assuming dead.`, e);
+                    // If LiveKit errors (room not found), it's definitely dead.
+                    await prisma.live_sessions.update({
+                        where: { id: existingSession.id },
+                        data: { status: 'ended', ended_at: new Date() }
+                    });
+                    existingSession = null;
+                }
+            }
         }
+
+        // If we killed the ghost session above, existingSession is null, so we proceed to normal queueing.
+
 
         // Check if matching user exists
         // We use a transaction to ensure atomic match-and-remove

@@ -57,23 +57,39 @@ export async function POST(req: NextRequest) {
                 const roomName = existingSession.room_name;
                 const participants = await livekit.listParticipants(roomName);
 
-                // If room is empty or doesn't exist (participants array empty), it's a ghost session.
-                // NOTE: If status is 'waiting', it might be just me waiting (1 participant? or 0 if I left). 
-                // But if I am calling /join, I am NOT in the room. So if participants.length == 0, nobody is there.
-                // Even if 1 person is there (the other guy), we can rejoin.
-                // But if 0 people, it's dead.
+                // Ghost Logic Refined:
+                // 1. If 0 participants, it's dead.
+                // 2. If 1 participant (the user themselves or just the partner waiting forever?), 
+                //    we need to decide if this is a 'stuck' session.
+
+                // If it's the SAME matched pair, and they are trying to rejoin:
+                // If participants.length === 0 -> Dead. End it.
+                // If participants.length === 1 -> Is it the *other* person waiting? If so, rejoin is valid.
+                // But if the session started long ago (> 2 minutes) and still only 1 person, maybe better to kill?
+
+                const sessionAge = new Date().getTime() - new Date(existingSession.started_at).getTime();
+                const isOld = sessionAge > 2 * 60 * 1000; // 2 minutes
+
                 if (participants.length === 0) {
-                    console.log(`[Join] Found ghost session ${existingSession.id} (empty room). Ending it.`);
+                    console.log(`[Join] Found ghost session ${existingSession.id} (empty). Ending.`);
                     await prisma.live_sessions.update({
                         where: { id: existingSession.id },
-                        data: {
-                            status: 'ended',
-                            ended_at: new Date()
-                        }
+                        data: { status: 'ended', ended_at: new Date() }
                     });
-                    existingSession = null; // Treat as if no session exists
+                    existingSession = null;
+                } else if (participants.length < 2 && isOld) {
+                    // Stale session with just 1 person hanging on?
+                    // Let's kill it so they can find a NEW partner.
+                    console.log(`[Join] Found stale session ${existingSession.id} (1 participant, old). Ending.`);
+                    await prisma.live_sessions.update({
+                        where: { id: existingSession.id },
+                        data: { status: 'ended', ended_at: new Date() }
+                    });
+                    // Also, we might want to KICK the existing participant from that room?
+                    // await livekit.deleteRoom(roomName); 
+                    existingSession = null;
                 } else {
-                    // Valid active session, let them rejoin
+                    // Valid active session (or recently started), let them rejoin
                     const token = await createToken(roomName, dbUser.id);
 
                     return NextResponse.json({
@@ -87,8 +103,7 @@ export async function POST(req: NextRequest) {
                 }
             } catch (e) {
                 if (existingSession) {
-                    console.warn(`[Join] Could not verify room ${existingSession.room_name}, assuming dead.`, e);
-                    // If LiveKit errors (room not found), it's definitely dead.
+                    // If room not found error
                     await prisma.live_sessions.update({
                         where: { id: existingSession.id },
                         data: { status: 'ended', ended_at: new Date() }

@@ -26,6 +26,7 @@ export function Navbar({ role }: NavbarProps) {
   const navItems: Record<string, NavItem[]> = {
     LEARNER: [
       { name: 'Dashboard', href: '/dashboard' },
+      { name: 'Live Practice', href: '/live-practice' },
       { name: 'Book Session', href: '/sessions/book' },
     ],
     TUTOR: [

@@ -22,7 +22,15 @@ model users {
   fluency_sessions  fluency_sessions[]  @relation("UserFluency")
   ai_chat_sessions  ai_chat_sessions[]
   fluency_snapshots fluency_snapshots[]
-  coach_memory      Json?
+  coach_memory        Json?
+  live_queue          live_queue[]
+  live_sessions_as_a  live_sessions[]     @relation("LiveSessionUserA")
+  live_sessions_as_b  live_sessions[]     @relation("LiveSessionUserB")
+  live_transcripts    live_transcripts[]
+  live_metrics        live_metrics[]
+  live_session_summaries live_session_summary[]
+  live_weaknesses     live_weaknesses[]
+  daily_plans         user_daily_plan[]
 }
 
 model packages {
@@ -201,4 +209,115 @@ model fluency_snapshots {
   word_count            Int      @default(0)
 
   created_at DateTime @default(now())
+}
+
+model live_queue {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String   @db.Uuid
+  fluency_score Float
+  goal          String
+  joined_at     DateTime @default(now()) @db.Timestamptz(6)
+  users         users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model live_sessions {
+  id         String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  room_name  String
+  user_a     String              @db.Uuid
+  user_b     String              @db.Uuid
+  status     live_session_status @default(waiting)
+  started_at DateTime            @default(now()) @db.Timestamptz(6)
+  ended_at   DateTime?           @db.Timestamptz(6)
+  
+  user_a_rel users               @relation("LiveSessionUserA", fields: [user_a], references: [id], onDelete: Cascade)
+  user_b_rel users               @relation("LiveSessionUserB", fields: [user_b], references: [id], onDelete: Cascade)
+
+  transcripts live_transcripts[]
+  metrics     live_metrics[]
+  summaries   live_session_summary[]
+  weaknesses  live_weaknesses[]
+}
+
+model live_transcripts {
+  id         String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id String        @db.Uuid
+  user_id    String        @db.Uuid
+  text       String
+  timestamp  DateTime      @default(now()) @db.Timestamptz(6)
+  
+  session    live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user       users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+enum live_session_status {
+  waiting
+  live
+  ended
+}
+
+model live_metrics {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id      String   @db.Uuid
+  user_id         String   @db.Uuid
+  speaking_time   Float    @default(0) // in seconds
+  word_count      Int      @default(0)
+  hesitation_count Int     @default(0)
+  filler_count    Int      @default(0)
+  grammar_errors  Int      @default(0)
+  speech_rate     Float    @default(0) // words per minute
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([session_id, user_id])
+}
+
+model live_session_summary {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id      String   @db.Uuid
+  user_id         String   @db.Uuid
+  confidence_score Float   @default(0)
+  fluency_score   Float    @default(0)
+  weakness_tags   String[]
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([session_id, user_id])
+}
+
+model live_weaknesses {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id  String   @db.Uuid
+  user_id     String   @db.Uuid
+  tag         String   // HESITATION, SPEED, TENSE, CONFIDENCE, VOCAB
+  severity    Float    @default(0)
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  session     live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user        users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model fluency_exercises {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  weakness_tag String
+  prompt       String
+  difficulty   String
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  
+  daily_plans  user_daily_plan[]
+}
+
+model user_daily_plan {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String   @db.Uuid
+  date        DateTime @db.Date // Store just the date part ideally, or timestamp
+  exercise_id String   @db.Uuid
+  status      String   @default("pending") // pending, completed
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  user        users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  exercise    fluency_exercises @relation(fields: [exercise_id], references: [id], onDelete: Cascade)
 }

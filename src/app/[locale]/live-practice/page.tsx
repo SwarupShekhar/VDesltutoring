@@ -136,11 +136,25 @@ export default function LivePracticePage() {
         }
     };
 
-    const endCall = () => {
+    const endCall = async () => {
         if (room) {
             room.disconnect();
             setRoom(null);
         }
+
+        // Explicitly tell backend to close session
+        if (currentSessionId) {
+            try {
+                await fetch('/api/live-practice/leave', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: currentSessionId })
+                });
+            } catch (e) {
+                console.error("Failed to notify backend of leave", e);
+            }
+        }
+
         setStatus("IDLE");
         setMatchTime(0);
         setCurrentSessionId(null);

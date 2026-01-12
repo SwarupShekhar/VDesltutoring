@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, DM_Serif_Display } from "next/font/google"; // Import requested fonts
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 // Configure Fonts
@@ -34,6 +35,7 @@ export default function RootLayout({
                 <body className={`${inter.variable} ${dmSerif.variable} font-sans antialiased`} suppressHydrationWarning>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                         {children}
+                        <Analytics />
                     </ThemeProvider>
                 </body>
             </html>

@@ -40,7 +40,7 @@ export function Navbar({ role }: NavbarProps) {
   const userNavItems = navItems[role] || [];
 
   return (
-    <nav className="border-b bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800" suppressHydrationWarning>
+    <nav className="sticky top-0 z-50 w-full border-b bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-slate-200 dark:border-slate-800 transition-colors duration-500" suppressHydrationWarning>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">

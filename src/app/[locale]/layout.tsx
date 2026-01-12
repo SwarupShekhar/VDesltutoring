@@ -25,9 +25,25 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: 'Englivo',
   description: 'The boutique approach to fluency.',
+  manifest: '/manifest.json',
+  themeColor: '#6366f1',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Englivo',
+    startupImage: [
+      {
+        url: '/icons/splash.png',
+        media: '(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)',
+      },
+    ],
+  },
+  formatDetection: {
+    telephone: false,
+  },
   icons: {
     icon: '/favicon.ico',
-    apple: 'https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png',
+    apple: '/icons/icon-512x512.png',
   },
 }
 

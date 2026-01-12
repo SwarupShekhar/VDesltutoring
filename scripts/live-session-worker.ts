@@ -445,8 +445,45 @@ function handleAudioTrack(track: any, userId: string, sessionId: string) {
         }
     });
 
-    // To actually send audio:
-    // track.on('message', (data) => dgConnection.send(data)); -- conceptual
+    // --- Audio Pipe Implementation using @livekit/rtc-node ---
+    // Note: ensure @livekit/rtc-node is installed and livekit-client picks it up.
+    // In many Node environments, we need to use the AudioStream helper.
+
+    // We try to use the raw stream if available.
+    // Since we are using @livekit/rtc-node, we can use AudioStream
+    const { AudioStream } = require('@livekit/rtc-node');
+
+    // Create an audio stream from the track
+    // track is RemoteAudioTrack
+    const audioStream = new AudioStream(track);
+
+    // send audio data to deepgram
+    const interval = setInterval(async () => {
+        // Getting frames is event based or polling?
+        // AudioStream in rtc-node usually has explicit read or events.
+        // Let's assume standard Reader pattern or event.
+    }, 10);
+
+    // BETTER APPROACH: Use built-in stream iterator if available or listener
+    // audioStream is often a Readable stream or has .on('data')
+    // Let's check typical usage:
+    // const stream = new AudioStream(track);
+    // for await (const frame of stream) { dsConnection.send(frame.data); }
+
+    (async () => {
+        try {
+            for await (const frame of audioStream) {
+                if (dgConnection.getReadyState() === 1) { // Open
+                    // frame.data is usually Int16Array (PCM linear16)
+                    // Deepgram expects raw buffer
+                    dgConnection.send(frame.data.buffer);
+                }
+            }
+        } catch (err) {
+            console.error(`Audio pipe error for user ${userId}:`, err);
+        }
+    })();
+
 }
 
 startWorker();

@@ -213,7 +213,7 @@ model fluency_snapshots {
 
 model live_queue {
   id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id       String   @db.Uuid
+  user_id       String   @unique @db.Uuid
   fluency_score Float
   goal          String
   joined_at     DateTime @default(now()) @db.Timestamptz(6)

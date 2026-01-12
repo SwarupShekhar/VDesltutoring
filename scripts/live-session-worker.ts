@@ -45,6 +45,8 @@ async function startWorker() {
     setInterval(safeCheckForEndedSessions, 10000);
     // Cleanup stale queue entries
     setInterval(cleanupQueue, 60 * 1000); // Every 1 minute
+    // Enforce 15-minute max session duration (Safety)
+    setInterval(safeCheckExpiredSessions, 60 * 1000); // Check every minute
 }
 
 async function syncLiveSessions() {
@@ -131,6 +133,35 @@ async function safeCheckForEndedSessions() {
         await checkForEndedSessions();
     } catch (e) {
         console.error("Error in checkEndedSessions loop:", e);
+    }
+}
+
+async function safeCheckExpiredSessions() {
+    try {
+        await checkExpiredSessions();
+    } catch (e) {
+        console.error("Error in checkExpiredSessions loop:", e);
+    }
+}
+
+async function checkExpiredSessions() {
+    // 🧩 Fix #2 — Expire sessions on inactivity (> 15 mins)
+    console.log("Checking for expired sessions...");
+    const expiredSessions = await prisma.live_sessions.updateMany({
+        where: {
+            status: { in: ['live', 'waiting'] },
+            started_at: {
+                lt: new Date(Date.now() - 15 * 60 * 1000) // Older than 15 mins
+            }
+        },
+        data: {
+            status: 'ended',
+            ended_at: new Date()
+        }
+    });
+
+    if (expiredSessions.count > 0) {
+        console.log(`[Worker] Expired ${expiredSessions.count} sessions due to timeout (>15m).`);
     }
 }
 

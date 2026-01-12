@@ -214,6 +214,40 @@ async function joinSessionAndTranscribe(session: any) {
         // Prompt says "Separately... User A audio stream... User B audio stream".
         // So we create a Deepgram Live connection PER TRACK.
 
+        // Monitor Room Events for Session Status
+        room.on(RoomEvent.ParticipantConnected, async (participant) => {
+            console.log(`Participant ${participant.identity} connected`);
+            // If we have 2 participants (users) + bot, mark as LIVE
+            // Worker is hidden usually, but let's just check if we have > 1 user
+            if (room.remoteParticipants.size >= 2) {
+                await prisma.live_sessions.update({
+                    where: { id: session.id },
+                    data: { status: 'live' }
+                });
+            }
+        });
+
+        room.on(RoomEvent.ParticipantDisconnected, async (participant) => {
+            console.log(`Participant ${participant.identity} disconnected`);
+            // If a user leaves, end the session
+            // Logic: If remaining participants (excluding bot) < 2? 
+            // Or strict pairs: if anyone leaves, it's over.
+
+            // Check if we should end
+            // For now, strict ending:
+            await prisma.live_sessions.update({
+                where: { id: session.id },
+                data: {
+                    status: 'ended',
+                    ended_at: new Date()
+                }
+            });
+
+            console.log(`Session ${session.id} marked as ended.`);
+            room.disconnect();
+            activeSessions.delete(session.id);
+        });
+
         room.on(RoomEvent.TrackSubscribed, (track: RemoteTrack, publication: any, participant: any) => {
             if (track.kind === Track.Kind.Audio) {
                 console.log(`Subscribed to audio from ${participant.identity}`);

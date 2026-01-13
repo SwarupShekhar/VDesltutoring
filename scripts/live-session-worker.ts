@@ -1,17 +1,19 @@
 import { createClient, LiveTranscriptionEvents } from "@deepgram/sdk";
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 // AccessToken is from server-sdk
 import { AccessToken } from "livekit-server-sdk";
-// Room and events are from client-sdk for the bot connection
-import { Room, RoomEvent, RemoteTrack, Track } from "livekit-client";
-import "dotenv/config"; // Better way to load dotenv if available, else require
+// Room and events are from rtc-node for Node.js support (replaces livekit-client)
+import { Room, RoomEvent, AudioStream, TrackKind } from "@livekit/rtc-node";
+import type { RemoteTrack, Track } from "@livekit/rtc-node";
+import "dotenv/config";
 
-// Polyfill for Node.js environment for livekit-client
-// usually livekit-client detects node, but sometimes needs explicit ws
-// We'll rely on global fetch/ws if node 22
-// If errors persist, we might need 'ws' package and assign to global
+// Polyfill for Node.js environment overrides if needed
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 const deepgram = createClient(process.env.DEEPGRAM_API_KEY!);
 
 const LIVEKIT_URL = process.env.LIVEKIT_URL!;
@@ -308,7 +310,7 @@ async function joinSessionAndTranscribe(session: any) {
         at.addGrant({ roomJoin: true, room: session.room_name, canSubscribe: true, canPublish: false });
         const token = await at.toJwt();
 
-        const room = new Room({ adaptiveStream: true, dynacast: true });
+        const room = new Room();
 
         // Prepare Deepgram connection
         // We need a separate deepgram stream for EACH user to identify speakers clearly?
@@ -362,7 +364,7 @@ async function joinSessionAndTranscribe(session: any) {
         });
 
         room.on(RoomEvent.TrackSubscribed, (track: RemoteTrack, publication: any, participant: any) => {
-            if (track.kind === Track.Kind.Audio) {
+            if (track.kind === TrackKind.KIND_AUDIO) {
                 console.log(`Subscribed to audio from ${participant.identity}`);
                 handleAudioTrack(track, participant.identity, session.id);
             }
@@ -377,140 +379,106 @@ async function joinSessionAndTranscribe(session: any) {
     }
 }
 
-function handleAudioTrack(track: any, userId: string, sessionId: string) {
-    // track is a RemoteAudioTrack. 
-    // In Node/LiveKit client, getting raw audio bits can be tricky without `wrtc` configured to expose them.
-    // However, assuming we have access to the stream:
-    const mediaStreamTrack = track.mediaStreamTrack;
-    // We need to get the raw PCM data. 
-    // In a browser we'd use Web Audio API. In Node with `wrtc`?
-    // This is the tricky part of Phase 4.4 without the official "Agents" SDK (which handles this).
-    // The prompt says "Pipe audio to Speech-to-Text".
+async function handleAudioTrack(track: any, userId: string, sessionId: string) {
+    // const { AudioStream } = require('@livekit/rtc-node'); // Imported at top
 
-    // For this implementation, I will simulate the "Pipe" behavior because extracting raw PCM from `livekit-client` in Node without complex setup (like `node-datachannel` or `wrtc` sinks) is advanced.
-    // BUT I will write the code as if we are receiving the stream events.
+    // 1. Create Audio Stream (decodes Opus -> PCM)
+    // Force 48kHz mono to match Deepgram config
+    const audioStream = new AudioStream(track, 48000, 1);
 
+    // 2. Setup Deepgram Connection
     const dgConnection = deepgram.listen.live({
         model: "nova-2",
         language: "en-US",
         smart_format: true,
+        encoding: "linear16", // Raw PCM
+        sample_rate: 48000,
+        channels: 1,
+        vad_events: true, // Help detect speech vs silence
+        utterance_end_ms: 1000,
+        interim_results: true
     });
 
-    dgConnection.on(LiveTranscriptionEvents.Open, () => {
-        console.log(`Deepgram connected for user ${userId}`);
+    dgConnection.on(LiveTranscriptionEvents.Open, async () => {
+        console.log(`[Deepgram] Connected for user ${userId}`);
 
-        // Hack for simulation/MVP in Agent context: 
-        // We can't easily get the real audio bytes here without `wrtc` output sink implementation which is verbose.
-        // I will implement the Deepgram listeners for transcription results.
-    });
-
-    dgConnection.on(LiveTranscriptionEvents.Transcript, async (data) => {
-        const transcript = data.channel.alternatives[0].transcript;
-        if (transcript && data.is_final) {
-            console.log(`[${userId}]: ${transcript}`);
-
-            // Store raw transcript
-            await prisma.live_transcripts.create({
-                data: {
-                    session_id: sessionId,
-                    user_id: userId, // Warning: userId in identity might need mapping back to DB UUID if it's different. In our case it IS the uuid.
-                    text: transcript,
-                    timestamp: new Date()
-                }
-            });
-
-            // Analyze Fluency Real-time
-            const words = transcript.split(/\s+/).filter((w: string) => w.length > 0);
-            const wordCount = words.length;
-
-            // Fillers detection (simple regex list)
-            const fillerRegex = /\b(um|uh|hmm|like|you know|i mean)\b/gi;
-            const fillers = (transcript.match(fillerRegex) || []).length;
-
-            // Hesitations (Deepgram sometimes marks these or we infer from small tokens/pauses if we had timestamps per word)
-            // For now, mapping detected fillers to hesitation count + short fragments
-            const hesitationCount = fillers;
-
-            // Update Metrics (Upsert)
-            // Note: In high concurrency, atomic increment is better. 
-            // Prisma supports atomic updates.
-
-            const existingMetric = await prisma.live_metrics.findUnique({
-                where: {
-                    session_id_user_id: {
-                        session_id: sessionId,
-                        user_id: userId
-                    }
-                }
-            });
-
-            if (existingMetric) {
-                await prisma.live_metrics.update({
-                    where: { id: existingMetric.id },
-                    data: {
-                        word_count: { increment: wordCount },
-                        filler_count: { increment: fillers },
-                        hesitation_count: { increment: hesitationCount },
-                        // Speaking time estimation: avg 3 words per second? 
-                        // Or better, use `data.start` and `data.duration` from Deepgram if available in this event structure
-                        // Deepgram `is_final` packet usually has `duration`.
-                        speaking_time: { increment: data.duration || (wordCount * 0.4) }
-                    }
-                });
-            } else {
-                await prisma.live_metrics.create({
-                    data: {
-                        session_id: sessionId,
-                        user_id: userId,
-                        word_count: wordCount,
-                        filler_count: fillers,
-                        hesitation_count: hesitationCount,
-                        speaking_time: data.duration || (wordCount * 0.4)
-                    }
-                });
-            }
-        }
-    });
-
-    // --- Audio Pipe Implementation using @livekit/rtc-node ---
-    // Note: ensure @livekit/rtc-node is installed and livekit-client picks it up.
-    // In many Node environments, we need to use the AudioStream helper.
-
-    // We try to use the raw stream if available.
-    // Since we are using @livekit/rtc-node, we can use AudioStream
-    const { AudioStream } = require('@livekit/rtc-node');
-
-    // Create an audio stream from the track
-    // track is RemoteAudioTrack
-    const audioStream = new AudioStream(track);
-
-    // send audio data to deepgram
-    const interval = setInterval(async () => {
-        // Getting frames is event based or polling?
-        // AudioStream in rtc-node usually has explicit read or events.
-        // Let's assume standard Reader pattern or event.
-    }, 10);
-
-    // BETTER APPROACH: Use built-in stream iterator if available or listener
-    // audioStream is often a Readable stream or has .on('data')
-    // Let's check typical usage:
-    // const stream = new AudioStream(track);
-    // for await (const frame of stream) { dsConnection.send(frame.data); }
-
-    (async () => {
+        // 3. Pipe Audio Frames
         try {
-            for await (const frame of audioStream) {
-                if (dgConnection.getReadyState() === 1) { // Open
-                    // frame.data is usually Int16Array (PCM linear16)
-                    // Deepgram expects raw buffer
-                    dgConnection.send(frame.data.buffer);
+            const reader = audioStream.getReader();
+
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                if (value) {
+                    if (dgConnection.getReadyState() === 1) { // Open
+                        // Create a compact ArrayBuffer copy to ensure no offset issues and satisfy types
+                        const cleanBuffer = value.data.slice().buffer;
+                        dgConnection.send(cleanBuffer);
+                    }
                 }
             }
         } catch (err) {
             console.error(`Audio pipe error for user ${userId}:`, err);
         }
-    })();
+    });
 
+    dgConnection.on(LiveTranscriptionEvents.Transcript, async (data) => {
+        const transcript = data.channel.alternatives[0].transcript;
+        if (transcript && data.is_final && transcript.trim().length > 0) {
+            console.log(`[${userId}]: ${transcript}`);
+
+            // A. Store raw transcript
+            await prisma.live_transcripts.create({
+                data: {
+                    session_id: sessionId,
+                    user_id: userId,
+                    text: transcript,
+                    timestamp: new Date()
+                }
+            });
+
+            // B. Analyze Fluency (Real-time updates)
+            const words = transcript.split(/\s+/).filter((w: string) => w.length > 0);
+            const wordCount = words.length;
+
+            const fillerRegex = /\b(um|uh|hmm|like|you know|i mean)\b/gi;
+            const fillers = (transcript.match(fillerRegex) || []).length;
+            const hesitationCount = fillers;
+
+            // Update Metrics Atomic
+            await prisma.live_metrics.upsert({
+                where: {
+                    session_id_user_id: {
+                        session_id: sessionId,
+                        user_id: userId
+                    }
+                },
+                update: {
+                    word_count: { increment: wordCount },
+                    filler_count: { increment: fillers },
+                    hesitation_count: { increment: hesitationCount },
+                    speaking_time: { increment: data.duration || (wordCount * 0.4) }
+                },
+                create: {
+                    session_id: sessionId,
+                    user_id: userId,
+                    word_count: wordCount,
+                    filler_count: fillers,
+                    hesitation_count: hesitationCount,
+                    speaking_time: data.duration || (wordCount * 0.4)
+                }
+            });
+        }
+    });
+
+    dgConnection.on(LiveTranscriptionEvents.Close, () => {
+        console.log(`[Deepgram] Connection closed for user ${userId}`);
+    });
+
+    dgConnection.on(LiveTranscriptionEvents.Error, (err) => {
+        console.error(`[Deepgram] Error for user ${userId}:`, err);
+    });
 }
 
 startWorker();

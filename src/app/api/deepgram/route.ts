@@ -1,39 +1,60 @@
-import { NextResponse } from "next/server"
-import { createClient } from "@deepgram/sdk"
+import { createClient } from "@deepgram/sdk";
+import { NextResponse } from "next/server";
 
-const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY
+export const dynamic = 'force-dynamic';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
     try {
-        if (!DEEPGRAM_API_KEY) {
-            console.error("Deepgram API Key is missing")
-            return NextResponse.json({ error: "Server Configuration Error" }, { status: 500 })
+        const { audio, mimeType } = await request.json();
+
+        if (!audio) {
+            return NextResponse.json({ error: "No audio provided" }, { status: 400 });
         }
 
-        const deepgram = createClient(DEEPGRAM_API_KEY)
-        const { audio, mimeType } = await req.json()
+        // Convert Base64 to Buffer
+        const audioBuffer = Buffer.from(audio, "base64");
 
-        const { result } = await deepgram.listen.prerecorded.transcribeFile(
-            Buffer.from(audio, "base64"),
+        // 🛡️ Guard: Ignore very short audio (Silence / Glitch)
+        // 1KB is roughly 0.2-0.5s of audio depending on compression. 
+        // Deepgram often hallucinates "Hello?" on empty/short buffers.
+        if (audioBuffer.length < 1000) {
+            console.log(`[Deepgram API] Ignored short audio chunk (${audioBuffer.length} bytes)`);
+            return NextResponse.json({ transcript: "" });
+        }
+
+        const deepgram = createClient(process.env.DEEPGRAM_API_KEY!);
+
+        const { result, error } = await deepgram.listen.prerecorded.transcribeFile(
+            audioBuffer,
             {
                 mimetype: mimeType || "audio/webm",
-                punctuate: true,
                 model: "nova-2",
                 language: "en-US",
+                smart_format: true,
+                punctuate: true,
+                utterance_end_ms: 1000
             }
-        )
+        );
 
-        console.log("DG Response:", JSON.stringify(result, null, 2))
+        if (error) {
+            console.error("Deepgram API Error:", error);
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        }
 
-        const transcript =
-            result?.results?.channels?.[0]?.alternatives?.[0]?.transcript || ""
+        const transcript = result.results?.channels[0]?.alternatives[0]?.transcript || "";
+
+        // Log for debugging
+        if (transcript.trim()) {
+            console.log(`[Deepgram API] Transcript: "${transcript}"`);
+        }
 
         return NextResponse.json({
             transcript,
-            result // Include full result for downstream timing/confidence analysis
-        })
+            result // Pass full result for fluency analysis if needed
+        });
+
     } catch (err) {
-        console.error("Deepgram error", err)
-        return NextResponse.json({ error: "Transcription failed" }, { status: 500 })
+        console.error("Deepgram Endpoint Fatal Error:", err);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

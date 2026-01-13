@@ -118,6 +118,24 @@ export default function LivePracticePage() {
                 }
             });
 
+            // Detect when the OTHER person leaves
+            newRoom.on(RoomEvent.ParticipantDisconnected, (participant) => {
+                console.log("Partner left the room:", participant.identity);
+                setError("Your partner has left the call.");
+                endCall();
+            });
+
+            // Listen for explicit end-call signal from partner
+            newRoom.on(RoomEvent.DataReceived, (payload) => {
+                const decoder = new TextDecoder();
+                const message = decoder.decode(payload);
+                if (message === "session_ended") {
+                    console.log("Received session_ended signal from partner");
+                    setError("The session has ended.");
+                    endCall();
+                }
+            });
+
             newRoom.on(RoomEvent.Disconnected, (reason) => {
                 console.log("Room disconnected", reason);
                 if (roomRef.current === newRoom) {
@@ -126,7 +144,6 @@ export default function LivePracticePage() {
                     setPartner(null);
                     roomRef.current = null;
 
-                    // Specific feedback if the partner ended the call (which closes the room)
                     if (reason !== DisconnectReason.CLIENT_INITIATED) {
                         setError("The session has ended. Your partner has left.");
                     }
@@ -151,31 +168,48 @@ export default function LivePracticePage() {
     };
 
     const endCall = async () => {
+        // 1. Immediately update UI state to avoid lag
+        setStatus("IDLE");
         isMatchingRef.current = false;
         if (pollTimeoutRef.current) clearTimeout(pollTimeoutRef.current);
 
+        // 2. Clear room connection
         if (roomRef.current) {
-            roomRef.current.disconnect();
+            const currentRoom = roomRef.current;
+
+            // Try to notify partner via data message for instant sync
+            try {
+                const encoder = new TextEncoder();
+                const data = encoder.encode("session_ended");
+                await currentRoom.localParticipant.publishData(data, { reliable: true });
+            } catch (e) {
+                console.warn("Failed to send end-of-session signal:", e);
+            }
+
+            currentRoom.disconnect();
             roomRef.current = null;
             setRoom(null);
         }
 
-        if (currentSessionId) {
+        // 3. Cleanup other state
+        setMatchTime(0);
+        const sessionIdToLeave = currentSessionId;
+        setCurrentSessionId(null);
+        setPartner(null);
+        if (matchTimerRef.current) clearInterval(matchTimerRef.current);
+
+        // 4. Notify backend
+        if (sessionIdToLeave) {
             try {
                 await fetch('/api/live-practice/leave', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ sessionId: currentSessionId })
+                    body: JSON.stringify({ sessionId: sessionIdToLeave })
                 });
             } catch (e) {
                 console.error("Failed to notify backend of leave", e);
             }
         }
-
-        setStatus("IDLE");
-        setMatchTime(0);
-        setCurrentSessionId(null);
-        if (matchTimerRef.current) clearInterval(matchTimerRef.current);
     };
 
     // Format seconds to mm:ss

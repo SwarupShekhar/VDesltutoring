@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
+        // Check if session exists and user is part of it
         const targetSession = await prisma.live_sessions.findFirst({
             where: {
                 id: sessionId,
@@ -39,11 +40,10 @@ export async function POST(req: NextRequest) {
         });
 
         if (!targetSession) {
-            // Either session doesn't exist or user not in it
             return NextResponse.json({ error: "Session not found or access denied" }, { status: 404 });
         }
 
-        // Mark as ended
+        // 1. Mark as ended in DB (if not already)
         if (targetSession.status !== 'ended') {
             await prisma.live_sessions.update({
                 where: { id: sessionId },
@@ -52,16 +52,19 @@ export async function POST(req: NextRequest) {
                     ended_at: new Date()
                 }
             });
+            console.log(`[Leave] DB: Session ${sessionId} marked as ended by user ${user.id}`);
+        }
 
-            // CRITICAL: Close the LiveKit room so the other partner is also disconnected
-            try {
-                const { livekit } = await import("@/lib/livekit");
-                await livekit.deleteRoom(targetSession.room_name);
-                console.log(`[Leave] Closed LiveKit room: ${targetSession.room_name}`);
-            } catch (lkError) {
-                // Not a fatal error if room already closed
-                console.warn(`[Leave] Could not close LiveKit room (may already be closed):`, lkError);
-            }
+        // 2. ALWAYS attempt to delete the room from LiveKit to ensure sync
+        // We do this even if status was already 'ended' in case a previous deletion failed
+        try {
+            const { livekit } = await import("@/lib/livekit");
+            console.log(`[Leave] LiveKit: Attempting to delete room: ${targetSession.room_name}`);
+            await livekit.deleteRoom(targetSession.room_name);
+            console.log(`[Leave] LiveKit: Successfully deleted room: ${targetSession.room_name}`);
+        } catch (lkError) {
+            // Room might already be deleted, which is fine
+            console.log(`[Leave] LiveKit: Room ${targetSession.room_name} already gone or could not be deleted.`);
         }
 
         return NextResponse.json({ success: true, message: "Session ended" });

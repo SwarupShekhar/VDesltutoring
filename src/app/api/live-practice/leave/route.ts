@@ -52,6 +52,16 @@ export async function POST(req: NextRequest) {
                     ended_at: new Date()
                 }
             });
+
+            // CRITICAL: Close the LiveKit room so the other partner is also disconnected
+            try {
+                const { livekit } = await import("@/lib/livekit");
+                await livekit.deleteRoom(targetSession.room_name);
+                console.log(`[Leave] Closed LiveKit room: ${targetSession.room_name}`);
+            } catch (lkError) {
+                // Not a fatal error if room already closed
+                console.warn(`[Leave] Could not close LiveKit room (may already be closed):`, lkError);
+            }
         }
 
         return NextResponse.json({ success: true, message: "Session ended" });

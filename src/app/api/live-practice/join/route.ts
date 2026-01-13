@@ -15,6 +15,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
+        console.log(`[Join] Request from user: ${user.id} (${user.emailAddresses[0]?.emailAddress})`);
+
         // Get internal user ID (ensure user exists in our DB)
         const dbUser = await prisma.users.findUnique({
             where: { clerkId: userId },
@@ -53,58 +55,60 @@ export async function POST(req: NextRequest) {
 
         if (existingSession) {
             // Lazy Cleanup: Check LiveKit for truth
+            const session = existingSession; // Stable reference for closure/lint
             try {
-                const roomName = existingSession.room_name;
+                const roomName = session.room_name;
                 const participants = await livekit.listParticipants(roomName);
 
-                // Ghost Logic Refined:
-                // 1. If 0 participants, it's dead.
-                // 2. If 1 participant (the user themselves or just the partner waiting forever?), 
-                //    we need to decide if this is a 'stuck' session.
-
-                // If it's the SAME matched pair, and they are trying to rejoin:
-                // If participants.length === 0 -> Dead. End it.
-                // If participants.length === 1 -> Is it the *other* person waiting? If so, rejoin is valid.
-                // But if the session started long ago (> 2 minutes) and still only 1 person, maybe better to kill?
-
-                const sessionAge = new Date().getTime() - new Date(existingSession.started_at).getTime();
+                const sessionAge = new Date().getTime() - new Date(session.started_at).getTime();
                 const isOld = sessionAge > 2 * 60 * 1000; // 2 minutes
                 const isVeryRecent = sessionAge < 30 * 1000; // 30 seconds
 
                 if (participants.length === 0 && !isVeryRecent) {
-                    // Only kill ghost sessions if they've had at least 30s to connect
-                    console.log(`[Join] Found ghost session ${existingSession.id} (empty). Ending.`);
+                    console.log(`[Join] Found ghost session ${session.id} (empty). Ending.`);
                     await prisma.live_sessions.update({
-                        where: { id: existingSession.id },
+                        where: { id: session.id },
                         data: { status: 'ended', ended_at: new Date() }
                     });
                     existingSession = null;
                 } else if (participants.length < 2 && isOld) {
-                    // Stale session with just 1 person hanging on for too long
-                    console.log(`[Join] Found stale session ${existingSession.id} (1 participant, old). Ending.`);
+                    console.log(`[Join] Found stale session ${session.id} (1 participant, old). Ending.`);
                     await prisma.live_sessions.update({
-                        where: { id: existingSession.id },
+                        where: { id: session.id },
                         data: { status: 'ended', ended_at: new Date() }
                     });
                     existingSession = null;
                 } else {
-                    // Valid active session, rejoin-able
+                    // Valid active session OR very recent wait. Rejoin.
                     const token = await createToken(roomName, dbUser.id);
                     return NextResponse.json({
                         matched: true,
-                        sessionId: existingSession.id,
-                        roomName: existingSession.room_name,
+                        sessionId: session.id,
+                        roomName: session.room_name,
                         token,
-                        partner: existingSession.user_a === dbUser.id ? existingSession.user_b_rel : existingSession.user_a_rel,
+                        partner: session.user_a === dbUser.id ? session.user_b_rel : session.user_a_rel,
                         isRestored: true
                     });
                 }
             } catch (e) {
-                // If LiveKit room list failed (e.g. room doesn't exist), assume it's safe to kill IF not very recent
-                const sessionAge = new Date().getTime() - new Date(existingSession!.started_at).getTime();
-                if (sessionAge > 30 * 1000) {
+                // If LiveKit list failed (e.g. room doesn't exist yet), 
+                // and session is very recent, assume it's valid and rejoin.
+                const sessionAge = new Date().getTime() - new Date(session.started_at).getTime();
+                if (sessionAge <= 30 * 1000) {
+                    console.log(`[Join] LiveKit room not yet active for recent session ${session.id}. Rejoining anyway.`);
+                    const token = await createToken(session.room_name, dbUser.id);
+                    return NextResponse.json({
+                        matched: true,
+                        sessionId: session.id,
+                        roomName: session.room_name,
+                        token,
+                        partner: session.user_a === dbUser.id ? session.user_b_rel : session.user_a_rel,
+                        isRestored: true
+                    });
+                } else {
+                    console.log(`[Join] LiveKit error for old session ${session.id}. Ending.`);
                     await prisma.live_sessions.update({
-                        where: { id: existingSession!.id },
+                        where: { id: session.id },
                         data: { status: 'ended', ended_at: new Date() }
                     });
                     existingSession = null;
@@ -115,8 +119,6 @@ export async function POST(req: NextRequest) {
         // If we killed the ghost session above, existingSession is null, so we proceed to normal queueing.
 
 
-        // 3. ATOMIC MATCHING & IDEMPOTENT QUEUEING
-        // We use a transaction to ensure no race conditions.
         // 3. ATOMIC MATCHING & IDEMPOTENT QUEUEING
         // We use a transaction to ensure no race conditions.
         const matchResult = await prisma.$transaction(async (tx) => {
@@ -142,7 +144,21 @@ export async function POST(req: NextRequest) {
             });
 
             if (partnerEntry) {
-                // MATCH FOUND!
+                // MATCH FOUND! Check if someone else already matched us to prevent duplicate sessions
+                const existingPairSession = await tx.live_sessions.findFirst({
+                    where: {
+                        OR: [
+                            { user_a: dbUser.id, user_b: partnerEntry.user_id },
+                            { user_a: partnerEntry.user_id, user_b: dbUser.id }
+                        ],
+                        status: 'waiting'
+                    }
+                });
+
+                if (existingPairSession) {
+                    return { matched: true, session: existingPairSession, partnerId: partnerEntry.user_id };
+                }
+
                 const roomName = `live-${dbUser.id}-${partnerEntry.user_id}-${Date.now()}`;
 
                 const newSession = await tx.live_sessions.create({

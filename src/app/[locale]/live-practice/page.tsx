@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Room, RoomEvent, Track } from "livekit-client";
+import { Room, RoomEvent, Track, DisconnectReason } from "livekit-client";
 import { useUser } from "@clerk/nextjs";
 import { Mic, Headphones, Loader2, AlertCircle, PhoneOff, Radio, TriangleAlert, Zap } from "lucide-react";
 
@@ -19,6 +19,7 @@ export default function LivePracticePage() {
     const pollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const roomRef = useRef<Room | null>(null);
     const isMatchingRef = useRef(false);
+    const [partner, setPartner] = useState<{ full_name: string } | null>(null);
 
     const startPractice = async () => {
         setError(null);
@@ -78,6 +79,7 @@ export default function LivePracticePage() {
                     matchTimerRef.current = null;
                 }
                 setCurrentSessionId(data.sessionId);
+                setPartner(data.partner);
                 connectToLiveKit(data.roomName, data.token);
             } else if (data.waiting) {
                 pollTimeoutRef.current = setTimeout(pollForMatch, 3000);
@@ -116,12 +118,18 @@ export default function LivePracticePage() {
                 }
             });
 
-            newRoom.on(RoomEvent.Disconnected, () => {
-                console.log("Room disconnected");
+            newRoom.on(RoomEvent.Disconnected, (reason) => {
+                console.log("Room disconnected", reason);
                 if (roomRef.current === newRoom) {
                     setStatus("IDLE");
                     setRoom(null);
+                    setPartner(null);
                     roomRef.current = null;
+
+                    // Specific feedback if the partner ended the call (which closes the room)
+                    if (reason !== DisconnectReason.CLIENT_INITIATED) {
+                        setError("The session has ended. Your partner has left.");
+                    }
                 }
             });
 
@@ -138,6 +146,7 @@ export default function LivePracticePage() {
             setError("Failed to connect to the call. Please try again.");
             setStatus("IDLE");
             isMatchingRef.current = false;
+            setPartner(null);
         }
     };
 
@@ -314,7 +323,9 @@ export default function LivePracticePage() {
                                     <div className="h-16 w-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-2 border-2 border-blue-500">
                                         <span className="text-2xl">👤</span>
                                     </div>
-                                    <span className="text-xs font-medium text-slate-500">Partner</span>
+                                    <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                                        {partner?.full_name || "Partner"}
+                                    </span>
                                 </div>
                             </div>
                         </div>

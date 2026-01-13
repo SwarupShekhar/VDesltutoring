@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const event = await receiver.receive(body, authHeader);
     console.log(`[Webhook] LiveKit event: ${event.event} for room ${event.room?.name}`);
 
-    if (event.event === 'participant_left' || event.event === 'room_finished') {
+    if (event.event === 'room_finished') {
       const roomName = event.room?.name;
       if (!roomName) return NextResponse.json({ status: 'ok' });
 
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       });
 
       if (session) {
-        console.log(`[Webhook] Ending session ${session.id} due to ${event.event}`);
+        console.log(`[Webhook] Definitive end for session ${session.id} due to room_finished`);
         // Mark session as ended
         await prisma.live_sessions.update({
           where: { id: session.id },
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
           }
         });
 
-        // Clean up any remaining queue entries for these users if they exist (just in case)
+        // Clean up any remaining queue entries (extra safety)
         await prisma.live_queue.deleteMany({
           where: {
             user_id: { in: [session.user_a, session.user_b] }
@@ -56,6 +56,17 @@ export async function POST(req: NextRequest) {
         } catch (e) {
           console.error(`[Webhook] Failed to run Fluency Engine for session ${session.id}:`, e);
         }
+      }
+    }
+
+    // Update status to 'live' when participants join
+    if (event.event === 'participant_joined') {
+      const roomName = event.room?.name;
+      if (roomName) {
+        await prisma.live_sessions.updateMany({
+          where: { room_name: roomName, status: 'waiting' },
+          data: { status: 'live' }
+        });
       }
     }
 

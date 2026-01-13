@@ -19,6 +19,7 @@ import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
 import { AudioTransformation } from '@/components/AudioTransformation';
 import { FluencyEngineShowcase } from '@/components/FluencyEngineShowcase';
 import { FluencyGlobe } from '@/components/FluencyGlobe';
+import { LiveNowBanner } from '@/components/LiveNowBanner';
 
 
 const tutors = [
@@ -95,6 +96,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
             </div>
           </div>
         </section>
+
+        {/* 1.2 LIVE NOW BANNER */}
+        <LiveNowBanner locale={locale} />
 
         {/* 1.5 FLUENCY ENGINE (Sticky Scroll Reveal) */}
         <FluencyReflexSection dict={t.fluencyEngine} />

@@ -316,6 +316,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 let totalFluencyScore = 0;
                 let totalFillers = 0; // lower is better
                 let totalPauses = 0;  // lower is better
+                let totalWords = 0; // Track total words spoken
 
                 // For now, we simulate pronunciation/grammar/vocab as we don't have deepgram phonemes stored yet
                 // In production, these would come from stored session analysis
@@ -326,6 +327,8 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                         duration: acc.duration + (r.metrics.duration || 0),
                         fillerCount: acc.fillerCount + (r.metrics.fillerCount || 0)
                     }), { wordCount: 0, duration: 0, fillerCount: 0 });
+
+                    totalWords += metrics.wordCount;
 
                     // Estimate speaking time (avg 3s per word if duration missing)
                     const duration = metrics.duration || (metrics.wordCount * 3);
@@ -339,18 +342,30 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     }
                 });
 
-                const count = recentSessions.length;
-                const avgFluency = totalFluencyScore / count;
-                const avgFillerRate = totalFillers / count;
+                // 🛡️ Guard: Insufficient Data (Prevent "B1 on Silence")
+                // If user spoke fewer than 25 total words across all sessions, force 0.
+                if (totalWords < 25) {
+                    console.log(`[Dashboard] Insufficient data (${totalWords} total words). Forcing 0 CEFR scores.`);
+                    aggregatedMetrics = {
+                        fluency: 0,
+                        pronunciation: 0,
+                        grammar: 0,
+                        vocabulary: 0
+                    };
+                } else {
+                    const count = recentSessions.length;
+                    const avgFluency = totalFluencyScore / count;
+                    const avgFillerRate = totalFillers / count;
 
-                // Map to SkillMetrics (0-1 scale)
-                aggregatedMetrics = {
-                    fluency: avgFluency, // Directly from fluency engine
-                    // INFERENCE: High fluency usually correlates with other skills until we have specific engines
-                    pronunciation: Math.min(1, avgFluency * 0.9 + 0.1), // Placeholder inference
-                    grammar: Math.min(1, avgFluency * 0.85 + 0.15),     // Placeholder inference
-                    vocabulary: Math.min(1, avgFluency * 0.8 + 0.2)     // Placeholder inference
-                };
+                    // Map to SkillMetrics (0-1 scale)
+                    aggregatedMetrics = {
+                        fluency: avgFluency, // Directly from fluency engine
+                        // INFERENCE: High fluency usually correlates with other skills until we have specific engines
+                        pronunciation: Math.min(1, avgFluency * 0.9 + 0.1), // Placeholder inference
+                        grammar: Math.min(1, avgFluency * 0.85 + 0.15),     // Placeholder inference
+                        vocabulary: Math.min(1, avgFluency * 0.8 + 0.2)     // Placeholder inference
+                    };
+                }
 
                 // Adjust based on specific signals if we had them (e.g. grammar error count)
             }

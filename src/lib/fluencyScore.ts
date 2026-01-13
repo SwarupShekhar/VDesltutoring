@@ -57,6 +57,12 @@ const RESTART_PATTERNS = [
  * - 10% Silence ratio (less dead air = higher score)
  */
 export function computeFluencyScore(metrics: FluencyMetrics): number {
+    // 🛡️ Guard: Insufficient Data (Prevent "B1 on Silence")
+    // If user said fewer than 5 words, force 0 score.
+    if (metrics.wordCount < 5) {
+        return 0
+    }
+
     const score =
         0.30 * (1 - Math.min(1, metrics.pauseRatio)) +
         0.25 * (1 - Math.min(1, metrics.restartRate)) +

@@ -205,6 +205,42 @@ async function summarizeSession(session: any) {
             metrics = { speaking_time: 0, filler_count: 0, speech_rate: 0, word_count: 0, grammar_errors: 0 };
         }
 
+        // 🛡️ Guard: Insufficient Data (Prevent "B1 on Silence")
+        if (metrics.word_count < 5) {
+            console.log(`[Worker] User ${userId} insufficient data (${metrics.word_count} words). Forcing 0.`);
+            await prisma.live_session_summary.upsert({
+                where: {
+                    session_id_user_id: {
+                        session_id: session.id,
+                        user_id: userId
+                    }
+                },
+                update: {
+                    confidence_score: 0,
+                    fluency_score: 0,
+                    weaknesses: ["PASSIVITY", "SILENCE"],
+                    drill_plan: [{
+                        weakness: "PASSIVITY",
+                        exercise: "Try to speak more next time so we can analyze your English.",
+                        difficulty: "Beginner"
+                    }]
+                },
+                create: {
+                    session_id: session.id,
+                    user_id: userId,
+                    confidence_score: 0,
+                    fluency_score: 0,
+                    weaknesses: ["PASSIVITY", "SILENCE"],
+                    drill_plan: [{
+                        weakness: "PASSIVITY",
+                        exercise: "Try to speak more next time so we can analyze your English.",
+                        difficulty: "Beginner"
+                    }]
+                }
+            });
+            continue; // Skip rest of loop for this user
+        }
+
         // --- 1. Confidence (Speaking Time) ---
         // speaking_time assumed in seconds
         const speakingRatio = (metrics.speaking_time / 60) / durationMinutes;

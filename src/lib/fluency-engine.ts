@@ -49,6 +49,48 @@ export class FluencyEngine {
 
         // --- A. Compute Raw Scores ---
 
+        // 🛡️ Guard: Insufficient Data (Prevent "B1 on Silence")
+        // If user said fewer than 5 words, they get 0.
+        if (metrics.word_count < 5) {
+            console.log(`[FluencyEngine] User ${userId} insufficient data (${metrics.word_count} words). Forcing 0.`);
+            // Force 0 scores
+            const zeroScore = 0;
+            const topWeaknesses = ["PASSIVITY", "SILENCE"];
+
+            // Save immediately to avoid skewing logic
+            await prisma.live_session_summary.upsert({
+                where: {
+                    session_id_user_id: {
+                        session_id: sessionId,
+                        user_id: userId
+                    }
+                },
+                create: {
+                    session_id: sessionId,
+                    user_id: userId,
+                    confidence_score: 0,
+                    fluency_score: 0,
+                    weaknesses: topWeaknesses,
+                    drill_plan: [{
+                        weakness: "PASSIVITY",
+                        exercise: "Try to speak more next time so we can analyze your English.",
+                        difficulty: "Beginner"
+                    }]
+                },
+                update: {
+                    confidence_score: 0,
+                    fluency_score: 0,
+                    weaknesses: topWeaknesses,
+                    drill_plan: [{
+                        weakness: "PASSIVITY",
+                        exercise: "Try to speak more next time so we can analyze your English.",
+                        difficulty: "Beginner"
+                    }]
+                }
+            });
+            return;
+        }
+
         // 1. Confidence (Speaking Time)
         // Ideal is 50% of the time (in a duo). 
         // speaking_time is in seconds (if our worker logic is correct, it was incremented by seconds or similar)

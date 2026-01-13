@@ -20,6 +20,7 @@ export default function LivePracticePage() {
     const roomRef = useRef<Room | null>(null);
     const isMatchingRef = useRef(false);
     const [partner, setPartner] = useState<{ full_name: string } | null>(null);
+    const [isMuted, setIsMuted] = useState(false);
 
     const startPractice = async () => {
         setError(null);
@@ -167,10 +168,22 @@ export default function LivePracticePage() {
         }
     };
 
+    const toggleMute = async () => {
+        if (!roomRef.current) return;
+        try {
+            const current = isMuted;
+            await roomRef.current.localParticipant.setMicrophoneEnabled(current); // Logic inverted: if muted(true), set enabled(true)
+            setIsMuted(!current);
+        } catch (e) {
+            console.error("Failed to toggle mute", e);
+        }
+    };
+
     const endCall = async () => {
         // 1. Immediately update UI state to avoid lag
         setStatus("IDLE");
         isMatchingRef.current = false;
+        setIsMuted(false);
         if (pollTimeoutRef.current) clearTimeout(pollTimeoutRef.current);
 
         // 2. Clear room connection
@@ -332,74 +345,83 @@ export default function LivePracticePage() {
 
 
                 {status === "IN_CALL" && (
-                    <div className="flex flex-col items-center animate-in fade-in duration-500">
-                        <div className="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 p-6 rounded-3xl mb-8 w-full">
-                            <div className="flex justify-center items-center gap-4 mb-2">
-                                <span className="relative flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    <div className="fixed inset-0 bg-white dark:bg-slate-900 z-50 flex flex-col items-center justify-between p-6 animate-in fade-in duration-300">
+                        {/* Top Bar */}
+                        <div className="w-full flex justify-between items-center max-w-lg mt-8">
+                            <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-full">
+                                <span className="relative flex h-2.5 w-2.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                                 </span>
-                                <span className="text-green-700 dark:text-green-400 font-semibold tracking-wide uppercase text-sm">Live Session</span>
+                                <span className="text-green-700 dark:text-green-300 text-xs font-bold tracking-wide uppercase">Live</span>
                             </div>
-
-                            <div className="flex justify-center gap-8 my-6">
-                                {/* Simulating User Avatars */}
-                                <div className="flex flex-col items-center">
-                                    <div className="h-16 w-16 bg-slate-200 dark:bg-slate-600 rounded-full flex items-center justify-center mb-2">
-                                        <span className="text-2xl">👤</span>
-                                    </div>
-                                    <span className="text-xs font-medium text-slate-500">You</span>
-                                </div>
-                                <div className="h-16 flex items-center text-slate-300 dark:text-slate-600">
-                                    ----------------
-                                </div>
-                                <div className="flex flex-col items-center">
-                                    <div className="h-16 w-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mb-2 border-2 border-blue-500">
-                                        <span className="text-2xl">👤</span>
-                                    </div>
-                                    <span className="text-xs font-medium text-slate-700 dark:text-slate-300">
-                                        {partner?.full_name || "Partner"}
-                                    </span>
-                                </div>
+                            <div className="text-slate-400 text-sm font-mono">
+                                {formatTime(matchTime)}
                             </div>
                         </div>
 
-                        <div className="flex gap-4">
-                            <button
-                                onClick={endCall}
-                                className="bg-red-500 hover:bg-red-600 text-white font-medium py-3 px-8 rounded-xl shadow-md hover:shadow-lg transition-all flex items-center gap-2"
-                            >
-                                <PhoneOff className="h-5 w-5" />
-                                End Call
-                            </button>
+                        {/* Main Visuals */}
+                        <div className="flex-1 flex flex-col items-center justify-center w-full max-w-lg gap-12">
+                            {/* Partner Profile */}
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="relative">
+                                    <div className="h-32 w-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white dark:ring-slate-800">
+                                        <span className="text-5xl">👤</span>
+                                    </div>
+                                    <div className="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg">
+                                        <div className="h-4 w-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-800"></div>
+                                    </div>
+                                </div>
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">
+                                        {partner?.full_name || "Partner"}
+                                    </h2>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm">Speaking English</p>
+                                </div>
+                            </div>
 
-                            <button
-                                onClick={async () => {
-                                    if (!room) return;
-                                    const reason = prompt("Please describe the issue (optional):");
-                                    if (reason === null) return; // cancelled
+                            {/* Connection Line */}
+                            <div className="w-px h-16 bg-gradient-to-b from-blue-200 to-transparent dark:from-blue-800"></div>
 
-                                    try {
-                                        // We need sessionId. We can get it from room name parsing or we should have saved it? 
-                                        // Room name format: live-userA-userB-timestamp
-                                        // BUT API returns sessionId. We didn't save it in state explicitly separate from room data?
-                                        // Wait, 'connectToLiveKit' received it? No, 'data.sessionId' was returned by JOIN API.
-                                        // We need to store sessionId in state to report it.
-                                        // IMPORTANT: The current component implementation didn't save 'sessionId' in state.
-                                        // I must add 'sessionId' state.
+                            {/* User Profile (Smaller) */}
+                            <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full opacity-60">
+                                <div className="h-8 w-8 bg-slate-300 dark:bg-slate-600 rounded-full flex items-center justify-center">
+                                    <span className="text-sm">You</span>
+                                </div>
+                                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Listening...</span>
+                            </div>
+                        </div>
 
-                                        // Hack for now: Logic below assumes we have it. If not, I need to update state first.
-                                        // Let's modify the component state in prev steps or do it here. 
-                                        // I'll update the component to store sessionId.
-                                    } catch (e) {
-                                        alert("Failed to report.");
-                                    }
-                                }}
-                                className="bg-slate-200 hover:bg-slate-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-200 p-3 rounded-xl transition-all"
-                                title="Report User"
-                            >
-                                <TriangleAlert className="h-5 w-5" />
-                            </button>
+                        {/* Control Bar */}
+                        <div className="w-full max-w-md mb-8">
+                            <div className="flex items-center justify-center gap-6 bg-white dark:bg-slate-800 px-8 py-5 rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700">
+                                <button
+                                    onClick={toggleMute}
+                                    className={`h-14 w-14 rounded-full flex items-center justify-center transition-all duration-200 ${isMuted
+                                        ? "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
+                                        : "bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-600"
+                                        }`}
+                                >
+                                    {isMuted ? <Mic className="h-6 w-6 opacity-40" /> : <Mic className="h-6 w-6" />}
+                                </button>
+
+                                <button
+                                    onClick={endCall}
+                                    className="h-16 w-32 bg-red-500 hover:bg-red-600 text-white rounded-2xl shadow-lg shadow-red-500/30 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                                >
+                                    <PhoneOff className="h-8 w-8" />
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        const reason = prompt("Report user reason:");
+                                        if (reason) alert("Report submitted.");
+                                    }}
+                                    className="h-14 w-14 rounded-full bg-white hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 text-slate-400 hover:text-amber-500 transition-colors flex items-center justify-center"
+                                >
+                                    <TriangleAlert className="h-6 w-6" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

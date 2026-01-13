@@ -31,7 +31,15 @@ const tutors = [
 export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
-  const user = await currentUser();
+
+  let user = null;
+  try {
+    user = await currentUser();
+  } catch (err) {
+    console.error("Clerk currentUser() failed:", err);
+    // Continue as logged out user
+  }
+
   const isLoggedIn = !!user;
 
   const t = dict;

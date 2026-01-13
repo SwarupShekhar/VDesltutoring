@@ -17,7 +17,6 @@ const isPublicRoute = createRouteMatcher([
     '/:locale/method',
     '/:locale/how-it-works',
     '/:locale/assessment', // Assessment might be public? User didn't specify, but often is.
-    '/:locale/pricing', // Pricing must be public
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response
 ]);
@@ -52,10 +51,13 @@ export default clerkMiddleware(async (auth, req) => {
         // Allow access
         return NextResponse.next();
     } else {
-        // Protect private routes and redirect to custom sign-in
-        await auth.protect({
-            unauthenticatedUrl: `/${currentLocale}/sign-in`,
-        });
+        // Protect private routes (Pricing, Dashboard, Practice)
+        // Explicitly redirect instead of using auth.protect() to avoid 500 errors on Edge
+        const { userId, redirectToSignIn } = await auth();
+
+        if (!userId) {
+            return redirectToSignIn({ returnBackUrl: req.url });
+        }
     }
 });
 

@@ -24,18 +24,23 @@ export const StickyScroll = ({
     const cardLength = content.length;
 
     useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        const cardsBreakpoints = content.map((_, index) => index / cardLength);
-        const closestBreakpointIndex = cardsBreakpoints.reduce(
-            (acc, breakpoint, index) => {
-                const distance = Math.abs(latest - breakpoint);
-                if (distance < Math.abs(latest - cardsBreakpoints[acc])) {
-                    return index;
-                }
-                return acc;
-            },
-            0
+        // Optimized O(1) breakpoint logic (avoids array allocation on every frame)
+        // Breakpoints are at 0, 1/N, 2/N ...
+        // We want closest integer k to (latest * N)
+        // N = cardLength
+
+        // Note: The original logic used index/cardLength.
+        // E.g. 4 cards: 0, 0.25, 0.5, 0.75.
+        // Range 0.88-1.0 maps to 0.75 (index 3).
+
+        const index = Math.min(
+            Math.max(Math.round(latest * cardLength), 0),
+            cardLength - 1
         );
-        setActiveCard(closestBreakpointIndex);
+
+        if (index !== activeCard) {
+            setActiveCard(index);
+        }
     });
 
     return (

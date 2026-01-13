@@ -17,6 +17,7 @@ const isPublicRoute = createRouteMatcher([
     '/:locale/method',
     '/:locale/how-it-works',
     '/:locale/assessment', // Assessment might be public? User didn't specify, but often is.
+    '/:locale/pricing', // Pricing must be public
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response
 ]);

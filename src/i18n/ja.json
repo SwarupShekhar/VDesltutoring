@@ -342,7 +342,19 @@
         "history": "セッション履歴",
         "noHistory": "セッション履歴はまだありません",
         "tutor": "チューター",
-        "notAssigned": "未割り当て"
+        "notAssigned": "未割り当て",
+        "gamification": {
+            "levelUnassessed": "レベル: 未評価",
+            "startBaseline": "ベースライン評価を開始",
+            "unknownLevelDesc": "現在の英語レベルが不明です。2分間の診断会話でベースラインを確認しましょう。",
+            "attemptTrial": "{level} トライアルに挑戦",
+            "nextTrialLocked": "次のトライアルはロックされています",
+            "availableIn": "{hours} 時間後に利用可能",
+            "levelUnlocked": "レベル解除！",
+            "reachedLevel": "正式にプロフィシェンシーレベル <strong>{level}</strong> に到達しました。さらなる高みを目指しましょう！",
+            "continueJourney": "続ける",
+            "levelUp": "レベルアップ！"
+        }
     },
     "intermediatePlateau": {
         "headline": "見えない壁",

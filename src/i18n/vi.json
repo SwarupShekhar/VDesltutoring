@@ -342,7 +342,19 @@
         "history": "Lịch sử buổi học",
         "noHistory": "Bạn chưa có lịch sử buổi học nào",
         "tutor": "Gia sư",
-        "notAssigned": "Chưa được phân công"
+        "notAssigned": "Chưa được phân công",
+        "gamification": {
+            "levelUnassessed": "Cấp độ: Chưa đánh giá",
+            "startBaseline": "Bắt đầu đánh giá",
+            "unknownLevelDesc": "Chúng tôi chưa biết trình độ tiếng Anh của bạn. Hãy dành 2 phút để trò chuyện và xác định mức cơ bản.",
+            "attemptTrial": "Thử thách {level}",
+            "nextTrialLocked": "Thử thách tiếp theo bị khóa",
+            "availableIn": "Có sẵn sau {hours} giờ",
+            "levelUnlocked": "Đã mở khóa cấp độ!",
+            "reachedLevel": "Bạn đã chính thức đạt cấp độ <strong>{level}</strong>. Hãy tiếp tục cố gắng!",
+            "continueJourney": "Tiếp tục",
+            "levelUp": "Lên cấp!"
+        }
     },
     "intermediatePlateau": {
         "headline": "Bức tường vô hình",

@@ -35,6 +35,12 @@ export default function AITutor() {
     const [started, setStarted] = useState(false)
     const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null)
     const [chats, setChats] = useState<ChatMessage[]>([])
+    const chatsRef = useRef<ChatMessage[]>([])
+
+    // Keep ref in sync with state for event listeners
+    useEffect(() => {
+        chatsRef.current = chats
+    }, [chats])
 
     // Request Locking to prevent double-speak
     const requestCounter = useRef(0)
@@ -321,7 +327,12 @@ export default function AITutor() {
                                 firstName: firstName,
                                 // Challenge Mode Params
                                 systemPromptType: mode === 'challenge' ? 'TRIAL' : 'TUTOR',
-                                targetLevel: targetLevel
+                                targetLevel: targetLevel,
+                                // Send last 10 turns for context
+                                history: chatsRef.current.slice(-10).map(c => ({
+                                    role: c.role,
+                                    content: c.content
+                                }))
                             })
                         })
 

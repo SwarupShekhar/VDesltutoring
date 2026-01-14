@@ -100,16 +100,20 @@ export class GeminiService {
 
     /**
      * Drop-in replacement for OpenAIService.generateChatResponse
-     * Allows dynamic system prompts for Honest Coaching.
+     * Allows dynamic system prompts for Honest Coaching with History.
      */
-    async generateChatResponse(systemPrompt: string, userMessage: string): Promise<string> {
+    async generateChatResponse(systemPrompt: string, userMessage: string, history: Array<{ role: string, content: string }> = []): Promise<string> {
         if (!userMessage || userMessage.trim().length === 0) {
             return "I didn't quite catch that.";
         }
 
-        // Combine system prompt and user message for Gemini (which often prefers single-prompt context 
-        // if not using the chat history API, though raw generation works well for 1-turn VAD).
-        const fullPrompt = `${systemPrompt}\n\nUser: ${userMessage}\nTutor:`;
+        // Format history into a script format
+        const historyText = history.map(msg =>
+            `${msg.role === 'user' ? 'User' : 'Tutor'}: ${msg.content}`
+        ).join('\n');
+
+        // Combine system prompt, history, and user message
+        const fullPrompt = `${systemPrompt}\n\nPREVIOUS CONVERSATION:\n${historyText}\n\nUser: ${userMessage}\nTutor:`;
         return this.executeWithFallback(fullPrompt, false);
     }
 

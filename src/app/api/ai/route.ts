@@ -200,7 +200,10 @@ If there are no errors, return an empty corrections array.
 GOAL: Make ${firstName} feel excited, supported, and eager to speak more. Focus on behavioral fluency (how they speak), not academic English.
 `
         }
-        const rawResponse = await geminiService.generateChatResponse(SYSTEM_PROMPT, transcript)
+
+        // Pass history to Gemini Service
+        const history = body.history || []
+        const rawResponse = await geminiService.generateChatResponse(SYSTEM_PROMPT, transcript, history)
 
         // Try to parse as JSON first (for corrections), fallback to plain text
         let response = rawResponse

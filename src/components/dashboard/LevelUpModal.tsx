@@ -8,9 +8,10 @@ import { X, Award, Star } from 'lucide-react'
 interface LevelUpModalProps {
     level: string
     onClose: () => void
+    dict?: any
 }
 
-export function LevelUpModal({ level, onClose }: LevelUpModalProps) {
+export function LevelUpModal({ level, onClose, dict = {} }: LevelUpModalProps) {
     useEffect(() => {
         const duration = 3 * 1000
         const end = Date.now() + duration
@@ -88,16 +89,15 @@ export function LevelUpModal({ level, onClose }: LevelUpModalProps) {
                                 transition={{ delay: 0.2 }}
                                 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-600 to-amber-600 dark:from-yellow-400 dark:to-amber-400"
                             >
-                                Level Unlocked!
+                                {dict?.gamification?.levelUnlocked || 'Level Unlocked!'}
                             </motion.h2>
                             <motion.p
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.4 }}
                                 className="text-slate-600 dark:text-slate-300"
-                            >
-                                You have officially reached proficiency level <strong>{level}</strong>. Keep pushing your limits!
-                            </motion.p>
+                                dangerouslySetInnerHTML={{ __html: (dict?.gamification?.reachedLevel || 'You have officially reached proficiency level <strong>{level}</strong>. Keep pushing your limits!').replace('{level}', level) }}
+                            />
                         </div>
 
                         <motion.button
@@ -106,7 +106,7 @@ export function LevelUpModal({ level, onClose }: LevelUpModalProps) {
                             onClick={onClose}
                             className="px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full font-bold shadow-lg"
                         >
-                            Continue Journey
+                            {dict?.gamification?.continueJourney || 'Continue Journey'}
                         </motion.button>
                     </div>
                 </motion.div>

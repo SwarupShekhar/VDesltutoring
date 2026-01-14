@@ -255,7 +255,7 @@ export function FluencyEngineShowcase({ dict }: { dict: any }) {
 
                 {/* 5. CTA */}
                 <motion.div variants={itemVariants} className="flex flex-col items-center text-center">
-                    <Link href="/fluency-check">
+                    <Link href="/ai-tutor?mode=challenge&targetLevel=A1">
                         <Button size="lg" className="rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-200 font-bold px-10 h-14 text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all">
                             {t.cta.button}
                         </Button>

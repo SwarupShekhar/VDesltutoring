@@ -98,6 +98,7 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
           profile={cefrProfile}
           trialCooldown={trialCooldown}
           timeUntilNextTrial={timeUntilNextTrial}
+          dict={t}
         />
       ) : (
         <div className="flex flex-col items-center justify-center p-12 text-center rounded-3xl bg-slate-50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-800 space-y-6">
@@ -105,14 +106,14 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
             <span className="text-3xl">❓</span>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Level: Unassessed</h2>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">{t.gamification?.levelUnassessed || "Level: Unassessed"}</h2>
             <p className="text-slate-500 max-w-md mx-auto">
-              We don't know your English level yet. Take a short 2-minute diagnostic conversation to find your baseline.
+              {t.gamification?.unknownLevelDesc || "We don't know your English level yet. Take a short 2-minute diagnostic conversation to find your baseline."}
             </p>
           </div>
 
           <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20" asChild>
-            <Link href="/ai-tutor">Start Baseline Assessment</Link>
+            <Link href="/ai-tutor">{t.gamification?.startBaseline || "Start Baseline Assessment"}</Link>
           </Button>
         </div>
       )}

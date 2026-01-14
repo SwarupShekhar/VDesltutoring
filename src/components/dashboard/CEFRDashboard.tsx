@@ -19,6 +19,7 @@ interface CEFRDashboardProps {
     className?: string
     trialCooldown?: boolean
     timeUntilNextTrial?: number
+    dict?: any
 }
 
 /**
@@ -37,7 +38,8 @@ export function CEFRDashboard({
     onPractice,
     className = "",
     trialCooldown = false,
-    timeUntilNextTrial = 0
+    timeUntilNextTrial = 0,
+    dict = {}
 }: CEFRDashboardProps) {
     const router = useRouter()
     const params = useParams()
@@ -82,6 +84,7 @@ export function CEFRDashboard({
                 <LevelUpModal
                     level={profile.overall.cefr}
                     onClose={() => setShowCelebration(false)}
+                    dict={dict}
                 />
             )}
             {/* Hero Section: Overall Level */}
@@ -140,7 +143,7 @@ export function CEFRDashboard({
                                     }`}
                             >
                                 <span className="relative z-10 flex items-center gap-2">
-                                    <span>{isCooldown ? `Next Trial Locked` : `Attempt ${nextLevel} Trial`}</span>
+                                    <span>{isCooldown ? (dict?.gamification?.nextTrialLocked || `Next Trial Locked`) : (dict?.gamification?.attemptTrial?.replace('{level}', nextLevel) || `Attempt ${nextLevel} Trial`)}</span>
                                     {isCooldown ? <Clock className="w-5 h-5" /> : <Award className="w-5 h-5" />}
                                 </span>
                                 {/* Shiny effect (only when active) */}
@@ -148,7 +151,7 @@ export function CEFRDashboard({
                             </button>
                             {isCooldown && (
                                 <span className="text-xs font-semibold text-slate-500 animate-pulse">
-                                    Available in {hoursLeft} hours
+                                    {(dict?.gamification?.availableIn || 'Available in {hours} hours').replace('{hours}', hoursLeft)}
                                 </span>
                             )}
                         </div>

@@ -1,100 +1,331 @@
 {
     "nav": {
-        "brandSubtitle": "Habla sin traducir",
-        "approach": "Nuestro Método",
-        "practice": "Práctica",
-        "pricing": "Precios",
-        "about": "Nosotros",
-        "signIn": "Iniciar sesión",
-        "getStarted": "Empezar",
-        "dashboard": "Panel de control",
-        "signOut": "Cerrar sesión",
-        "startAssessment": "Iniciar evaluación",
-        "signInToPractice": "Iniciar sesión para practicar",
-        "createAccount": "Crear cuenta",
-        "language": "Idioma",
-        "interfaceOnly": "Solo interfaz. El contenido de aprendizaje permanece en inglés.",
+        "brandSubtitle": "Speak without translating",
+        "approach": "Our Method",
+        "practice": "Practice",
+        "pricing": "Pricing",
+        "about": "About Us",
         "aboutPage": {
             "hero": {
-                "title": "No enseñamos inglés.<br/>Entrenamos a la gente a hablar.",
-                "subtitle": "La mayoría de los estudiantes de inglés no luchan con el conocimiento. Luchan con la presión, la duda y la confianza.<br/>Construimos esta plataforma para arreglar eso."
+                "title": "We don’t teach English.<br/>We train people to speak.",
+                "subtitle": "Most English learners don’t struggle with knowledge. They struggle with pressure, hesitation, and confidence.<br/>We built this platform to fix that."
             },
             "sections": [
                 {
                     "id": "problem",
-                    "label": "El Problema Real",
-                    "title": "“Sé inglés… pero no puedo hablar.”",
-                    "content": "Esto es lo que casi todos los estudiantes nos dicen.<br/><br/>Saben:<br/>• Gramática<br/>• Vocabulario<br/>• Reglas<br/><br/>Pero cuando es hora de hablar:<br/>• Su mente se congela<br/>• Dudan<br/>• Traducen<br/>• Pierden el flujo<br/><br/>Los sistemas de aprendizaje tradicionales responden añadiendo más:<br/>• Gramática<br/>• Ejercicios<br/>• Lectura<br/><br/>Eso no arregla el habla.<br/>Lo empeora."
+                    "label": "The Real Problem",
+                    "title": "“I know English… but I can’t speak.”",
+                    "content": "This is what almost every learner tells us.<br/><br/>They know:<br/>• Grammar<br/>• Vocabulary<br/>• Rules<br/><br/>But when it’s time to speak:<br/>• Their mind freezes<br/>• They hesitate<br/>• They translate<br/>• They lose flow<br/><br/>Traditional learning systems respond by adding more:<br/>• Grammar<br/>• Exercises<br/>• Reading<br/><br/>That doesn’t fix speaking.<br/>It makes it worse."
                 },
                 {
                     "id": "reason",
-                    "label": "Por Qué Existimos",
-                    "title": "Para ayudar a la gente a hablar sin miedo.",
-                    "content": "Englivo fue creado por una razón.<br/><br/>Nos dimos cuenta de algo simple:<br/><br/>Hablar no es un problema de conocimiento.<br/>Es un problema de reflejos.<br/><br/>Y los reflejos se construyen mediante:<br/>• Repetición<br/>• Tiempo<br/>• Seguridad emocional<br/>• Conversación real<br/><br/>No libros de texto.<br/><br/>Así que en lugar de construir otro curso,<br/>construimos un Motor de Fluidez."
+                    "label": "Why We Exist",
+                    "title": "To help people speak without fear.",
+                    "content": "Englivo was created for one reason.<br/><br/>We realized something simple:<br/><br/>Speaking is not a knowledge problem.<br/>It is a reflex problem.<br/><br/>And reflexes are built by:<br/>• Repetition<br/>• Timing<br/>• Emotional safety<br/>• Real conversation<br/><br/>Not textbooks.<br/><br/>So instead of building another course,<br/>we built a Fluency Engine."
                 },
                 {
                     "id": "difference",
-                    "label": "Lo Que Nos Hace Diferentes",
-                    "title": "No corregimos el inglés.<br/>Recableamos el comportamiento al hablar.",
-                    "content": "La mayoría de las plataformas preguntan:<br/>“¿Sabes la frase correcta?”<br/><br/>Nosotros preguntamos:<br/>“¿Puedes decirla en voz alta cuando importa?”<br/><br/>Nuestro sistema escucha cómo hablas:<br/>• Dudas<br/>• Muletillas<br/>• Reinicios<br/>• Pausas<br/>• Flujo<br/><br/>Y te entrena de la misma manera que lo haría un tutor humano:<br/>• Con calma<br/>• Con apoyo<br/>• En tiempo real<br/>• Sin juicios"
+                    "label": "What Makes Us Different",
+                    "title": "We don’t correct English.<br/>We rewire speaking behavior.",
+                    "content": "Most platforms ask:<br/>“Do you know the correct sentence?”<br/><br/>We ask:<br/>“Can you say it out loud when it matters?”<br/><br/>Our system listens to how you speak:<br/>• Hesitations<br/>• Fillers<br/>• Restarts<br/>• Pauses<br/>• Flow<br/><br/>And coaches you the same way a human tutor would:<br/>• Calm<br/>• Supportive<br/>• Real-time<br/>• Without judgment"
                 },
                 {
                     "id": "philosophy",
-                    "label": "La Filosofía Humana",
-                    "title": "La gente solo se vuelve fluida cuando se siente lo suficientemente segura para hablar.",
-                    "content": "Diseñamos esta plataforma en torno a una creencia.<br/><br/>Es por eso que nuestra IA:<br/>• Nunca dice “incorrecto”<br/>• Nunca critica<br/>• Nunca avergüenza<br/><br/>Dice:<br/>• “Prueba esto en su lugar.”<br/>• “Eso estuvo bien - suavicémoslo.”<br/>• “Sigue adelante.”<br/><br/>Porque la confianza se construye a través del movimiento, no de la perfección."
+                    "label": "The Human Philosophy",
+                    "title": "People only become fluent when they feel safe enough to speak.",
+                    "content": "We designed this platform around one belief.<br/><br/>That’s why our AI:<br/>• Never says “wrong”<br/>• Never criticizes<br/>• Never shames<br/><br/>It says:<br/>• “Try this instead.”<br/>• “That was good - let’s smooth it.”<br/>• “Keep going.”<br/><br/>Because confidence is built through motion, not perfection."
                 },
                 {
                     "id": "audience",
-                    "label": "A Quién Servimos",
-                    "title": "Para cualquiera que quiera que su inglés se sienta como su propia voz.",
-                    "content": "Englivo está construido para personas que:<br/><br/>• Entienden inglés pero se congelan al hablar<br/>• Necesitan inglés para el trabajo, entrevistas o la vida<br/>• Se sienten avergonzados al cometer errores<br/>• Quieren sonar naturales, no robóticos<br/><br/>Desde estudiantes hasta profesionales e inmigrantes."
+                    "label": "Who We Serve",
+                    "title": "For anyone who wants their English to feel like their own voice.",
+                    "content": "Englivo is built for people who:<br/><br/>• Understand English but freeze when speaking<br/>• Need English for work, interviews, or life<br/>• Feel embarrassed making mistakes<br/>• Want to sound natural, not robotic<br/><br/>From students to professionals to immigrants."
                 },
                 {
                     "id": "vision",
-                    "label": "Hacia Dónde Vamos",
-                    "title": "Plataforma de idiomas centrada en la fluidez",
-                    "content": "Estamos construyendo el primer lugar del mundo donde:<br/>• Hablas<br/>• Eres entendido<br/>• Eres entrenado<br/>• Creces<br/><br/>No memorizando,<br/>sino convirtiéndote en un hablante."
+                    "label": "Where We Are Going",
+                    "title": "Fluency-first language platform",
+                    "content": "We are building the world’s first place where:<br/>• You speak<br/>• You’re understood<br/>• You’re coached<br/>• You grow<br/><br/>Not by memorizing,<br/>but by becoming a speaker."
                 }
             ],
             "final": {
-                "title": "Englivo no trata sobre aprender inglés.",
-                "subtitle": "Trata sobre convertirse en alguien que puede hablarlo."
+                "title": "Englivo is not about learning English.",
+                "subtitle": "It’s about becoming someone who can speak it."
             }
+        },
+        "signIn": "Sign in",
+        "getStarted": "Get Started",
+        "dashboard": "Dashboard",
+        "signOut": "Sign out",
+        "startReflection": "Start Reflection",
+        "signInToPractice": "Sign In to Practice",
+        "createAccount": "Create Account",
+        "language": "Language",
+        "interfaceOnly": "Interface only. Learning content remains in English."
+    },
+    "methodPage": {
+        "hero": {
+            "title": "The Fluency Engine™",
+            "subtitle": "“Most people don’t fail at English.<br/>They fail at speaking under pressure.”"
+        },
+        "section1": {
+            "label": "The Hidden Problem",
+            "title": "Cognitive Overload",
+            "content": "Most learners believe their problem is Grammar, Vocabulary, or Accent. But when they speak in real life, something else happens: Their brain Hesitates, Translates, Freezes, and Loses flow. They know what to say. They just can’t say it fast enough. Traditional courses respond by adding more grammar, more rules, and more words. This increases mental load - and makes speaking even harder. Fluency doesn’t break because of ignorance. It breaks because of cognitive overload under pressure."
+        },
+        "section2": {
+            "label": "Speaking Is Not Knowledge",
+            "title": "The Reflex Gap",
+            "content": "Reading and speaking use different parts of the brain. You can know English and still not be able to speak English. Because: Speaking is not memory. Speaking is a reflex. Reflexes are trained through Timing, Repetition, Feedback, and Emotional safety. Not through Explanations, Rules, or Textbooks. That’s why people who study for years still freeze when a real human speaks to them."
+        },
+        "section3": {
+            "label": "Introducing the Fluency Engine™",
+            "title": "Rewiring, Not Correcting",
+            "content": "The Fluency Engine™ is not a course. It is a speaking system that retrains how your brain produces English. It listens to your pauses, your filler words, your timing, your rhythm, and your hesitation patterns. And adjusts the conversation in real time. You are not corrected. You are rewired."
+        },
+        "section4": {
+            "label": "Our Four Core Principles",
+            "title": "Principles of Flow",
+            "cards": [
+                {
+                    "title": "1) Live Reflex Training",
+                    "content": "You don’t become fluent by reading. You become fluent by Speaking, Hearing yourself, and Adjusting in the moment. Your Fluency Engine listens as you speak and responds instantly. This trains Speed, Flow, and Automaticity. Not memory. It builds the speaking reflex."
+                },
+                {
+                    "title": "2) Pattern-Based Coaching",
+                    "content": "Other platforms say: “You made a grammar mistake.” We say: “You paused here,” “You restarted here,” “You hesitated before this word.” These are habits, not errors. We don’t fix English. We fix how you speak English. This is why your progress is permanent."
+                },
+                {
+                    "title": "3) Emotional Safety",
+                    "content": "People don’t freeze because they don’t know English. They freeze because they fear Sounding stupid, Being judged, or Being corrected. Your tutor never says Wrong, Incorrect, or Bad. It says: “Try this instead,” “That was good, let’s smooth it,” “Keep going.” Safety creates fluency."
+                },
+                {
+                    "title": "4) Situational Fluency",
+                    "content": "You don’t want “English.” You want Interviews, Meetings, Travel, Small talk, and Presentations. Your tutor practices these exact situations. So your brain learns: “I can speak in THIS moment.” That’s how confidence transfers to real life."
+                }
+            ]
+        },
+        "section5": {
+            "label": "Why This Is Different From Traditional Audio-Based Methods",
+            "title": "Memory vs. Identity",
+            "content": "Traditional audio-based programs train memory. We train Hesitation, Timing, Flow, Confidence, and Speaking identity. They ask: “Can you remember this phrase?” We ask: “Can you speak without freezing?” That is what real fluency is."
+        },
+        "final": {
+            "label": "The Shift",
+            "content": "Most platforms make you feel: “I need to study more.” The Fluency Engine makes you feel: “I can speak right now.” That is the difference."
+        }
+    },
+    "howItWorksPage": {
+        "hero": {
+            "title": "How It Works",
+            "subtitle": "A simple way to go from \"I know English\" to \"I can speak English\"",
+            "description": "You don’t need to study more. You need to practice speaking in the right way.<br/>Here’s exactly what happens when you use Englivo."
+        },
+        "steps": [
+            {
+                "step": "Step 1",
+                "title": "You speak",
+                "description": "You click Start. You see your AI tutor. You just start talking.",
+                "details": [
+                    "Your day",
+                    "Your work",
+                    "A topic",
+                    "Anything"
+                ],
+                "footer": "There is no test. No pressure. Just a conversation."
+            },
+            {
+                "step": "Step 2",
+                "title": "The AI listens",
+                "description": "While you talk, the AI is quietly listening to:",
+                "details": [
+                    "Your pauses",
+                    "Your \"uh\", \"um\", \"well\"",
+                    "When you stop and restart",
+                    "Your rhythm and timing"
+                ],
+                "footer": "It is not judging you. It is learning how you speak."
+            },
+            {
+                "step": "Step 3",
+                "title": "Your patterns are detected",
+                "description": "The system looks for habits, not mistakes. For example:",
+                "details": [
+                    "Do you pause before speaking?",
+                    "Do you think too long?",
+                    "Do you translate in your head?",
+                    "Do you rush or freeze?"
+                ],
+                "footer": "These are called fluency patterns. They are what block confident speaking."
+            },
+            {
+                "step": "Step 4",
+                "title": "Your tutor adapts",
+                "description": "Now the magic part. Your AI tutor changes how it talks to you based on your patterns.",
+                "subsections": [
+                    {
+                        "title": "If you hesitate:",
+                        "content": "It slows down and encourages you."
+                    },
+                    {
+                        "title": "If you use many fillers:",
+                        "content": "It models smoother sentences."
+                    },
+                    {
+                        "title": "If you freeze:",
+                        "content": "It gives you gentle starters."
+                    }
+                ],
+                "footer": "You are not taught. You are guided."
+            },
+            {
+                "step": "Step 5",
+                "title": "You improve by speaking",
+                "description": "You do not memorize rules. You do not do exercises. You improve by:",
+                "details": [
+                    "Talking",
+                    "Trying",
+                    "Hearing better versions",
+                    "Trying again"
+                ],
+                "footer": "This builds a speaking reflex - the same way you learned your first language."
+            },
+            {
+                "step": "Step 6",
+                "title": "Your progress is tracked",
+                "description": "After every session, we save:",
+                "details": [
+                    "Your hesitation level",
+                    "Your flow",
+                    "Your filler use",
+                    "Your speaking style"
+                ],
+                "quote": "“I am freezing less. I am speaking more.”",
+                "footer": "You don’t feel progress. You see it."
+            }
+        ],
+        "final": {
+            "label": "Why this works",
+            "title": "Most people don’t fail at English.",
+            "subtitle": "They fail at speaking under pressure.",
+            "listTitle": "Englivo trains:",
+            "list": [
+                "Confidence",
+                "Timing",
+                "Flow",
+                "Speaking identity"
+            ],
+            "conclusion": "Not just words. That’s why people finally start talking."
+        }
+    },
+    "pricingPage": {
+        "hero": {
+            "title": "Choose your speaking path",
+            "subtitle": "Every plan gives you access to the Fluency Engine.<br/>The difference is how deep you go."
+        },
+        "plans": {
+            "basic": {
+                "title": "Basic",
+                "price": "$19",
+                "period": "/ month",
+                "tagline": "Start speaking",
+                "features": [
+                    "AI Tutor (limited sessions)",
+                    "Fluency feedback",
+                    "Speaking history",
+                    "Daily conversation scenarios"
+                ],
+                "button": "Start with Basic"
+            },
+            "standard": {
+                "title": "Standard",
+                "price": "$39",
+                "period": "/ month",
+                "tagline": "Build confidence",
+                "badge": "Most Popular",
+                "features": [
+                    "Unlimited AI Tutor",
+                    "Full Fluency Engine",
+                    "Situations: work, travel, interviews",
+                    "Weekly speaking challenges",
+                    "Progress tracking"
+                ],
+                "button": "Start with Standard"
+            },
+            "premium": {
+                "title": "Premium",
+                "price": "$79",
+                "period": "/ month",
+                "tagline": "Speak naturally",
+                "features": [
+                    "Priority AI tutor",
+                    "Personalized speaking roadmap",
+                    "Pronunciation & hesitation drills",
+                    "Industry-specific scenarios",
+                    "Advanced fluency reports"
+                ],
+                "button": "Go Premium"
+            }
+        },
+        "enterprise": {
+            "title": "Enterprise",
+            "description": "For companies, universities, and training teams who want their people to speak English confidently in real situations.",
+            "button": "Contact Sales"
+        },
+        "trust": "You are not paying for lessons. You are paying for a system that trains how you speak."
+    },
+    "checkoutPage": {
+        "title": "Checkout",
+        "selectedPlan": "You selected:",
+        "perMonth": "/ month",
+        "form": {
+            "name": "Full Name",
+            "email": "Email Address",
+            "cardNumber": "Card Number",
+            "expiry": "MM / YY",
+            "cvv": "CVV"
+        },
+        "button": "Start My Fluency Journey",
+        "modal": {
+            "title": "Payments are not enabled yet.",
+            "subtitle": "You’re early. That’s good.",
+            "description": "Enter your email and we’ll invite you when this launches.",
+            "emailPlaceholder": "Enter your email",
+            "button": "Join Early Access"
         }
     },
     "hero": {
-        "headline": "Deja de traducir en tu cabeza.<br /><span>Empieza a hablar como tú mismo.</span>",
-        "subtext": "El enfoque boutique para la fluidez. Para profesionales que se sienten atrapados en el silencio entre el pensamiento y el habla.",
-        "ctaReflection": "Comienza tu reflexión",
-        "ctaMethod": "Nuestra Metodología"
+        "headline": "Stop translating in your head.<br /><span>Start speaking like yourself.</span>",
+        "subtext": "The boutique approach to fluency. For professionals who feel stuck in the silence between thought and speech.",
+        "ctaReflection": "Start Your Reflection",
+        "ctaMethod": "Our Methodology"
     },
     "problems": {
-        "label": "El Problema",
-        "headline": "Por qué las apps no pueden enseñarte esto.",
-        "p1": "La mayoría de las apps te enseñan <strong>vocabulario</strong> (qué decir). Pero en una reunión real, no luchas porque te falten palabras.",
-        "p2": "Luchas debido a la <strong>presión</strong>.",
-        "p3": "Cuando hay mucho en juego, tu cerebro vuelve a lo seguro: <span class=\"text-foreground italic\">traducir desde tu lengua materna</span>. Este retraso es lo que mata tu confianza, no tu gramática.",
-        "simulationLabel": "Simulación de presión en tiempo real",
-        "you": "Tú"
+        "label": "The Problem",
+        "headline": "Why apps can't teach you this.",
+        "p1": "Most language apps teach you <strong>vocabulary</strong> (what to say). But in a real meeting, you don't struggle because you lack words.",
+        "p2": "You struggle because of <strong>pressure</strong>.",
+        "p3": "When the stakes go up, your brain reverts to safety: <span class=\"text-foreground italic\">translating from your native language</span>. This delay is what kills your confidence, not your grammar.",
+        "simulationLabel": "Real-time pressure simulation",
+        "you": "You"
     },
     "features": {
         "dialogues": {
-            "title": "Diálogos Estructurados",
-            "desc": "Sin charlas aleatorias. Cada sesión tiene un objetivo preciso."
+            "title": "Structured Dialogues",
+            "desc": "No random chats. Every session has a precise goal."
         },
         "feedback": {
-            "title": "Retroalimentación Instantánea",
-            "desc": "Corrección que se siente de apoyo, no crítica."
+            "title": "Instant Feedback",
+            "desc": "Correction that feels supportive, not critical."
         },
         "match": {
-            "title": "Coincidencia por Química",
-            "desc": "Te emparejamos con mentores que coinciden con tu vibra profesional."
+            "title": "Matched for Chemistry",
+            "desc": "We pair you with mentors who match your professional vibe."
         }
     },
     "testimonials": {
-        "headline": "La fluidez es una palanca profesional.",
-        "subtext": "No solo confíes en nuestra palabra.",
+        "headline": "Fluency is career leverage.",
+        "subtext": "Don't just take our word for it.",
         "stories": [
             {
                 "quote": "I stopped being the quiet one in strategy meetings. I finally sound like the expert I actually am.",
@@ -105,433 +336,378 @@
                 "quote": "My English was 'good enough', but I wasn't connecting. Now I can joke, interrupt, and lead with nuance.",
                 "author": "Marco R.",
                 "role": "Tech Lead, São Paulo"
+            },
+            {
+                "quote": "The 'Timing Problems' concept changed everything. I realized I wasn't bad at English, I was just slow at processing.",
+                "author": "Hiroshi T.",
+                "role": "Investment Banker, Tokyo"
+            },
+            {
+                "quote": "Just 4 weeks in, my CEO asked if I had lived abroad. I haven't. I just stopped translating in my head.",
+                "author": "Camille D.",
+                "role": "Marketing Director, Paris"
+            },
+            {
+                "quote": "My accent is still there, but my hesitation is gone. People listen to me differently now.",
+                "author": "Lars J.",
+                "role": "Architect, Copenhagen"
+            },
+            {
+                "quote": "I used to dread Q&A sessions. Now they are my favorite part of the presentation.",
+                "author": "Priya S.",
+                "role": "Lead Developer, Bangalore"
+            },
+            {
+                "quote": "Finally found a mentor who doesn't just correct my grammar, but helps me find my rhythm. My meetings are 100% more productive now.",
+                "author": "Alex M.",
+                "role": "Founder & CEO, London"
+            },
+            {
+                "quote": "I used to prepare scripts for every call. Now I just show up and speak. The freedom is incredible.",
+                "author": "Sofia L.",
+                "role": "UX Designer, Stockholm"
+            },
+            {
+                "quote": "The psychological approach to fluency is what I was missing. It's not about the language, it's about the confidence.",
+                "author": "Luca B.",
+                "role": "Data Scientist, Milan"
             }
         ]
     },
     "speakingMoments": {
-        "headline": "Momentos donde hablar inglés se siente más difícil",
-        "subtext": "No son problemas de gramática. Son problemas de tiempo.",
+        "headline": "Moments where speaking English feels hardest",
+        "subtext": "These are not grammar problems. They’re timing problems.",
         "modal": {
-            "whyHard": "Por qué esto se siente difícil",
-            "whyHardDesc": "Estás tratando de preparar todo antes de hablar.",
-            "reframeLabel": "Reencuadre de Englivo",
-            "practice": "Practicar este momento",
-            "teach": "Mira cómo enseñamos esto"
+            "whyHard": "Why this feels hard",
+            "whyHardDesc": "You're trying to prepare everything before speaking.",
+            "reframeLabel": "Englivo Reframe",
+            "practice": "Practice this moment",
+            "teach": "See how we teach this"
         },
         "items": [
             {
                 "id": "explain_delay",
-                "title": "Explicar un retraso",
-                "description": "Cuando sabes qué pasó pero te cuesta empezar a explicar.",
+                "title": "Explaining a delay",
+                "description": "When you know what happened but struggle to start explaining.",
                 "example": "“Can you explain why this was delayed?”",
-                "reframe": "Empezar importa más que una explicación perfecta."
+                "reframe": "Starting matters more than perfect explanation."
             },
             {
                 "id": "unexpected_question",
-                "title": "Ser preguntado inesperadamente",
-                "description": "Cuando entiendes la pregunta pero tu mente se queda en blanco.",
+                "title": "Being asked unexpectedly",
+                "description": "When you understand the question but your mind goes blank.",
                 "example": "“What do you think about this idea?”",
-                "reframe": "No necesitas una respuesta - necesitas una entrada."
+                "reframe": "You don’t need an answer - you need an entry."
             },
             {
                 "id": "disagree_politely",
-                "title": "Desacuerdo cortés",
-                "description": "Cuando quieres estar en desacuerdo pero temes sonar grosero.",
+                "title": "Disagreeing politely",
+                "description": "When you want to disagree but fear sounding rude.",
                 "example": "“I’m not sure I agree with that.”",
-                "reframe": "El tono viene del ritmo, no del vocabulario."
+                "reframe": "Tone comes from pacing, not vocabulary."
             },
             {
                 "id": "clarify_mistake",
-                "title": "Aclarar un malentendido",
-                "description": "Cuando algo sale mal y necesitas explicarte.",
+                "title": "Clarifying a misunderstanding",
+                "description": "When something goes wrong and you need to explain yourself.",
                 "example": "“Let me clarify what I meant.”",
-                "reframe": "Hablar temprano previene la presión."
+                "reframe": "Speaking early prevents pressure."
             },
             {
                 "id": "joining_conversation",
-                "title": "Unirse tarde a una conversación",
-                "description": "Cuando la discusión ya avanza rápido.",
+                "title": "Joining a conversation late",
+                "description": "When the discussion is already moving fast.",
                 "example": "“Can I add something here?”",
-                "reframe": "Reclamar espacio es una habilidad."
+                "reframe": "Claiming space is a skill."
             },
             {
                 "id": "thinking_mid_sentence",
-                "title": "Perder la frase a la mitad",
-                "description": "Cuando empiezas a hablar y olvidas lo que querías decir.",
+                "title": "Losing your sentence halfway",
+                "description": "When you start speaking and forget what you wanted to say.",
                 "example": "“What I was trying to say is…”",
-                "reframe": "Pausar con confianza mantiene el flujo vivo."
+                "reframe": "Pausing confidently keeps flow alive."
             }
         ]
     },
     "tutors": {
-        "headline": "Mentores, no solo profesores.",
-        "subtext": "Profesionales seleccionados que entienden la psicología del rendimiento.",
-        "viewAll": "Ver toda la facultad"
+        "headline": "Mentors, not just teachers.",
+        "subtext": "Hand-picked professionals who understand the psychology of performance.",
+        "viewAll": "View all faculty"
     },
     "roadmap": {
-        "headline": "Un proceso construido para el flujo",
+        "headline": "A process built for flow",
         "audit": {
-            "title": "La Auditoría",
-            "desc": "Analizamos tus patrones de vacilación para crear tu perfil."
+            "title": "The Audit",
+            "desc": "We analyze your hesitation patterns to create your profile."
         },
         "plan": {
-            "title": "La Hoja de Ruta",
-            "desc": "Un plan personalizado para cerrar tus brechas de procesamiento específicas."
+            "title": "The Roadmap",
+            "desc": "A custom plan to bridge your specific processing gaps."
         },
         "immersion": {
-            "title": "Inmersión Profunda",
-            "desc": "Conversaciones guiadas donde el silencio es seguro y el progreso se siente."
+            "title": "Deep Immersion",
+            "desc": "Guided conversations where silence is safe and progress is felt."
         }
     },
     "faq": {
-        "headline": "Preguntas Frecuentes",
+        "headline": "Frequently Asked Questions",
         "items": [
             {
-                "question": "¿Es esto para principiantes?",
-                "answer": "No. Englivo está diseñado para personas que ya saben inglés pero luchan por hablar con fluidez y confianza en situaciones reales. Si sabes gramática pero te congelas, dudas o traduces en tu cabeza, esto es para ti."
+                "question": "Is Englivo for beginners?",
+                "answer": "No. Englivo is built for people who already know English but struggle to speak smoothly and confidently in real situations. If you know grammar but freeze, hesitate, or translate in your head - this is for you."
             },
             {
-                "question": "¿Necesito un tutor para usar Englivo?",
-                "answer": "No. Puedes mejorar usando solo el Tutor de IA + Motor de Práctica. Los tutores son opcionales y se usan cuando quieres conversación humana o práctica de examen."
+                "question": "Do I need a tutor to use Englivo?",
+                "answer": "No. You can improve using the AI Tutor + Practice Engine alone. Tutors are optional and used when you want human conversation or exam-style speaking practice."
             },
             {
-                "question": "¿En qué se diferencia de otras apps o chatbots de IA?",
-                "answer": "La mayoría de las herramientas enseñan qué decir. Englivo entrena cómo hablas: tus pausas, tiempos, flujo y confianza. No te calificamos. Detectamos tus patrones de habla y te ayudamos a cambiarlos en tiempo real."
+                "question": "How is this different from other apps or AI chatbots?",
+                "answer": "Most tools teach what to say. Englivo trains how you speak - your pauses, timing, flow, and confidence. We don’t grade you. We detect your speaking patterns and help you change them in real time."
             },
             {
-                "question": "¿Qué pasa cuando hago clic en 'Empezar'?",
-                "answer": "Tú hablas. La IA escucha. Mide tus hábitos de fluidez (pausas, muletillas, reinicios). Luego te da un ejercicio específico para mejorar la parte más débil de tu habla. No estudias, entrenas."
+                "question": "What happens when I click “Start”?",
+                "answer": "You speak. The AI listens. It measures your fluency habits (pauses, fillers, restarts). Then it gives you a specific drill to improve the weakest part of your speaking. You don’t study - you train."
             },
             {
-                "question": "¿Y si soy tímido, nervioso o cometo errores?",
-                "answer": "Para eso es exactamente Englivo. La IA nunca te juzga ni te avergüenza. Está diseñado para sentirse como un espacio de práctica seguro donde puedes hablar libremente y mejorar."
+                "question": "What if I’m shy, nervous, or make mistakes?",
+                "answer": "That’s exactly who Englivo is for. The AI never judges or embarrasses you. It’s designed to feel like a safe practice space where you can speak freely and improve."
             },
             {
-                "question": "¿Cómo sé que estoy mejorando?",
-                "answer": "Verás tu Puntuación de Fluidez, nivel MCER y radar de habilidades cambiar con el tiempo. También puedes comparar ayer vs hoy para ver el progreso real en pausas, flujo y confianza."
+                "question": "How do I know I’m improving?",
+                "answer": "You’ll see your Fluency Score, CEFR level, and skill radar change over time. You can also compare yesterday vs today to see real progress in pauses, flow, and confidence."
             },
             {
-                "question": "¿Qué pasa si no conecto con mi mentor?",
-                "answer": "Puedes cambiar de tutor en cualquier momento. Tu progreso se guarda en Englivo, no con un solo tutor, así que nunca pierdes el impulso."
+                "question": "What if I don’t click with my mentor?",
+                "answer": "You can switch tutors anytime. Your progress is stored in Englivo, not with a single tutor, so you never lose momentum."
             },
             {
-                "question": "¿Se comparten mi voz o mis datos?",
-                "answer": "No. Tus grabaciones se usan solo para analizar y mejorar tu fluidez. Nunca se hacen públicas ni se comparten con otros usuarios."
+                "question": "Is my voice or data shared?",
+                "answer": "No. Your recordings are used only to analyze and improve your fluency. They are never made public or shared with other users."
             }
         ]
     },
-    "howItWorksPage": {
-        "hero": {
-            "title": "Cómo Funciona",
-            "subtitle": "Una forma sencilla de pasar de \"Sé inglés\" a \"Puedo hablar inglés\"",
-            "description": "No necesitas estudiar más. Necesitas practicar el habla de la manera correcta.<br/>Esto es exactamente lo que sucede cuando usas Englivo."
-        },
-        "steps": [
-            {
-                "step": "Paso 1",
-                "title": "Tú hablas",
-                "description": "Haces clic en Empezar. Ves a tu tutor de IA. Simplemente empiezas a hablar.",
-                "details": [
-                    "Tu día",
-                    "Tu trabajo",
-                    "Un tema",
-                    "Cualquier cosa"
-                ],
-                "footer": "No hay examen. Sin presión. Solo una conversación."
-            },
-            {
-                "step": "Paso 2",
-                "title": "La IA escucha",
-                "description": "Mientras hablas, la IA escucha silenciosamente:",
-                "details": [
-                    "Tus pausas",
-                    "Tus \"eh\", \"um\", \"bueno\"",
-                    "Cuando paras y reinicias",
-                    "Tu ritmo y tiempo"
-                ],
-                "footer": "No te está juzgando. Está aprendiendo cómo hablas."
-            },
-            {
-                "step": "Paso 3",
-                "title": "Se detectan tus patrones",
-                "description": "El sistema busca hábitos, no errores. Por ejemplo:",
-                "details": [
-                    "¿Haces una pausa antes de hablar?",
-                    "¿Piensas demasiado tiempo?",
-                    "¿Traduces en tu cabeza?",
-                    "¿Te apresuras o te congelas?"
-                ],
-                "footer": "Estos se llaman patrones de fluidez. Son los que bloquean el habla segura."
-            },
-            {
-                "step": "Paso 4",
-                "title": "Tu tutor se adapta",
-                "description": "Ahora la parte mágica. Tu tutor de IA cambia cómo te habla basándose en tus patrones.",
-                "subsections": [
-                    {
-                        "title": "Si dudas:",
-                        "content": "Reduce la velocidad y te anima."
-                    },
-                    {
-                        "title": "Si usas muchas muletillas:",
-                        "content": "Modela oraciones más fluidas."
-                    },
-                    {
-                        "title": "Si te congelas:",
-                        "content": "Te da inicios suaves."
-                    }
-                ],
-                "footer": "No se te enseña. Se te guía."
-            },
-            {
-                "step": "Paso 5",
-                "title": "Mejoras hablando",
-                "description": "No memorizas reglas. No haces ejercicios. Mejoras al:",
-                "details": [
-                    "Hablar",
-                    "Intentar",
-                    "Escuchar mejores versiones",
-                    "Intentar de nuevo"
-                ],
-                "footer": "Esto construye un reflejo de habla - de la misma manera que aprendiste tu primer idioma."
-            },
-            {
-                "step": "Paso 6",
-                "title": "Se rastrea tu progreso",
-                "description": "Después de cada sesión, guardamos:",
-                "details": [
-                    "Tu nivel de vacilación",
-                    "Tu flujo",
-                    "Tu uso de muletillas",
-                    "Tu estilo de habla"
-                ],
-                "quote": "“Me congelo menos. Hablo más.”",
-                "footer": "No sientes el progreso. Lo ves."
-            }
-        ],
-        "final": {
-            "label": "Por qué funciona",
-            "title": "La mayoría no falla en inglés.",
-            "subtitle": "Fallan al hablar bajo presión.",
-            "listTitle": "Englivo entrena:",
-            "list": [
-                "Confianza",
-                "Tiempo",
-                "Flujo",
-                "Identidad al hablar"
-            ],
-            "conclusion": "No solo palabras. Es por eso que la gente finalmente comienza a hablar."
-        }
-    },
     "ctaBottom": {
-        "headline": "¿Listo para encontrar tu flujo?",
-        "button": "Reserva tu primera sesión",
-        "guarantee": "No se requiere compromiso. Garantía de devolución del 100% del dinero."
+        "headline": "Ready to find your flow?",
+        "button": "Book your first session",
+        "guarantee": "No commitment required. 100% money-back guarantee."
     },
     "dashboard": {
-        "learnerTitle": "Panel del Estudiante",
-        "bookSession": "Reservar nueva sesión",
-        "creditsRemaining": "Créditos restantes",
-        "nextSession": "Próxima sesión",
-        "noUpcoming": "No hay sesiones próximas",
-        "yourProgress": "Tu Progreso",
-        "confidenceSpeaking": "Confianza al hablar",
-        "confidenceListening": "Confianza al escuchar",
-        "history": "Historial de sesiones",
-        "noHistory": "Aún no tienes historial de sesiones",
+        "learnerTitle": "Learner Dashboard",
+        "bookSession": "Book a Tutor",
+        "startAiSession": "Start AI Audit",
+        "startPractice": "Practice Speaking",
+        "creditsRemaining": "Credits Remaining",
+        "nextSession": "Next Session",
+        "noUpcoming": "No upcoming sessions",
+        "yourProgress": "Your Progress",
+        "confidenceSpeaking": "Speaking confidence",
+        "confidenceListening": "Listening confidence",
+        "history": "Session History",
+        "noHistory": "You don't have any session history yet",
         "tutor": "Tutor",
-        "notAssigned": "No asignado"
+        "gamification": {
+            "levelUnassessed": "Nivel: No evaluado",
+            "startBaseline": "Iniciar evaluación",
+            "unknownLevelDesc": "Aún no conocemos tu nivel de inglés. Toma 2 minutos para establecer tu línea base.",
+            "attemptTrial": "Intentar prueba {level}",
+            "nextTrialLocked": "Prueba bloqueada",
+            "availableIn": "Disponible en {hours} horas",
+            "levelUnlocked": "¡Nivel Desbloqueado!",
+            "reachedLevel": "Has alcanzado oficialmente el nivel <strong>{level}</strong>. ¡Sigue así!",
+            "continueJourney": "Continuar",
+            "levelUp": "¡Subida de Nivel!"
+        }
     },
     "intermediatePlateau": {
-        "headline": "El Muro Invisible",
-        "subtext": "Por qué te sientes atrapado en 'Avanzado' pero suenas como un principiante.",
+        "headline": "The Invisible Wall",
+        "subtext": "Why you feel stuck at 'Advanced' but sound like a beginner.",
         "trap": {
-            "title": "El Bucle de Traducción",
-            "desc": "Tu cerebro monitorea la gramática de cada palabra antes de hablar. Esto crea vacilación."
+            "title": "The Translation Loop",
+            "desc": "Your brain monitors every word for grammar before you speak. This creates hesitation."
         },
         "flow": {
-            "title": "Adquisición Directa",
-            "desc": "Evitando el monitor. Conectando el pensamiento directamente con el sonido."
+            "title": "Direct Acquisition",
+            "desc": "Bypassing the monitor. Connecting thought directly to sound."
         }
     },
     "audioTransformation": {
-        "headline": "Escucha el cambio.",
-        "subtext": "La diferencia entre inglés 'correcto' e inglés 'fluido'.",
-        "week1": "Semana 1",
-        "week12": "Semana 12",
-        "label": "Reproducir para escuchar"
+        "headline": "Hear the shift.",
+        "subtext": "The difference between 'correct' English and 'fluent' English.",
+        "week1": "Week 1",
+        "week12": "Week 12",
+        "label": "Play to listen"
     },
     "dailyRoutine": {
-        "headline": "Los 20 Diarios",
-        "subtext": "La fluidez es un hábito biológico, no una materia académica.",
+        "headline": "The Daily 20",
+        "subtext": "Fluency is a biological habit, not an academic subject.",
         "steps": [
             {
-                "title": "Absorber",
-                "time": "10 min",
-                "desc": "Escucha un patrón rítmico específico."
+                "title": "Absorb",
+                "time": "10 mins",
+                "desc": "Listen to a specific rhythmic pattern."
             },
             {
-                "title": "Reflexionar",
-                "time": "5 min",
-                "desc": "Graba un pensamiento corto usando el patrón."
+                "title": "Reflect",
+                "time": "5 mins",
+                "desc": "Record a short thought using the pattern."
             },
             {
-                "title": "Consolidar",
-                "time": "Dormir",
-                "desc": "Tu cerebro se reconecta durante el descanso."
+                "title": "Consolidate",
+                "time": "Sleep",
+                "desc": "Your brain rewires itself during rest."
             }
         ]
     },
     "situationalGateway": {
-        "headline": "¿Dónde usas el inglés?",
-        "subtext": "No te damos un curso. Construimos un camino de habla alrededor de tu vida real.",
-        "defaultCta": "Tu inglés no necesita reparación - necesita fluidez.",
-        "button": "Encuentra tu camino de habla",
-        "meta": "2–3 minutos · Sin gramática · Solo hablar",
+        "headline": "Where do you use English?",
+        "subtext": "We don’t give you a course. We build a speaking path around your real life.",
+        "defaultCta": "Your English doesn’t need fixing - it needs flow.",
+        "button": "Find your speaking path",
+        "meta": "2-3 minutes · No grammar · Just speaking",
         "loading": {
-            "headline": "Encontrando tu ritmo de habla...",
-            "subtext": "Preparando tu espacio personalizado"
+            "headline": "Finding your speaking rhythm...",
+            "subtext": "Preparing your personalized space"
         },
         "cards": [
             {
-                "category": "Trabajo",
+                "category": "Work",
                 "items": [
-                    "Reuniones",
-                    "Presentaciones",
-                    "Entrevistas",
-                    "Correos",
-                    "Negociaciones"
+                    "Meetings",
+                    "Presentations",
+                    "Interviews",
+                    "Emails",
+                    "Negotiations"
                 ],
-                "ctaText": "Hagamos tu voz clara en reuniones."
+                "ctaText": "Let’s make your voice clear in meetings."
             },
             {
-                "category": "Vida Diaria",
+                "category": "Daily Life",
                 "items": [
-                    "Viajes",
-                    "Charlas",
-                    "Hacer amigos",
-                    "Llamadas",
-                    "Vivir fuera"
+                    "Travel",
+                    "Small talk",
+                    "Making friends",
+                    "Phone calls",
+                    "Living abroad"
                 ],
-                "ctaText": "Hagamos que el inglés diario se sienta natural."
+                "ctaText": "Let’s make everyday English feel natural."
             },
             {
-                "category": "Exámenes y Metas",
+                "category": "Exams & Goals",
                 "items": [
                     "IELTS",
                     "TOEFL",
-                    "Universidad",
-                    "Inmigración",
-                    "Cambio de carrera"
+                    "University",
+                    "Immigration",
+                    "Career change"
                 ],
-                "ctaText": "Preparemos tu habla para la prueba real."
+                "ctaText": "Let’s prepare your speaking for the real test."
             },
             {
-                "category": "Campos Especializados",
+                "category": "Specialist Fields",
                 "items": [
-                    "TI",
-                    "Salud",
-                    "Ingeniería",
-                    "Finanzas",
-                    "Ventas",
-                    "Derecho"
+                    "IT",
+                    "Healthcare",
+                    "Engineering",
+                    "Finance",
+                    "Sales",
+                    "Law"
                 ],
-                "ctaText": "Hagamos que el inglés profesional se sienta sin esfuerzo."
+                "ctaText": "Let’s make professional English feel effortless."
             }
         ]
     },
     "fluencyEngine": {
-        "title": "El Motor de Fluidez",
-        "subtitle": "El aprendizaje tradicional trata el inglés como datos. Nosotros lo tratamos como un reflejo biológico.",
-        "title1": "La mayoría no falla en inglés",
-        "desc1": "Conocen la gramática. Conocen las palabras. Pero al hablar, su cerebro duda, traduce y se congela. Los cursos tradicionales añaden más reglas, lo que lo empeora.",
-        "content1": "Las palabras se congelan bajo presión.",
-        "title2": "La fluidez no es conocimiento. Es un reflejo.",
-        "desc2": "Hablar es una reacción automática. Como conducir o tocar música. No piensas, respondes. El Fluency Engine entrena este reflejo en tiempo real.",
-        "content2_p1": "🧠 Conocimiento → ❌",
-        "content2_p2": "⚡ Reflejo → Fluidez",
-        "title3": "Entrenamiento de Reflejos en Vivo",
-        "desc3": "Mientras hablas, el sistema escucha tus pausas, dudas y flujo. Reacciona al instante, como un tutor real. Esto entrena a tu cerebro para hablar sin congelarse.",
-        "content3_p1": "🎙 Tú hablas",
+        "title": "The Fluency Engine",
+        "subtitle": "Traditional learning treats English as data. We treat it as a biological reflex.",
+        "title1": "Most people don’t fail at English",
+        "desc1": "They know grammar. They know words. But when they speak, their brain hesitates, translates, and freezes. Traditional courses add more rules - which makes it worse.",
+        "content1": "Words freeze when pressure hits.",
+        "title2": "Fluency is not knowledge. It is a reflex.",
+        "desc2": "Speaking is an automatic reaction. Just like driving or playing music. You don’t think - you respond. The Fluency Engine trains this reflex in real time.",
+        "content2_p1": "🧠 Knowledge → ❌",
+        "content2_p2": "⚡ Reflex → Fluency",
+        "title3": "Live Reflex Training",
+        "desc3": "While you speak, the system listens to your pauses, hesitations, and flow. It reacts instantly, just like a real tutor. This trains your brain to speak without freezing.",
+        "content3_p1": "🎙 You speak",
         "content3_p2": "⚙ Fluency Engine",
-        "content3_p3": "💬 Respuesta en tiempo real",
-        "title4": "Coaching Basado en Patrones",
-        "desc4": "No decimos “incorrecto”. Detectamos hábitos. Pausar. Reiniciar. Traducir en tu cabeza. Estos patrones bloquean la fluidez, y esto es lo que reentrenamos.",
-        "content4_p1": "DUDA",
-        "content4_p2": "MULETILLAS",
-        "content4_p3": "TRADUCCIÓN",
-        "content4_p4": "→ Reentrenado",
-        "title5": "Seguridad Emocional",
-        "desc5": "Tu tutor de IA nunca juzga. Nunca dice “incorrecto”. Te mantiene hablando. Esto elimina el miedo, que es el verdadero enemigo de la fluidez.",
-        "content5_p1": "Sin miedo.",
-        "content5_p2": "Sin vergüenza.",
-        "content5_p3": "Solo hablar.",
-        "title6": "Fluidez Situacional",
-        "desc6": "No aprendes ‘inglés’. Aprendes a hablar en reuniones, entrevistas, viajes y la vida diaria. Tu tutor simula situaciones reales para que tu cerebro lo transfiera a la realidad.",
-        "content6_p1": "Entrevista",
-        "content6_p2": "Reuniones",
-        "content6_p3": "Charla",
-        "content6_p4": "Viajes",
-        "title7": "Por qué funciona",
-        "desc7": "Otros sistemas entrenan la memoria. El Fluency Engine entrena la duda, el tiempo, la confianza y el flujo: las cosas que realmente deciden si puedes hablar.",
-        "content7_p1": "No enseñamos inglés.",
-        "content7_p2": "Entrenamos el habla."
+        "content3_p3": "💬 Real-time response",
+        "title4": "Pattern-Based Coaching",
+        "desc4": "We don’t say “wrong”. We detect habits. Pausing. Restarting. Translating in your head. These patterns are what block fluency - and this is what we retrain.",
+        "content4_p1": "HESITATION",
+        "content4_p2": "FILLERS",
+        "content4_p3": "TRANSLATION",
+        "content4_p4": "→ Retrained",
+        "title5": "Emotional Safety",
+        "desc5": "Your AI tutor never judges. It never says ‘wrong’. It keeps you talking. This removes fear - which is the real enemy of fluency.",
+        "content5_p1": "No fear.",
+        "content5_p2": "No shame.",
+        "content5_p3": "Just speaking.",
+        "title6": "Situational Fluency",
+        "desc6": "You don’t learn ‘English’. You learn how to speak in meetings, interviews, travel, and daily life. Your tutor simulates real situations so your brain transfers it to reality.",
+        "content6_p1": "Interview",
+        "content6_p2": "Meetings",
+        "content6_p3": "Small Talk",
+        "content6_p4": "Travel",
+        "title7": "Why this works",
+        "desc7": "Other systems train memory. The Fluency Engine trains hesitation, timing, confidence, and flow - the things that actually decide whether you can speak.",
+        "content7_p1": "We don’t teach English.",
+        "content7_p2": "We train speaking."
     },
     "fluencyGlobe": {
-        "tag": "Comunidad Global",
-        "headline": "Habla inglés con el mundo.",
-        "subtext": "Únete a una red global de estudiantes que van más allá de la memorización hacia la conversación real. Nuestra plataforma te conecta con los patrones de inglés utilizados en todo el mundo.",
-        "quote": "“Personas de todo el mundo están practicando, dudando, reiniciando y encontrando su voz, igual que tú.”",
+        "tag": "Global Community",
+        "headline": "Speak English with the World.",
+        "subtext": "Join a global network of learners who are moving beyond memorization to true conversation. Our platform connects you with the patterns of English used worldwide.",
+        "quote": "“People around the world are practicing, hesitating, restarting, and finding their voice - just like you.”",
         "stats": {
             "timezones": {
                 "value": "12+",
-                "label": "Zonas horarias"
+                "label": "Timezones"
             },
             "availability": {
                 "value": "24/7",
-                "label": "Disponibilidad"
+                "label": "Availability"
             },
             "immersion": {
                 "value": "100%",
-                "label": "Inmersión"
+                "label": "Immersion"
             }
         }
     },
     "fluencyShowcase": {
-        "headline": "El Motor de Fluidez",
-        "subtext": "Englivo no adivina qué tan bien hablas. Mide cómo tu cerebro produce el lenguaje en tiempo real.",
+        "headline": "The Fluency Engine",
+        "subtext": "Englivo doesn’t guess how well you speak. It measures how your brain produces language in real time.",
         "features": {
-            "pauseRatio": "Ratio de Pausas",
-            "fillerUsage": "Uso de Muletillas",
-            "speakingSpeed": "Velocidad del Habla",
-            "fluencyScore": "Puntuación de Fluidez",
-            "cefrMapping": "Nivel MCER"
+            "pauseRatio": "Pause Ratio",
+            "fillerUsage": "Filler Usage",
+            "speakingSpeed": "Speaking Speed",
+            "fluencyScore": "Fluency Score",
+            "cefrMapping": "CEFR Mapping"
         },
-        "featureCaption": "Estas señales se extraen directamente de tu voz.",
+        "featureCaption": "These signals are extracted directly from your voice.",
         "livePanel": {
-            "title": "Lo que Englivo Ve Cuando Hablas",
-            "caption": "Estos números se actualizan cada segundo mientras hablas.",
+            "title": "What Englivo Sees While You Speak",
+            "caption": "These numbers update every second while you talk.",
             "metrics": {
-                "pauses": "Pausas",
-                "fillers": "Muletillas",
-                "fluency": "Fluidez"
+                "pauses": "Pauses",
+                "fillers": "Fillers",
+                "fluency": "Fluency"
             }
         },
         "radar": {
-            "title": "Tu Nivel Real de Inglés",
-            "caption": "Englivo mapea tus datos de habla a los mismos niveles MCER utilizados por las universidades."
+            "title": "Your Real English Level",
+            "caption": "Englivo maps your speaking data to the same CEFR levels used by universities."
         },
         "proof": {
-            "headline": "Una sesión puede cambiar tu patrón de habla",
-            "before": "Antes",
-            "after": "Después",
-            "week0": "Semana 0",
-            "week1": "Semana 1",
-            "caption": "Misma persona. Mismo tema. Después de un ejercicio de fluidez específico."
+            "headline": "One session can change your speaking pattern",
+            "before": "Before",
+            "after": "After",
+            "week0": "Week 0",
+            "week1": "Week 1",
+            "caption": "Same person. Same topic. After one targeted fluency drill."
         },
         "cta": {
-            "button": "Comienza Tu Chequeo de Fluidez",
-            "subtext": "Habla durante 30 segundos. Ve tus números reales."
+            "button": "Start Your Fluency Check",
+            "subtext": "Speak for 30 seconds. See your real numbers."
         }
     }
 }

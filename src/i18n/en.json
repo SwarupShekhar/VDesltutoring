@@ -505,7 +505,18 @@
         "history": "Session History",
         "noHistory": "You don't have any session history yet",
         "tutor": "Tutor",
-        "notAssigned": "Not assigned"
+        "gamification": {
+            "levelUnassessed": "Level: Unassessed",
+            "startBaseline": "Start Baseline Assessment",
+            "unknownLevelDesc": "We don’t know your English level yet. Take a short 2-minute diagnostic conversation to find your baseline.",
+            "attemptTrial": "Attempt {level} Trial",
+            "nextTrialLocked": "Next Trial Locked",
+            "availableIn": "Available in {hours} hours",
+            "levelUnlocked": "Level Unlocked!",
+            "reachedLevel": "You have officially reached proficiency level <strong>{level}</strong>. Keep pushing your limits!",
+            "continueJourney": "Continue Journey",
+            "levelUp": "Level Up!"
+        }
     },
     "intermediatePlateau": {
         "headline": "The Invisible Wall",

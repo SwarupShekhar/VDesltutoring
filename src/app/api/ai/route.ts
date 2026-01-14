@@ -210,9 +210,13 @@ GOAL: Make ${firstName} feel excited, supported, and eager to speak more. Focus 
         let corrections = []
 
         try {
-            const parsed = JSON.parse(rawResponse)
+            // Clean markdown code blocks if present (Gemini often wraps JSON in ```json ... ```)
+            const cleanJson = rawResponse.replace(/```json/g, "").replace(/```/g, "").trim();
+            const parsed = JSON.parse(cleanJson)
             if (parsed.response) {
-                response = parsed.response
+
+                // Also clean any potential markdown in the inner response text
+                response = parsed.response.replace(/```/g, "")
                 corrections = parsed.corrections || []
             }
         } catch (e) {

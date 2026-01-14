@@ -18,6 +18,8 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
   let me = { credits: 0 };
   let sessions = [];
   let cefrProfile = null;
+  let trialCooldown = false;
+  let timeUntilNextTrial = 0;
   let error = null;
 
   try {
@@ -25,6 +27,10 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
     me.credits = data.credits || 0;
     sessions = data.sessions;
     cefrProfile = data.cefrProfile;
+    // @ts-ignore
+    trialCooldown = data.trialCooldown || false;
+    // @ts-ignore
+    timeUntilNextTrial = data.timeUntilNextTrial || 0;
   } catch (err) {
     console.error("Dashboard data fetch error:", err);
     error = err instanceof Error ? err.message : "Unknown error occurred";
@@ -88,13 +94,25 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
 
       {/* MAIN CEFR DASHBOARD - REPLACES NARRATIVE CARDS */}
       {cefrProfile ? (
-        <CEFRDashboard profile={cefrProfile} />
+        <CEFRDashboard
+          profile={cefrProfile}
+          trialCooldown={trialCooldown}
+          timeUntilNextTrial={timeUntilNextTrial}
+        />
       ) : (
-        <div className="p-12 text-center rounded-2xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800">
-          <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No Data Yet</h2>
-          <p className="text-slate-500 mb-6">Complete your first AI session to unlock your CEFR analysis.</p>
-          <Button asChild>
-            <Link href="/ai-tutor">Start Speaking Audit</Link>
+        <div className="flex flex-col items-center justify-center p-12 text-center rounded-3xl bg-slate-50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-800 space-y-6">
+          <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-2">
+            <span className="text-3xl">❓</span>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Level: Unassessed</h2>
+            <p className="text-slate-500 max-w-md mx-auto">
+              We don't know your English level yet. Take a short 2-minute diagnostic conversation to find your baseline.
+            </p>
+          </div>
+
+          <Button size="lg" className="rounded-full px-8 bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20" asChild>
+            <Link href="/ai-tutor">Start Baseline Assessment</Link>
           </Button>
         </div>
       )}

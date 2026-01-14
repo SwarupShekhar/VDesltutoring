@@ -19,6 +19,7 @@ const isPublicRoute = createRouteMatcher([
     '/:locale/assessment', // Assessment might be public? User didn't specify, but often is.
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response
+    '/api/live-practice(.*)', // Public stats for landing page
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

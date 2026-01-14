@@ -50,6 +50,33 @@ export default function AITutor() {
     const voiceDetectRef = useRef<number | null>(null)
 
     const router = useRouter()
+    // Use searchParams for mode detection
+    // Note: In Next.js client components, we use useSearchParams()
+    // but here we can just parse window.location or similar if useSearchParams is not available directly on this version,
+    // assuming standard Next.js 13/14 app router, useSearchParams is best.
+    // For now, let's assume we can grab it from window as a fallback or add useSearchParams import.
+
+    // Quick Fix: Since we need `useSearchParams`, let's add it.
+    // However, I can't easily add the import at the top without replacing the whole file header.
+    // I already see `useRouter` from `next/navigation`. `useSearchParams` is in the same package.
+
+    // Let's rely on a simpler prop or state if possible, but reading URL is essential for the link from dashboard.
+    // I will use a utility to parse it safely inside useEffect to avoid import hassle if restricted,
+    // actually, I'll just add the import in a subsequent edit if needed, but wait:
+    // I can parse window.location in useEffect.
+
+    const [mode, setMode] = useState<'practice' | 'challenge'>('practice')
+    const [targetLevel, setTargetLevel] = useState<string>('')
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search)
+            const m = params.get('mode')
+            const t = params.get('targetLevel')
+            if (m === 'challenge') setMode('challenge')
+            if (t) setTargetLevel(t)
+        }
+    }, [])
 
     // Fetch LiveKit token
     useEffect(() => {
@@ -80,7 +107,11 @@ export default function AITutor() {
         setStarted(true)
         // Small delay to ensure UI transition completes and audio context is ready
         setTimeout(async () => {
-            await speak("Hi, I am your English tutor. Tell me how your day is going.")
+            if (mode === 'challenge') {
+                await speak(`Welcome to the ${targetLevel} Trial. I am your examiner. To pass, you must demonstrate ${targetLevel} proficiency. Let's begin.`)
+            } else {
+                await speak("Hi, I am your English tutor. Tell me how your day is going.")
+            }
         }, 500)
     }
 
@@ -146,7 +177,20 @@ export default function AITutor() {
 
     const handleReportClose = () => {
         setShowReport(false)
-        router.push('/')
+
+        let redirectUrl = '/' // Default to home/dashboard
+
+        // Check for Challenge Success
+        if (mode === 'challenge' && reportData?.cefr_analysis?.level) {
+            // Logic: If the assigned level matches or exceeds the target level
+            // For simplicity, if they got ANY valid CEFR level back from the Strict Examiner, it's a verify.
+            // But let's be precise: did they hit the target?
+            if (reportData.cefr_analysis.level === targetLevel) {
+                redirectUrl = '/dashboard?celebrate=true'
+            }
+        }
+
+        router.push(redirectUrl)
     }
 
     const speak = async (text: string) => {
@@ -274,7 +318,10 @@ export default function AITutor() {
                                 transcript: dg.transcript,
                                 metrics: { fluencyScore: 0.5 }, // Top-level metrics for API compatibility
                                 fluency: { metrics: { fluencyScore: 0.5 } }, // Keep for backward compatibility if needed
-                                firstName: firstName
+                                firstName: firstName,
+                                // Challenge Mode Params
+                                systemPromptType: mode === 'challenge' ? 'TRIAL' : 'TUTOR',
+                                targetLevel: targetLevel
                             })
                         })
 
@@ -378,12 +425,16 @@ export default function AITutor() {
         }
     }
 
+    const isBossMode = mode === 'challenge'
+
     if (!token) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col transition-colors duration-300">
+            <div className={`min-h-screen ${isBossMode ? 'bg-zinc-950 text-red-500' : 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white'} flex flex-col transition-colors duration-300`}>
                 <HomeNavbar locale="en" dict={{}} />
                 <div className="flex-1 flex items-center justify-center">
-                    <div className="text-xl font-light animate-pulse text-blue-600 dark:text-blue-400">Connecting to your tutor...</div>
+                    <div className={`text-xl font-light animate-pulse ${isBossMode ? 'text-red-500 font-mono tracking-widest uppercase' : 'text-blue-600 dark:text-blue-400'}`}>
+                        {isBossMode ? 'Initializing Exam Protocols...' : 'Connecting to your tutor...'}
+                    </div>
                 </div>
             </div>
         )
@@ -391,84 +442,141 @@ export default function AITutor() {
 
     if (!started) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col transition-colors duration-300">
+            <div className={`min-h-screen ${isBossMode ? 'bg-zinc-950' : 'bg-slate-50 dark:bg-slate-950'} text-slate-900 dark:text-white flex flex-col transition-colors duration-300`}>
                 <HomeNavbar locale="en" dict={{}} />
                 <div className="flex-1 flex flex-col items-center justify-center space-y-12 p-10 relative overflow-hidden">
                     {/* Decorative Background */}
-                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
-                        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '4s' }} />
-                        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-violet-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '5s' }} />
-                    </div>
+                    {!isBossMode && (
+                        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+                            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-blue-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '4s' }} />
+                            <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-violet-500/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '5s' }} />
+                        </div>
+                    )}
+
+                    {isBossMode && (
+                        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/10 via-zinc-950 to-zinc-950" />
+                    )}
 
                     <div className="relative z-10 flex flex-col items-center space-y-6">
-                        <div className="w-40 h-40 bg-gradient-to-tr from-blue-100 to-white dark:from-blue-600 dark:to-blue-500 rounded-full flex items-center justify-center shadow-2xl dark:shadow-[0_0_80px_rgba(37,99,235,0.5)] mb-6 ring-4 ring-white/20">
-                            <span className="text-6xl animate-bounce-slow">🎓</span>
-                        </div>
-                        <h1 className="text-6xl font-bold font-serif bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 text-center tracking-tight">
-                            Fluency Tutor
+                        {isBossMode ? (
+                            <div className="w-40 h-40 border-4 border-red-800 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(220,38,38,0.2)] mb-6 bg-zinc-900">
+                                <span className="text-6xl animate-pulse">🛑</span>
+                            </div>
+                        ) : (
+                            <div className="w-40 h-40 bg-gradient-to-tr from-blue-100 to-white dark:from-blue-600 dark:to-blue-500 rounded-full flex items-center justify-center shadow-2xl dark:shadow-[0_0_80px_rgba(37,99,235,0.5)] mb-6 ring-4 ring-white/20">
+                                <span className="text-6xl animate-bounce-slow">🎓</span>
+                            </div>
+                        )}
+
+                        <h1 className={`text-6xl font-bold font-serif bg-clip-text text-transparent ${isBossMode ? 'bg-gradient-to-r from-red-500 to-red-800 tracking-widest uppercase' : 'bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300'} text-center`}>
+                            {isBossMode ? `${targetLevel} TRIAL` : 'Fluency Tutor'}
                         </h1>
-                        <p className="text-slate-600 dark:text-gray-300 max-w-lg text-center text-xl leading-relaxed font-light">
-                            Your personal AI conversational partner. <br />
-                            <span className="text-blue-600 dark:text-blue-400 font-medium">No judgment. Just practice.</span>
+                        <p className={`${isBossMode ? 'text-zinc-500 font-mono text-sm uppercase tracking-widest' : 'text-slate-600 dark:text-gray-300 text-xl font-light'} max-w-lg text-center leading-relaxed`}>
+                            {isBossMode ? (
+                                <>
+                                    Examiner Protocol Active.<br />
+                                    This seesion will be strictly graded.<br />
+                                    Good luck.
+                                </>
+                            ) : (
+                                <>
+                                    Your personal AI conversational partner. <br />
+                                    <span className="text-blue-600 dark:text-blue-400 font-medium">No judgment. Just practice.</span>
+                                </>
+                            )}
                         </p>
                     </div>
 
                     <button
                         onClick={startSession}
-                        className="group relative px-12 py-5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-bold text-xl transition-all shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 flex items-center gap-4 z-10 overflow-hidden"
+                        className={`group relative px-12 py-5 ${isBossMode ? 'bg-red-900 hover:bg-red-800 border border-red-700/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]' : 'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-xl hover:shadow-2xl'} text-white rounded-full font-bold text-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-4 z-10 overflow-hidden`}
                     >
-                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                        {!isBossMode && <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />}
                         <Play size={28} fill="currentColor" />
-                        <span>Start Conversation</span>
+                        <span>{isBossMode ? 'ENTER TRIAL' : 'Start Conversation'}</span>
                     </button>
                 </div>
             </div>
         )
     }
 
+    // MAIN SESSION UI
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white flex flex-col relative overflow-hidden transition-colors duration-300">
-            <HomeNavbar locale="en" dict={{}} />
+        <div className={`min-h-screen ${isBossMode ? 'bg-zinc-950 font-mono' : 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white'} flex flex-col relative overflow-hidden transition-colors duration-300`}>
+            {!isBossMode && <HomeNavbar locale="en" dict={{}} />}
 
             {/* Premium Background */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 dark:bg-blue-500/10 blur-[120px] rounded-full" />
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/5 dark:bg-violet-500/10 blur-[100px] rounded-full" />
-            </div>
+            {!isBossMode ? (
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-500/5 dark:bg-blue-500/10 blur-[120px] rounded-full" />
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/5 dark:bg-violet-500/10 blur-[100px] rounded-full" />
+                </div>
+            ) : (
+                <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-zinc-950">
+                    <div className="absolute top-0 right-0 p-8 opacity-20 text-red-700 font-mono text-xs">
+                        CLASSIFIED ASSESSMENT // {targetLevel}
+                    </div>
+                </div>
+            )}
 
             <div className="flex-1 flex flex-col items-center justify-between py-12 px-6 w-full max-w-6xl mx-auto z-10 h-full">
 
-                {/* Top Section: Avatar */}
+                {/* Top Section: Avatar / Timer */}
                 <div className="flex-1 flex flex-col items-center justify-center w-full min-h-[300px]">
-                    <div className={`transition-all duration-700 flex flex-col items-center transform ${listening ? 'scale-105' : 'scale-100'}`}>
-                        <AIAvatar state={speaking ? 'speaking' : processing ? 'processing' : listening ? 'listening' : 'idle'} />
-                    </div>
+                    {isBossMode ? (
+                        <div className="flex flex-col items-center gap-4">
+                            <div className={`w-32 h-32 rounded-full border-2 ${speaking ? 'border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.5)]' : 'border-zinc-800'} flex items-center justify-center bg-zinc-950 transition-all duration-300`}>
+                                {listening ? (
+                                    <div className="w-4 h-4 rounded-full bg-red-500 animate-pulse" />
+                                ) : speaking ? (
+                                    <VoiceVisualizer analyser={analyserNode} isListening={true} />
+                                ) : (
+                                    <div className="w-16 h-1 bg-red-900/50" />
+                                )}
+                            </div>
+                            <div className="text-red-700/50 font-mono text-sm tracking-[0.2em] animate-pulse">
+                                {listening ? 'LISTENING' : speaking ? 'EXAMINER SPEAKING' : 'PROCESSING'}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className={`transition-all duration-700 flex flex-col items-center transform ${listening ? 'scale-105' : 'scale-100'}`}>
+                            <AIAvatar state={speaking ? 'speaking' : processing ? 'processing' : listening ? 'listening' : 'idle'} />
+                        </div>
+                    )}
                 </div>
 
                 {/* Middle Section: Chat Bubbles (Floating) */}
                 <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 max-w-4xl">
                     {/* User Bubble */}
-                    <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${listening
-                        ? 'bg-green-50/50 dark:bg-green-900/10 border-green-200/50 dark:border-green-500/30 shadow-[0_4px_20px_rgba(34,197,94,0.1)]'
-                        : 'bg-white/60 dark:bg-white/5 border-slate-200/50 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/10'}`}>
+                    <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${isBossMode
+                        ? 'bg-zinc-900/80 border-zinc-800 text-zinc-300'
+                        : listening
+                            ? 'bg-green-50/50 dark:bg-green-900/10 border-green-200/50 dark:border-green-500/30 shadow-[0_4px_20px_rgba(34,197,94,0.1)]'
+                            : 'bg-white/60 dark:bg-white/5 border-slate-200/50 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/10'}`}>
+
                         <div className="flex justify-between items-start mb-4">
-                            <span className="text-xs font-bold text-slate-400 dark:text-gray-500 uppercase tracking-widest">You</span>
-                            {listening ? <Mic size={18} className="text-green-500 animate-pulse" /> : <MicOff size={18} className="text-slate-300 dark:text-gray-600" />}
+                            <span className={`text-xs font-bold uppercase tracking-widest ${isBossMode ? 'text-zinc-500' : 'text-slate-400 dark:text-gray-500'}`}>You</span>
+                            {listening ? <Mic size={18} className={`${isBossMode ? 'text-red-500' : 'text-green-500'} animate-pulse`} /> : <MicOff size={18} className="text-slate-300 dark:text-gray-600" />}
                         </div>
-                        <p className="text-xl font-light leading-relaxed text-slate-800 dark:text-gray-100">
+                        <p className={`text-xl font-light leading-relaxed ${isBossMode ? 'text-zinc-100' : 'text-slate-800 dark:text-gray-100'}`}>
                             {transcript || <span className="text-slate-300 dark:text-gray-600 italic">Listening...</span>}
                         </p>
                     </div>
 
                     {/* AI Bubble */}
-                    <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${speaking
-                        ? 'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200/50 dark:border-blue-500/30 shadow-[0_4px_20px_rgba(59,130,246,0.15)]'
-                        : 'bg-blue-50/20 dark:bg-white/5 border-blue-100/30 dark:border-white/10'}`}>
+                    <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${isBossMode
+                        ? 'bg-red-950/10 border-red-900/20 text-red-100'
+                        : speaking
+                            ? 'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200/50 dark:border-blue-500/30 shadow-[0_4px_20px_rgba(59,130,246,0.15)]'
+                            : 'bg-blue-50/20 dark:bg-white/5 border-blue-100/30 dark:border-white/10'}`}>
+
                         <div className="flex justify-between items-start mb-4">
-                            <span className="text-xs font-bold text-blue-400 dark:text-blue-400 uppercase tracking-widest">AI Tutor</span>
+                            <span className={`text-xs font-bold uppercase tracking-widest ${isBossMode ? 'text-red-800' : 'text-blue-400 dark:text-blue-400'}`}>
+                                {isBossMode ? 'EXAMINER' : 'AI Tutor'}
+                            </span>
                         </div>
                         <div>
-                            <p className="text-xl font-light leading-relaxed text-blue-900 dark:text-blue-100">
+                            <p className={`text-xl font-light leading-relaxed ${isBossMode ? 'text-red-100' : 'text-blue-900 dark:text-blue-100'}`}>
                                 {aiResponse || <span className="text-blue-300 dark:text-gray-600 italic">...</span>}
                             </p>
                             {chats.length > 0 && chats[chats.length - 1].role === "assistant" && (

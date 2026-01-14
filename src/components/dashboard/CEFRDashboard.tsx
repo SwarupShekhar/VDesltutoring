@@ -1,5 +1,7 @@
 "use client"
 
+import { useState, useEffect } from 'react'
+
 import { motion } from 'framer-motion'
 import { Clock, TrendingUp, Award } from 'lucide-react'
 import { useRouter, useParams } from 'next/navigation'
@@ -9,11 +11,14 @@ import { CEFRBadge } from './CEFRBadge'
 import { WeaknessPanel } from './WeaknessPanel'
 import type { CEFRProfile, Skill } from '@/lib/cefrEngine'
 import { SKILL_LABELS, generateProfileSummary } from '@/lib/cefrEngine'
+import { LevelUpModal } from './LevelUpModal'
 
 interface CEFRDashboardProps {
     profile: CEFRProfile
     onPractice?: (mode: Skill | 'auto') => void
     className?: string
+    trialCooldown?: boolean
+    timeUntilNextTrial?: number
 }
 
 /**
@@ -30,7 +35,9 @@ interface CEFRDashboardProps {
 export function CEFRDashboard({
     profile,
     onPractice,
-    className = ""
+    className = "",
+    trialCooldown = false,
+    timeUntilNextTrial = 0
 }: CEFRDashboardProps) {
     const router = useRouter()
     const params = useParams()
@@ -53,8 +60,30 @@ export function CEFRDashboard({
         }
     }
 
+    const [showCelebration, setShowCelebration] = useState(false)
+
+    useEffect(() => {
+        // useSearchParams would be better but we have useParams.
+        // Let's use window.location search as a robust fallback or parse current URL
+        if (typeof window !== 'undefined') {
+            const search = new URLSearchParams(window.location.search)
+            if (search.get('celebrate') === 'true') {
+                setShowCelebration(true)
+                // Clean URL
+                const newUrl = window.location.pathname
+                window.history.replaceState({}, '', newUrl)
+            }
+        }
+    }, [])
+
     return (
         <div className={`space-y-8 ${className}`}>
+            {showCelebration && (
+                <LevelUpModal
+                    level={profile.overall.cefr}
+                    onClose={() => setShowCelebration(false)}
+                />
+            )}
             {/* Hero Section: Overall Level */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -80,6 +109,51 @@ export function CEFRDashboard({
                         </span>
                     </div>
                 )}
+            </motion.div>
+
+            {/* Challenge Gate: The Boss Fight Button */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15 }}
+                className="flex justify-center -mt-4 mb-8"
+            >
+                {/* Calculate next level safely */}
+                {(() => {
+                    const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+                    const currentIdx = levels.indexOf(profile.overall.cefr)
+                    const nextLevel = levels[currentIdx + 1]
+
+                    if (!nextLevel) return null // Already C2
+
+                    const isCooldown = trialCooldown;
+                    const hoursLeft = timeUntilNextTrial;
+
+                    return (
+                        <div className="flex flex-col items-center gap-2">
+                            <button
+                                onClick={() => !isCooldown && router.push(`/${locale}/ai-tutor?mode=challenge&targetLevel=${nextLevel}`)}
+                                disabled={isCooldown}
+                                className={`group relative inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg transition-all overflow-hidden ring-4 ring-slate-100 dark:ring-slate-800 ${isCooldown
+                                    ? 'bg-slate-400 cursor-not-allowed opacity-70'
+                                    : 'bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white text-white dark:text-slate-900 shadow-[0_0_20px_rgba(0,0,0,0.2)] dark:shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:scale-105 active:scale-95'
+                                    }`}
+                            >
+                                <span className="relative z-10 flex items-center gap-2">
+                                    <span>{isCooldown ? `Next Trial Locked` : `Attempt ${nextLevel} Trial`}</span>
+                                    {isCooldown ? <Clock className="w-5 h-5" /> : <Award className="w-5 h-5" />}
+                                </span>
+                                {/* Shiny effect (only when active) */}
+                                {!isCooldown && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />}
+                            </button>
+                            {isCooldown && (
+                                <span className="text-xs font-semibold text-slate-500 animate-pulse">
+                                    Available in {hoursLeft} hours
+                                </span>
+                            )}
+                        </div>
+                    )
+                })()}
             </motion.div>
 
             {/* Main Grid */}

@@ -12,6 +12,8 @@ export type DashboardData = {
     pastSessions?: any[];
     aiSessions?: any[];
     cefrProfile?: any; // CEFRProfile type
+    trialCooldown?: boolean;
+    timeUntilNextTrial?: number;
     error?: string;
 }
 
@@ -284,6 +286,8 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 type: 'PRACTICE',
                 report: {
                     identity: { archetype: "Practice Session" },
+                    // Placeholder CEFR analysis for practice sessions (we don't have deep audits for these yet)
+                    cefr_analysis: { level: 'Unassessed', reason: 'Automated drill practice.' },
                     patterns: [
                         `Practice Session • ${(s.average_score * 100).toFixed(0)}% Fluency • ${(s.rounds as any[]).length} Drills`
                     ],
@@ -310,13 +314,14 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 vocabulary: 0
             };
             let totalSpeakingTime = 0;
+            let totalWords = 0;
 
             if (recentSessions.length > 0) {
                 // Calculate average metrics
                 let totalFluencyScore = 0;
                 let totalFillers = 0; // lower is better
                 let totalPauses = 0;  // lower is better
-                let totalWords = 0; // Track total words spoken
+                // totalWords is now declared outside
 
                 // For now, we simulate pronunciation/grammar/vocab as we don't have deepgram phonemes stored yet
                 // In production, these would come from stored session analysis
@@ -370,14 +375,59 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 // Adjust based on specific signals if we had them (e.g. grammar error count)
             }
 
-            // 2. Compute CEFR Profile
-            const cefrProfile = computeSkillScores(aggregatedMetrics, totalSpeakingTime);
+            // 2. Compute Base CEFR Profile from Mechanics (Initialize as Null)
+            let cefrProfile = null;
+
+            // Only compute profile if we have enough data (>= 25 words)
+            if (recentSessions.length > 0 && totalWords >= 25) {
+                cefrProfile = computeSkillScores(aggregatedMetrics, totalSpeakingTime);
+            }
+
+            // 3. OVERRIDE with Strict AI Audit Level if available
+            // Find the latest AI Audit session that has a valid CEFR analysis
+            const latestAudit = chats.find(c => c.report?.cefr_analysis?.level);
+
+            if (latestAudit && latestAudit.report.cefr_analysis) {
+                console.log(`[Dashboard] Found AI Audit: ${latestAudit.report.cefr_analysis.level}`);
+
+                // If profile was null (low data) but we have an audit, force create one based on the audit
+                if (!cefrProfile) {
+                    cefrProfile = computeSkillScores(aggregatedMetrics, totalSpeakingTime);
+                }
+
+                // Override the overall CEFR level with the Strict Gate result
+                cefrProfile.overall.cefr = latestAudit.report.cefr_analysis.level;
+                cefrProfile.overall.label = `Verified ${latestAudit.report.cefr_analysis.level}`;
+
+                // Add the specific reason if we can (might need to extend the type)
+                // For now, the Level is the most critical piece.
+            }
+
+            // 4. Cooldown Logic
+            // Check if last audit was recent (< 24h) and failed?
+            // For now, let's just enforce a 12h cooldown between attempts if the user has an established level
+            let trialCooldown = false;
+            let timeUntilNextTrial = 0;
+
+            if (latestAudit) {
+                const lastAuditTime = new Date(latestAudit.date).getTime();
+                const now = Date.now();
+                const hoursSince = (now - lastAuditTime) / (1000 * 60 * 60);
+
+                // If it was a TRIAL (implied by strict audit), enforce 12h cooldown
+                if (hoursSince < 12) {
+                    trialCooldown = true;
+                    timeUntilNextTrial = Math.ceil(12 - hoursSince);
+                }
+            }
 
             return {
                 credits,
                 sessions: formattedSessions,
                 aiSessions: formattedAiSessions,
-                cefrProfile
+                cefrProfile,
+                trialCooldown, // New Flag
+                timeUntilNextTrial
             };
         }
 

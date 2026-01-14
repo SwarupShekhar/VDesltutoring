@@ -12,7 +12,10 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(req: Request) {
     try {
-        const { transcript, fluency, metrics, firstName: reqName } = await req.json()
+        const body = await req.json()
+        const { transcript, firstName: reqName } = body
+        // Handle both direct metrics (new) and nested fluency.metrics (old)
+        const metrics = body.metrics || body.fluency?.metrics
         const { userId: clerkId } = await auth()
 
         // Fetch User Context / Memory

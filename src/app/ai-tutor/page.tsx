@@ -272,7 +272,8 @@ export default function AITutor() {
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                                 transcript: dg.transcript,
-                                fluency: { metrics: { fluencyScore: 0.5 } }, // optimistic fluency for speed
+                                metrics: { fluencyScore: 0.5 }, // Top-level metrics for API compatibility
+                                fluency: { metrics: { fluencyScore: 0.5 } }, // Keep for backward compatibility if needed
                                 firstName: firstName
                             })
                         })

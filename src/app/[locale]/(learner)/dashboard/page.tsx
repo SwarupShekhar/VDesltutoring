@@ -9,6 +9,8 @@ import { getDashboardData } from '@/lib/data/dashboard';
 import { DailyInsightCard } from '@/components/DailyInsightCard';
 import { CEFRDashboard } from '@/components/dashboard/CEFRDashboard';
 import { TrainingHub } from '@/components/dashboard/TrainingHub';
+import { CEFRPathCard } from '@/components/dashboard/CEFRPathCard';
+
 
 export default async function LearnerDashboard({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
@@ -91,6 +93,9 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
 
       {/* TRAINING HUB - NEW COMMAND CENTER */}
       <TrainingHub />
+
+      {/* CEFR PATH CARD - PROGRESSION OVERVIEW */}
+      <CEFRPathCard />
 
       {/* MAIN CEFR DASHBOARD - REPLACES NARRATIVE CARDS */}
       {cefrProfile ? (

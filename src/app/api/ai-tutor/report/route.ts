@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server"
 import { generateDrills } from "@/lib/fluencyTrainer"
 import { geminiService } from "@/lib/gemini-service"
+import { detectLexicalCeiling } from "@/lib/fluency-engine"
+import type { CEFRLevel } from "@/lib/cefr-lexical-triggers"
+
 
 const REPORT_PROMPT = `
 You are a STRICT CEFR AUDITOR for English proficiency.
@@ -114,6 +117,37 @@ export async function POST(req: Request) {
     }
 
     const report = await geminiService.generateReport(studentText)
+
+    // -------- Lexical Ceiling Check (CEFR Gate Enforcement) ----------
+    // If user is attempting to level up, check for vocabulary limitations
+    if (report.cefr_analysis?.level) {
+      const assignedLevel = report.cefr_analysis.level as CEFRLevel
+
+      // Check if they're stuck at a lexical ceiling
+      const lexicalCeiling = detectLexicalCeiling(studentText, assignedLevel)
+
+      if (lexicalCeiling) {
+        // Fail the gate due to vocabulary limitations
+        console.log(`[CEFR Gate] Lexical ceiling detected: ${lexicalCeiling.category} (${lexicalCeiling.detectedWords.join(', ')})`)
+
+        // Override the level assignment
+        report.cefr_analysis.level = lexicalCeiling.currentLimit
+        report.cefr_analysis.failed_gate = assignedLevel
+        report.cefr_analysis.reason = `Failed ${assignedLevel} gate due to ${lexicalCeiling.category.toLowerCase()} limitations. ${lexicalCeiling.explanation} Detected overuse of: ${lexicalCeiling.detectedWords.join(', ')}. Try using: ${lexicalCeiling.upgrades.slice(0, 3).join(', ')}.`
+
+        // Add to patterns
+        if (!report.patterns) report.patterns = []
+        report.patterns.unshift(`Over-reliance on basic ${lexicalCeiling.category.toLowerCase()}: ${lexicalCeiling.detectedWords.join(', ')}`)
+
+        // Add to refinements
+        if (!report.refinements) report.refinements = []
+        report.refinements.unshift({
+          original: lexicalCeiling.detectedWords[0],
+          better: lexicalCeiling.upgrades[0],
+          explanation: `To reach ${assignedLevel}, use more sophisticated ${lexicalCeiling.category.toLowerCase()}.`
+        })
+      }
+    }
 
     // -------- Fluency drills ----------
     const drills = generateDrills(report.patterns || [])

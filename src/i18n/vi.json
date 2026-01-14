@@ -526,5 +526,38 @@
             "button": "Bắt Đầu Kiểm Tra Lưu Loát",
             "subtext": "Nói trong 30 giây. Xem những con số thực của bạn."
         }
+    },
+    "cefrJourney": {
+        "headline": "Sự lưu loát của bạn có thứ hạng",
+        "subtext": "Englivo không chỉ rèn luyện bạn. Nó cho bạn thấy bạn đang trở thành người nói như thế nào.",
+        "levels": {
+            "A1": {
+                "title": "Người sống sót",
+                "tagline": "Tôi có thể xoay xở được."
+            },
+            "A2": {
+                "title": "Người khám phá",
+                "tagline": "Tôi có thể đi du lịch và kết nối."
+            },
+            "B1": {
+                "title": "Người kết nối",
+                "tagline": "Tôi có thể giao tiếp xã hội."
+            },
+            "B2": {
+                "title": "Người suy nghĩ",
+                "tagline": "Tôi có thể làm việc bằng tiếng Anh."
+            },
+            "C1": {
+                "title": "Nhà chiến lược",
+                "tagline": "Tôi có thể thuyết phục."
+            },
+            "C2": {
+                "title": "Nhà ngoại giao",
+                "tagline": "Tôi có thể điều hướng các sắc thái."
+            }
+        },
+        "tooltip": "Bạn không đạt được điều này bằng cách học. Bạn đạt được nó bằng cách nói.",
+        "cta": "Xem trình độ của tôi",
+        "ladderTag": "Leo lên nấc thang"
     }
 }

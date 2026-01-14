@@ -9,6 +9,9 @@ import {
 } from "@/lib/fluencyScore"
 import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
+import { detectLexicalCeiling } from "@/lib/fluency-engine"
+import type { CEFRLevel } from "@/lib/cefr-lexical-triggers"
+
 
 export async function POST(req: Request) {
     try {
@@ -93,6 +96,14 @@ export async function POST(req: Request) {
         // Add specific Micro-Lesson instruction to coaching rules
         if (activeLesson && lessonReason) {
             specificRules.unshift(`PRIORITY FOCUS: ${activeLesson.lesson.title}. ${lessonReason} Remind them: "${activeLesson.lesson.instruction}"`)
+        }
+
+        // Check for lexical ceilings (vocabulary limitations)
+        const lexicalTargetLevel: CEFRLevel = (body.targetLevel as CEFRLevel) || "B1"
+        const lexicalCeiling = detectLexicalCeiling(transcript, lexicalTargetLevel)
+
+        if (lexicalCeiling) {
+            specificRules.unshift(`LEXICAL CEILING DETECTED: ${firstName} is overusing basic ${lexicalCeiling.category.toLowerCase()}: ${lexicalCeiling.detectedWords.slice(0, 3).join(', ')}. ${lexicalCeiling.explanation} Gently suggest alternatives like: ${lexicalCeiling.upgrades.slice(0, 3).join(', ')}.`)
         }
 
         // Generate Memory Context

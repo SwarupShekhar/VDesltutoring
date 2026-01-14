@@ -8,6 +8,9 @@ import { AccessToken } from "livekit-server-sdk";
 import { Room, RoomEvent, AudioStream, TrackKind } from "@livekit/rtc-node";
 import type { RemoteTrack, Track } from "@livekit/rtc-node";
 import "dotenv/config";
+import { detectLexicalCeiling } from "../src/lib/fluency-engine";
+import type { CEFRLevel } from "../src/lib/cefr-lexical-triggers";
+
 
 // Polyfill for Node.js environment overrides if needed
 
@@ -415,6 +418,77 @@ async function joinSessionAndTranscribe(session: any) {
     }
 }
 
+/**
+ * Check for lexical ceilings in user's speech patterns.
+ * Runs periodically (every ~45 seconds of speech) to detect vocabulary limitations.
+ */
+async function checkLexicalCeiling(sessionId: string, userId: string) {
+    try {
+        // Get user's target CEFR level from their profile
+        const user = await prisma.users.findUnique({
+            where: { id: userId },
+            include: { student_profiles: true }
+        });
+
+        // Default to B1 if no profile or target level
+        const targetLevel: CEFRLevel = "B1"; // TODO: Get from user profile when available
+
+        // Get recent transcripts (last 45 seconds worth)
+        const recentTranscripts = await prisma.live_transcripts.findMany({
+            where: {
+                session_id: sessionId,
+                user_id: userId,
+                timestamp: {
+                    gte: new Date(Date.now() - 45000) // Last 45 seconds
+                }
+            },
+            orderBy: { timestamp: 'desc' }
+        });
+
+        if (recentTranscripts.length === 0) return;
+
+        // Combine transcripts into a single text window
+        const transcriptWindow = recentTranscripts.map(t => t.text).join(' ');
+
+        // Run lexical detection
+        const lexicalFix = detectLexicalCeiling(transcriptWindow, targetLevel);
+
+        if (lexicalFix) {
+            // Check if we already logged this issue recently (avoid spam)
+            const recentFix = await prisma.live_micro_fixes.findFirst({
+                where: {
+                    session_id: sessionId,
+                    user_id: userId,
+                    category: lexicalFix.category,
+                    created_at: {
+                        gte: new Date(Date.now() - 60000) // Within last minute
+                    }
+                }
+            });
+
+            if (!recentFix) {
+                // Log the micro-fix
+                await prisma.live_micro_fixes.create({
+                    data: {
+                        session_id: sessionId,
+                        user_id: userId,
+                        category: lexicalFix.category,
+                        detected_words: lexicalFix.detectedWords,
+                        upgrades: lexicalFix.upgrades,
+                        explanation: lexicalFix.explanation,
+                        target_level: lexicalFix.targetLevel,
+                        current_limit: lexicalFix.currentLimit
+                    }
+                });
+
+                console.log(`[Lexical Fix] User ${userId}: ${lexicalFix.category} ceiling detected (${lexicalFix.detectedWords.join(', ')})`);
+            }
+        }
+    } catch (err) {
+        console.error(`Error in lexical ceiling check for user ${userId}:`, err);
+    }
+}
+
 async function handleAudioTrack(track: any, userId: string, sessionId: string) {
     // const { AudioStream } = require('@livekit/rtc-node'); // Imported at top
 
@@ -505,6 +579,10 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
                     speaking_time: data.duration || (wordCount * 0.4)
                 }
             });
+
+            // C. Lexical Ceiling Detection (Periodic - every ~45 seconds worth of speech)
+            // Check if we should run lexical analysis
+            await checkLexicalCeiling(sessionId, userId);
         }
     });
 

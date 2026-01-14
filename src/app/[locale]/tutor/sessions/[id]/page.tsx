@@ -5,26 +5,120 @@ import "@livekit/components-styles"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { Track, RoomEvent } from "livekit-client"
+import { SessionPrepPanel } from "@/components/Tutor/SessionPrepPanel"
+
+type SessionPhase = "prep" | "active"
 
 export default function TutorSessionPage() {
     const [token, setToken] = useState<string | null>(null)
     const [roomName, setRoomName] = useState<string>("")
+    const [phase, setPhase] = useState<SessionPhase>("prep")
+    const [studentId, setStudentId] = useState<string | null>(null)
+    const [studentName, setStudentName] = useState<string>("")
     const params = useParams()
 
-    // Note: params.id is available via hook in Client Component if needed later
-
+    // Fetch session details including student info
     useEffect(() => {
-        fetch("/api/livekit/token", { credentials: "include" })
-            .then(r => r.json())
-            .then(d => {
-                setToken(d.token)
-                setRoomName(d.roomName)
-            })
-            .catch(console.error)
-    }, [])
+        async function fetchSessionData() {
+            try {
+                // Fetch session details to get student ID
+                const sessionRes = await fetch(`/api/sessions/${params.id}`, { credentials: "include" })
+                if (sessionRes.ok) {
+                    const sessionData = await sessionRes.json()
+                    setStudentId(sessionData.student_id || sessionData.studentId)
+                    setStudentName(sessionData.student_name || sessionData.studentName || "Student")
+                }
+            } catch (err) {
+                console.error("Failed to fetch session data:", err)
+            }
+        }
 
+        if (params.id) {
+            fetchSessionData()
+        }
+    }, [params.id])
+
+    // Fetch LiveKit token when ready to start
+    const handleStartSession = async () => {
+        try {
+            const res = await fetch("/api/livekit/token", { credentials: "include" })
+            const data = await res.json()
+            setToken(data.token)
+            setRoomName(data.roomName)
+            setPhase("active")
+        } catch (err) {
+            console.error("Failed to get token:", err)
+        }
+    }
+
+    // Prep phase - Show CEFR blockers
+    if (phase === "prep") {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+                {/* Header */}
+                <header className="px-8 py-6 border-b border-white/10 bg-slate-900/50 backdrop-blur-xl">
+                    <div className="max-w-5xl mx-auto flex justify-between items-center">
+                        <div>
+                            <h1 className="text-2xl font-bold">Session Preparation</h1>
+                            <p className="text-slate-400 mt-1">
+                                Review CEFR blockers before starting with {studentName}
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => window.location.href = "/tutor/dashboard"}
+                            className="px-4 py-2 text-slate-400 hover:text-white transition-colors"
+                        >
+                            ← Back to Dashboard
+                        </button>
+                    </div>
+                </header>
+
+                {/* Session Prep Content */}
+                <main className="max-w-5xl mx-auto p-8">
+                    {studentId ? (
+                        <div className="space-y-8">
+                            <SessionPrepPanel
+                                studentId={studentId}
+                                onReady={() => { }} // Checklist completion handled internally
+                            />
+
+                            {/* Start Session Button */}
+                            <div className="flex justify-center">
+                                <button
+                                    onClick={handleStartSession}
+                                    className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-lg font-bold rounded-xl shadow-2xl shadow-blue-500/25 transition-all transform hover:scale-105"
+                                >
+                                    Start Session →
+                                </button>
+                            </div>
+
+                            <p className="text-center text-slate-500 text-sm">
+                                Complete the coaching checklist above, then click Start Session
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="flex items-center justify-center h-64">
+                            <div className="text-center">
+                                <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                                <p className="text-slate-400">Loading session details...</p>
+                            </div>
+                        </div>
+                    )}
+                </main>
+            </div>
+        )
+    }
+
+    // Active session phase
     if (!token) {
-        return <div className="p-10 text-center text-slate-500">Preparing session...</div>
+        return (
+            <div className="h-screen flex items-center justify-center bg-[#0b1120] text-white">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-slate-400">Connecting to session...</p>
+                </div>
+            </div>
+        )
     }
 
     return (

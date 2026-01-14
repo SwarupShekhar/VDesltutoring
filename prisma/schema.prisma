@@ -30,6 +30,7 @@ model users {
   live_metrics        live_metrics[]
   live_session_summaries live_session_summary[]
   live_weaknesses     live_weaknesses[]
+  live_micro_fixes    live_micro_fixes[]
   daily_plans         user_daily_plan[]
 }
 
@@ -236,6 +237,7 @@ model live_sessions {
   metrics     live_metrics[]
   summaries   live_session_summary[]
   weaknesses  live_weaknesses[]
+  micro_fixes live_micro_fixes[]
 }
 
 model live_transcripts {
@@ -300,6 +302,25 @@ model live_weaknesses {
   session     live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
   user        users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
+
+model live_micro_fixes {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id      String   @db.Uuid
+  user_id         String   @db.Uuid
+  category        String   // Vocabulary, Connectors, Nuance
+  detected_words  Json     // Array of detected basic words
+  upgrades        Json     // Array of suggested upgrades
+  explanation     String   // Why this is a ceiling
+  target_level    String   // CEFR level they're attempting (B1, B2, C1, C2)
+  current_limit   String   // CEFR level they're stuck at (A2, B1, B2, C1)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([session_id, user_id], map: "idx_micro_fixes_session_user")
+}
+
 
 model fluency_exercises {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid

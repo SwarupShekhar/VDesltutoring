@@ -709,5 +709,38 @@
             "button": "Start Your Fluency Check",
             "subtext": "Speak for 30 seconds. See your real numbers."
         }
+    },
+    "cefrJourney": {
+        "headline": "Your Fluency Has Ranks",
+        "subtext": "Englivo doesn’t just train you. It shows you who you are becoming as a speaker.",
+        "levels": {
+            "A1": {
+                "title": "The Survivor",
+                "tagline": "I can get by."
+            },
+            "A2": {
+                "title": "The Explorer",
+                "tagline": "I can travel and connect."
+            },
+            "B1": {
+                "title": "The Connector",
+                "tagline": "I can socialize."
+            },
+            "B2": {
+                "title": "The Thinker",
+                "tagline": "I can work in English."
+            },
+            "C1": {
+                "title": "The Strategist",
+                "tagline": "I can persuade."
+            },
+            "C2": {
+                "title": "The Diplomat",
+                "tagline": "I can navigate nuance."
+            }
+        },
+        "tooltip": "You don’t get this by studying. You earn it by speaking.",
+        "cta": "See where I stand",
+        "ladderTag": "Scale the ladder"
     }
 }

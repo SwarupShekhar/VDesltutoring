@@ -20,6 +20,7 @@ import { AudioTransformation } from '@/components/AudioTransformation';
 import { FluencyEngineShowcase } from '@/components/FluencyEngineShowcase';
 import { FluencyGlobe } from '@/components/FluencyGlobe';
 import { LiveNowBanner } from '@/components/LiveNowBanner';
+import { CEFRJourney } from '@/components/home/CEFRJourney';
 
 
 const tutors = [
@@ -107,6 +108,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         <section id="practice">
           <FluencyMirror />
         </section>
+
+        {/* 2.0 CEFR JOURNEY (Aspirational Prestige Ladder) */}
+        <CEFRJourney dict={t.cefrJourney} locale={locale} />
 
         {/* 2.5 SITUATIONS (Identity Mirror) */}
         <SituationalGateway dict={t.situationalGateway} />

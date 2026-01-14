@@ -360,8 +360,8 @@ export default function AITutor() {
                 } else {
                     // Silence Logic
                     if (recorder.state === "recording") {
-                        // Increased silence timeout to 2.5s to prevent fragmentation
-                        if (Date.now() - silenceStart > 2500) {
+                        // Reduced silence timeout to 1.2s for snappier response
+                        if (Date.now() - silenceStart > 1200) {
                             console.log("Silence detected. Stopping recording...")
                             recorder.stop()
                             setListening(false)

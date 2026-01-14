@@ -46,23 +46,6 @@ export async function POST(req: Request) {
     console.log("Filtered student text length:", studentText.length)
     console.log("Filtered student text preview:", studentText.substring(0, 50))
 
-    const uniqueWordCount = new Set(studentText.split(/\s+/).filter((w: string) => w.length > 0)).size
-
-    if (!studentText || studentText.length < 10 || uniqueWordCount < 3) {
-      // Return "Insufficient Data" instead of a placeholder report
-      return NextResponse.json({
-        identity: { archetype: "No Data", description: "Not enough speech detected." },
-        insights: { fluency: "N/A", grammar: "N/A", vocabulary: "N/A" },
-        patterns: [],
-        refinements: [],
-        next_step: "Speak more next time.",
-        drills: [],
-        metrics: { wordCount: 0, fillerCount: 0, fillerPercentage: 0, uniqueWords: 0 }
-      })
-    }
-
-    const report = await geminiService.generateReport(studentText)
-
     // -------- Metrics (Text Analysis) ----------
     const words = studentText.split(/\s+/)
     const wordCount = words.length
@@ -71,12 +54,38 @@ export async function POST(req: Request) {
     const fillers = studentText.match(fillerRegex) || []
     const fillerCount = fillers.length
 
+    const uniqueWordCount = new Set(studentText.split(/\s+/).filter((w: string) => w.length > 0)).size
+
     const metrics = {
       wordCount,
       fillerCount,
       fillerPercentage: wordCount ? Math.round((fillerCount / wordCount) * 100) : 0,
       uniqueWords: uniqueWordCount
     }
+
+    // 50 words is roughly 30-45 seconds of speaking.
+    // User requested 3-5 mins, but 50 words is a good "minimum viable" threshold to avoid hallucinations.
+    if (!studentText || wordCount < 50) {
+      // Return "Insufficient Data" instead of a placeholder report
+      return NextResponse.json({
+        identity: {
+          archetype: "The Warm-up",
+          description: "Session too short for a full forensic audit. Speak more next time!"
+        },
+        insights: {
+          fluency: "Keep talking! We need about 50 words to analyze your flow.",
+          grammar: "Not enough data yet.",
+          vocabulary: "Not enough data yet."
+        },
+        patterns: ["Short session detected."],
+        refinements: [],
+        next_step: "Try to have a conversation of at least 2-3 minutes.",
+        drills: [],
+        metrics
+      })
+    }
+
+    const report = await geminiService.generateReport(studentText)
 
     // -------- Fluency drills ----------
     const drills = generateDrills(report.patterns || [])

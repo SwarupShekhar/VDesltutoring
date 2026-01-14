@@ -58,7 +58,8 @@ async function elevenLabsTTS(text: string): Promise<string> {
     const voiceId = "EXAVITQu4vr4xnSDxMaL"; // Sarah - warm and friendly
     const modelId = "eleven_turbo_v2_5"; // Faster, more natural model
 
-    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+    // optimize_streaming_latency=3 (Enable optimizations for lower latency)
+    const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?optimize_streaming_latency=3`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

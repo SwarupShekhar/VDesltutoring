@@ -1,410 +1,115 @@
 {
     "nav": {
         "brandSubtitle": "Nói không cần dịch",
-        "approach": "Phương Pháp Của Chúng Tôi",
-        "practice": "Thực hành",
+        "approach": "Phương pháp",
+        "howItWorks": "Cách thức",
+        "practice": "Luyện tập",
         "pricing": "Giá cả",
-        "about": "Giới thiệu",
+        "about": "Về chúng tôi",
         "signIn": "Đăng nhập",
         "getStarted": "Bắt đầu",
         "dashboard": "Bảng điều khiển",
         "signOut": "Đăng xuất",
-        "startAssessment": "Bắt đầu đánh giá",
-        "signInToPractice": "Đăng nhập để thực hành",
+        "startReflection": "Bắt đầu phản hồi",
+        "signInToPractice": "Đăng nhập để luyện tập",
         "createAccount": "Tạo tài khoản",
         "language": "Ngôn ngữ",
-        "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh.",
-        "aboutPage": {
-            "hero": {
-                "title": "Chúng tôi không dạy tiếng Anh.<br/>Chúng tôi đào tạo mọi người nói.",
-                "subtitle": "Hầu hết người học tiếng Anh không gặp khó khăn về kiến thức. Họ gặp khó khăn với áp lực, sự do dự và sự tự tin.<br/>Chúng tôi xây dựng nền tảng này để khắc phục điều đó."
-            },
-            "sections": [
-                {
-                    "id": "problem",
-                    "label": "Vấn đề thực sự",
-                    "title": "“Tôi biết tiếng Anh… nhưng tôi không thể nói.”",
-                    "content": "Đây là điều mà hầu hết mọi người học nói với chúng tôi.<br/><br/>Họ biết:<br/>• Ngữ pháp<br/>• Từ vựng<br/>• Quy tắc<br/><br/>Nhưng khi đến lúc nói:<br/>• Tâm trí họ đóng băng<br/>• Họ do dự<br/>• Họ dịch<br/>• Họ mất dòng chảy<br/><br/>Các hệ thống học tập truyền thống phản ứng bằng cách thêm vào:<br/>• Ngữ pháp<br/>• Bài tập<br/>• Đọc<br/><br/>Điều đó không sửa lỗi nói.<br/>Nó làm cho nó tồi tệ hơn."
-                },
-                {
-                    "id": "reason",
-                    "label": "Tại sao chúng tôi tồn tại",
-                    "title": "Để giúp mọi người nói mà không sợ hãi.",
-                    "content": "Englivo được tạo ra vì một lý do.<br/><br/>Chúng tôi nhận ra một điều đơn giản:<br/><br/>Nói không phải là vấn đề kiến thức.<br/>Đó là vấn đề phản xạ.<br/><br/>Và phản xạ được xây dựng bởi:<br/>• Sự lặp lại<br/>• Thời gian<br/>• An toàn cảm xúc<br/>• Cuộc trò chuyện thực tế<br/><br/>Không phải sách giáo khoa.<br/><br/>Vì vậy, thay vì xây dựng một khóa học khác,<br/>chúng tôi đã xây dựng một Công cụ Trôi chảy."
-                },
-                {
-                    "id": "difference",
-                    "label": "Điều gì làm chúng tôi khác biệt",
-                    "title": "Chúng tôi không sửa tiếng Anh.<br/>Chúng tôi kết nối lại hành vi nói.",
-                    "content": "Hầu hết các nền tảng hỏi:<br/>“Bạn có biết câu đúng không?”<br/><br/>Chúng tôi hỏi:<br/>“Bạn có thể nói to khi cần thiết không?”<br/><br/>Hệ thống của chúng tôi lắng nghe cách bạn nói:<br/>• Sự do dự<br/>• Từ đệm<br/>• Khởi động lại<br/>• Khoảng dừng<br/>• Dòng chảy<br/><br/>Và huấn luyện bạn giống như một gia sư con người sẽ làm:<br/>• Bình tĩnh<br/>• Hỗ trợ<br/>• Thời gian thực<br/>• Không phán xét"
-                },
-                {
-                    "id": "philosophy",
-                    "label": "Triết lý con người",
-                    "title": "Mọi người chỉ trở nên trôi chảy khi họ cảm thấy đủ an toàn để nói.",
-                    "content": "Chúng tôi thiết kế nền tảng này xung quanh một niềm tin.<br/><br/>Đó là lý do tại sao AI của chúng tôi:<br/>• Không bao giờ nói “sai”<br/>• Không bao giờ chỉ trích<br/>• Không bao giờ làm xấu hổ<br/><br/>Nó nói:<br/>• “Hãy thử cái này thay thế.”<br/>• “Điều đó tốt - hãy làm cho nó mượt mà hơn.”<br/>• “Tiếp tục đi.”<br/><br/>Bởi vì sự tự tin được xây dựng thông qua chuyển động, không phải sự hoàn hảo."
-                },
-                {
-                    "id": "audience",
-                    "label": "Chúng tôi phục vụ ai",
-                    "title": "Dành cho bất kỳ ai muốn tiếng Anh của họ cảm thấy như giọng nói của chính họ.",
-                    "content": "Englivo được xây dựng cho những người:<br/><br/>• Hiểu tiếng Anh nhưng đóng băng khi nói<br/>• Cần tiếng Anh cho công việc, phỏng vấn hoặc cuộc sống<br/>• Cảm thấy xấu hổ khi mắc lỗi<br/>• Muốn nghe tự nhiên, không phải robot<br/><br/>Từ sinh viên đến chuyên gia đến người nhập cư."
-                },
-                {
-                    "id": "vision",
-                    "label": "Nơi chúng tôi đang đi",
-                    "title": "Nền tảng ngôn ngữ ưu tiên sự trôi chảy",
-                    "content": "Chúng tôi đang xây dựng nơi đầu tiên trên thế giới nơi:<br/>• Bạn nói<br/>• Bạn được hiểu<br/>• Bạn được huấn luyện<br/>• Bạn phát triển<br/><br/>Không phải bằng cách ghi nhớ,<br/>mà bằng cách trở thành một người nói."
-                }
-            ],
-            "final": {
-                "title": "Englivo không phải là về việc học tiếng Anh.",
-                "subtitle": "Đó là về việc trở thành một người có thể nói nó."
-            }
-        }
+        "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh."
     },
     "hero": {
         "headline": "Ngừng dịch trong đầu.<br /><span>Bắt đầu nói như chính bạn.</span>",
-        "subtext": "Phương pháp tiếp cận boutique cho sự trôi chảy. Dành cho các chuyên gia cảm thấy bị mắc kẹt trong sự im lặng giữa suy nghĩ và lời nói.",
-        "ctaReflection": "Bắt đầu suy ngẫm",
+        "subtext": "Phương pháp tiếp cận tinh hoa để lưu loát. Dành cho những chuyên gia cảm thấy bị mắc kẹt trong sự im lặng giữa suy nghĩ và lời nói.",
+        "ctaReflection": "Bắt đầu phản hồi",
         "ctaMethod": "Phương pháp của chúng tôi"
     },
     "problems": {
         "label": "Vấn đề",
         "headline": "Tại sao các ứng dụng không thể dạy bạn điều này.",
-        "p1": "Hầu hết các ứng dụng dạy bạn <strong>từ vựng</strong> (nói gì). Nhưng trong một cuộc họp thực tế, bạn không thất bại vì thiếu từ.",
-        "p2": "Bạn thất bại vì <strong>áp lực</strong>.",
-        "p3": "Khi rủi ro cao, não bạn quay về sự an toàn: <span class=\"text-foreground italic\">dịch từ ngôn ngữ mẹ đẻ</span>. Sự chậm trễ này là thứ giết chết sự tự tin của bạn, không phải ngữ pháp.",
+        "p1": "Hầu hết các ứng dụng ngôn ngữ dạy bạn <strong>từ vựng</strong> (phải nói gì). Nhưng trong một cuộc họp thực tế, bạn không gặp khó khăn vì thiếu từ.",
+        "p2": "Bạn gặp khó khăn vì <strong>áp lực</strong>.",
+        "p3": "Khi rủi ro tăng cao, não bạn quay lại vùng an toàn: <span class=\"text-foreground italic\">dịch từ ngôn ngữ mẹ đẻ</span>. Sự chậm trễ này là thứ giết chết sự tự tin của bạn, không phải ngữ pháp.",
         "simulationLabel": "Mô phỏng áp lực thời gian thực",
         "you": "Bạn"
     },
-    "features": {
-        "dialogues": {
-            "title": "Đối thoại có cấu trúc",
-            "desc": "Không nói chuyện phiếm ngẫu nhiên. Mỗi phiên đều có mục tiêu chính xác."
-        },
-        "feedback": {
-            "title": "Phản hồi tức thì",
-            "desc": "Sửa lỗi mang lại cảm giác hỗ trợ, không chỉ trích."
-        },
-        "match": {
-            "title": "Ghép đôi theo sự ăn ý",
-            "desc": "Chúng tôi ghép bạn với những cố vấn phù hợp với phong cách chuyên nghiệp của bạn."
-        }
+    "fluencyEngine": {
+        "title": "The Fluency Engine",
+        "subtitle": "Cách học truyền thống coi tiếng Anh là dữ liệu. Chúng tôi coi đó là một phản xạ sinh học.",
+        "title1": "Hầu hết mọi người không thất bại ở tiếng Anh",
+        "desc1": "Họ biết ngữ pháp. Họ biết từ vựng. Nhưng khi họ nói, não họ ngập ngừng, dịch và đóng băng.",
+        "content1": "Lời nói đóng băng khi áp lực ập đến.",
+        "title2": "Lưu loát không phải là kiến thức. Nó là một phản xạ.",
+        "desc2": "Nói là một phản ứng tự động. Fluency Engine đào tạo phản xạ này trong thời gian thực.",
+        "content2_p1": "🧠 Kiến thức → ❌",
+        "content2_p2": "⚡ Phản xạ → Lưu loát",
+        "title3": "Đào tạo phản xạ trực tiếp",
+        "desc3": "Trong khi bạn nói, hệ thống lắng nghe các khoảng nghỉ, sự ngập ngừng và nhịp điệu của bạn.",
+        "content3_p1": "🎙 Bạn nói",
+        "content3_p2": "⚙ Fluency Engine",
+        "content3_p3": "💬 Phản hồi thời gian thực",
+        "title4": "Huấn luyện dựa trên mô hình",
+        "desc4": "Chúng tôi không nói “sai”. Chúng tôi phát hiện thói quen.",
+        "content4_p1": "NGẬP NGỪNG",
+        "content4_p2": "TỪ ĐỆM",
+        "content4_p3": "DỊCH TRONG ĐẦU",
+        "content4_p4": "→ Được tái đào tạo",
+        "title5": "An toàn cảm xúc",
+        "desc5": "Gia sư AI của bạn không bao giờ phán xét. Nó giúp bạn tiếp tục nói.",
+        "content5_p1": "Không sợ hãi.",
+        "content5_p2": "Không xấu hổ.",
+        "content5_p3": "Chỉ việc nói.",
+        "title6": "Sự lưu loát theo tình huống",
+        "desc6": "Bạn không học ‘tiếng Anh’. Bạn học cách nói trong các cuộc họp, phỏng vấn và cuộc sống hàng ngày.",
+        "content6_p1": "Phỏng vấn",
+        "content6_p2": "Cuộc họp",
+        "content6_p3": "Du lịch",
+        "content6_p4": "Đời thường",
+        "title7": "Tại sao nó hiệu quả",
+        "desc7": "Các hệ thống khác đào tạo trí nhớ. Fluency Engine đào tạo sự ngập ngừng, thời gian và nhịp điệu.",
+        "content7_p1": "Chúng tôi không dạy tiếng Anh.",
+        "content7_p2": "Chúng tôi đào tạo việc nói."
     },
-    "testimonials": {
-        "headline": "Sự trôi chảy là đòn bẩy sự nghiệp.",
-        "subtext": "Đừng chỉ nghe lời chúng tôi.",
-        "stories": [
-            {
-                "quote": "I stopped being the quiet one in strategy meetings. I finally sound like the expert I actually am.",
-                "author": "Elena K.",
-                "role": "Senior Product Manager, Berlin"
+    "cefrJourney": {
+        "headline": "Sự lưu loát của bạn có thứ hạng",
+        "subtext": "Englivo cho bạn thấy bạn đang trở thành người nói như thế nào.",
+        "levels": {
+            "A1": {
+                "title": "Người sống sót",
+                "tagline": "Tôi có thể xoay xở."
             },
-            {
-                "quote": "My English was 'good enough', but I wasn't connecting. Now I can joke, interrupt, and lead with nuance.",
-                "author": "Marco R.",
-                "role": "Tech Lead, São Paulo"
+            "A2": {
+                "title": "Người khám phá",
+                "tagline": "Tôi có thể du lịch và kết nối."
+            },
+            "B1": {
+                "title": "Người kết nối",
+                "tagline": "Tôi có thể giao lưu."
+            },
+            "B2": {
+                "title": "Người tư duy",
+                "tagline": "Tôi có thể làm việc bằng tiếng Anh."
+            },
+            "C1": {
+                "title": "Người chiến lược",
+                "tagline": "Tôi có thể thuyết phục."
+            },
+            "C2": {
+                "title": "Nhà ngoại giao",
+                "tagline": "Tôi có thể điều hướng sự tinh tế."
             }
-        ]
-    },
-    "speakingMoments": {
-        "headline": "Những khoảnh khắc nói tiếng Anh cảm thấy khó khăn nhất",
-        "subtext": "Đây không phải là vấn đề ngữ pháp. Đây là vấn đề về thời gian.",
-        "modal": {
-            "whyHard": "Tại sao điều này cảm thấy khó khăn",
-            "whyHardDesc": "Bạn đang cố gắng chuẩn bị mọi thứ trước khi nói.",
-            "reframeLabel": "Tái định hình Englivo",
-            "practice": "Thực hành khoảnh khắc này",
-            "teach": "Xem cách chúng tôi dạy điều này"
         },
-        "items": [
-            {
-                "id": "explain_delay",
-                "title": "Giải thích sự chậm trễ",
-                "description": "Khi bạn biết chuyện gì đã xảy ra nhưng gặp khó khăn khi bắt đầu giải thích.",
-                "example": "“Can you explain why this was delayed?”",
-                "reframe": "Bắt đầu quan trọng hơn một lời giải thích hoàn hảo."
-            },
-            {
-                "id": "unexpected_question",
-                "title": "Bị hỏi bất ngờ",
-                "description": "Khi bạn hiểu câu hỏi nhưng đầu óc trống rỗng.",
-                "example": "“What do you think about this idea?”",
-                "reframe": "Bạn không cần câu trả lời - bạn cần một lời mở đầu."
-            },
-            {
-                "id": "disagree_politely",
-                "title": "Phản đối lịch sự",
-                "description": "Khi bạn muốn phản đối nhưng sợ nghe có vẻ thô lỗ.",
-                "example": "“I’m not sure I agree with that.”",
-                "reframe": "Giọng điệu đến từ nhịp độ, không phải từ vựng."
-            },
-            {
-                "id": "clarify_mistake",
-                "title": "Làm rõ hiểu lầm",
-                "description": "Khi có gì đó sai và bạn cần giải thích bản thân.",
-                "example": "“Let me clarify what I meant.”",
-                "reframe": "Nói sớm ngăn chặn áp lực."
-            },
-            {
-                "id": "joining_conversation",
-                "title": "Tham gia cuộc trò chuyện muộn",
-                "description": "Khi cuộc thảo luận đã diễn ra nhanh chóng.",
-                "example": "“Can I add something here?”",
-                "reframe": "Chiếm lấy không gian là một kỹ năng."
-            },
-            {
-                "id": "thinking_mid_sentence",
-                "title": "Mất mạch suy nghĩ giữa chừng",
-                "description": "Khi bạn bắt đầu nói và quên mất mình định nói gì.",
-                "example": "“What I was trying to say is…”",
-                "reframe": "Tạm dừng một cách tự tin giữ cho dòng chảy tiếp tục."
-            }
-        ]
-    },
-    "tutors": {
-        "headline": "Cố vấn, không chỉ là giáo viên.",
-        "subtext": "Các chuyên gia được lựa chọn kỹ lưỡng, hiểu rõ tâm lý của hiệu suất.",
-        "viewAll": "Xem tất cả giảng viên"
-    },
-    "roadmap": {
-        "headline": "Một quy trình được xây dựng cho sự trôi chảy",
-        "audit": {
-            "title": "Kiểm toán",
-            "desc": "Chúng tôi phân tích các kiểu do dự của bạn để tạo hồ sơ của bạn."
-        },
-        "plan": {
-            "title": "Lộ trình",
-            "desc": "Một kế hoạch tùy chỉnh để lấp đầy các khoảng trống xử lý cụ thể của bạn."
-        },
-        "immersion": {
-            "title": "Đắm mình sâu",
-            "desc": "Các cuộc trò chuyện có hướng dẫn nơi sự im lặng là an toàn và sự tiến bộ được cảm nhận."
-        }
-    },
-    "faq": {
-        "headline": "Câu hỏi thường gặp",
-        "items": [
-            {
-                "question": "Cái này có dành cho người mới bắt đầu không?",
-                "answer": "Không. Englivo được xây dựng cho những người đã biết tiếng Anh nhưng gặp khó khăn khi nói trôi chảy và tự tin trong các tình huống thực tế. Nếu bạn biết ngữ pháp nhưng bị đóng băng, do dự hoặc dịch trong đầu - cái này dành cho bạn."
-            },
-            {
-                "question": "Tôi có cần gia sư để sử dụng Englivo không?",
-                "answer": "Không. Bạn có thể cải thiện chỉ bằng cách sử dụng Gia sư AI + Công cụ Luyện tập. Gia sư là tùy chọn và được sử dụng khi bạn muốn trò chuyện với người thật hoặc luyện nói theo kiểu thi cử."
-            },
-            {
-                "question": "Cái này khác gì so với các ứng dụng khác hoặc chatbot AI?",
-                "answer": "Hầu hết các công cụ dạy những gì cần nói. Englivo rèn luyện cách bạn nói - sự ngưng nghỉ, thời gian, dòng chảy và sự tự tin của bạn. Chúng tôi không chấm điểm bạn. Chúng tôi phát hiện các kiểu nói của bạn và giúp bạn thay đổi chúng trong thời gian thực."
-            },
-            {
-                "question": "Điều gì xảy ra khi tôi nhấp vào “Bắt đầu”?",
-                "answer": "Bạn nói. AI lắng nghe. Nó đo lường các thói quen trôi chảy của bạn (ngưng nghỉ, từ đệm, khởi động lại). Sau đó, nó đưa ra cho bạn một bài tập cụ thể để cải thiện phần yếu nhất trong khả năng nói của bạn. Bạn không học - bạn rèn luyện."
-            },
-            {
-                "question": "Nếu tôi nhút nhát, lo lắng hoặc mắc lỗi thì sao?",
-                "answer": "Đó chính xác là đối tượng mà Englivo hướng tới. AI không bao giờ phán xét hay làm bạn xấu hổ. Nó được thiết kế để cảm thấy như một không gian luyện tập an toàn, nơi bạn có thể nói chuyện tự do và cải thiện."
-            },
-            {
-                "question": "Làm sao tôi biết mình đang tiến bộ?",
-                "answer": "Bạn sẽ thấy Điểm số Trôi chảy, cấp độ CEFR và biểu đồ kỹ năng của mình thay đổi theo thời gian. Bạn cũng có thể so sánh ngày hôm qua với hôm nay để thấy sự tiến bộ thực sự về sự ngưng nghỉ, dòng chảy và sự tự tin."
-            },
-            {
-                "question": "Nếu tôi không hợp với cố vấn thì sao?",
-                "answer": "Bạn có thể đổi gia sư bất cứ lúc nào. Sự tiến bộ của bạn được lưu trữ trong Englivo, không phải với một gia sư duy nhất, vì vậy bạn không bao giờ mất đà."
-            },
-            {
-                "question": "Giọng nói hoặc dữ liệu của tôi có được chia sẻ không?",
-                "answer": "Không. Các bản ghi âm của bạn chỉ được sử dụng để phân tích và cải thiện sự trôi chảy của bạn. Chúng không bao giờ được công khai hoặc chia sẻ với người dùng khác."
-            }
-        ]
-    },
-    "howItWorksPage": {
-        "hero": {
-            "title": "Cách thức hoạt động",
-            "subtitle": "Một cách đơn giản để đi từ \"Tôi biết tiếng Anh\" đến \"Tôi có thể nói tiếng Anh\"",
-            "description": "Bạn không cần học nhiều hơn. Bạn cần thực hành nói đúng cách.<br/>Đây chính xác là những gì xảy ra khi bạn sử dụng Englivo."
-        },
-        "steps": [
-            {
-                "step": "Bước 1",
-                "title": "Bạn nói",
-                "description": "Bạn nhấp vào Bắt đầu. Bạn thấy gia sư AI của mình. Bạn chỉ cần bắt đầu nói chuyện.",
-                "details": [
-                    "Một ngày của bạn",
-                    "Công việc của bạn",
-                    "Một chủ đề",
-                    "Bất cứ điều gì"
-                ],
-                "footer": "Không có bài kiểm tra. Không áp lực. Chỉ là một cuộc trò chuyện."
-            },
-            {
-                "step": "Bước 2",
-                "title": "AI lắng nghe",
-                "description": "Trong khi bạn nói, AI đang lặng lẽ lắng nghe:",
-                "details": [
-                    "Những khoảng dừng của bạn",
-                    "Những tiếng \"uh\", \"um\", \"well\" của bạn",
-                    "Khi bạn dừng lại và bắt đầu lại",
-                    "Nhịp điệu và thời gian của bạn"
-                ],
-                "footer": "Nó không phán xét bạn. Nó đang học cách bạn nói."
-            },
-            {
-                "step": "Bước 3",
-                "title": "Các mẫu của bạn được phát hiện",
-                "description": "Hệ thống tìm kiếm thói quen, không phải lỗi. Ví dụ:",
-                "details": [
-                    "Bạn có dừng lại trước khi nói không?",
-                    "Bạn có suy nghĩ quá lâu không?",
-                    "Bạn có dịch trong đầu không?",
-                    "Bạn có vội vàng hay đóng băng không?"
-                ],
-                "footer": "Đây được gọi là các mẫu trôi chảy. Chúng là những gì ngăn cản việc nói tự tin."
-            },
-            {
-                "step": "Bước 4",
-                "title": "Gia sư của bạn thích nghi",
-                "description": "Bây giờ là phần kỳ diệu. Gia sư AI của bạn thay đổi cách nói chuyện với bạn dựa trên các mẫu của bạn.",
-                "subsections": [
-                    {
-                        "title": "Nếu bạn do dự:",
-                        "content": "Nó chậm lại và khuyến khích bạn."
-                    },
-                    {
-                        "title": "Nếu bạn sử dụng nhiều từ đệm:",
-                        "content": "Nó mô hình hóa các câu trôi chảy hơn."
-                    },
-                    {
-                        "title": "Nếu bạn đóng băng:",
-                        "content": "Nó cung cấp cho bạn những khởi đầu nhẹ nhàng."
-                    }
-                ],
-                "footer": "Bạn không được dạy. Bạn được hướng dẫn."
-            },
-            {
-                "step": "Bước 5",
-                "title": "Bạn cải thiện bằng cách nói",
-                "description": "Bạn không ghi nhớ các quy tắc. Bạn không làm bài tập. Bạn cải thiện bằng cách:",
-                "details": [
-                    "Nói",
-                    "Cố gắng",
-                    "Nghe các phiên bản tốt hơn",
-                    "Cố gắng lại"
-                ],
-                "footer": "Điều này xây dựng phản xạ nói - giống như cách bạn học ngôn ngữ đầu tiên của mình."
-            },
-            {
-                "step": "Bước 6",
-                "title": "Tiến trình của bạn được theo dõi",
-                "description": "Sau mỗi phiên, chúng tôi lưu:",
-                "details": [
-                    "Mức độ do dự của bạn",
-                    "Dòng chảy của bạn",
-                    "Cách sử dụng từ đệm của bạn",
-                    "Phong cách nói của bạn"
-                ],
-                "quote": "“Tôi ít đóng băng hơn. Tôi nói nhiều hơn.”",
-                "footer": "Bạn không cảm thấy sự tiến bộ. Bạn nhìn thấy nó."
-            }
-        ],
-        "final": {
-            "label": "Tại sao điều này hiệu quả",
-            "title": "Hầu hết mọi người không thất bại ở tiếng Anh.",
-            "subtitle": "Họ thất bại khi nói dưới áp lực.",
-            "listTitle": "Englivo rèn luyện:",
-            "list": [
-                "Sự tự tin",
-                "Thời gian",
-                "Dòng chảy",
-                "Bản sắc nói"
-            ],
-            "conclusion": "Không chỉ là lời nói. Đó là lý do tại sao mọi người cuối cùng cũng bắt đầu nói chuyện."
-        }
-    },
-    "ctaBottom": {
-        "headline": "Sẵn sàng tìm lại dòng chảy của bạn?",
-        "button": "Đặt buổi học đầu tiên",
-        "guarantee": "Không yêu cầu cam kết. Đảm bảo hoàn tiền 100%."
-    },
-    "dashboard": {
-        "learnerTitle": "Bảng điều khiển học viên",
-        "bookSession": "Đặt lịch với gia sư",
-        "startAiSession": "Bắt đầu kiểm toán AI",
-        "startPractice": "Luyện nói",
-        "creditsRemaining": "Tín chỉ còn lại",
-        "nextSession": "Buổi học tiếp theo",
-        "noUpcoming": "Không có buổi học nào sắp tới",
-        "yourProgress": "Tiến bộ của bạn",
-        "confidenceSpeaking": "Sự tự tin khi nói",
-        "confidenceListening": "Sự tự tin khi nghe",
-        "history": "Lịch sử buổi học",
-        "noHistory": "Bạn chưa có lịch sử buổi học nào",
-        "tutor": "Gia sư",
-        "notAssigned": "Chưa được phân công",
-        "gamification": {
-            "levelUnassessed": "Cấp độ: Chưa đánh giá",
-            "startBaseline": "Bắt đầu đánh giá",
-            "unknownLevelDesc": "Chúng tôi chưa biết trình độ tiếng Anh của bạn. Hãy dành 2 phút để trò chuyện và xác định mức cơ bản.",
-            "attemptTrial": "Thử thách {level}",
-            "nextTrialLocked": "Thử thách tiếp theo bị khóa",
-            "availableIn": "Có sẵn sau {hours} giờ",
-            "levelUnlocked": "Đã mở khóa cấp độ!",
-            "reachedLevel": "Bạn đã chính thức đạt cấp độ <strong>{level}</strong>. Hãy tiếp tục cố gắng!",
-            "continueJourney": "Tiếp tục",
-            "levelUp": "Lên cấp!"
-        }
-    },
-    "intermediatePlateau": {
-        "headline": "Bức tường vô hình",
-        "subtext": "Tại sao bạn cảm thấy 'Nâng cao' nhưng nghe như người mới bắt đầu.",
-        "trap": {
-            "title": "Vòng lặp dịch thuật",
-            "desc": "Não bạn kiểm tra ngữ pháp từng từ trước khi nói. Điều này tạo ra sự do dự."
-        },
-        "flow": {
-            "title": "Tiếp thu trực tiếp",
-            "desc": "Bỏ qua bộ giám sát. Kết nối suy nghĩ trực tiếp với âm thanh."
-        }
-    },
-    "audioTransformation": {
-        "headline": "Nghe sự thay đổi.",
-        "subtext": "Sự khác biệt giữa tiếng Anh 'đúng' và tiếng Anh 'trôi chảy'.",
-        "week1": "Tuần 1",
-        "week12": "Tuần 12",
-        "label": "Phát để nghe"
-    },
-    "dailyRoutine": {
-        "headline": "20 phút mỗi ngày",
-        "subtext": "Sự trôi chảy là một thói quen sinh học, không phải môn học.",
-        "steps": [
-            {
-                "title": "Hấp thụ",
-                "time": "10 phút",
-                "desc": "Nghe một mẫu nhịp điệu cụ thể."
-            },
-            {
-                "title": "Phản ánh",
-                "time": "5 phút",
-                "desc": "Ghi âm một suy nghĩ ngắn sử dụng mẫu đó."
-            },
-            {
-                "title": "Củng cố",
-                "time": "Ngủ",
-                "desc": "Não bạn kết nối lại trong khi nghỉ ngơi."
-            }
-        ]
+        "tooltip": "Bạn không đạt được điều này bằng cách học. Bạn đạt được bằng cách nói.",
+        "cta": "Xem tôi đang ở đâu",
+        "ladderTag": "Leo lên nấc thang"
     },
     "situationalGateway": {
         "headline": "Bạn sử dụng tiếng Anh ở đâu?",
-        "subtext": "Chúng tôi không đưa cho bạn một khóa học. Chúng tôi xây dựng lộ trình nói chuyện xoay quanh cuộc sống thực của bạn.",
-        "defaultCta": "Tiếng Anh của bạn không cần sửa chữa - nó cần sự trôi chảy.",
+        "subtext": "Chúng tôi xây dựng một lộ trình nói xung quanh cuộc sống thực của bạn.",
+        "defaultCta": "Tiếng Anh của bạn không cần sửa - nó cần sự trôi chảy.",
         "button": "Tìm lộ trình nói của bạn",
-        "meta": "2–3 phút · Không ngữ pháp · Chỉ nói",
+        "meta": "2-3 phút · Không ngữ pháp · Chỉ việc nói",
         "loading": {
             "headline": "Đang tìm nhịp điệu nói của bạn...",
-            "subtext": "Đang chuẩn bị không gian cá nhân hóa"
+            "subtext": "Đang chuẩn bị không gian cá nhân hóa của bạn"
         },
         "cards": [
             {
@@ -412,152 +117,219 @@
                 "items": [
                     "Cuộc họp",
                     "Thuyết trình",
-                    "Phỏng vấn",
-                    "Email",
-                    "Đàm phán"
+                    "Phỏng vấn"
                 ],
                 "ctaText": "Hãy làm cho giọng nói của bạn rõ ràng trong các cuộc họp."
             },
             {
-                "category": "Đời sống hàng ngày",
+                "category": "Đời sống",
                 "items": [
                     "Du lịch",
-                    "Trò chuyện",
-                    "Kết bạn",
-                    "Cuộc gọi",
-                    "Sống ở nước ngoài"
+                    "Trò chuyện xã giao",
+                    "Kết bạn"
                 ],
                 "ctaText": "Hãy làm cho tiếng Anh hàng ngày trở nên tự nhiên."
-            },
-            {
-                "category": "Kỳ thi & Mục tiêu",
-                "items": [
-                    "IELTS",
-                    "TOEFL",
-                    "Đại học",
-                    "Nhập cư",
-                    "Thay đổi nghề nghiệp"
-                ],
-                "ctaText": "Hãy chuẩn bị khả năng nói của bạn cho bài kiểm tra thực tế."
-            },
-            {
-                "category": "Lĩnh vực chuyên môn",
-                "items": [
-                    "CNTT",
-                    "Y tế",
-                    "Kỹ thuật",
-                    "Tài chính",
-                    "Bán hàng",
-                    "Luật"
-                ],
-                "ctaText": "Hãy làm cho tiếng Anh chuyên nghiệp cảm thấy dễ dàng."
             }
         ]
     },
-    "fluencyEngine": {
-        "title": "Động cơ trôi chảy",
-        "subtitle": "Học tập truyền thống coi tiếng Anh là dữ liệu. Chúng tôi coi đó là một phản xạ sinh học.",
-        "title1": "Hầu hết mọi người không thất bại ở tiếng Anh",
-        "desc1": "Họ biết ngữ pháp. Họ biết từ vựng. Nhưng khi nói, não họ chần chừ, dịch và đóng băng. Các khóa học truyền thống thêm nhiều quy tắc - làm mọi thứ tệ hơn.",
-        "content1": "Từ ngữ đóng băng khi áp lực ập đến.",
-        "title2": "Trôi chảy không phải là kiến thức. Nó là phản xạ.",
-        "desc2": "Nói là một phản ứng tự động. Giống như lái xe hay chơi nhạc. Bạn không suy nghĩ - bạn phản hồi. Fluency Engine rèn luyện phản xạ này trong thời gian thực.",
-        "content2_p1": "🧠 Kiến thức → ❌",
-        "content2_p2": "⚡ Phản xạ → Trôi chảy",
-        "title3": "Rèn luyện phản xạ trực tiếp",
-        "desc3": "Trong khi bạn nói, hệ thống lắng nghe những khoảng dừng, sự chần chừ và dòng chảy của bạn. Nó phản hồi ngay lập tức, giống như một gia sư thực thụ. Điều này rèn luyện não bạn nói mà không bị đóng băng.",
-        "content3_p1": "🎙 Bạn nói",
-        "content3_p2": "⚙ Fluency Engine",
-        "content3_p3": "💬 Phản hồi thời gian thực",
-        "title4": "Huấn luyện dựa trên mô hình",
-        "desc4": "Chúng tôi không nói “sai”. Chúng tôi phát hiện thói quen. Tạm dừng. Bắt đầu lại. Dịch trong đầu. Những mô hình này chặn sự trôi chảy - và đây là những gì chúng tôi rèn luyện lại.",
-        "content4_p1": "CHẦN CHỪ",
-        "content4_p2": "TỪ ĐỆM",
-        "content4_p3": "DỊCH THUẬT",
-        "content4_p4": "→ Được rèn luyện lại",
-        "title5": "An toàn cảm xúc",
-        "desc5": "Gia sư AI của bạn không bao giờ phán xét. Nó không bao giờ nói ‘sai’. Nó giữ bạn tiếp tục nói. Điều này loại bỏ nỗi sợ hãi - kẻ thù thực sự của sự trôi chảy.",
-        "content5_p1": "Không sợ hãi.",
-        "content5_p2": "Không xấu hổ.",
-        "content5_p3": "Chỉ nói thôi.",
-        "title6": "Trôi chảy theo tình huống",
-        "desc6": "Bạn không học ‘tiếng Anh’. Bạn học cách nói trong các cuộc họp, phỏng vấn, du lịch và cuộc sống hàng ngày. Gia sư của bạn mô phỏng các tình huống thực tế để não bạn chuyển nó vào thực tế.",
-        "content6_p1": "Phỏng vấn",
-        "content6_p2": "Cuộc họp",
-        "content6_p3": "Chuyện phiếm",
-        "content6_p4": "Du lịch",
-        "title7": "Tại sao nó hiệu quả",
-        "desc7": "Các hệ thống khác rèn luyện trí nhớ. Fluency Engine rèn luyện sự chần chừ, thời gian, sự tự tin và dòng chảy - những thứ thực sự quyết định liệu bạn có thể nói hay không.",
-        "content7_p2": "Chúng tôi rèn luyện kỹ năng nói."
+    "fluencyGlobe": {
+        "tag": "Cộng đồng toàn cầu",
+        "headline": "Nói tiếng Anh với thế giới.",
+        "subtext": "Tham gia mạng lưới học viên toàn cầu.",
+        "quote": "“Mọi người trên thế giới đang luyện tập, ngập ngừng, bắt đầu lại và tìm thấy giọng nói của mình - giống như bạn.”",
+        "stats": {
+            "timezones": {
+                "value": "12+",
+                "label": "Múi giờ"
+            },
+            "availability": {
+                "value": "24/7",
+                "label": "Sẵn sàng"
+            },
+            "immersion": {
+                "value": "100%",
+                "label": "Đắm mình"
+            }
+        }
+    },
+    "speakingMoments": {
+        "headline": "Những khoảnh khắc mà nói tiếng Anh cảm thấy khó nhất",
+        "subtext": "Đây không phải là vấn đề ngữ pháp. Đây là vấn đề về nhịp điệu.",
+        "modal": {
+            "whyHard": "Tại sao điều này cảm thấy khó",
+            "whyHardDesc": "Bạn đang cố gắng chuẩn bị mọi thứ trước khi nói.",
+            "reframeLabel": "Englivo Reframe",
+            "practice": "Luyện tập khoảnh khắc này",
+            "teach": "Xem cách chúng tôi dạy điều này"
+        },
+        "items": [
+            {
+                "id": "explain_delay",
+                "title": "Giải thích sự chậm trễ",
+                "description": "Khi bạn biết chuyện gì đã xảy ra nhưng gặp khó khăn để bắt đầu giải thích.",
+                "example": "“Bạn có thể giải thích tại sao chuyện này bị chậm trễ không?”",
+                "reframe": "Bắt đầu quan trọng hơn là giải thích hoàn hảo."
+            }
+        ]
+    },
+    "intermediatePlateau": {
+        "headline": "Bức tường vô hình",
+        "subtext": "Tại sao bạn cảm thấy bị kẹt ở mức 'Nâng cao'.",
+        "trap": {
+            "title": "Vòng lặp dịch thuật",
+            "desc": "Não bạn theo dõi từng từ về ngữ pháp trước khi bạn nói."
+        },
+        "flow": {
+            "title": "Tiếp nhận trực tiếp",
+            "desc": "Bỏ qua bộ lọc. Kết nối suy nghĩ trực tiếp với âm thanh."
+        }
+    },
+    "dailyRoutine": {
+        "headline": "20 phút mỗi ngày",
+        "subtext": "Lưu loát là một thói quen sinh học.",
+        "steps": [
+            {
+                "title": "Hấp thụ",
+                "time": "10 phút",
+                "desc": "Nghe một mô hình nhịp điệu cụ thể."
+            },
+            {
+                "title": "Phản hồi",
+                "time": "5 phút",
+                "desc": "Ghi lại một suy nghĩ ngắn."
+            },
+            {
+                "title": "Củng cố",
+                "time": "Ngủ",
+                "desc": "Não bạn tái cấu trúc trong khi nghỉ ngơi."
+            }
+        ]
+    },
+    "audioTransformation": {
+        "headline": "Nghe thấy sự thay đổi.",
+        "subtext": "Sự khác biệt giữa tiếng Anh 'đúng' và tiếng Anh 'lưu loát'.",
+        "week1": "Tuần 1",
+        "week12": "Tuần 12",
+        "label": "Phát để nghe"
     },
     "fluencyShowcase": {
-        "headline": "Công Cụ Lưu Loát",
-        "subtext": "Englivo không đoán bạn nói tốt như thế nào. Nó đo lường cách não bộ của bạn tạo ra ngôn ngữ trong thời gian thực.",
+        "headline": "The Fluency Engine",
+        "subtext": "Englivo không đoán bạn nói tốt như thế nào. Nó đo lường cách não bạn tạo ra ngôn ngữ trong thời gian thực.",
         "features": {
-            "pauseRatio": "Tỷ Lệ Ngưng Nghỉ",
-            "fillerUsage": "Sử Dụng Từ Đệm",
-            "speakingSpeed": "Tốc Độ Nói",
-            "fluencyScore": "Điểm Lưu Loát",
-            "cefrMapping": "Bản Đồ CEFR"
+            "pauseRatio": "Tỷ lệ khoảng nghỉ",
+            "fillerUsage": "Từ đệm",
+            "speakingSpeed": "Tốc độ nói",
+            "fluencyScore": "Điểm lưu loát",
+            "cefrMapping": "Bản đồ CEFR"
         },
-        "featureCaption": "Những tín hiệu này được trích xuất trực tiếp từ giọng nói của bạn.",
         "livePanel": {
-            "title": "Những Gì Englivo Thấy Khi Bạn Nói",
-            "caption": "Những con số này cập nhật mỗi giây khi bạn nói.",
+            "title": "Những gì Englivo thấy",
+            "caption": "Các con số này cập nhật mỗi giây khi bạn nói.",
             "metrics": {
-                "pauses": "Ngưng Nghỉ",
-                "fillers": "Từ Đệm",
-                "fluency": "Lưu Loát"
+                "pauses": "Khoảng nghỉ",
+                "fillers": "Từ đệm",
+                "fluency": "Độ lưu loát"
             }
         },
         "radar": {
-            "title": "Trình Độ Tiếng Anh Thực Của Bạn",
-            "caption": "Englivo ánh xạ dữ liệu nói của bạn tới cùng các cấp độ CEFR được sử dụng bởi các trường đại học."
+            "title": "Trình độ tiếng Anh thực tế",
+            "caption": "Englivo lập bản đồ dữ liệu nói của bạn theo các cấp độ CEFR."
         },
         "proof": {
-            "headline": "Một buổi học có thể thay đổi cách nói của bạn",
+            "headline": "Một phiên có thể thay đổi thói quen nói của bạn",
             "before": "Trước",
             "after": "Sau",
-            "week0": "Tuần 0",
-            "week1": "Tuần 1",
-            "caption": "Cùng một người. Cùng chủ đề. Sau một bài tập lưu loát có mục tiêu."
+            "caption": "Cùng một người. Cùng một chủ đề."
         },
         "cta": {
-            "button": "Bắt Đầu Kiểm Tra Lưu Loát",
-            "subtext": "Nói trong 30 giây. Xem những con số thực của bạn."
+            "button": "Bắt đầu kiểm tra",
+            "subtext": "Nói trong 30 giây."
         }
     },
-    "cefrJourney": {
-        "headline": "Sự lưu loát của bạn có thứ hạng",
-        "subtext": "Englivo không chỉ rèn luyện bạn. Nó cho bạn thấy bạn đang trở thành người nói như thế nào.",
-        "levels": {
-            "A1": {
-                "title": "Người sống sót",
-                "tagline": "Tôi có thể xoay xở được."
+    "testimonials": {
+        "headline": "Lưu loát là đòn bẩy sự nghiệp.",
+        "subtext": "Đừng chỉ nghe lời chúng tôi.",
+        "stories": [
+            {
+                "quote": "Tôi đã ngừng làm người im lặng trong các cuộc họp chiến lược. Cuối cùng tôi cũng có tiếng nói như một chuyên gia thực thụ.",
+                "author": "Elena K.",
+                "role": "Giám đốc sản phẩm cao cấp, Berlin"
             },
-            "A2": {
-                "title": "Người khám phá",
-                "tagline": "Tôi có thể đi du lịch và kết nối."
+            {
+                "quote": "Tiếng Anh của tôi 'đủ tốt', nhưng tôi không kết nối được. Giờ tôi có thể đùa giỡn, ngắt lời và dẫn dắt.",
+                "author": "Marco R.",
+                "role": "Trưởng nhóm kỹ thuật, São Paulo"
+            }
+        ]
+    },
+    "tutors": {
+        "headline": "Cố vấn, không chỉ là giáo viên.",
+        "subtext": "Những chuyên gia được tuyển chọn kỹ lưỡng, hiểu tâm lý biểu đạt.",
+        "viewAll": "Xem tất cả giảng viên"
+    },
+    "roadmap": {
+        "headline": "Quy trình được xây dựng cho sự trôi chảy",
+        "audit": {
+            "title": "Kiểm toán",
+            "desc": "Chúng tôi phân tích các mô hình ngập ngừng của bạn."
+        },
+        "plan": {
+            "title": "Lộ trình",
+            "desc": "Một kế hoạch tùy chỉnh dành riêng cho bạn."
+        },
+        "immersion": {
+            "title": "Đắm mình sâu",
+            "desc": "Các cuộc hội thoại có hướng dẫn nơi sự im lặng là an toàn."
+        }
+    },
+    "faq": {
+        "headline": "Các câu hỏi thường gặp",
+        "items": [
+            {
+                "question": "Englivo có dành cho người mới bắt đầu không?",
+                "answer": "Không. Englivo được xây dựng cho những người đã biết tiếng Anh nhưng gặp khó khăn khi nói trôi chảy."
+            }
+        ]
+    },
+    "ctaBottom": {
+        "headline": "Phát hiện nhịp điệu của bạn?",
+        "button": "Đặt phiên đầu tiên",
+        "guarantee": "Không yêu cầu cam kết. Hoàn tiền 100%."
+    },
+    "footer": {
+        "description": "Phương pháp tiếp cận tinh hoa để lưu loát.",
+        "columns": {
+            "product": {
+                "title": "Sản phẩm",
+                "method": "Phương pháp",
+                "pricing": "Giá cả",
+                "practice": "Luyện tập"
             },
-            "B1": {
-                "title": "Người kết nối",
-                "tagline": "Tôi có thể giao tiếp xã hội."
+            "company": {
+                "title": "Công ty",
+                "about": "Giới thiệu",
+                "careers": "Tuyển dụng",
+                "contact": "Liên hệ"
             },
-            "B2": {
-                "title": "Người suy nghĩ",
-                "tagline": "Tôi có thể làm việc bằng tiếng Anh."
-            },
-            "C1": {
-                "title": "Nhà chiến lược",
-                "tagline": "Tôi có thể thuyết phục."
-            },
-            "C2": {
-                "title": "Nhà ngoại giao",
-                "tagline": "Tôi có thể điều hướng các sắc thái."
+            "legal": {
+                "title": "Pháp lý",
+                "privacy": "Bảo mật",
+                "terms": "Điều khoản"
             }
         },
-        "tooltip": "Bạn không đạt được điều này bằng cách học. Bạn đạt được nó bằng cách nói.",
-        "cta": "Xem trình độ của tôi",
-        "ladderTag": "Leo lên nấc thang"
+        "copyright": "© 2024 Englivo"
+    },
+    "assessmentPage": {
+        "title": "Đánh giá sự lưu loát",
+        "preparatory_note": "Chúng tôi đang chuẩn bị môi trường chẩn đoán cá nhân hóa cho bạn.",
+        "loading_module": "Đang tải mô-đun đánh giá...",
+        "available_soon": "Sắp ra mắt"
+    },
+    "tutorSession": {
+        "prepTitle": "Chuẩn bị buổi học",
+        "prepSubtitle": "Xem lại các rào cản CEFR trước khi bắt đầu với {studentName}",
+        "backToDashboard": "Quay lại Dashboard",
+        "startSession": "Bắt đầu buổi học",
+        "completeChecklist": "Hoàn thành danh sách kiểm tra ở trên, sau đó nhấp vào Bắt đầu buổi học"
     }
 }

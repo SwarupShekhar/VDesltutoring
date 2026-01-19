@@ -16,7 +16,7 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                             <BubbleText />
                         </Link>
                         <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
-                            {t.description}
+                            {t.description || "The boutique approach to fluency. For professionals who feel stuck in the silence between thought and speech."}
                         </p>
                         <div className="flex gap-4">
                             <a href="#" className="text-slate-400 hover:text-electric transition-colors" aria-label="Twitter"><Twitter size={20} /></a>
@@ -66,7 +66,7 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                     <div className="flex gap-6 text-sm text-slate-400">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                            <span>All Systems Operational</span>
+                            <span>{locale === 'vi' ? 'Toàn bộ hệ thống hoạt động' : locale === 'ja' ? 'すべてのシステムが正常' : 'All Systems Operational'}</span>
                         </div>
                     </div>
                 </div>

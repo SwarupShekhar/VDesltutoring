@@ -2,6 +2,7 @@
     "nav": {
         "brandSubtitle": "Speak without translating",
         "approach": "Our Method",
+        "howItWorks": "How It Works",
         "practice": "Practice",
         "pricing": "Pricing",
         "about": "About Us",
@@ -742,5 +743,41 @@
         "tooltip": "You don’t get this by studying. You earn it by speaking.",
         "cta": "See where I stand",
         "ladderTag": "Scale the ladder"
+    },
+    "footer": {
+        "description": "The boutique approach to fluency. For professionals who feel stuck in the silence between thought and speech.",
+        "columns": {
+            "product": {
+                "title": "Product",
+                "method": "Method",
+                "pricing": "Pricing",
+                "practice": "Practice"
+            },
+            "company": {
+                "title": "Company",
+                "about": "About",
+                "careers": "Careers",
+                "contact": "Contact"
+            },
+            "legal": {
+                "title": "Legal",
+                "privacy": "Privacy",
+                "terms": "Terms"
+            }
+        },
+        "copyright": "© 2024 Englivo"
+    },
+    "assessmentPage": {
+        "title": "Fluency Assessment",
+        "preparatory_note": "We are preparing your personalized diagnostic environment. This assessment will analyze your hesitation patterns and create your custom roadmap.",
+        "loading_module": "Assessment Module Loading...",
+        "available_soon": "Available Soon"
+    },
+    "tutorSession": {
+        "prepTitle": "Session Preparation",
+        "prepSubtitle": "Review CEFR blockers before starting with {studentName}",
+        "backToDashboard": "Back to Dashboard",
+        "startSession": "Start Session",
+        "completeChecklist": "Complete the coaching checklist above, then click Start Session"
     }
 }

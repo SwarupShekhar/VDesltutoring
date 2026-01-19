@@ -13,9 +13,18 @@ const dictionaries: Record<string, () => Promise<any>> = {
 export type Locale = keyof typeof dictionaries;
 
 export const getDictionary = async (locale: Locale): Promise<any> => {
+    console.log(`[i18n] Fetching dictionary for locale: ${locale}`);
+
     // partial match or fallback
     if (dictionaries[locale]) {
-        return dictionaries[locale]();
+        try {
+            return await dictionaries[locale]();
+        } catch (error) {
+            console.error(`[i18n] Failed to load dictionary for locale: ${locale}`, error);
+            return dictionaries.en();
+        }
     }
+
+    console.warn(`[i18n] Locale "${locale}" not found, falling back to "en"`);
     return dictionaries.en(); // Fallback
 }

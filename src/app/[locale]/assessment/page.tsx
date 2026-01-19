@@ -7,6 +7,13 @@ import Link from 'next/link';
 export default async function AssessmentPage({ params }: { params: Promise<{ locale: Locale }> }) {
     const { locale } = await params;
     const dict = await getDictionary(locale);
+    const assessmentDict = dict.assessmentPage || {
+        title: "Fluency Assessment",
+        preparatory_note: "We are preparing your personalized diagnostic environment. This assessment will analyze your hesitation patterns and create your custom roadmap.",
+        loading_module: "Assessment Module Loading...",
+        available_soon: "Available Soon"
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground">
 
@@ -15,17 +22,16 @@ export default async function AssessmentPage({ params }: { params: Promise<{ loc
                     <div className="w-3 h-3 bg-electric rounded-full animate-pulse" />
                 </div>
 
-                <h1 className="font-serif text-4xl md:text-5xl mb-6">Fluency Assessment</h1>
+                <h1 className="font-serif text-4xl md:text-5xl mb-6">{assessmentDict.title}</h1>
                 <p className="text-xl text-muted-foreground leading-relaxed mb-12">
-                    We are preparing your personalized diagnostic environment.
-                    This assessment will analyze your hesitation patterns and create your custom roadmap.
+                    {assessmentDict.preparatory_note}
                 </p>
 
                 <div className="inline-flex flex-col items-center gap-4">
                     <Button size="lg" className="rounded-full px-8 bg-electric text-white shadow-lg" disabled>
-                        Assessment Module Loading...
+                        {assessmentDict.loading_module}
                     </Button>
-                    <p className="text-xs text-muted-foreground uppercase tracking-widest">Available Soon</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-widest">{assessmentDict.available_soon}</p>
                 </div>
             </main>
         </div>

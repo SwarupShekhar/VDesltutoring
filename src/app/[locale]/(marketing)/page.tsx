@@ -1,26 +1,28 @@
-import DynamicText from '@/components/ui/dynamic-text';
-import { FAQSection } from '@/components/FAQSection';
 import Link from 'next/link';
-import { SpeakingMomentsGrid } from '@/components/SpeakingMomentsGrid';
-import { FloatingConversation } from '@/components/FloatingConversation';
-import { TutorCard } from '@/components/TutorCard';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight } from 'lucide-react';
-import { IntermediatePlateau } from '@/components/IntermediatePlateau';
-import { DailyRoutine } from '@/components/DailyRoutine';
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
 import { currentUser } from '@clerk/nextjs/server';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
-import { AITutorButton } from '@/components/AITutorButton';
-import { FluencyMirror } from '@/components/FluencyMirror';
-import { SituationalGateway } from '@/components/SituationalGateway';
-import { FluencyReflexSection } from '@/components/FluencyReflexSection';
-import { TestimonialsCarousel } from '@/components/TestimonialsCarousel';
-import { AudioTransformation } from '@/components/AudioTransformation';
-import { FluencyEngineShowcase } from '@/components/FluencyEngineShowcase';
-import { FluencyGlobe } from '@/components/FluencyGlobe';
-import { LiveNowBanner } from '@/components/LiveNowBanner';
-import { CEFRJourney } from '@/components/home/CEFRJourney';
+import dynamic from 'next/dynamic';
+
+const DynamicText = dynamic(() => import('@/components/ui/dynamic-text'));
+const FAQSection = dynamic(() => import('@/components/FAQSection').then(mod => mod.FAQSection));
+const SpeakingMomentsGrid = dynamic(() => import('@/components/SpeakingMomentsGrid').then(mod => mod.SpeakingMomentsGrid));
+const FloatingConversation = dynamic(() => import('@/components/FloatingConversation').then(mod => mod.FloatingConversation));
+const TutorCard = dynamic(() => import('@/components/TutorCard').then(mod => mod.TutorCard));
+const IntermediatePlateau = dynamic(() => import('@/components/IntermediatePlateau').then(mod => mod.IntermediatePlateau));
+const DailyRoutine = dynamic(() => import('@/components/DailyRoutine').then(mod => mod.DailyRoutine));
+const AITutorButton = dynamic(() => import('@/components/AITutorButton').then(mod => mod.AITutorButton));
+const FluencyMirror = dynamic(() => import('@/components/FluencyMirror').then(mod => mod.FluencyMirror));
+const SituationalGateway = dynamic(() => import('@/components/SituationalGateway').then(mod => mod.SituationalGateway));
+const FluencyReflexSection = dynamic(() => import('@/components/FluencyReflexSection').then(mod => mod.FluencyReflexSection));
+const TestimonialsCarousel = dynamic(() => import('@/components/TestimonialsCarousel').then(mod => mod.TestimonialsCarousel));
+const AudioTransformation = dynamic(() => import('@/components/AudioTransformation').then(mod => mod.AudioTransformation));
+const FluencyEngineShowcase = dynamic(() => import('@/components/FluencyEngineShowcase').then(mod => mod.FluencyEngineShowcase));
+const FluencyGlobe = dynamic(() => import('@/components/FluencyGlobe').then(mod => mod.FluencyGlobe));
+const LiveNowBanner = dynamic(() => import('@/components/LiveNowBanner').then(mod => mod.LiveNowBanner));
+const CEFRJourney = dynamic(() => import('@/components/home/CEFRJourney').then(mod => mod.CEFRJourney));
 
 
 const tutors = [

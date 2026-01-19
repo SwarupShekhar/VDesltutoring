@@ -114,7 +114,9 @@
                 "items": [
                     "Reuniones",
                     "Presentaciones",
-                    "Entrevistas"
+                    "Entrevistas",
+                    "Correos",
+                    "Negociaciones"
                 ],
                 "ctaText": "Hagamos que tu voz sea clara en las reuniones."
             },
@@ -123,9 +125,34 @@
                 "items": [
                     "Viajes",
                     "Charla casual",
-                    "Hacer amigos"
+                    "Hacer amigos",
+                    "Llamadas",
+                    "Vivir en el extranjero"
                 ],
                 "ctaText": "Hagamos que el inglés diario se sienta natural."
+            },
+            {
+                "category": "Exámenes y Metas",
+                "items": [
+                    "IELTS",
+                    "TOEFL",
+                    "Universidad",
+                    "Inmigración",
+                    "Cambio de carrera"
+                ],
+                "ctaText": "Preparemos tu habla para la prueba real."
+            },
+            {
+                "category": "Campos Especializados",
+                "items": [
+                    "TI",
+                    "Salud",
+                    "Ingeniería",
+                    "Finanzas",
+                    "Ventas",
+                    "Derecho"
+                ],
+                "ctaText": "Hagamos que el inglés profesional sea sin esfuerzo."
             }
         ]
     },
@@ -166,6 +193,41 @@
                 "description": "Cuando sabes lo que pasó pero te cuesta empezar a explicar.",
                 "example": "“¿Puedes explicar por qué se retrasó esto?”",
                 "reframe": "Empezar importa más que una explicación perfecta."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Ser preguntado inesperadamente",
+                "description": "Cuando entiendes la pregunta pero tu mente se queda en blanco.",
+                "example": "“¿Qué piensas de esta idea?”",
+                "reframe": "No necesitas una respuesta, necesitas una entrada."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Estar en desacuerdo cortésmente",
+                "description": "Cuando quieres estar en desacuerdo pero temes sonar grosero.",
+                "example": "“No estoy seguro de estar de acuerdo con eso.”",
+                "reframe": "El tono viene del ritmo, no del vocabulario."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Clarificar un malentendido",
+                "description": "Cuando algo sale mal y necesitas explicarte.",
+                "example": "“Déjame aclarar lo que quise decir.”",
+                "reframe": "Hablar pronto evita la presión."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Unirse tarde a una conversación",
+                "description": "Cuando la discusión ya avanza rápido.",
+                "example": "“¿Puedo añadir algo aquí?”",
+                "reframe": "Tomar espacio es una habilidad."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Perder la frase a la mitad",
+                "description": "Cuando empiezas a hablar y olvidas lo que querías decir.",
+                "example": "“Lo que intentaba decir es…”",
+                "reframe": "Pausar con confianza mantiene el flujo vivo."
             }
         ]
     },

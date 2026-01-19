@@ -117,7 +117,9 @@
                 "items": [
                     "Cuộc họp",
                     "Thuyết trình",
-                    "Phỏng vấn"
+                    "Phỏng vấn",
+                    "Email",
+                    "Đàm phán"
                 ],
                 "ctaText": "Hãy làm cho giọng nói của bạn rõ ràng trong các cuộc họp."
             },
@@ -126,9 +128,34 @@
                 "items": [
                     "Du lịch",
                     "Trò chuyện xã giao",
-                    "Kết bạn"
+                    "Kết bạn",
+                    "Cuộc gọi điện thoại",
+                    "Sống ở nước ngoài"
                 ],
                 "ctaText": "Hãy làm cho tiếng Anh hàng ngày trở nên tự nhiên."
+            },
+            {
+                "category": "Kỳ thi & Mục tiêu",
+                "items": [
+                    "IELTS",
+                    "TOEFL",
+                    "Đại học",
+                    "Nhập cư",
+                    "Thay đổi nghề nghiệp"
+                ],
+                "ctaText": "Hãy chuẩn bị khả năng nói cho bài kiểm tra thực tế."
+            },
+            {
+                "category": "Lĩnh vực chuyên môn",
+                "items": [
+                    "CNTT",
+                    "Y tế",
+                    "Kỹ thuật",
+                    "Tài chính",
+                    "Bán hàng",
+                    "Luật"
+                ],
+                "ctaText": "Hãy làm cho tiếng Anh chuyên ngành trở nên dễ dàng."
             }
         ]
     },
@@ -169,6 +196,41 @@
                 "description": "Khi bạn biết chuyện gì đã xảy ra nhưng gặp khó khăn để bắt đầu giải thích.",
                 "example": "“Bạn có thể giải thích tại sao chuyện này bị chậm trễ không?”",
                 "reframe": "Bắt đầu quan trọng hơn là giải thích hoàn hảo."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Bị hỏi bất ngờ",
+                "description": "Khi bạn hiểu câu hỏi nhưng đầu óc trống rỗng.",
+                "example": "“Bạn nghĩ gì về ý tưởng này?”",
+                "reframe": "Bạn không cần câu trả lời - bạn cần một lối vào."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Phản đối một cách lịch sự",
+                "description": "Khi bạn muốn phản đối nhưng sợ nghe có vẻ thô lỗ.",
+                "example": "“Tôi không chắc mình đồng ý về điều đó.”",
+                "reframe": "Giọng điệu đến từ nhịp độ, không phải từ vựng."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Làm rõ sự hiểu lầm",
+                "description": "Khi có sự cố và bạn cần giải thích bản thân.",
+                "example": "“Hãy để tôi làm rõ ý tôi.”",
+                "reframe": "Nói sớm ngăn chặn áp lực."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Tham gia cuộc trò chuyện muộn",
+                "description": "Khi cuộc thảo luận đang diễn ra nhanh chóng.",
+                "example": "“Tôi có thể thêm một chút ý kiến vào đây không?”",
+                "reframe": "Giành lấy không gian nói là một kỹ năng."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Mất ý giữa câu",
+                "description": "Khi bạn bắt đầu nói và quên mất mình muốn nói gì.",
+                "example": "“Điều tôi đang cố gắng nói là…”",
+                "reframe": "Dừng lại một cách tự tin giữ cho dòng chảy tiếp tục."
             }
         ]
     },

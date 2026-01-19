@@ -126,18 +126,45 @@
                 "items": [
                     "Réunions",
                     "Présentations",
-                    "Entretiens"
+                    "Entretiens",
+                    "E-mails",
+                    "Négociations"
                 ],
                 "ctaText": "Faisons en sorte que votre voix soit claire en réunion."
             },
             {
-                "category": "Vie quotidienne",
+                "category": "Vie Quotidienne",
                 "items": [
                     "Voyage",
-                    "Small talk",
-                    "Se faire des amis"
+                    "Discussions",
+                    "Se faire des amis",
+                    "Appels téléphoniques",
+                    "Vivre à l'étranger"
                 ],
                 "ctaText": "Rendons l'anglais quotidien naturel."
+            },
+            {
+                "category": "Examens & Objectifs",
+                "items": [
+                    "IELTS",
+                    "TOEFL",
+                    "Université",
+                    "Immigration",
+                    "Changement de carrière"
+                ],
+                "ctaText": "Préparons votre oral pour le vrai test."
+            },
+            {
+                "category": "Domaines Spécialisés",
+                "items": [
+                    "IT",
+                    "Santé",
+                    "Ingénierie",
+                    "Finance",
+                    "Vente",
+                    "Droit"
+                ],
+                "ctaText": "Rendons l'anglais professionnel sans effort."
             }
         ]
     },
@@ -176,8 +203,43 @@
                 "id": "explain_delay",
                 "title": "Expliquer un retard",
                 "description": "Quand vous savez ce qui s'est passé mais avez du mal à commencer à expliquer.",
-                "example": "« Pouvez-vous expliquer pourquoi cela a été retardé ? »",
+                "example": "“Pouvez-vous expliquer pourquoi cela a été retardé ?”",
                 "reframe": "Commencer est plus important qu'une explication parfaite."
+            },
+            {
+                "id": "unexpected_question",
+                "title": "Être interrogé à l'improviste",
+                "description": "Quand vous comprenez la question mais votre esprit se vide.",
+                "example": "“Que pensez-vous de cette idée ?”",
+                "reframe": "Vous n'avez pas besoin d'une réponse, mais d'une entrée."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Être en désaccord poliment",
+                "description": "Quand vous voulez être en désaccord mais craignez de paraître impoli.",
+                "example": "“Je ne suis pas sûr d'être d'accord avec ça.”",
+                "reframe": "Le ton vient du rythme, pas du vocabulaire."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Clarifier un malentendu",
+                "description": "Quand quelque chose ne va pas et vous devez vous expliquer.",
+                "example": "“Laissez-moi clarifier ce que je voulais dire.”",
+                "reframe": "Parler tôt évite la pression."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Rejoindre une conversation tard",
+                "description": "Quand la discussion avance déjà vite.",
+                "example": "“Puis-je ajouter quelque chose ici ?”",
+                "reframe": "Prendre sa place est une compétence."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Perder sa phrase en cours de route",
+                "description": "Quand vous commencez à parler et oubliez ce que vous vouliez dire.",
+                "example": "“Ce que j'essayais de dire est…”",
+                "reframe": "Faire une pause avec confiance maintient le flux."
             }
         ]
     },

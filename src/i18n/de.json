@@ -126,7 +126,9 @@
                 "items": [
                     "Meetings",
                     "Präsentationen",
-                    "Interviews"
+                    "Interviews",
+                    "E-Mails",
+                    "Verhandlungen"
                 ],
                 "ctaText": "Lass uns deine Stimme in Meetings klar machen."
             },
@@ -135,9 +137,34 @@
                 "items": [
                     "Reisen",
                     "Small Talk",
-                    "Freunde finden"
+                    "Freunde finden",
+                    "Telefonate",
+                    "Im Ausland leben"
                 ],
                 "ctaText": "Lass uns Alltagsenglisch natürlich klingen lassen."
+            },
+            {
+                "category": "Prüfungen & Ziele",
+                "items": [
+                    "IELTS",
+                    "TOEFL",
+                    "Universität",
+                    "Einwanderung",
+                    "Karrierewechsel"
+                ],
+                "ctaText": "Lass uns dein Sprechen für den echten Test vorbereiten."
+            },
+            {
+                "category": "Fachgebiete",
+                "items": [
+                    "IT",
+                    "Gesundheitswesen",
+                    "Ingenieurwesen",
+                    "Finanzen",
+                    "Vertrieb",
+                    "Recht"
+                ],
+                "ctaText": "Lass uns professionelles Englisch mühelos machen."
             }
         ]
     },
@@ -185,6 +212,34 @@
                 "description": "Wenn du die Frage verstehst, dein Kopf aber leer ist.",
                 "example": "„Was halten Sie von dieser Idee?“",
                 "reframe": "Du brauchst keine Antwort - du brauchst einen Einstieg."
+            },
+            {
+                "id": "disagree_politely",
+                "title": "Höflich widersprechen",
+                "description": "Wenn du widersprechen willst, aber Angst hast unhöflich zu klingen.",
+                "example": "„Ich bin nicht sicher, ob ich da zustimme.“",
+                "reframe": "Tonfall kommt vom Tempo, nicht vom Vokabular."
+            },
+            {
+                "id": "clarify_mistake",
+                "title": "Missverständnis klären",
+                "description": "Wenn etwas schiefläuft und du dich erklären musst.",
+                "example": "„Lass mich erklären, was ich meinte.“",
+                "reframe": "Früh sprechen verhindert Druck."
+            },
+            {
+                "id": "joining_conversation",
+                "title": "Spät in ein Gespräch einsteigen",
+                "description": "Wenn die Diskussion schon schnell läuft.",
+                "example": "„Darf ich hier etwas hinzufügen?“",
+                "reframe": "Raum einzunehmen ist eine Fähigkeit."
+            },
+            {
+                "id": "thinking_mid_sentence",
+                "title": "Satz mitten drin verlieren",
+                "description": "Wenn du anfängst zu sprechen und vergisst was du sagen wolltest.",
+                "example": "„Was ich sagen wollte ist…“",
+                "reframe": "Selbstbewusstes Pausieren hält den Fluss am Leben."
             }
         ]
     },

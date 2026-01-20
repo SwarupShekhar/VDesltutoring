@@ -1,7 +1,4 @@
 import { type Metadata } from 'next'
-import {
-  ClerkProvider,
-} from '@clerk/nextjs'
 import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google'
 import '../globals.css'
 import { BrowserExtensionFix } from '@/components/BrowserExtensionFix'
@@ -58,11 +55,9 @@ export default async function RootLayout({
   const { locale } = await params
 
   return (
-    <ClerkProvider>
-      <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}>
-        <BrowserExtensionFix />
-        {children}
-      </div>
-    </ClerkProvider>
+    <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}>
+      <BrowserExtensionFix />
+      {children}
+    </div>
   )
 }

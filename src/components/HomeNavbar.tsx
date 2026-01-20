@@ -70,6 +70,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
     { label: t.practice || 'Practice', href: `/${locale}/practice`, onClick: handlePracticeClick },
     { label: t.pricing || 'Pricing', href: `/${locale}/pricing` },
     { label: t.about || 'About Us', href: `/${locale}/about` },
+    { label: t.blog || 'Blog', href: `/${locale}/blog` }, // Added Blog
     // Add Dashboard if logged in (Client-side check via user)
     ...(user ? [
       { label: 'AI Tutor', href: '/ai-tutor' },

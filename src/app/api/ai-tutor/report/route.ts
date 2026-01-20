@@ -63,7 +63,7 @@ OUTPUT JSON:
 
 export async function POST(req: Request) {
   try {
-    const { transcript } = await req.json()
+    const { transcript, duration } = await req.json()
 
     // Filter out AI speech to check if STUDENT actually spoke
     const studentText = transcript
@@ -96,7 +96,32 @@ export async function POST(req: Request) {
 
     // 50 words is roughly 30-45 seconds of speaking.
     // User requested 3-5 mins, but 50 words is a good "minimum viable" threshold to avoid hallucinations.
-    if (!studentText || wordCount < 50) {
+    // 50 words is roughly 30-45 seconds of speaking.
+    // User requested 3-5 mins, but we also enforce a hard time limit.
+
+
+    // Check for 3-minute minimum (180 seconds)
+    // We kept the 10-word threshold for basic debugging, but for a valid CEFR score, we now require time.
+    if (duration && duration < 180) {
+      return NextResponse.json({
+        identity: {
+          archetype: "Quick Practice",
+          description: "Session under 3 minutes. Assessment requires a longer sample."
+        },
+        insights: {
+          fluency: "Keep talking! reliable fluency tracking requires at least 3 minutes of continuous speech.",
+          grammar: "Practice mode active.",
+          vocabulary: "Practice mode active."
+        },
+        patterns: ["Session too short for full CEFR profiling."],
+        refinements: [],
+        next_step: "Try a longer session (3+ mins) to get your CEFR level.",
+        drills: [],
+        metrics
+      })
+    }
+
+    if (!studentText || wordCount < 10) {
       // Return "Insufficient Data" instead of a placeholder report
       return NextResponse.json({
         identity: {

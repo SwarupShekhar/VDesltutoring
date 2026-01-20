@@ -16,6 +16,7 @@ export default async function AdminLayout({
                         Englivo <span className="text-blue-600">Admin</span>
                     </div>
                     <nav className="flex gap-6">
+                        <NavLink href="/admin/blog">Blog</NavLink>
                         <NavLink href="/admin/qa">QA Inspector</NavLink>
                         <NavLink href="/admin/control">Engine Control</NavLink>
                         <NavLink href="/admin/analytics">Analytics</NavLink>

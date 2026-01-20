@@ -20,6 +20,8 @@ const isPublicRoute = createRouteMatcher([
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response
     '/api/live-practice(.*)', // Public stats for landing page
+    '/blog',
+    '/blog/(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

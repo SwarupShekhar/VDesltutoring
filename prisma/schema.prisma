@@ -343,3 +343,16 @@ model user_daily_plan {
   user        users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
   exercise    fluency_exercises @relation(fields: [exercise_id], references: [id], onDelete: Cascade)
 }
+
+model blog_posts {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  content   String   // HTML from Tiptap or Markdown
+  cover     String?
+  status    String   // draft | published
+  author_id String
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

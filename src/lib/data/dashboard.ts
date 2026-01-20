@@ -257,7 +257,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
         // Fetch AI Sessions & Practice Sessions for Learner
         let formattedAiSessions: any[] = [];
         if (role === 'LEARNER') {
-            const [aiChats, practiceSessions] = await Promise.all([
+            const [aiChats, practiceSessions, liveSessions] = await Promise.all([
                 prisma.ai_chat_sessions.findMany({
                     where: { user_id: user.id },
                     orderBy: { started_at: 'desc' },
@@ -267,6 +267,16 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 prisma.fluency_sessions.findMany({
                     where: { user_clerk_id: user.clerkId! },
                     orderBy: { created_at: 'desc' },
+                    take: 10
+                }),
+                prisma.live_sessions.findMany({
+                    where: {
+                        OR: [
+                            { user_a: user.id },
+                            { user_b: user.id }
+                        ]
+                    },
+                    orderBy: { started_at: 'desc' },
                     take: 10
                 })
             ])
@@ -298,8 +308,28 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 }
             }));
 
+            // Normalize Live Sessions (P2P)
+            const p2pSessions = liveSessions.map(s => ({
+                id: s.id,
+                date: s.started_at,
+                type: 'P2P_PRACTICE',
+                report: {
+                    identity: { archetype: "Live Peer Session" },
+                    // Placeholder until we have P2P analytics
+                    cefr_analysis: { level: 'Unassessed', reason: 'Peer conversation.' },
+                    patterns: [
+                        `Peer Session • Status: ${s.status}`
+                    ],
+                    metrics: {
+                        // We would need to join with live_metrics to get real data
+                        wordCount: 0,
+                        fillerPercentage: 0
+                    }
+                }
+            }));
+
             // Merge & Sort
-            formattedAiSessions = [...chats, ...practices]
+            formattedAiSessions = [...chats, ...practices, ...p2pSessions]
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 .slice(0, 10);
 

@@ -54,6 +54,7 @@ export default function AITutor() {
     const audioRef = useRef<HTMLAudioElement | null>(null)
     const streamRef = useRef<MediaStream | null>(null)
     const voiceDetectRef = useRef<number | null>(null)
+    const startTimeRef = useRef<number>(0)
 
     const router = useRouter()
     // Use searchParams for mode detection
@@ -111,6 +112,7 @@ export default function AITutor() {
 
     const startSession = async () => {
         setStarted(true)
+        startTimeRef.current = Date.now()
         // Small delay to ensure UI transition completes and audio context is ready
         setTimeout(async () => {
             if (mode === 'challenge') {
@@ -157,12 +159,13 @@ export default function AITutor() {
             setReportData(report)
 
             // 2. Save Session
+            const durationSeconds = Math.round((Date.now() - (startTimeRef.current || Date.now())) / 1000);
             await fetch("/api/ai-tutor/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     messages: chats,
-                    duration: 300,
+                    duration: durationSeconds,
                     report: report
                 })
             })

@@ -28,6 +28,7 @@ export function Navbar({ role }: NavbarProps) {
       { name: 'Dashboard', href: '/dashboard' },
       { name: 'Live Practice', href: '/live-practice' },
       { name: 'Book Session', href: '/sessions/book' },
+      { name: 'Blog', href: '/blog' },
     ],
     TUTOR: [
       { name: 'Dashboard', href: '/tutor/dashboard' },

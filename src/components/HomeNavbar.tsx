@@ -115,7 +115,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                   key={link.label}
                   href={link.href}
                   onClick={link.onClick}
-                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group cursor-pointer"
+                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group cursor-pointer whitespace-nowrap"
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />

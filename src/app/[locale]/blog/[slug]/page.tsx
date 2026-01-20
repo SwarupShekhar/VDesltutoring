@@ -5,6 +5,7 @@ import { Calendar, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer";
+import { RelatedFromPillar } from '@/components/blog/RelatedFromPillar';
 
 interface PageProps {
     params: Promise<{ slug: string }>
@@ -37,8 +38,26 @@ export default async function BlogPostPage({ params }: PageProps) {
         notFound()
     }
 
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: post.title,
+        image: post.cover ? [post.cover] : [],
+        datePublished: post.createdAt,
+        dateModified: post.updatedAt,
+        author: [{
+            '@type': 'Person',
+            name: 'Swarup Shekhar',
+            url: 'https://englivo.com/about'
+        }]
+    }
+
     return (
         <article className="min-h-screen bg-white dark:bg-slate-950 pt-24 pb-16">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <Link href="/blog" className="inline-flex items-center text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mb-8 transition-colors">
                     <ArrowLeft size={16} className="mr-2" /> Back to Blog
@@ -66,6 +85,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
                 <article className="prose prose-lg prose-indigo dark:prose-invert max-w-3xl mx-auto px-4">
                     <MarkdownRenderer content={post.content} />
+                    <RelatedFromPillar />
                 </article>
             </div>
         </article>

@@ -23,6 +23,7 @@ const FluencyEngineShowcase = dynamic(() => import('@/components/FluencyEngineSh
 const FluencyGlobe = dynamic(() => import('@/components/FluencyGlobe').then(mod => mod.FluencyGlobe));
 const LiveNowBanner = dynamic(() => import('@/components/LiveNowBanner').then(mod => mod.LiveNowBanner));
 const CEFRJourney = dynamic(() => import('@/components/home/CEFRJourney').then(mod => mod.CEFRJourney));
+const MicroHeadlines = dynamic(() => import('@/components/MicroHeadlines').then(mod => mod.MicroHeadlines));
 
 
 const tutors = [
@@ -51,8 +52,26 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   // Clean headline for Text Effect (remove HTML tags)
   const headlineText = t.hero.headline.replace(/<[^>]*>/g, ' ');
 
+  // FAQ Schema
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.items.map((item: any) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-electric/30 selection:text-electric-foreground relative">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <FloatingConversation />
 
       {/* AI Tutor Floating Button */}
@@ -91,9 +110,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                   {t.hero.ctaReflection}
                 </Button>
               </Link>
-              <Link href="#method">
+              <Link href={`/${locale}/fluency-guide`}>
                 <Button variant="ghost" size="lg" className="rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/10 px-8 h-12 text-base">
-                  {t.hero.ctaMethod}
+                  Explore Fluency Guide →
                 </Button>
               </Link>
             </div>
@@ -102,6 +121,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
         {/* 1.2 LIVE NOW BANNER */}
         <LiveNowBanner locale={locale} />
+
+        {/* 1.3 MICRO-HEADLINES (Pillar + Problem/Solution) */}
+        <MicroHeadlines locale={locale} />
 
         {/* 1.5 FLUENCY ENGINE (Sticky Scroll Reveal) */}
         <FluencyReflexSection dict={t.fluencyEngine} />

@@ -9,7 +9,7 @@ import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/Button';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { Menu, X, ChevronDown, User, CreditCard, Info, LogOut, ShieldAlert } from 'lucide-react';
+import { Menu, X, ChevronDown, User, CreditCard, Info, LogOut, ShieldAlert, Sparkles } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BubbleText } from '@/components/BubbleText';
 import { GetStartedButton } from '@/components/GetStartedButton';
@@ -66,16 +66,12 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
   const navLinks = [
     { label: t.approach || 'Our Method', href: `/${locale}/method` },
+    { label: 'Fluency Guide', href: `/${locale}/fluency-guide` }, // Added Fluency Guide
     { label: t.howItWorks || 'How It Works', href: `/${locale}/how-it-works` },
     { label: t.practice || 'Practice', href: `/${locale}/practice`, onClick: handlePracticeClick },
     { label: t.pricing || 'Pricing', href: `/${locale}/pricing` },
     { label: t.about || 'About Us', href: `/${locale}/about` },
     { label: t.blog || 'Blog', href: `/${locale}/blog` }, // Added Blog
-    // Add Dashboard if logged in (Client-side check via user)
-    ...(user ? [
-      { label: 'AI Tutor', href: '/ai-tutor' },
-      { label: t.dashboard || 'Dashboard', href: `/${locale}/dashboard` }
-    ] : []),
   ];
 
   const scrollToTop = () => {
@@ -113,7 +109,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
             </Link>
 
             {/* CENTER: NAVIGATION */}
-            <div className="hidden md:flex items-center space-x-10">
+            <div className="hidden md:flex items-center space-x-6 lg:space-x-10">
               {navLinks.map((link) => (
                 <a
                   key={link.label}
@@ -137,43 +133,56 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
               <ThemeToggle />
 
               {isLoaded && user ? (
-                <Dropdown
-                  trigger={
-                    <button className="focus:outline-none">
-                      <Avatar src={user.imageUrl} alt={user.fullName || 'User'} size="sm" className="border-2 border-transparent hover:border-electric transition-colors" />
-                    </button>
-                  }
-                  align="right"
-                >
-                  <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{user.fullName}</p>
-                    <p className="text-xs text-slate-500 truncate">{user.primaryEmailAddress?.emailAddress}</p>
-                    <p className="text-xs text-electric font-bold mt-1">{userRole}</p>
-                  </div>
-
-                  {userRole === 'ADMIN' && (
-                    <DropdownItem onClick={() => router.push(`/${locale}/admin/dashboard`)} className="flex items-center gap-2 text-electric font-medium">
-                      <ShieldAlert size={16} />
-                      Admin Dashboard
-                    </DropdownItem>
-                  )}
-
-                  <DropdownItem onClick={() => router.push(`/${locale}/dashboard`)} className="flex items-center gap-2">
-                    <User size={16} />
+                <>
+                  <Link
+                    href={`/${locale}/dashboard`}
+                    className="text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-electric transition-colors"
+                  >
                     {t.dashboard || 'Dashboard'}
-                  </DropdownItem>
-                  <DropdownItem onClick={() => router.push(`/${locale}/pricing`)} className="flex items-center gap-2">
-                    <CreditCard size={16} />
-                    {t.pricing || 'Pricing'}
-                  </DropdownItem>
-                  <div className="h-px bg-gray-50 dark:bg-white/5 my-1" />
-                  <SignOutButton>
-                    <DropdownItem className="text-red-500 hover:text-red-600 flex items-center gap-2">
-                      <LogOut size={16} />
-                      {t.signOut || 'Sign Out'}
+                  </Link>
+                  <Dropdown
+                    trigger={
+                      <button className="focus:outline-none">
+                        <Avatar src={user.imageUrl} alt={user.fullName || 'User'} size="sm" className="border-2 border-transparent hover:border-electric transition-colors" />
+                      </button>
+                    }
+                    align="right"
+                  >
+                    <div className="px-4 py-3 border-b border-gray-100 dark:border-white/10">
+                      <p className="text-sm font-medium text-slate-900 dark:text-white">{user.fullName}</p>
+                      <p className="text-xs text-slate-500 truncate">{user.primaryEmailAddress?.emailAddress}</p>
+                      <p className="text-xs text-electric font-bold mt-1">{userRole}</p>
+                    </div>
+
+                    {userRole === 'ADMIN' && (
+                      <DropdownItem onClick={() => router.push(`/${locale}/admin/dashboard`)} className="flex items-center gap-2 text-electric font-medium">
+                        <ShieldAlert size={16} />
+                        Admin Dashboard
+                      </DropdownItem>
+                    )}
+
+                    <DropdownItem onClick={() => router.push('/ai-tutor')} className="flex items-center gap-2">
+                      <Sparkles size={16} />
+                      AI Tutor
                     </DropdownItem>
-                  </SignOutButton>
-                </Dropdown>
+
+                    <DropdownItem onClick={() => router.push(`/${locale}/dashboard`)} className="flex items-center gap-2">
+                      <User size={16} />
+                      {t.dashboard || 'Dashboard'}
+                    </DropdownItem>
+                    <DropdownItem onClick={() => router.push(`/${locale}/pricing`)} className="flex items-center gap-2">
+                      <CreditCard size={16} />
+                      {t.pricing || 'Pricing'}
+                    </DropdownItem>
+                    <div className="h-px bg-gray-50 dark:bg-white/5 my-1" />
+                    <SignOutButton>
+                      <DropdownItem className="text-red-500 hover:text-red-600 flex items-center gap-2">
+                        <LogOut size={16} />
+                        {t.signOut || 'Sign Out'}
+                      </DropdownItem>
+                    </SignOutButton>
+                  </Dropdown>
+                </>
               ) : (
                 <div className="flex items-center gap-4">
                   <Link href={`/${locale}/sign-in`} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">

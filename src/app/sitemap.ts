@@ -12,6 +12,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 1.0,
         },
         {
+            url: `${baseUrl}/fluency-guide`,
+            priority: 1.0,
+            changeFrequency: 'weekly' as const,
+        },
+        {
             url: `${baseUrl}/how-it-works`,
             priority: 0.9,
         },
@@ -34,6 +39,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         {
             url: `${baseUrl}/blog`,
             priority: 0.8, // Increased priority for blog hub
+        },
+        // Key Conversion Pages
+        {
+            url: `${baseUrl}/live-practice`,
+            priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/ai-tutor`,
+            priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/dashboard`,
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/book-session`,
+            priority: 0.9,
         }
     ];
 

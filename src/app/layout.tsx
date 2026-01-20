@@ -20,8 +20,43 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-    title: "ESL Tutoring",
-    description: "Advanced ESL Tutoring Platform",
+    metadataBase: new URL("https://englivo.com"),
+    title: {
+        default: "Englivo | Advanced ESL Tutoring & AI Practice",
+        template: "%s | Englivo"
+    },
+    description: "Master English with AI-powered conversation practice and expert human tutoring. Real-time feedback, CEFR assessment, and fluency training.",
+    keywords: ["ESL tutoring", "AI English Tutor", "Live Practice", "English Fluency", "CEFR Assessment"],
+    authors: [{ name: "Swarup Shekhar" }],
+    creator: "Swarup Shekhar",
+    openGraph: {
+        type: "website",
+        locale: "en_US",
+        url: "https://englivo.com",
+        title: "Englivo | Advanced ESL Tutoring & AI Practice",
+        description: "Master English with AI-powered conversation practice and expert human tutoring.",
+        siteName: "Englivo",
+        images: [
+            {
+                url: "/og-image.jpg", // Assuming an OG image exists or will exist
+                width: 1200,
+                height: 630,
+                alt: "Englivo Platform Preview",
+            },
+        ],
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Englivo",
+        description: "Advanced ESL Tutoring & AI Practice",
+        images: ["/og-image.jpg"],
+    },
+    verification: {
+        google: "jk58qo7u4JdJ31q1TTYOQu6y7qzBPFYmmyj86rSi6TU",
+    },
+    alternates: {
+        canonical: "./",
+    },
 };
 
 export default function RootLayout({

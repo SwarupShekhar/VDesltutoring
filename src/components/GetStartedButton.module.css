@@ -1,0 +1,51 @@
+.btn {
+    outline: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #3B82F6;
+    /* Brand Electric Blue instead of Teal #40B3A2 */
+    min-width: 160px;
+    /* Reduced from 200px to fit navbar better */
+    border: 0;
+    border-radius: 9999px;
+    /* Keeping pill shape for consistency with other buttons, looking at code snippet it was 4px. I will use 9999px to match site style or 4px? User gave 4px. I will use 4px to respect snippet.*/
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-sizing: border-box;
+    padding: 12px 20px;
+    /* Reduced vertical padding slightly */
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+}
+
+.btn:hover {
+    opacity: .95;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+    transition: all 0.2s ease;
+}
+
+.animation {
+    border-radius: 100%;
+    animation: ripple 0.6s linear infinite;
+    display: block;
+    width: 1px;
+    height: 1px;
+}
+
+@keyframes ripple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.1), 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+
+    100% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.1), 0 0 0 20px rgba(255, 255, 255, 0.1), 0 0 0 30px rgba(255, 255, 255, 0.1), 0 0 0 40px rgba(255, 255, 255, 0);
+    }
+}

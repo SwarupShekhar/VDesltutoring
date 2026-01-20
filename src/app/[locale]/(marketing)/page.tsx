@@ -136,8 +136,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         {/* 2.0 CEFR JOURNEY (Aspirational Prestige Ladder) */}
         <CEFRJourney dict={t.cefrJourney} locale={locale} />
 
-        {/* 2.5 SITUATIONS (Identity Mirror) */}
-        <SituationalGateway dict={t.situationalGateway} />
+        <SituationalGateway dict={t.situationalGateway} isLoggedIn={isLoggedIn} />
 
         {/* 2.75 FLUENCY GLOBE (Global Context) */}
         <FluencyGlobe dict={t.fluencyGlobe} />

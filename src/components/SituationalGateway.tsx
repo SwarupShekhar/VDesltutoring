@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 
-export function SituationalGateway({ dict }: { dict: any }) {
-    const { isSignedIn } = useUser();
+export function SituationalGateway({ dict, isLoggedIn }: { dict: any; isLoggedIn: boolean }) {
     const params = useParams();
     const router = useRouter(); // Create router instance
     const locale = params?.locale || 'en';
@@ -22,7 +20,7 @@ export function SituationalGateway({ dict }: { dict: any }) {
         e.preventDefault();
         setIsNavigating(true);
         setTimeout(() => {
-            router.push(`/${locale}/${isSignedIn ? 'practice' : 'sign-up'}`);
+            router.push(`/${locale}/${isLoggedIn ? 'practice' : 'sign-up'}`);
         }, 600); // 0.6s delay for the "ceremony"
     };
 

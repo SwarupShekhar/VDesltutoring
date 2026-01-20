@@ -1,10 +1,5 @@
 
 import { NextResponse } from "next/server";
-import { TextToSpeechClient } from "@google-cloud/text-to-speech";
-
-// Initialize Google Cloud TTS Client
-// Automatically uses GOOGLE_APPLICATION_CREDENTIALS from env
-const googleClient = new TextToSpeechClient();
 
 export async function POST(req: Request) {
     try {
@@ -86,30 +81,38 @@ async function elevenLabsTTS(text: string): Promise<string> {
     return Buffer.from(arrayBuffer).toString("base64");
 }
 
-// --- Google Cloud TTS Helper ---
+// --- Google Cloud TTS Helper (REST API) ---
+// Switched to REST API to support simple API Key usage
 async function googleTTS(text: string): Promise<string> {
-    const request = {
-        input: { text },
-        // Warmer voices:
-        // "en-US-Neural2-F" - Female, neutral (original)
-        // "en-US-Neural2-H" - Female, warm and friendly
-        // "en-US-Journey-F" - Female, conversational and expressive
-        voice: {
-            languageCode: "en-US",
-            name: "en-US-Journey-F" // Most natural, conversational voice
-        },
-        audioConfig: {
-            audioEncoding: "MP3" as const,
-            pitch: 2.0,              // Slightly higher pitch = friendlier
-            speakingRate: 1.0        // Normal speed
-        },
-    };
+    const apiKey = process.env.GOOGLE_TTS_API_KEY;
+    if (!apiKey) throw new Error("Missing GOOGLE_TTS_API_KEY");
 
-    const [response] = await googleClient.synthesizeSpeech(request);
+    const endpoint = `https://texttospeech.googleapis.com/v1/text:synthesize?key=${apiKey}`;
 
-    if (!response.audioContent) {
-        throw new Error("Google Cloud TTS returned empty audio content.");
+    const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            input: { text },
+            voice: {
+                languageCode: "en-US",
+                name: "en-US-Journey-F" // Most natural, conversational voice
+            },
+            audioConfig: {
+                audioEncoding: "MP3",
+                pitch: 2.0,              // Slightly higher pitch = friendlier
+                speakingRate: 1.0        // Normal speed
+            }
+        })
+    });
+
+    if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Google TTS API Error: ${response.status} ${response.statusText} - ${errorBody}`);
     }
 
-    return Buffer.from(response.audioContent).toString("base64");
+    const data = await response.json();
+    return data.audioContent;
 }

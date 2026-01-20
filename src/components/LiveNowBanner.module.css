@@ -4,12 +4,10 @@
     align-items: center;
     width: auto;
     /* Changed from fixed 22rem to auto */
-    min-width: 22rem;
-    /* Ensure it stays big */
-    /* Increased from 13rem */
+    /* Reduced size by ~35% */
+    min-width: 14.5rem;
     overflow: hidden;
-    height: 4.5rem;
-    /* Increased from 3rem */
+    height: 3rem;
     background-size: 300% 300%;
     cursor: pointer;
     backdrop-filter: blur(1rem);
@@ -26,9 +24,7 @@
     background-origin: border-box;
     background-clip: content-box, border-box;
     position: relative;
-    /* Ensure text doesn't overflow */
-    padding: 0 3rem;
-    /* Increased padding */
+    padding: 0 2rem;
 }
 
 .containerStars {
@@ -40,7 +36,6 @@
     transition: 0.5s;
     backdrop-filter: blur(1rem);
     border-radius: 5rem;
-    /* Fix absolute positioning relative to btn */
     top: 0;
     left: 0;
 }
@@ -48,12 +43,9 @@
 .text {
     z-index: 2;
     font-family: var(--font-serif), ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
-    /* Using site font */
-    font-size: 16px;
-    /* Increased from 12px */
+    font-size: 11px;
     font-weight: bold;
-    letter-spacing: 2px;
-    /* Reduced from 5px for better readability of longer text */
+    letter-spacing: 1px;
     color: #ffffff;
     text-shadow: 0 0 4px white;
     text-transform: uppercase;
@@ -64,7 +56,7 @@
 .glow {
     position: absolute;
     display: flex;
-    width: 12rem;
+    width: 8rem;
 }
 
 .circle {

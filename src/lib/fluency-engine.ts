@@ -234,7 +234,53 @@ export class FluencyEngine {
             });
         }
 
-        // --- E. Save Summary ---
+        // --- E. Lexical Ceiling Detection (NEW) ---
+        // Analyze transcripts for repetitive basic vocabulary
+        if (metrics.word_count > 50) { // Only analyze if sufficient data
+            // Fetch Transcripts for this user
+            const sessionData = await prisma.live_sessions.findUnique({
+                where: { id: sessionId },
+                include: { transcripts: true }
+            });
+
+            const userTranscripts = sessionData?.transcripts
+                .filter(t => t.user_id === userId)
+                .map(t => t.text)
+                .join(" ") || "";
+
+            if (userTranscripts.length > 0) {
+                // Check for common ceilings (A2->B1, B1->B2)
+                const targetLevels: CEFRLevel[] = ["B1", "B2", "C1"];
+
+                for (const level of targetLevels) {
+                    const detection = detectLexicalCeiling(userTranscripts, level);
+                    if (detection) {
+                        console.log(`[FluencyEngine] User ${userId} hit lexical ceiling: ${detection.category} for ${level}`);
+
+                        // Save Micro-Fix
+                        await prisma.live_micro_fixes.create({
+                            data: {
+                                user_id: userId,
+                                session_id: sessionId,
+                                category: detection.category,
+                                detected_words: detection.detectedWords,
+                                upgrades: detection.upgrades,
+                                explanation: detection.explanation,
+                                target_level: detection.targetLevel,
+                                current_limit: detection.currentLimit
+                            }
+                        });
+
+                        // Add to weaknesses list if not already there
+                        if (!topWeaknesses.includes("LEXICAL_CEILING")) {
+                            topWeaknesses.push("LEXICAL_CEILING");
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- F. Save Summary ---
         await prisma.live_session_summary.upsert({
             where: {
                 session_id_user_id: {

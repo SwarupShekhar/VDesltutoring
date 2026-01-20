@@ -3,6 +3,7 @@ import { Inter, DM_Serif_Display } from "next/font/google"; // Import requested 
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 import "./globals.css";
 
 // Configure Fonts
@@ -68,6 +69,20 @@ export default function RootLayout({
         <ClerkProvider>
             <html lang="en" suppressHydrationWarning>
                 <body className={`${inter.variable} ${dmSerif.variable} font-sans antialiased`} suppressHydrationWarning>
+                    {/* Google Analytics */}
+                    <Script
+                        src="https://www.googletagmanager.com/gtag/js?id=G-7MTWCZ41GW"
+                        strategy="afterInteractive"
+                    />
+                    <Script id="google-analytics" strategy="afterInteractive">
+                        {`
+                          window.dataLayer = window.dataLayer || [];
+                          function gtag(){dataLayer.push(arguments);}
+                          gtag('js', new Date());
+
+                          gtag('config', 'G-7MTWCZ41GW');
+                        `}
+                    </Script>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
                         {children}
                         <Analytics />

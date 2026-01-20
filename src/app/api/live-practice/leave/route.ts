@@ -67,6 +67,20 @@ export async function POST(req: NextRequest) {
             console.log(`[Leave] LiveKit: Room ${targetSession.room_name} already gone or could not be deleted.`);
         }
 
+        // 3. TRIGGER FLUENCY ENGINE (Async - don't block response)
+        // This is the "Wake Up" call.
+        try {
+            const { fluencyEngine } = await import("@/lib/fluency-engine");
+            // Do not await this if you want instant response, 
+            // but for reliability in MVP let's await it or fire-and-forget properly.
+            // Vercel serverless might kill it if we don't await, so we await.
+            console.log(`[Leave] Triggering FluencyEngine for session ${sessionId}...`);
+            await fluencyEngine.evaluateSession(sessionId);
+            console.log(`[Leave] FluencyEngine complete.`);
+        } catch (engineError) {
+            console.error(`[Leave] Failed to run FluencyEngine:`, engineError);
+        }
+
         return NextResponse.json({ success: true, message: "Session ended" });
 
     } catch (error) {

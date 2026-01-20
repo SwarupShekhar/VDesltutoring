@@ -32,9 +32,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function BlogPostPage({ params }: PageProps) {
     const { slug, locale } = await params
-    const post = await getPublishedPostBySlug(slug)
+    console.log(`[BlogParamDebug] Slug raw: "${slug}", Locale: "${locale}"`);
+
+    const decodedSlug = decodeURIComponent(slug);
+    console.log(`[BlogParamDebug] Decoded Slug: "${decodedSlug}"`);
+
+    let post = await getPublishedPostBySlug(decodedSlug)
 
     if (!post) {
+        console.log(`[BlogDebug] Clean slug not found. Trying with 'blog/' prefix...`);
+        post = await getPublishedPostBySlug(`blog/${decodedSlug}`);
+    }
+
+    if (!post) {
+        console.error(`[BlogError] Post not found for slug: "${decodedSlug}" (nor with prefix)`);
         notFound()
     }
 

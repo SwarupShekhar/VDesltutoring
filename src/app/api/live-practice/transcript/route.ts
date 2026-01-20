@@ -43,6 +43,8 @@ export async function POST(req: NextRequest) {
         // Also update word count metrics?
         // Let's do a simple increment on live_metrics to keep counters fresh
         const wordCount = text.split(" ").length;
+        // Estimate duration: Average speaking rate ~150wpm = 2.5 words/sec = 0.4 sec/word
+        const estimatedDuration = wordCount * 0.4;
 
         await prisma.live_metrics.upsert({
             where: {
@@ -55,10 +57,13 @@ export async function POST(req: NextRequest) {
                 session_id: sessionId,
                 user_id: user.id,
                 word_count: wordCount,
-                speaking_time: 0 // We don't know duration well here without start/end
+                speaking_time: estimatedDuration,
+                hesitation_count: 0,
+                grammar_errors: 0
             },
             update: {
-                word_count: { increment: wordCount }
+                word_count: { increment: wordCount },
+                speaking_time: { increment: estimatedDuration }
             }
         });
 

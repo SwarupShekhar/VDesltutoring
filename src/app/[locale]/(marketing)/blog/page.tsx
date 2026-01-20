@@ -29,33 +29,38 @@ export default async function BlogListPage({ params }: PageProps) {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {posts.map((post: any) => (
-                        <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
-                            {post.cover && (
-                                <div className="aspect-[16/9] w-full relative overflow-hidden">
-                                    {/* Simple img for now, verify next/image usage if needed but external URL might need config */}
-                                    <img
-                                        src={post.cover}
-                                        alt={post.title}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {posts.map((post: any) => {
+                        const cleanSlug = post.slug.replace(/^blog\//, '').replace(/^\//, '');
+                        console.log(`[BlogList] Generating link for: ${post.title}, Slug: ${post.slug}, Clean: ${cleanSlug}`);
+                        return (
+                            <Link key={post.id} href={`/${locale}/blog/${cleanSlug}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
+
+                                {post.cover && (
+                                    <div className="aspect-[16/9] w-full relative overflow-hidden">
+                                        {/* Simple img for now, verify next/image usage if needed but external URL might need config */}
+                                        <img
+                                            src={post.cover}
+                                            alt={post.title}
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    </div>
+                                )}
+                                <div className="p-6 flex-1 flex flex-col">
+                                    <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-3">
+                                        <Calendar size={14} />
+                                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                    </div>
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-500 transition-colors">
+                                        {post.title}
+                                    </h2>
+                                    <div className="mt-auto pt-4 flex items-center text-blue-600 font-medium text-sm group-hover:gap-2 transition-all">
+                                        Read Article <ArrowRight size={16} className="ml-1" />
+                                    </div>
                                 </div>
-                            )}
-                            <div className="p-6 flex-1 flex flex-col">
-                                <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-3">
-                                    <Calendar size={14} />
-                                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                                </div>
-                                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-500 transition-colors">
-                                    {post.title}
-                                </h2>
-                                <div className="mt-auto pt-4 flex items-center text-blue-600 font-medium text-sm group-hover:gap-2 transition-all">
-                                    Read Article <ArrowRight size={16} className="ml-1" />
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
+                            </Link>
+                        )
+                    })}
                 </div>
 
                 {posts.length === 0 && (

@@ -8,7 +8,7 @@ import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer";
 import { RelatedFromPillar } from '@/components/blog/RelatedFromPillar';
 
 interface PageProps {
-    params: Promise<{ slug: string }>
+    params: Promise<{ slug: string; locale: string }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-    const { slug } = await params
+    const { slug, locale } = await params
     const post = await getPublishedPostBySlug(slug)
 
     if (!post) {
@@ -59,7 +59,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
             <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <Link href="/blog" className="inline-flex items-center text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mb-8 transition-colors">
+                <Link href={`/${locale}/blog`} className="inline-flex items-center text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mb-8 transition-colors">
                     <ArrowLeft size={16} className="mr-2" /> Back to Blog
                 </Link>
 

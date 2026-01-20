@@ -8,7 +8,12 @@ export const metadata: Metadata = {
     description: "Read the latest articles on English learning, fluency tips, and the Englivo methodology.",
 }
 
-export default async function BlogListPage() {
+interface PageProps {
+    params: Promise<{ locale: string }>
+}
+
+export default async function BlogListPage({ params }: PageProps) {
+    const { locale } = await params;
     const posts = await getPublishedPosts();
 
     return (
@@ -25,7 +30,7 @@ export default async function BlogListPage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {posts.map((post: any) => (
-                        <Link key={post.id} href={`/blog/${post.slug}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                        <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
                             {post.cover && (
                                 <div className="aspect-[16/9] w-full relative overflow-hidden">
                                     {/* Simple img for now, verify next/image usage if needed but external URL might need config */}

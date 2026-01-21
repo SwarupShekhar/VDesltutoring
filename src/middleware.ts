@@ -22,6 +22,8 @@ const isPublicRoute = createRouteMatcher([
     '/api/live-practice(.*)', // Public stats for landing page
     '/blog',
     '/blog/(.*)',
+    '/:locale/blog',
+    '/:locale/blog/(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

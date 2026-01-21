@@ -21,42 +21,46 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://englivo.com"),
     title: {
-        default: "Englivo | Advanced ESL Tutoring & AI Practice",
-        template: "%s | Englivo"
+        default: "Englivo — English Fluency for Professionals",
+        template: "%s | Englivo",
     },
-    description: "Master English with AI-powered conversation practice and expert human tutoring. Real-time feedback, CEFR assessment, and fluency training.",
-    keywords: ["ESL tutoring", "AI English Tutor", "Live Practice", "English Fluency", "CEFR Assessment"],
-    authors: [{ name: "Swarup Shekhar" }],
-    creator: "Swarup Shekhar",
-    openGraph: {
-        type: "website",
-        locale: "en_US",
-        url: "https://englivo.com",
-        title: "Englivo | Advanced ESL Tutoring & AI Practice",
-        description: "Master English with AI-powered conversation practice and expert human tutoring.",
-        siteName: "Englivo",
-        images: [
-            {
-                url: "/og-image.jpg", // Assuming an OG image exists or will exist
-                width: 1200,
-                height: 630,
-                alt: "Englivo Platform Preview",
-            },
-        ],
-    },
-    twitter: {
-        card: "summary_large_image",
-        title: "Englivo",
-        description: "Advanced ESL Tutoring & AI Practice",
-        images: ["/og-image.jpg"],
-    },
+    description:
+        "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching for professionals.",
+
     verification: {
         google: "jk58qo7u4JdJ31q1TTYOQu6y7qzBPFYmmyj86rSi6TU",
     },
-    alternates: {
-        canonical: "./",
+
+    icons: {
+        icon: "/favicon.ico",
+        shortcut: "/favicon.ico",
+        apple: "/apple-icon.png",
+    },
+
+    openGraph: {
+        title: "Englivo — English Fluency for Professionals",
+        description:
+            "AI-powered English fluency training for professionals. Stop translating. Start speaking naturally.",
+        url: "https://englivo.com",
+        siteName: "Englivo",
+        images: [
+            {
+                url: "https://englivo.com/og-image.png",
+                width: 1200,
+                height: 630,
+                alt: "Englivo — English Fluency for Professionals",
+            },
+        ],
+        type: "website",
+    },
+
+    twitter: {
+        card: "summary_large_image",
+        title: "Englivo — English Fluency for Professionals",
+        description:
+            "Stop translating in your head. Build real English fluency with AI-powered speaking practice.",
+        images: ["https://englivo.com/og-image.png"],
     },
 };
 
@@ -81,6 +85,21 @@ export default function RootLayout({
                           gtag('js', new Date());
 
                           gtag('config', 'G-7MTWCZ41GW');
+                        `}
+                    </Script>
+                    <Script id="website-schema" type="application/ld+json">
+                        {`
+                          {
+                            "@context": "https://schema.org",
+                            "@type": "WebSite",
+                            "name": "Englivo",
+                            "url": "https://englivo.com",
+                            "potentialAction": {
+                              "@type": "SearchAction",
+                              "target": "https://englivo.com/blog?q={search_term_string}",
+                              "query-input": "required name=search_term_string"
+                            }
+                          }
                         `}
                     </Script>
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

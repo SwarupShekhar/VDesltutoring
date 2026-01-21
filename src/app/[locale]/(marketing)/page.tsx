@@ -1,10 +1,17 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { Button } from '@/components/ui/Button';
 import { ArrowRight } from 'lucide-react';
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
 import { currentUser } from '@clerk/nextjs/server';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 import dynamic from 'next/dynamic';
+
+export const metadata: Metadata = {
+  title: "Englivo — English Fluency for Professionals",
+  description:
+    "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
+};
 
 const DynamicText = dynamic(() => import('@/components/ui/dynamic-text'));
 const FAQSection = dynamic(() => import('@/components/FAQSection').then(mod => mod.FAQSection));

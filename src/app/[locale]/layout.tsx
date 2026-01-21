@@ -20,8 +20,6 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Englivo',
-  description: 'The boutique approach to fluency.',
   manifest: '/manifest.json',
   themeColor: '#6366f1',
   appleWebApp: {
@@ -37,10 +35,6 @@ export const metadata: Metadata = {
   },
   formatDetection: {
     telephone: false,
-  },
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/icons/icon-512x512.png',
   },
 }
 

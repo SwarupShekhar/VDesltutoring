@@ -13,31 +13,27 @@ export async function requireRole(allowedRoles: Role[], locale: string = 'en') {
     redirect(`/${locale}/sign-in`)
   }
 
-  // User is authenticated, now fetch user details from our API
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-  const headerList = await headers()
+  // User is authenticated, now fetch user details directly from DB
+  const { prisma } = await import('@/lib/prisma')
 
   let user = null;
 
   try {
-    const res = await fetch(`${baseUrl}/api/me`, {
-      cache: 'no-store',
-      headers: {
-        cookie: headerList.get('cookie') ?? '',
-      },
-    })
+    user = await prisma.users.findUnique({
+      where: { clerkId: userId },
+      include: {
+        student_profiles: true,
+        tutor_profiles: true
+      }
+    });
 
-    if (res.ok) {
-      user = await res.json()
-    }
   } catch (error) {
-    // If there's an error fetching user data (e.g., network error), we return null below.
-    console.error('Error fetching user data:', error)
+    console.error('Error fetching user data from DB:', error)
   }
 
   // Perform checks outside try/catch to avoid catching NEXT_REDIRECT
   if (user) {
-    if (!user.is_active || !allowedRoles.includes(user.role)) {
+    if (!user.is_active || !user.role || !allowedRoles.includes(user.role)) {
       // Smart Redirect Logic
       if (user.role === 'ADMIN') {
         redirect(`/${locale}/admin/dashboard`)

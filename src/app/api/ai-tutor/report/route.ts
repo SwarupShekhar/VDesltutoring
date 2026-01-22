@@ -46,13 +46,39 @@ THE GATES (Check sequentially):
    - Result if Fail: Pre-A1.
 
 ---
+ARCHETYPES (Choose ONE that matches their CEFR level AND speech patterns):
+
+**C2/C1 Levels:**
+- "The Precision Speaker" (Uses sophisticated vocabulary, varied structures)
+- "The Cultural Navigator" (References idioms, cultural context, nuance)
+- "The Debater" (Strong argumentation, complex reasoning)
+
+**B2/B1 Levels:**
+- "The Storyteller" (Good narrative flow, describes experiences well)
+- "The Practical Communicator" (Clear about concrete topics, struggles with abstract)
+- "The Developing Analyst" (Can explain 'what' but struggles with 'why')
+
+**A2/A1 Levels:**
+- "The Cautious Builder" (Simple sentences, careful word choice, slow but correct)
+- "The Enthusiastic Beginner" (Lots of errors but communicates basic ideas)
+- "The Survival Speaker" (Minimal vocabulary, present tense only)
+
+**Cross-Level Patterns:**
+- "The Hesitant Thinker" (Lots of pauses, fillers, searching for words - ANY level)
+- "The Rapid Talker" (Fast speech, sacrifices accuracy for speed - ANY level)
+- "The Translator" (Clearly thinking in native language first - ANY level)
+
+---
 OUTPUT JSON:
   "cefr_analysis": {
     "level": "B1",
     "failed_gate": "B2",
     "reason": "Passed B1 narration but failed B2 abstraction. Could not explain 'why' clearly."
   },
-  "identity": { "archetype": "", "description": "Clinical description of their main struggle." },
+  "identity": {
+    "archetype": "The Developing Analyst",
+    "description": "You can describe events clearly but struggle to explain abstract reasoning or justify opinions with depth."
+  },
   "insights": { "fluency": "Critique.", "grammar": "Critique.", "vocabulary": "Critique." },
   "patterns": ["List 3 specific bad habits"],
   "refinements": [
@@ -185,7 +211,11 @@ export async function POST(req: Request) {
     const drills = generateDrills(report.patterns || [])
 
     // -------- SINGLE SOURCE OF TRUTH UPDATE ----------
+    console.log(`[API/Report] About to check update condition. userId: ${userId}, cefrLevel: ${report.cefr_analysis?.level}`);
+
     if (userId && report.cefr_analysis?.level) {
+      console.log(`[API/Report] Condition passed! Proceeding with profile update...`);
+
       // Calculate derived metrics for profile
       // Confidence is inversely related to filler percentage, simplified
       const confidence = Math.max(0, 100 - (metrics.fillerPercentage * 2));
@@ -207,17 +237,25 @@ export async function POST(req: Request) {
       }
 
       console.log(`[API/Report] Calling updateProfile for ${userId} with Level ${report.cefr_analysis.level}`); // DEBUG
-      await updateUserFluencyProfile({
-        userId,
-        cefrLevel: report.cefr_analysis.level,
-        fluencyScore: Math.round(fluencyScore),
-        confidence: Math.round(confidence),
-        pauseRatio,
-        wordCount,
-        lexicalBlockers: blockers,
-        sourceSessionId: sessionId || "ai-tutor-session", // Ensure we have an ID
-        sourceType: "ai_tutor",
-      });
+
+      try {
+        await updateUserFluencyProfile({
+          userId,
+          cefrLevel: report.cefr_analysis.level,
+          fluencyScore: Math.round(fluencyScore),
+          confidence: Math.round(confidence),
+          pauseRatio,
+          wordCount,
+          lexicalBlockers: blockers,
+          sourceSessionId: sessionId || "ai-tutor-session", // Ensure we have an ID
+          sourceType: "ai_tutor",
+        });
+        console.log(`[API/Report] updateUserFluencyProfile completed successfully!`);
+      } catch (updateError) {
+        console.error(`[API/Report] updateUserFluencyProfile FAILED:`, updateError);
+      }
+    } else {
+      console.warn(`[API/Report] Skipping profile update. userId: ${userId}, cefrLevel: ${report.cefr_analysis?.level}`);
     }
 
     return NextResponse.json({

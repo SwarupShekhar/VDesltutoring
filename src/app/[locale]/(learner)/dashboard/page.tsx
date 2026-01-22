@@ -11,6 +11,8 @@ import { CEFRDashboard } from '@/components/dashboard/CEFRDashboard';
 import { TrainingHub } from '@/components/dashboard/TrainingHub';
 import { CEFRPathCard } from '@/components/dashboard/CEFRPathCard';
 
+// Disable caching to ensure fluency profile updates are immediately visible
+export const revalidate = 0;
 
 export default async function LearnerDashboard({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale } = await params
@@ -79,6 +81,11 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
             <a href={`/${locale}/sessions/book`} className="no-underline">
               {t.bookSession || 'Book a Tutor'}
             </a>
+          </Button>
+          <Button variant="outline" className="rounded-full px-6">
+            <Link href={`/${locale}/history`} className="no-underline">
+              View History
+            </Link>
           </Button>
           <Button className="rounded-full px-8 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:scale-105 transition-transform">
             <Link href="/ai-tutor" className="no-underline">

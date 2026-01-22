@@ -22,26 +22,26 @@ export type DashboardData = {
 export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Promise<DashboardData> {
     try {
         console.log(`[DashboardService] Fetching data for role: ${role}`);
-        const { userId } = await auth();
-        console.log(`[DashboardService] Auth userId: ${userId}`);
+        const { userId: clerkId } = await auth();
+        console.log(`[DashboardService] Auth userId: ${clerkId}`);
 
-        if (!userId) throw new Error("Unauthorized: No userId from auth()");
+        if (!clerkId) throw new Error("Unauthorized: No userId from auth()");
 
         let user = await prisma.users.findUnique({
-            where: { clerkId: userId },
+            where: { clerkId },
             include: {
-                student_profiles: { include: { users: true } },
-                tutor_profiles: { include: { users: true } },
-            },
+                student_profiles: true,
+                tutor_profiles: true
+            }
         });
 
         // SELF-HEALING: If user missing in DB but exists in Clerk, create them.
         if (!user) {
-            console.warn(`[DashboardService] User ${userId} not found in DB. Attempting self-healing...`);
+            console.warn(`[DashboardService] User not found for Clerk ID: ${clerkId}. Attempting self-healing...`);
             const clerkUser = await currentUser();
 
             if (!clerkUser) {
-                console.error(`[DashboardService] Failed to fetch Clerk user details for ${userId}`);
+                console.error(`[DashboardService] Failed to fetch Clerk user details for ${clerkId}`);
                 throw new Error("User not found in database and failed to sync from Clerk");
             }
 
@@ -54,7 +54,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             user = await prisma.$transaction(async (tx) => {
                 const newUser = await tx.users.create({
                     data: {
-                        clerkId: userId,
+                        clerkId: clerkId,
                         email: email,
                         full_name: fullName,
                         role: 'LEARNER', // Default to Learner
@@ -102,9 +102,14 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     }
                 });
                 // Attach to current user object to proceed without refetch
-                user.student_profiles = { ...newProfile, users: user };
+                // Force cast to any to avoid strict Prisma type mismatch on 'users' relation which isn't needed here
+                user.student_profiles = newProfile as any;
             }
 
+            if (!user.student_profiles) {
+                // Should not happen after self-healing above
+                throw new Error("Failed to load student profile");
+            }
             credits = user.student_profiles.credits;
             console.log(`[DashboardService] Fetching sessions for Student Profile: ${user.student_profiles!.id} (Credits: ${credits})`);
 

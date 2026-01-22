@@ -142,12 +142,20 @@ export default function AITutor() {
 
             const fullTranscript = chats.map(c => `${c.role.toUpperCase()}: ${c.content}`).join("\n")
 
-            console.log("Generating report for transcript length:", fullTranscript.length)
+            const duration = Math.round((Date.now() - (startTimeRef.current || Date.now())) / 1000);
+
+            console.log("Generating report for transcript length:", fullTranscript.length, "Duration:", duration)
 
             const reportRes = await fetch("/api/ai-tutor/report", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ transcript: fullTranscript })
+                body: JSON.stringify({
+                    transcript: fullTranscript,
+                    duration: duration,
+                    // sessionId represents the session being analyzed. 
+                    // Since we haven't saved it to DB yet, we can pass a temp ID or omitted to fallback to default
+                    sessionId: `ai-session-${Date.now()}`
+                })
             })
 
             if (!reportRes.ok) {

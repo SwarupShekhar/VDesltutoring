@@ -6,7 +6,7 @@ import { geminiService } from "@/lib/gemini-service";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { sessionId: string } }
+    { params }: { params: Promise<{ sessionId: string }> } // Params is a Promise in newer Next.js versions
 ) {
     try {
         const { userId: clerkId } = getAuth(req);
@@ -24,7 +24,7 @@ export async function GET(
             return NextResponse.json({ error: "User not found" }, { status: 404 });
         }
 
-        const sessionId = params.sessionId;
+        const { sessionId } = await params;
 
         // Fetch Summary & Metrics
         const summary = await prisma.live_session_summary.findUnique({

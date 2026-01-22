@@ -74,20 +74,20 @@ export default function HistoryPage() {
             {/* Filters */}
             <div className="flex gap-2">
                 <Button
-                    variant={filter === 'all' ? 'default' : 'outline'}
+                    variant={filter === 'all' ? 'primary' : 'outline'}
                     onClick={() => setFilter('all')}
                 >
                     All ({history.length})
                 </Button>
                 <Button
-                    variant={filter === 'ai_tutor' ? 'default' : 'outline'}
+                    variant={filter === 'ai_tutor' ? 'primary' : 'outline'}
                     onClick={() => setFilter('ai_tutor')}
                 >
                     <MessageSquare className="w-4 h-4 mr-2" />
                     AI Tutor ({history.filter(s => s.type === 'ai_tutor').length})
                 </Button>
                 <Button
-                    variant={filter === 'live_practice' ? 'default' : 'outline'}
+                    variant={filter === 'live_practice' ? 'primary' : 'outline'}
                     onClick={() => setFilter('live_practice')}
                 >
                     <Users className="w-4 h-4 mr-2" />

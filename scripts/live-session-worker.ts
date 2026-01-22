@@ -568,8 +568,8 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
                 for await (const frame of stream) {
                     if (dgConnection.getReadyState() === 1 && frame && frame.data) {
                         // Send raw PCM data (linear16)
-                        const buffer = Buffer.from(frame.data.buffer, frame.data.byteOffset, frame.data.byteLength);
-                        dgConnection.send(buffer);
+                        const arrayBuffer = frame.data.buffer.slice(frame.data.byteOffset, frame.data.byteOffset + frame.data.byteLength);
+                        dgConnection.send(arrayBuffer);
                     } else if (dgConnection.getReadyState() > 1) {
                         break;
                     }
@@ -578,8 +578,8 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
                 console.warn(`[AudioPipe] AudioStream for ${userId} does not support AsyncIterator. falling back to data events.`);
                 stream.on('data', (frame: any) => {
                     if (dgConnection.getReadyState() === 1 && frame && frame.data) {
-                        const buffer = Buffer.from(frame.data.buffer, frame.data.byteOffset, frame.data.byteLength);
-                        dgConnection.send(buffer);
+                        const arrayBuffer = frame.data.buffer.slice(frame.data.byteOffset, frame.data.byteOffset + frame.data.byteLength);
+                        dgConnection.send(arrayBuffer);
                     }
                 });
             }

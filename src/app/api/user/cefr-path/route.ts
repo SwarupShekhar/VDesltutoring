@@ -36,6 +36,7 @@ export async function GET(req: Request) {
             where: { clerkId },
             include: {
                 student_profiles: true,
+                user_fluency_profile: true,
                 live_session_summaries: {
                     include: {
                         session: {
@@ -57,23 +58,25 @@ export async function GET(req: Request) {
         }
 
         // Check if user has been assessed
-        // Requirements:
-        // 1. Must have valid scores (fluency > 0)
-        // 2. Must have some vocal interaction (total word_count > 10)
-        // 3. Must have at least 1 "real" session
+        // Priority 1: User Fluency Profile (The single source of truth)
+        // Priority 2: Historical Live Session Summaries (The legacy/backup source)
 
-        const realSessions = user.live_session_summaries.filter(summary => {
+        const fluencyProfile = (user as any).user_fluency_profile;
+        const hasFluencyProfile = fluencyProfile && fluencyProfile.cefr_level && fluencyProfile.word_count >= 10;
+
+        const liveSummaries = (user as any).live_session_summaries || [];
+        const realSessions = liveSummaries.filter((summary: any) => {
             return typeof summary.fluency_score === 'number' && summary.fluency_score > 0;
         });
 
         // Sum up total words from these potentially real sessions
-        const totalWords = realSessions.reduce((sum, summary) => {
-            const metrics = summary.session.metrics.find(m => m.user_id === user.id);
+        const totalWords = realSessions.reduce((sum: number, summary: any) => {
+            const metrics = summary.session.metrics.find((m: any) => m.user_id === (user as any).id);
             return sum + (metrics?.word_count || 0);
         }, 0);
 
         const latestRealSession = realSessions[0];
-        const hasBeenAssessed = realSessions.length >= 1 && totalWords >= 10 && latestRealSession;
+        const hasBeenAssessed = hasFluencyProfile || (realSessions.length >= 1 && totalWords >= 10 && latestRealSession);
 
         if (!hasBeenAssessed) {
             // Return unassessed state - no fake progress
@@ -84,43 +87,32 @@ export async function GET(req: Request) {
         }
 
         // Get current CEFR level & Calculate real progress based on score position in range
-        // Range Logic:
-        // A1: 0-20
-        // A2: 20-40
-        // B1: 40-60
-        // B2: 60-80
-        // C1: 80-95
-        // C2: 95-100
+        // If we have a fluency profile, USE IT. Otherwise fallback to the latest real session.
+        const effectiveScore = fluencyProfile ? fluencyProfile.fluency_score : (latestRealSession?.fluency_score || 0);
+        const cefrFromProfile = fluencyProfile?.cefr_level as CEFRLevel;
 
-        const score = latestRealSession.fluency_score || 0;
         let currentLevel: CEFRLevel = "A1";
         let minScore = 0;
         let maxScore = 20;
 
-        if (score >= 95) {
-            currentLevel = "C2";
-            minScore = 95;
-            maxScore = 100;
-        } else if (score >= 80) {
-            currentLevel = "C1";
-            minScore = 80;
-            maxScore = 95;
-        } else if (score >= 60) {
-            currentLevel = "B2";
-            minScore = 60;
-            maxScore = 80;
-        } else if (score >= 40) {
-            currentLevel = "B1";
-            minScore = 40;
-            maxScore = 60;
-        } else if (score >= 20) {
-            currentLevel = "A2";
-            minScore = 20;
-            maxScore = 40;
+        // If CEFR is explicitly set in profile, use it as the base
+        if (cefrFromProfile) {
+            currentLevel = cefrFromProfile;
+            // Set bounds for progress calculation within this level
+            if (currentLevel === "C2") { minScore = 95; maxScore = 100; }
+            else if (currentLevel === "C1") { minScore = 80; maxScore = 95; }
+            else if (currentLevel === "B2") { minScore = 60; maxScore = 80; }
+            else if (currentLevel === "B1") { minScore = 40; maxScore = 60; }
+            else if (currentLevel === "A2") { minScore = 20; maxScore = 40; }
+            else { minScore = 0; maxScore = 20; }
         } else {
-            currentLevel = "A1";
-            minScore = 0;
-            maxScore = 20;
+            // Derived from score
+            if (effectiveScore >= 95) { currentLevel = "C2"; minScore = 95; maxScore = 100; }
+            else if (effectiveScore >= 80) { currentLevel = "C1"; minScore = 80; maxScore = 95; }
+            else if (effectiveScore >= 60) { currentLevel = "B2"; minScore = 60; maxScore = 80; }
+            else if (effectiveScore >= 40) { currentLevel = "B1"; minScore = 40; maxScore = 60; }
+            else if (effectiveScore >= 20) { currentLevel = "A2"; minScore = 20; maxScore = 40; }
+            else { currentLevel = "A1"; minScore = 0; maxScore = 20; }
         }
 
         const targetLevel = nextCEFR(currentLevel);

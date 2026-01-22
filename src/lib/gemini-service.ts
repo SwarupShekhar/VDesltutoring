@@ -45,6 +45,7 @@ Assessment Criteria:
 3. Patterns: List 3 speaking patterns observed (positive or negative).
 4. Refinements: 3 corrections. "original" (what they said), "better" (natural version), "explanation".
 5. Next Step: One specific actionable goal.
+6. CEFR Analysis: Provide a CEFR level (A1, A2, B1, B2, C1, or C2), a reason for this level, and a confidence score (0-100).
 
 Output JSON exactly like this:
 {
@@ -65,7 +66,12 @@ Output JSON exactly like this:
   "refinements": [
     { "original": "I go store.", "better": "I went to the store.", "explanation": "Use past tense for completed actions." }
   ],
-  "next_step": "Practice using transition words like 'however' and 'therefore'."
+  "next_step": "Practice using transition words like 'however' and 'therefore'.",
+  "cefr_analysis": {
+    "level": "B1",
+    "reason": "Student can carry out simple conversations and navigate daily tasks but lacks complex structure.",
+    "confidence_score": 85
+  }
 }
 `;
 
@@ -141,7 +147,16 @@ export class GeminiService {
         try {
             // Clean markdown code blocks if present
             const cleanJson = jsonStr.replace(/```json/g, "").replace(/```/g, "").trim();
-            return JSON.parse(cleanJson);
+            const report = JSON.parse(cleanJson);
+
+            // Safety Fallback: Ensure cefr_analysis.level exists
+            if (!report.cefr_analysis) {
+                report.cefr_analysis = { level: "A1", reason: "Default level assigned due to missing analysis.", confidence_score: 50 };
+            } else if (!report.cefr_analysis.level) {
+                report.cefr_analysis.level = "A1";
+            }
+
+            return report;
         } catch (e) {
             console.error("Failed to parse Report JSON:", e);
             throw new Error("Invalid JSON response from AI");

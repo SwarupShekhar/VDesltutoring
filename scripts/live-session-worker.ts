@@ -547,9 +547,14 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
         sample_rate: 48000,
         channels: 1,
         vad_events: true, // Help detect speech vs silence
-        utterance_end_ms: 1000,
+        utterance_end_ms: 3000, // Increased to 3s to capture longer thoughts
+        endpointing: 1000, // Increased to avoid cutting off mid-sentence pauses
+        no_delay: true, // Minimize processing delay
+        filler_words: true, // Capture ums/uhs for fluency metrics
         interim_results: true
     });
+
+    let frameCount = 0;
 
     dgConnection.on(LiveTranscriptionEvents.Open, async () => {
         console.log(`[Deepgram] Connected for user ${userId}`);
@@ -567,9 +572,13 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
             if (typeof stream[Symbol.asyncIterator] === 'function') {
                 for await (const frame of stream) {
                     if (dgConnection.getReadyState() === 1 && frame && frame.data) {
-                        // Send raw PCM data (linear16)
-                        const arrayBuffer = frame.data.buffer.slice(frame.data.byteOffset, frame.data.byteOffset + frame.data.byteLength);
-                        dgConnection.send(arrayBuffer);
+                        frameCount++;
+                        if (frameCount % 100 === 0) {
+                            console.log(`[AudioPipe] ${userId} throughput: ${frameCount} frames sent.`);
+                        }
+                        // Use Uint8Array which is standard and type-safe for send()
+                        const audioData = new Uint8Array(frame.data.buffer, frame.data.byteOffset, frame.data.byteLength);
+                        (dgConnection as any).send(audioData);
                     } else if (dgConnection.getReadyState() > 1) {
                         break;
                     }
@@ -578,8 +587,8 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
                 console.warn(`[AudioPipe] AudioStream for ${userId} does not support AsyncIterator. falling back to data events.`);
                 stream.on('data', (frame: any) => {
                     if (dgConnection.getReadyState() === 1 && frame && frame.data) {
-                        const arrayBuffer = frame.data.buffer.slice(frame.data.byteOffset, frame.data.byteOffset + frame.data.byteLength);
-                        dgConnection.send(arrayBuffer);
+                        const buffer = Buffer.from(frame.data.buffer, frame.data.byteOffset, frame.data.byteLength);
+                        (dgConnection as any).send(buffer);
                     }
                 });
             }

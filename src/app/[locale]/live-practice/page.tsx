@@ -13,12 +13,14 @@ export default function LivePracticePage() {
     const [room, setRoom] = useState<Room | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [matchTime, setMatchTime] = useState(0);
+    const [callTime, setCallTime] = useState(0);
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
     const [lastReportSessionId, setLastReportSessionId] = useState<string | null>(null);
     const [isLoadingReport, setIsLoadingReport] = useState(false);
     const [report, setReport] = useState<any | null>(null);
 
     const matchTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const callTimerRef = useRef<NodeJS.Timeout | null>(null);
     const pollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const roomRef = useRef<Room | null>(null);
     const isMatchingRef = useRef(false);
@@ -194,6 +196,13 @@ export default function LivePracticePage() {
             setRoom(newRoom);
             setStatus("IN_CALL");
 
+            // Start Call Timer
+            setCallTime(0);
+            if (callTimerRef.current) clearInterval(callTimerRef.current);
+            callTimerRef.current = setInterval(() => {
+                setCallTime(prev => prev + 1);
+            }, 1000);
+
         } catch (err) {
             console.error("LiveKit connection error:", err);
             setError("Failed to connect to the call. Please try again.");
@@ -241,10 +250,12 @@ export default function LivePracticePage() {
 
         // 3. Cleanup other state
         setMatchTime(0);
+        setCallTime(0);
         const sessionIdToLeave = currentSessionId;
         setCurrentSessionId(null);
         setPartner(null);
         if (matchTimerRef.current) clearInterval(matchTimerRef.current);
+        if (callTimerRef.current) clearInterval(callTimerRef.current);
 
         // 4. Notify backend
         if (sessionIdToLeave) {
@@ -276,6 +287,7 @@ export default function LivePracticePage() {
             isMatchingRef.current = false;
             if (pollTimeoutRef.current) clearTimeout(pollTimeoutRef.current);
             if (matchTimerRef.current) clearInterval(matchTimerRef.current);
+            if (callTimerRef.current) clearInterval(callTimerRef.current);
             if (roomRef.current) {
                 roomRef.current.disconnect();
                 roomRef.current = null;
@@ -455,7 +467,7 @@ export default function LivePracticePage() {
                                 <span className="text-green-700 dark:text-green-300 text-xs font-bold tracking-wide uppercase">Live</span>
                             </div>
                             <div className="text-slate-400 text-sm font-mono">
-                                {formatTime(matchTime)}
+                                {formatTime(callTime)}
                             </div>
                         </div>
 

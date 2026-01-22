@@ -32,6 +32,7 @@ model users {
   live_weaknesses     live_weaknesses[]
   live_micro_fixes    live_micro_fixes[]
   daily_plans         user_daily_plan[]
+  user_fluency_profile user_fluency_profile?
 }
 
 model packages {
@@ -358,7 +359,7 @@ model blog_posts {
 }
 
 model user_fluency_profile {
-  user_id           String   @id
+  user_id           String   @id @db.Uuid
   cefr_level        String
   fluency_score     Float
   confidence        Float
@@ -369,5 +370,7 @@ model user_fluency_profile {
   lexical_blockers  Json?
   source_session_id String?
   source_type       String // "ai_tutor" | "live_practice"
+
+  user              users    @relation(fields: [user_id], references: [id])
 }
 

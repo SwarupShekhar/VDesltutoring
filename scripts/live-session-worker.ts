@@ -444,8 +444,10 @@ async function joinSessionAndTranscribe(session: any) {
 
         room.on(RoomEvent.TrackSubscribed, (track: RemoteTrack, publication: any, participant: any) => {
             if (track.kind === TrackKind.KIND_AUDIO) {
-                console.log(`Subscribed to audio from ${participant.identity}`);
+                console.log(`[Worker] Subscribed to AUDIO track from HUMAN: ${participant.identity}`);
                 handleAudioTrack(track, participant.identity, session.id);
+            } else {
+                console.log(`[Worker] Subscribed to NON-AUDIO track (${track.kind}) from ${participant.identity}`);
             }
         });
 

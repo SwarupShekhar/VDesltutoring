@@ -14,6 +14,9 @@ export default function LivePracticePage() {
     const [error, setError] = useState<string | null>(null);
     const [matchTime, setMatchTime] = useState(0);
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+    const [lastReportSessionId, setLastReportSessionId] = useState<string | null>(null);
+    const [isLoadingReport, setIsLoadingReport] = useState(false);
+    const [report, setReport] = useState<any | null>(null);
 
     const matchTimerRef = useRef<NodeJS.Timeout | null>(null);
     const pollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -22,8 +25,40 @@ export default function LivePracticePage() {
     const [partner, setPartner] = useState<{ full_name: string } | null>(null);
     const [isMuted, setIsMuted] = useState(false);
 
+    const fetchReportWithRetry = useCallback(async (sessionId: string) => {
+        setIsLoadingReport(true);
+        setReport(null);
+        setLastReportSessionId(sessionId);
+
+        // Initial delay: Give FluencyEngine time to process the session summary
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const maxAttempts = 10; // ~25-30s worst case
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            try {
+                const res = await fetch(`/api/live-practice/report/${sessionId}`, { method: "GET" });
+                if (res.ok) {
+                    const data = await res.json();
+                    setReport(data);
+                    setIsLoadingReport(false);
+                    return;
+                }
+            } catch (e) {
+                // ignore and retry
+            }
+
+            // Backoff: 2.5s between polls
+            await new Promise(resolve => setTimeout(resolve, 2500));
+        }
+
+        setIsLoadingReport(false);
+        setError("Your feedback is still being prepared. Please check again in a moment.");
+    }, []);
+
     const startPractice = async () => {
         setError(null);
+        setReport(null);
+        setLastReportSessionId(null);
         setStatus("CHECKING_PERMISSIONS");
 
         try {
@@ -222,6 +257,9 @@ export default function LivePracticePage() {
             } catch (e) {
                 console.error("Failed to notify backend of leave", e);
             }
+
+            // 5. Fetch end-of-call feedback for THIS user
+            fetchReportWithRetry(sessionIdToLeave);
         }
     };
 
@@ -275,6 +313,76 @@ export default function LivePracticePage() {
                             <Mic className="h-5 w-5 group-hover:scale-110 transition-transform" />
                             Start Live Practice
                         </button>
+
+                        {(isLoadingReport || report) && (
+                            <div className="mt-6 text-left rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
+                                <div className="flex items-center justify-between gap-3 mb-3">
+                                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Your end-of-call feedback</p>
+                                    {isLoadingReport && (
+                                        <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            Preparing…
+                                        </div>
+                                    )}
+                                </div>
+
+                                {report && (
+                                    <div className="space-y-3">
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="rounded-lg bg-white dark:bg-slate-800 p-3 border border-slate-200 dark:border-slate-700">
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">Fluency</p>
+                                                <p className="text-lg font-bold text-slate-800 dark:text-white">{report.fluencyScore}</p>
+                                            </div>
+                                            <div className="rounded-lg bg-white dark:bg-slate-800 p-3 border border-slate-200 dark:border-slate-700">
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">Confidence</p>
+                                                <p className="text-lg font-bold text-slate-800 dark:text-white">{report.confidenceScore}</p>
+                                            </div>
+                                        </div>
+
+                                        {report.aiReport?.insights && (
+                                            <div className="rounded-lg bg-white dark:bg-slate-800 p-3 border border-slate-200 dark:border-slate-700">
+                                                <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 mb-2">What the AI noticed</p>
+                                                <div className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
+                                                    <p><span className="font-medium">Fluency:</span> {report.aiReport.insights.fluency}</p>
+                                                    <p><span className="font-medium">Grammar:</span> {report.aiReport.insights.grammar}</p>
+                                                    <p><span className="font-medium">Vocabulary:</span> {report.aiReport.insights.vocabulary}</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {Array.isArray(report.aiReport?.refinements) && report.aiReport.refinements.length > 0 && (
+                                            <div className="rounded-lg bg-white dark:bg-slate-800 p-3 border border-slate-200 dark:border-slate-700">
+                                                <p className="text-xs font-semibold text-slate-700 dark:text-slate-200 mb-2">A few helpful refinements</p>
+                                                <div className="space-y-2">
+                                                    {report.aiReport.refinements.slice(0, 3).map((r: any, idx: number) => (
+                                                        <div key={idx} className="text-sm">
+                                                            <p className="text-slate-500 dark:text-slate-400">You said: <span className="text-slate-700 dark:text-slate-200">{r.original}</span></p>
+                                                            <p className="text-slate-500 dark:text-slate-400">More natural: <span className="text-slate-800 dark:text-white font-medium">{r.better}</span></p>
+                                                            <p className="text-slate-500 dark:text-slate-400">{r.explanation}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {report.aiReport?.next_step && (
+                                            <div className="rounded-lg bg-emerald-500/10 p-3 border border-emerald-500/20 text-sm text-emerald-700 dark:text-emerald-300">
+                                                <span className="font-semibold">Next step:</span> {report.aiReport.next_step}
+                                            </div>
+                                        )}
+
+                                        {lastReportSessionId && (
+                                            <button
+                                                onClick={() => fetchReportWithRetry(lastReportSessionId)}
+                                                className="w-full mt-2 px-4 py-2 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                                            >
+                                                Refresh feedback
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* New Feature: View Last Report */}
                         <div className="grid grid-cols-2 gap-3 mt-4">

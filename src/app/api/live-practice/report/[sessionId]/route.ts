@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
+import { geminiService } from "@/lib/gemini-service";
 
 export async function GET(
     req: NextRequest,
@@ -52,6 +53,26 @@ export async function GET(
             return NextResponse.json({ error: "Report not ready or not found" }, { status: 404 });
         }
 
+        // Fetch transcripts for THIS user only (privacy)
+        const transcripts = await prisma.live_transcripts.findMany({
+            where: { session_id: sessionId, user_id: user.id },
+            orderBy: { timestamp: "asc" }
+        });
+
+        const transcriptText = transcripts.map(t => t.text).join(" ").trim();
+
+        // Gemini feedback (best-effort; do not block base report)
+        let aiReport: any = null;
+        try {
+            // Only call Gemini if we have meaningful speech
+            if (transcriptText.split(/\s+/).filter(Boolean).length >= 10) {
+                aiReport = await geminiService.generateReport(transcriptText);
+            }
+        } catch (e) {
+            console.error("Gemini report generation failed:", e);
+            aiReport = null;
+        }
+
         // Prepare Response
         const metrics = summary.session.metrics[0] || {};
 
@@ -68,6 +89,7 @@ export async function GET(
                 speed: metrics.speech_rate,
                 grammarErrors: metrics.grammar_errors
             },
+            aiReport,
             date: summary.created_at
         });
 

@@ -4,95 +4,17 @@ import { generateDrills } from "@/lib/fluencyTrainer"
 import { geminiService } from "@/lib/gemini-service"
 import { detectLexicalCeiling } from "@/lib/fluency-engine"
 import { updateUserFluencyProfile } from "@/lib/assessment/updateUserFluencyProfile"
+import { analyzeAudioConfidence } from "@/lib/speech/audioConfidenceAnalyzer"
 import type { CEFRLevel } from "@/lib/cefr-lexical-triggers"
 
 
-const REPORT_PROMPT = `
-You are a STRICT CEFR AUDITOR for English proficiency.
-Your Goal: Assign a CEFR level (A1-C2) based on a "Failing Gate" system.
-Assume the user is C2, then disqualify them downwards based on missing skills.
 
----
-THE GATES (Check sequentially):
-
-1. **C2 Gate (Mastery)**
-   - Requirement: Nuance, cultural references, irony, complex metaphors.
-   - Fail Condition: Speech is logical but literal. No double meanings or stylistic flair.
-   - Result if Fail: Drop to C1.
-
-2. **C1 Gate (Precision)**
-   - Requirement: Precise vocabulary ("exacerbate" vs "make worse"), diverse sentence structures.
-   - Fail Condition: Searching for words, using generic descriptors ("good", "bad", "big"), simple sentence structure.
-   - Result if Fail: Drop to B2.
-
-3. **B2 Gate (Abstraction)**
-   - Requirement: Can explain *why*, compare ideas, and handle abstract topics (e.g., "Justice", "Future").
-   - Fail Condition: Can only talk about concrete things (events, daily life). Struggling to justify opinions.
-   - Result if Fail: Drop to B1.
-
-4. **B1 Gate (Narration)**
-   - Requirement: Can tell a coherent story with "Beginning -> Middle -> End". Describes feelings/experiences.
-   - Fail Condition: Disjointed sentences. No logical flow between thoughts.
-   - Result if Fail: Drop to A2.
-
-5. **A2 Gate (Connection)**
-   - Requirement: Determine if they can connect 2-3 sentences about routine/likes/dislikes.
-   - Fail Condition: One-word answers or isolated simple sentences.
-   - Result if Fail: Drop to A1.
-
-6. **A1 Gate (Survival)**
-   - Requirement: Basic intro, present tense.
-   - Fail Condition: Unintelligible or cannot form a sentence.
-   - Result if Fail: Pre-A1.
-
----
-ARCHETYPES (Choose ONE that matches their CEFR level AND speech patterns):
-
-**C2/C1 Levels:**
-- "The Precision Speaker" (Uses sophisticated vocabulary, varied structures)
-- "The Cultural Navigator" (References idioms, cultural context, nuance)
-- "The Debater" (Strong argumentation, complex reasoning)
-
-**B2/B1 Levels:**
-- "The Storyteller" (Good narrative flow, describes experiences well)
-- "The Practical Communicator" (Clear about concrete topics, struggles with abstract)
-- "The Developing Analyst" (Can explain 'what' but struggles with 'why')
-
-**A2/A1 Levels:**
-- "The Cautious Builder" (Simple sentences, careful word choice, slow but correct)
-- "The Enthusiastic Beginner" (Lots of errors but communicates basic ideas)
-- "The Survival Speaker" (Minimal vocabulary, present tense only)
-
-**Cross-Level Patterns:**
-- "The Hesitant Thinker" (Lots of pauses, fillers, searching for words - ANY level)
-- "The Rapid Talker" (Fast speech, sacrifices accuracy for speed - ANY level)
-- "The Translator" (Clearly thinking in native language first - ANY level)
-
----
-OUTPUT JSON:
-  "cefr_analysis": {
-    "level": "B1",
-    "failed_gate": "B2",
-    "reason": "Passed B1 narration but failed B2 abstraction. Could not explain 'why' clearly."
-  },
-  "identity": {
-    "archetype": "The Developing Analyst",
-    "description": "You can describe events clearly but struggle to explain abstract reasoning or justify opinions with depth."
-  },
-  "insights": { "fluency": "Critique.", "grammar": "Critique.", "vocabulary": "Critique." },
-  "patterns": ["List 3 specific bad habits"],
-  "refinements": [
-    { "original": "", "better": "", "explanation": "" }
-  ],
-  "next_step": "One hard drill to fix the main flaw."
-}
-`
 
 export async function POST(req: Request) {
   console.log("[API/Report] Received request. Processing..."); // DEBUG
   try {
     const { userId } = await auth()
-    const { transcript, duration, sessionId } = await req.json()
+    const { transcript, duration, sessionId, words: wordTimingData } = await req.json()
     console.log(`[API/Report] User: ${userId}, Duration: ${duration}, TranscriptLen: ${transcript?.length}`); // DEBUG
 
     // Filter out AI speech to check if STUDENT actually spoke
@@ -172,7 +94,17 @@ export async function POST(req: Request) {
       })
     }
 
-    const report = await geminiService.generateReport(studentText)
+    // -------- Audio-First Confidence Analysis ----------
+    const audioAnalysis = analyzeAudioConfidence(wordTimingData || [], duration || 0)
+    const confidenceScore = audioAnalysis.score
+    const confidenceBand = audioAnalysis.band
+    const confidenceExplanation = audioAnalysis.explanation
+    const audioMetrics = audioAnalysis.metrics
+
+    const report = await geminiService.generateReport(studentText, {
+      band: confidenceBand,
+      explanation: confidenceExplanation
+    })
 
     let lexicalCeiling = null; // Store for profile update
 
@@ -181,17 +113,56 @@ export async function POST(req: Request) {
     if (report.cefr_analysis?.level) {
       const assignedLevel = report.cefr_analysis.level as CEFRLevel
 
-      // Check if they're stuck at a lexical ceiling
-      lexicalCeiling = detectLexicalCeiling(studentText, assignedLevel)
+      // --- Reliability Gate Enforcement ---
+      // We enforce hard limits on high levels to ensure credibility.
+      const durationVal = duration || 0;
+      const wordCountVal = wordCount || 0;
+      let targetLevel = assignedLevel;
+      let reliabilityReason = "";
+
+      // Step-down logic: Check gates sequentially to allow multiple level drops
+      if (targetLevel === "C2" && durationVal < 180 && wordCountVal < 300) {
+        targetLevel = "C1";
+        reliabilityReason += "C2 requires 3m/300 words. ";
+      }
+
+      if (targetLevel === "C1" && durationVal < 120 && wordCountVal < 200) {
+        targetLevel = "B2";
+        reliabilityReason += "C1 requires 2m/200 words. ";
+      }
+
+      if (targetLevel === "B2" && durationVal < 60 && wordCountVal < 100) {
+        targetLevel = "B1";
+        reliabilityReason += "B2 requires 1m/100 words. ";
+      }
+
+      if (targetLevel !== assignedLevel) {
+        console.log(`[Reliability Gate] Capping ${assignedLevel} to ${targetLevel} due to insufficient data.`);
+        reliabilityReason = reliabilityReason.trim() + ` (Got: ${durationVal}s, ${wordCountVal} words).`;
+
+        // Save the original intent for transparency
+        report.cefr_analysis.preliminary_level = assignedLevel;
+        report.cefr_analysis.level_capped = true;
+
+        // Apply the cap
+        report.cefr_analysis.level = targetLevel;
+        report.cefr_analysis.failed_gate = assignedLevel;
+        report.cefr_analysis.reason = `${reliabilityReason} ${report.cefr_analysis.reason}`;
+      }
+
+      // Check if they're stuck at a lexical ceiling for the (potentially capped) level
+      lexicalCeiling = detectLexicalCeiling(studentText, report.cefr_analysis.level as CEFRLevel)
 
       if (lexicalCeiling) {
         // Fail the gate due to vocabulary limitations
         console.log(`[CEFR Gate] Lexical ceiling detected: ${lexicalCeiling.category} (${lexicalCeiling.detectedWords.join(', ')})`)
 
+        const currentAssigned = report.cefr_analysis.level;
+
         // Override the level assignment
         report.cefr_analysis.level = lexicalCeiling.currentLimit
-        report.cefr_analysis.failed_gate = assignedLevel
-        report.cefr_analysis.reason = `Failed ${assignedLevel} gate due to ${lexicalCeiling.category.toLowerCase()} limitations. ${lexicalCeiling.explanation} Detected overuse of: ${lexicalCeiling.detectedWords.join(', ')}. Try using: ${lexicalCeiling.upgrades.slice(0, 3).join(', ')}.`
+        report.cefr_analysis.failed_gate = currentAssigned
+        report.cefr_analysis.reason = `Failed ${currentAssigned} gate due to ${lexicalCeiling.category.toLowerCase()} limitations. ${lexicalCeiling.explanation} Detected overuse of: ${lexicalCeiling.detectedWords.join(', ')}. Try using: ${lexicalCeiling.upgrades.slice(0, 3).join(', ')}.`
 
         // Add to patterns
         if (!report.patterns) report.patterns = []
@@ -202,7 +173,7 @@ export async function POST(req: Request) {
         report.refinements.unshift({
           original: lexicalCeiling.detectedWords[0],
           better: lexicalCeiling.upgrades[0],
-          explanation: `To reach ${assignedLevel}, use more sophisticated ${lexicalCeiling.category.toLowerCase()}.`
+          explanation: `To reach ${currentAssigned}, use more sophisticated ${lexicalCeiling.category.toLowerCase()}.`
         })
       }
     }
@@ -216,23 +187,27 @@ export async function POST(req: Request) {
     if (userId && report.cefr_analysis?.level) {
       console.log(`[API/Report] Condition passed! Proceeding with profile update...`);
 
-      // Calculate derived metrics for profile
-      // Confidence is inversely related to filler percentage, simplified
-      const confidence = Math.max(0, 100 - (metrics.fillerPercentage * 2));
-      // Pause ratio (mocked for now, or derived if we had timeline data)
-      const pauseRatio = 0.1; // Placeholder
-      // Fluency score (mocked or derived from metrics)
-      // A simple heuristic: High word count + low fillers = high fluency
-      const fluencyScore = Math.min(100, Math.max(0, (wordCount / (duration / 60)) * 0.5 - (metrics.fillerPercentage * 2)));
+      // Audio-First Metrics
+      const confidence = confidenceScore
+      const pauseRatio = audioMetrics.midSentencePauseRatio
+
+      const fluencyScore = Math.min(100, Math.max(0,
+        (wordCount / (duration / 60)) * 0.5 - (audioMetrics.midSentencePauseRatio * 100)
+      ));
 
       // Construct lexical blockers object if present
-      let blockers = null;
-      if (lexicalCeiling) {
+      let blockers: any = null;
+      if (lexicalCeiling || report.cefr_analysis.level_capped) {
         blockers = {
-          category: lexicalCeiling.category,
-          detectedWords: lexicalCeiling.detectedWords,
-          upgrades: lexicalCeiling.upgrades,
-          frequency: lexicalCeiling.detectedWords.length // simplified frequency
+          category: lexicalCeiling?.category || "Reliability",
+          detectedWords: lexicalCeiling?.detectedWords || [],
+          upgrades: lexicalCeiling?.upgrades || [],
+          explanation: lexicalCeiling?.explanation || report.cefr_analysis.reason || "More data needed for higher assessment.",
+          targetLevel: lexicalCeiling?.targetLevel || report.cefr_analysis.failed_gate || report.cefr_analysis.level || "B1",
+          currentLimit: lexicalCeiling?.currentLimit || report.cefr_analysis.level || "A2",
+          frequency: lexicalCeiling?.detectedWords.length || 0,
+          level_capped: report.cefr_analysis.level_capped,
+          preliminary_level: report.cefr_analysis.preliminary_level
         };
       }
 
@@ -244,7 +219,14 @@ export async function POST(req: Request) {
           cefrLevel: report.cefr_analysis.level,
           fluencyScore: Math.round(fluencyScore),
           confidence: Math.round(confidence),
+          confidenceBand,
+          confidenceExplanation,
           pauseRatio,
+          avgPauseMs: audioMetrics.avgPauseMs,
+          midSentencePauseRatio: audioMetrics.midSentencePauseRatio,
+          pauseVariance: audioMetrics.pauseVariance,
+          speechRateVariance: audioMetrics.speechRateVariance,
+          recoveryScore: audioMetrics.recoveryScore,
           wordCount,
           lexicalBlockers: blockers,
           sourceSessionId: sessionId || "ai-tutor-session", // Ensure we have an ID
@@ -261,7 +243,13 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ...report,
       drills,
-      metrics
+      metrics,
+      audioAnalysis: {
+        score: confidenceScore,
+        band: confidenceBand,
+        explanation: confidenceExplanation,
+        metrics: audioMetrics
+      }
     })
 
   } catch (error: any) {

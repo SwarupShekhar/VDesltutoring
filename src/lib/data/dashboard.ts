@@ -17,6 +17,12 @@ export type DashboardData = {
     error?: string;
     blockers?: any;
     status?: string;
+    delta?: {
+        scoreChange: number;
+        confidenceChange: 'improved' | 'declined' | 'stable';
+        lastWordCount: number;
+        improvementNote: string;
+    } | null;
 }
 
 export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Promise<DashboardData> {
@@ -319,22 +325,27 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             }));
 
             // Normalize Live Sessions (P2P)
-            const p2pSessions = liveSessions.map(s => {
+            const p2pSessions = await Promise.all(liveSessions.map(async (s) => {
                 // Find summary for this user
-                const summary = s.summaries.find((sum: any) => sum.user_id === user.id);
+                const summary = s.summaries.find((sum: any) => sum.user_id === user.id) as any;
+                // Find metrics for this user
+                const userMetrics = await prisma.live_metrics.findUnique({
+                    where: { session_id_user_id: { session_id: s.id, user_id: user.id } }
+                }) as any;
 
                 let report = {
                     identity: { archetype: "Live Peer Session" },
                     cefr_analysis: { level: 'Unassessed', reason: 'Peer conversation.' },
                     patterns: [`Peer Session • Status: ${s.status}`],
-                    metrics: { wordCount: 0, fillerPercentage: 0 }
+                    metrics: { wordCount: userMetrics?.word_count || 0, fillerPercentage: userMetrics?.filler_count || 0 },
+                    audioAnalysis: null as any
                 };
 
                 if (summary) {
                     report = {
                         identity: { archetype: "Live Partnership" },
                         cefr_analysis: {
-                            level: summary.fluency_score >= 80 ? 'Advanced' : 'Intermediate',
+                            level: summary.fluency_score >= 90 ? 'C2' : summary.fluency_score >= 80 ? 'C1' : summary.fluency_score >= 65 ? 'B2' : summary.fluency_score >= 50 ? 'B1' : 'A2',
                             reason: `Training Session (Score: ${summary.fluency_score})`
                         },
                         patterns: [
@@ -342,8 +353,19 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                             ...(summary.weaknesses as string[] || []).map(w => `Detected Weakness: ${w}`)
                         ],
                         metrics: {
-                            wordCount: 100, // Placeholder as summary doesn't store word count directly, unless we join metrics
-                            fillerPercentage: 0
+                            wordCount: userMetrics?.word_count || 0,
+                            fillerPercentage: Math.round(((userMetrics?.filler_count || 0) / (userMetrics?.word_count || 1)) * 100)
+                        },
+                        audioAnalysis: {
+                            score: summary.confidence_score,
+                            band: summary.confidence_band,
+                            explanation: summary.confidence_explanation,
+                            metrics: {
+                                avgPauseMs: userMetrics?.avg_pause_ms,
+                                midSentencePauseRatio: userMetrics?.mid_sentence_pause_ratio,
+                                pauseVariance: userMetrics?.pause_variance,
+                                recoveryScore: userMetrics?.recovery_score
+                            }
                         }
                     };
                 }
@@ -354,7 +376,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     type: 'P2P_PRACTICE',
                     report
                 };
-            });
+            }));
 
             // Merge & Sort
             formattedAiSessions = [...chats, ...practices, ...p2pSessions]
@@ -392,10 +414,38 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     formatted_level: fluencyProfile.cefr_level,
                     weakest: 'vocabulary', // Placeholder since we don't store this yet
                     strongest: 'fluency',
-                    speakingTime: fluencyProfile.word_count * 0.6 // Rough estimate
+                    speakingTime: fluencyProfile.word_count * 0.6, // Rough estimate
+                    isPreliminary: !!fluencyProfile.lexical_blockers?.level_capped || fluencyProfile.word_count < 250, // Mark as preliminary if capped or low word count
+                    confidenceBand: fluencyProfile.confidence_band,
+                    confidenceExplanation: fluencyProfile.confidence_explanation
                 };
 
                 blockers = fluencyProfile.lexical_blockers;
+            }
+
+            // CALCULATE SESSION DELTA (What changed since last session)
+            // ----------------------------------------------------------------
+            let delta = null;
+            if (formattedAiSessions.length >= 2) {
+                const latest = formattedAiSessions[0].report;
+                const previous = formattedAiSessions[1].report;
+
+                if (latest && previous) {
+                    const scoreDiff = (latest.overall?.score || latest.metrics?.fluencyScore || 0) -
+                        (previous.overall?.score || previous.metrics?.fluencyScore || 0);
+
+                    const bands = { "Low": 1, "Medium": 2, "High": 3 };
+                    const latestBand = latest.audioAnalysis?.band || "Low";
+                    const previousBand = previous.audioAnalysis?.band || "Low";
+                    const bandDiff = (bands[latestBand as keyof typeof bands] || 0) - (bands[previousBand as keyof typeof bands] || 0);
+
+                    delta = {
+                        scoreChange: Math.round(scoreDiff),
+                        confidenceChange: (bandDiff > 0 ? 'improved' : bandDiff < 0 ? 'declined' : 'stable') as 'improved' | 'declined' | 'stable',
+                        lastWordCount: latest.metrics?.wordCount || 0,
+                        improvementNote: scoreDiff > 5 ? "Significant fluency boost!" : scoreDiff > 0 ? "Steady progress." : "Keep practicing to build momentum."
+                    };
+                }
             }
 
             return {
@@ -403,6 +453,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 sessions: formattedSessions,
                 aiSessions: formattedAiSessions,
                 cefrProfile,
+                delta, // Session-to-session comparison
                 blockers, // New field for UI
                 status: fluencyProfile ? 'assessed' : 'unassessed'
             };

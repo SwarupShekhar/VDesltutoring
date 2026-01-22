@@ -58,38 +58,20 @@ export async function GET(req: Request) {
         }
 
         // Check if user has been assessed
-        // Priority 1: User Fluency Profile (The single source of truth)
-        // Priority 2: Historical Live Session Summaries (The legacy/backup source)
-
         const fluencyProfile = (user as any).user_fluency_profile;
-        const hasFluencyProfile = fluencyProfile && fluencyProfile.cefr_level && fluencyProfile.word_count >= 10;
-
-        const liveSummaries = (user as any).live_session_summaries || [];
-        const realSessions = liveSummaries.filter((summary: any) => {
-            return typeof summary.fluency_score === 'number' && summary.fluency_score > 0;
-        });
-
-        // Sum up total words from these potentially real sessions
-        const totalWords = realSessions.reduce((sum: number, summary: any) => {
-            const metrics = summary.session.metrics.find((m: any) => m.user_id === (user as any).id);
-            return sum + (metrics?.word_count || 0);
-        }, 0);
-
-        const latestRealSession = realSessions[0];
-        const hasBeenAssessed = hasFluencyProfile || (realSessions.length >= 1 && totalWords >= 10 && latestRealSession);
+        const hasBeenAssessed = !!fluencyProfile;
 
         if (!hasBeenAssessed) {
-            // Return unassessed state - no fake progress
+            // Return unassessed state
             return NextResponse.json({
                 assessed: false,
                 message: "Take your first assessment to see your path"
             });
         }
 
-        // Get current CEFR level & Calculate real progress based on score position in range
-        // If we have a fluency profile, USE IT. Otherwise fallback to the latest real session.
-        const effectiveScore = fluencyProfile ? fluencyProfile.fluency_score : (latestRealSession?.fluency_score || 0);
-        const cefrFromProfile = fluencyProfile?.cefr_level as CEFRLevel;
+        // Get assessment data (The single source of truth)
+        const effectiveScore = fluencyProfile.fluency_score;
+        const cefrFromProfile = fluencyProfile.cefr_level as CEFRLevel;
 
         let currentLevel: CEFRLevel = "A1";
         let minScore = 0;
@@ -160,12 +142,6 @@ export async function GET(req: Request) {
         // Calculate overall progress as weighted average of gates
         // Weighting: 40% Thinking, 40% Expression, 20% Fluency
         let progress = (gates.thinking * 0.4) + (gates.expression * 0.4) + (gates.fluency * 0.2);
-
-        // CRITICAL FIX: If user only has 1 real session (just baseline), set progress to 0
-        // until they start practicing toward the next level.
-        if (realSessions.length <= 1) {
-            progress = 0;
-        }
 
         // Aggregate blockers
         const blockers = aggregateBlockers(microFixes);

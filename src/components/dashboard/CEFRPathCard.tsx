@@ -12,6 +12,7 @@ interface CEFRPathSummary {
     targetLevel?: CEFRLevel
     progress?: number
     primaryBlocker?: string | null
+    primaryBlockerReason?: string | null
     message?: string
 }
 
@@ -36,7 +37,8 @@ export function CEFRPathCard() {
                         currentLevel: result.currentLevel,
                         targetLevel: result.targetLevel,
                         progress: result.progress,
-                        primaryBlocker: result.blockers[0]?.type || null
+                        primaryBlocker: result.blockers[0]?.type || null,
+                        primaryBlockerReason: result.blockers[0]?.reason || null
                     })
                 }
             } catch (error) {
@@ -153,11 +155,18 @@ export function CEFRPathCard() {
 
                 {/* Primary Blocker or Achievement */}
                 {data.primaryBlocker ? (
-                    <div className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/10 backdrop-blur-sm">
-                        <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-                        <span className="text-slate-700 dark:text-slate-300 truncate">
-                            Blocker: <span className="font-semibold text-amber-700 dark:text-amber-400">{data.primaryBlocker}</span>
-                        </span>
+                    <div className="flex flex-col gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/10 backdrop-blur-sm">
+                        <div className="flex items-center gap-2 text-sm">
+                            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                            <span className="text-slate-700 dark:text-slate-300 truncate font-semibold">
+                                {data.primaryBlocker} Ceiling
+                            </span>
+                        </div>
+                        {data.primaryBlockerReason && (
+                            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed italic">
+                                "{data.primaryBlockerReason}"
+                            </p>
+                        )}
                     </div>
                 ) : progressPercent >= 80 && (
                     <div className="flex items-center gap-2 text-sm px-3 py-2 rounded-lg bg-white/20 dark:bg-slate-800/30 border border-white/10 backdrop-blur-sm" style={{ color: targetIdentity.color }}>

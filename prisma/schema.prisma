@@ -246,6 +246,7 @@ model live_transcripts {
   session_id String        @db.Uuid
   user_id    String        @db.Uuid
   text       String
+  word_data  Json?         // Array of {word, start, end, confidence}
   timestamp  DateTime      @default(now()) @db.Timestamptz(6)
   
   session    live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
@@ -268,6 +269,14 @@ model live_metrics {
   filler_count    Int      @default(0)
   grammar_errors  Int      @default(0)
   speech_rate     Float    @default(0) // words per minute
+  
+  // New Audio-First Metrics
+  avg_pause_ms             Float?    @default(0)
+  mid_sentence_pause_ratio Float?    @default(0)
+  pause_variance           Float?    @default(0)
+  speech_rate_variance     Float?    @default(0)
+  recovery_score           Float?    @default(0)
+
   updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
@@ -281,6 +290,8 @@ model live_session_summary {
   session_id      String   @db.Uuid
   user_id         String   @db.Uuid
   confidence_score Float   @default(0)
+  confidence_band  String?  // "Low" | "Medium" | "High"
+  confidence_explanation String?
   fluency_score   Float    @default(0)
   weaknesses      Json     // Array of strings ["HESITATION", "SPEED"]
   drill_plan      Json     // Array of objects [{exercise: "...", weakness: "..."}]
@@ -363,7 +374,16 @@ model user_fluency_profile {
   cefr_level        String
   fluency_score     Float
   confidence        Float
+  confidence_band   String?  // "Low" | "Medium" | "High"
+  confidence_explanation String?
+  
   pause_ratio       Float
+  avg_pause_ms             Float?    @default(0)
+  mid_sentence_pause_ratio Float?    @default(0)
+  pause_variance           Float?    @default(0)
+  speech_rate_variance     Float?    @default(0)
+  recovery_score           Float?    @default(0)
+
   word_count        Int
   last_updated      DateTime @updatedAt
 

@@ -58,23 +58,32 @@ export async function GET() {
         });
 
         // Transform AI sessions
-        const aiHistory = aiSessions.map(session => ({
-            id: session.id,
-            type: 'ai_tutor' as const,
-            date: session.started_at,
-            duration: session.ended_at
-                ? Math.round((new Date(session.ended_at).getTime() - new Date(session.started_at).getTime()) / 1000)
-                : 0,
-            cefrLevel: null, // cefr_level not in ai_chat_sessions yet
-            archetype: null,
-            insights: session.feedback_summary,
-            patterns: [],
-            transcript: session.messages.map(m => ({
-                role: m.role,
-                content: m.content,
-                timestamp: m.timestamp
-            }))
-        }));
+        const aiHistory = aiSessions.map(session => {
+            let reportData = null;
+            try {
+                reportData = session.feedback_summary ? JSON.parse(session.feedback_summary) : null;
+            } catch (e) {
+                console.warn(`Failed to parse feedback_summary for session ${session.id}`);
+            }
+
+            return {
+                id: session.id,
+                type: 'ai_tutor' as const,
+                date: session.started_at,
+                duration: session.ended_at
+                    ? Math.round((new Date(session.ended_at).getTime() - new Date(session.started_at).getTime()) / 1000)
+                    : 0,
+                cefrLevel: reportData?.cefr_analysis?.level || 'N/A',
+                archetype: reportData?.identity?.archetype || 'N/A',
+                insights: reportData,
+                patterns: reportData?.patterns || [],
+                transcript: session.messages.map(m => ({
+                    role: m.role,
+                    content: m.content,
+                    timestamp: m.timestamp
+                }))
+            };
+        });
 
         // Transform Live Practice sessions
         const liveHistory = liveSessions.map(session => {

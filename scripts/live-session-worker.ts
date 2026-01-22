@@ -11,6 +11,7 @@ import "dotenv/config";
 import { detectLexicalCeiling } from "../src/lib/fluency-engine";
 import type { CEFRLevel } from "../src/lib/cefr-lexical-triggers";
 import { updateUserFluencyProfile } from "../src/lib/assessment/updateUserFluencyProfile";
+import { analyzeAudioConfidence } from "../src/lib/speech/audioConfidenceAnalyzer";
 
 
 // Polyfill for Node.js environment overrides if needed
@@ -245,14 +246,27 @@ async function summarizeSession(session: any) {
             continue; // Skip rest of loop for this user
         }
 
-        // --- 1. Confidence (Speaking Time) ---
-        // speaking_time assumed in seconds
-        const speakingRatio = (metrics.speaking_time / 60) / durationMinutes;
-        let confidenceScore = Math.min(Math.max((speakingRatio / 0.5), 0), 1) * 100;
+        // --- 1. Audio-First Confidence Analysis ---
+        const transcripts = await prisma.live_transcripts.findMany({
+            where: { session_id: session.id, user_id: userId },
+            orderBy: { timestamp: "asc" }
+        });
 
-        // --- 2. Hesitation (Fillers) ---
-        const fillersPerMin = metrics.filler_count / durationMinutes;
-        let hesitationScore = 100 - Math.min(Math.max(fillersPerMin * 15, 0), 100);
+        // Flatten all words from all transcripts for this session
+        const allWords = transcripts.flatMap(t => (t.word_data as any) || []);
+        const totalDurationLive = (session.ended_at ? new Date(session.ended_at).getTime() : Date.now()) - new Date(session.started_at).getTime();
+
+        const audioAnalysis = analyzeAudioConfidence(allWords, totalDurationLive / 1000);
+
+        const confidenceScore = audioAnalysis.score;
+        const confidenceBand = audioAnalysis.band;
+        const confidenceExplanation = audioAnalysis.explanation;
+        const audioMetrics = audioAnalysis.metrics;
+
+        // --- 2. Hesitation (Audio-Based) ---
+        // We use the raw score from audio analysis as the baseline
+        let hesitationScore = 100 - (audioMetrics.midSentencePauseRatio * 200); // 0.5 ratio is 0 score
+        hesitationScore = Math.max(0, Math.min(100, hesitationScore));
 
         // --- 3. Speed (WPM) ---
         let wpm = metrics.speech_rate || 0;
@@ -278,11 +292,11 @@ async function summarizeSession(session: any) {
 
         // --- Weakness Diagnosis ---
         const weaknesses: string[] = [];
-        if (hesitationScore < 60) weaknesses.push("HESITATION");
+        if (audioAnalysis.hesitationFlags.midPauseHigh || hesitationScore < 60) weaknesses.push("HESITATION");
         if (speedScore < 60) weaknesses.push("SPEED");
         if (grammarScore < 70) weaknesses.push("GRAMMAR");
-        if (confidenceScore < 60) weaknesses.push("CONFIDENCE");
-        if (speakingRatio < 0.1) weaknesses.push("PASSIVITY");
+        if (confidenceBand === "Low") weaknesses.push("CONFIDENCE");
+        if (audioMetrics.speechRateWpm < 60) weaknesses.push("PASSIVITY");
 
         const topWeaknesses = weaknesses.slice(0, 3);
 
@@ -323,14 +337,18 @@ async function summarizeSession(session: any) {
             },
             update: {
                 confidence_score: Math.round(confidenceScore),
+                confidence_band: confidenceBand,
+                confidence_explanation: confidenceExplanation,
                 fluency_score: Math.round(fluencyScore),
-                weaknesses: topWeaknesses, // Now Json, so array of strings work directly if Prisma handles it (it expects array/object for JSON type)
+                weaknesses: topWeaknesses,
                 drill_plan: drillPlan
             },
             create: {
                 session_id: session.id,
                 user_id: userId,
                 confidence_score: Math.round(confidenceScore),
+                confidence_band: confidenceBand,
+                confidence_explanation: confidenceExplanation,
                 fluency_score: Math.round(fluencyScore),
                 weaknesses: topWeaknesses,
                 drill_plan: drillPlan
@@ -366,9 +384,16 @@ async function summarizeSession(session: any) {
                 cefrLevel: fluencyScore >= 90 ? "C2" : fluencyScore >= 80 ? "C1" : fluencyScore >= 65 ? "B2" : fluencyScore >= 50 ? "B1" : fluencyScore >= 35 ? "A2" : "A1",
                 fluencyScore: Math.round(fluencyScore),
                 confidence: Math.round(confidenceScore),
-                pauseRatio: 0, // Not strictly calculated yet
+                confidenceBand: confidenceBand,
+                confidenceExplanation: confidenceExplanation,
+                pauseRatio: audioMetrics.midSentencePauseRatio,
+                avgPauseMs: audioMetrics.avgPauseMs,
+                midSentencePauseRatio: audioMetrics.midSentencePauseRatio,
+                pauseVariance: audioMetrics.pauseVariance,
+                speechRateVariance: audioMetrics.speechRateVariance,
+                recoveryScore: audioMetrics.recoveryScore,
                 wordCount: metrics.word_count,
-                lexicalBlockers: null, // Live practice doesn't do deep lexical audit yet (only micro-fixes)
+                lexicalBlockers: null,
                 sourceSessionId: session.id,
                 sourceType: "live_practice"
             });
@@ -604,12 +629,14 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
         if (transcript && data.is_final && transcript.trim().length > 0) {
             console.log(`[Worker] SAVING FINAL TRANSCRIPT [${userId}]: ${transcript}`);
 
-            // A. Store raw transcript
+            // A. Store raw transcript with word-level timing
+            const wordData = data.channel.alternatives[0].words || [];
             await prisma.live_transcripts.create({
                 data: {
                     session_id: sessionId,
                     user_id: userId,
                     text: transcript,
+                    word_data: wordData as any,
                     timestamp: new Date()
                 }
             });

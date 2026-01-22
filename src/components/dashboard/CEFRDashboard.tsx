@@ -20,6 +20,12 @@ interface CEFRDashboardProps {
     trialCooldown?: boolean
     timeUntilNextTrial?: number
     dict?: any
+    delta?: {
+        scoreChange: number;
+        confidenceChange: 'improved' | 'declined' | 'stable';
+        lastWordCount: number;
+        improvementNote: string;
+    } | null;
 }
 
 /**
@@ -39,7 +45,8 @@ export function CEFRDashboard({
     className = "",
     trialCooldown = false,
     timeUntilNextTrial = 0,
-    dict = {}
+    dict = {},
+    delta = null
 }: CEFRDashboardProps) {
     const router = useRouter()
     const params = useParams()
@@ -65,13 +72,10 @@ export function CEFRDashboard({
     const [showCelebration, setShowCelebration] = useState(false)
 
     useEffect(() => {
-        // useSearchParams would be better but we have useParams.
-        // Let's use window.location search as a robust fallback or parse current URL
         if (typeof window !== 'undefined') {
             const search = new URLSearchParams(window.location.search)
             if (search.get('celebrate') === 'true') {
                 setShowCelebration(true)
-                // Clean URL
                 const newUrl = window.location.pathname
                 window.history.replaceState({}, '', newUrl)
             }
@@ -87,6 +91,36 @@ export function CEFRDashboard({
                     dict={dict}
                 />
             )}
+
+            {/* NEW: What's Changed Section */}
+            {delta && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex flex-col md:flex-row items-center justify-between p-5 rounded-3xl bg-gradient-to-br from-indigo-500/5 via-white/5 to-emerald-500/5 border border-indigo-500/10 dark:border-white/10 shadow-sm"
+                >
+                    <div className="flex items-center gap-5">
+                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner ${delta.scoreChange >= 0 ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'}`}>
+                            <TrendingUp className={`w-6 h-6 ${delta.scoreChange < 0 ? 'rotate-180' : ''}`} />
+                        </div>
+                        <div>
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">What's changed since last session</h3>
+                            <div className="flex items-center gap-3">
+                                <span className="text-xl font-bold text-slate-900 dark:text-white">
+                                    {delta.scoreChange > 0 ? `+${delta.scoreChange}` : delta.scoreChange} Fluency Points
+                                </span>
+                                <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase ${delta.confidenceChange === 'improved' ? 'bg-emerald-500 text-white' : delta.confidenceChange === 'declined' ? 'bg-amber-500 text-white' : 'bg-slate-200 text-slate-600'}`}>
+                                    Confidence {delta.confidenceChange}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-4 md:mt-0 text-sm font-medium text-slate-600 dark:text-gray-400 italic">
+                        "{delta.improvementNote}"
+                    </div>
+                </motion.div>
+            )}
+
             {/* Hero Section: Overall Level */}
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -96,20 +130,45 @@ export function CEFRDashboard({
                 <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">
                     Your English Level
                 </h1>
-                <div className="flex justify-center mb-4">
+                <div className="flex flex-col items-center justify-center mb-4 gap-2">
                     <CEFRBadge
                         level={profile.overall.cefr}
                         score={profile.overall.score}
                         size="xl"
                         showDescription
                     />
+                    {profile.isPreliminary && (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800 text-xs font-bold uppercase tracking-wider">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                            Preliminary Assessment
+                        </div>
+                    )}
                 </div>
                 {profile.speakingTime > 0 && (
-                    <div className="flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400">
-                        <Clock className="w-4 h-4" />
-                        <span className="text-sm">
-                            Based on {Math.round(profile.speakingTime)} seconds of speaking
-                        </span>
+                    <div className="flex flex-col items-center gap-3">
+                        {/* Confidence Band Section */}
+                        {profile.confidenceBand && (
+                            <div className="flex flex-col items-center p-4 max-w-lg bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-800/50">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-xs font-bold uppercase tracking-widest text-blue-600 dark:text-blue-400">Speech Control:</span>
+                                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${profile.confidenceBand === 'High' ? 'bg-emerald-500 text-white' :
+                                        profile.confidenceBand === 'Medium' ? 'bg-blue-500 text-white' :
+                                            'bg-amber-500 text-white'
+                                        }`}>
+                                        {profile.confidenceBand} Confidence
+                                    </span>
+                                </div>
+                                <p className="text-sm text-slate-700 dark:text-slate-300 italic text-center">
+                                    "{profile.confidenceExplanation}"
+                                </p>
+                            </div>
+                        )}
+                        <div className="flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400">
+                            <Clock className="w-4 h-4" />
+                            <span className="text-sm">
+                                Based on {Math.round(profile.speakingTime)} seconds of speaking
+                            </span>
+                        </div>
                     </div>
                 )}
             </motion.div>

@@ -35,17 +35,17 @@ export const CEFR_LEXICAL_TRIGGERS: LexicalTrigger[] = [
         targetLevel: "C1",
         currentLimit: "B2",
         category: "Nuance",
-        triggers: ["very", "really", "extremely", "i think", "i feel", "i believe", "maybe", "probably"],
-        upgrades: ["substantially", "considerably", "arguably", "it appears that", "one could argue", "it seems likely that", "evidence suggests", "to some extent"],
-        explanation: "C1 requires precision and hedging instead of emotional intensifiers. Use academic language that shows nuanced thinking and appropriate certainty levels."
+        triggers: ["very", "really", "extremely", "i think", "i feel", "i believe", "maybe", "probably", "important", "interesting", "happy", "sad"],
+        upgrades: ["substantially", "considerably", "arguably", "it appears that", "one could argue", "it seems likely that", "evidence suggests", "to some extent", "pivotal", "compelling", "exhilarated", "melancholic"],
+        explanation: "C1 requires precision and hedging instead of emotional intensifiers or basic adjectives. Use academic language that shows nuanced thinking."
     },
     {
         targetLevel: "C2",
         currentLimit: "C1",
         category: "Nuance",
-        triggers: ["important", "interesting", "difficult", "easy", "complex"],
-        upgrades: ["pivotal", "noteworthy", "intricate", "straightforward", "multifaceted", "compelling", "nuanced", "sophisticated"],
-        explanation: "C2 speakers use sophisticated vocabulary that demonstrates deep understanding and subtle distinctions in meaning."
+        triggers: ["important", "interesting", "difficult", "easy", "complex", "good", "bad", "stuff", "things"],
+        upgrades: ["pivotal", "noteworthy", "intricate", "straightforward", "multifaceted", "compelling", "nuanced", "sophisticated", "substance", "elements"],
+        explanation: "C2 speakers use sophisticated vocabulary that demonstrates deep understanding and subtle distinctions. Avoid generic nouns like 'stuff' or 'things'."
     }
 ];
 

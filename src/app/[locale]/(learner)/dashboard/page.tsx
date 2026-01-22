@@ -35,6 +35,8 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
     trialCooldown = data.trialCooldown || false;
     // @ts-ignore
     timeUntilNextTrial = data.timeUntilNextTrial || 0;
+    // @ts-ignore
+    me.delta = data.delta;
   } catch (err) {
     console.error("Dashboard data fetch error:", err);
     error = err instanceof Error ? err.message : "Unknown error occurred";
@@ -111,6 +113,7 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
           trialCooldown={trialCooldown}
           timeUntilNextTrial={timeUntilNextTrial}
           dict={t}
+          delta={(me as any).delta}
         />
       ) : (
         <div className="flex flex-col items-center justify-center p-12 text-center rounded-3xl bg-slate-50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-800 space-y-6">

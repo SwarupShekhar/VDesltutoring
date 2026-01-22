@@ -53,6 +53,9 @@ export interface CEFRProfile {
     weakest: Skill
     strongest: Skill
     speakingTime: number  // Total speaking time in seconds
+    isPreliminary?: boolean // True if assessment is based on limited data
+    confidenceBand?: string // "Low" | "Medium" | "High"
+    confidenceExplanation?: string
 }
 
 // ============================================================================
@@ -158,7 +161,12 @@ export function createSkillScore(score: number): SkillScore {
  * Convert raw skill metrics (0-1) to CEFR profile.
  * This is the main function that powers the dashboard.
  */
-export function computeSkillScores(m: SkillMetrics, speakingTime: number = 0): CEFRProfile {
+export function computeSkillScores(
+    m: SkillMetrics,
+    speakingTime: number = 0,
+    confidenceBand?: string,
+    confidenceExplanation?: string
+): CEFRProfile {
     const to100 = (v: number) => Math.round(Math.max(0, Math.min(1, v)) * 100)
 
     const fluencyScore = to100(m.fluency)
@@ -202,7 +210,9 @@ export function computeSkillScores(m: SkillMetrics, speakingTime: number = 0): C
         },
         weakest,
         strongest,
-        speakingTime
+        speakingTime,
+        confidenceBand,
+        confidenceExplanation
     }
 }
 

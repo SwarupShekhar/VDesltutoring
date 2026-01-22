@@ -36,6 +36,8 @@ export default function AITutor() {
     const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null)
     const [chats, setChats] = useState<ChatMessage[]>([])
     const chatsRef = useRef<ChatMessage[]>([])
+    const sessionWordsRef = useRef<any[]>([])
+    const sessionStartTimeRef = useRef<number>(0)
 
     // Keep ref in sync with state for event listeners
     useEffect(() => {
@@ -113,6 +115,8 @@ export default function AITutor() {
     const startSession = async () => {
         setStarted(true)
         startTimeRef.current = Date.now()
+        sessionStartTimeRef.current = Date.now()
+        sessionWordsRef.current = [] // Reset
         // Small delay to ensure UI transition completes and audio context is ready
         setTimeout(async () => {
             if (mode === 'challenge') {
@@ -152,8 +156,7 @@ export default function AITutor() {
                 body: JSON.stringify({
                     transcript: fullTranscript,
                     duration: duration,
-                    // sessionId represents the session being analyzed. 
-                    // Since we haven't saved it to DB yet, we can pass a temp ID or omitted to fallback to default
+                    words: sessionWordsRef.current,
                     sessionId: `ai-session-${Date.now()}`
                 })
             })
@@ -281,6 +284,7 @@ export default function AITutor() {
 
             const recorder = new MediaRecorder(stream)
             mediaRecorder.current = recorder
+            const chunkOffsetRef = { current: 0 }
 
             recorder.ondataavailable = async (e) => {
                 const blob = e.data
@@ -316,6 +320,16 @@ export default function AITutor() {
                 if (dg.transcript && dg.transcript.trim().length > 1) {
                     setTranscript(dg.transcript)
                     setChats(prev => [...prev, { role: "user", content: dg.transcript, timestamp: new Date() }])
+
+                    // Collect and adjust word timing
+                    const words = dg.result?.results?.channels[0]?.alternatives[0]?.words || []
+                    const offset = chunkOffsetRef.current
+                    const adjustedWords = words.map((w: any) => ({
+                        ...w,
+                        start: w.start + offset,
+                        end: w.end + offset
+                    }))
+                    sessionWordsRef.current.push(...adjustedWords)
 
                     try {
                         // 1) Analyze fluency (Parallel)
@@ -427,6 +441,7 @@ export default function AITutor() {
 
                     if (recorder.state === "inactive") {
                         console.log("Voice started. Recording...")
+                        chunkOffsetRef.current = (Date.now() - sessionStartTimeRef.current) / 1000
                         recorder.start()
                         setListening(true)
                     }

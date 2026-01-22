@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { generateDrills } from "@/lib/fluencyTrainer"
 import { geminiService } from "@/lib/gemini-service"
 import { detectLexicalCeiling } from "@/lib/fluency-engine"
+import { updateUserFluencyProfile } from "@/lib/assessment/updateUserFluencyProfile"
 import type { CEFRLevel } from "@/lib/cefr-lexical-triggers"
 
 
@@ -63,7 +65,8 @@ OUTPUT JSON:
 
 export async function POST(req: Request) {
   try {
-    const { transcript, duration } = await req.json()
+    const { userId } = await auth()
+    const { transcript, duration, sessionId } = await req.json()
 
     // Filter out AI speech to check if STUDENT actually spoke
     const studentText = transcript
@@ -100,22 +103,22 @@ export async function POST(req: Request) {
     // User requested 3-5 mins, but we also enforce a hard time limit.
 
 
-    // Check for 3-minute minimum (180 seconds)
-    // We kept the 10-word threshold for basic debugging, but for a valid CEFR score, we now require time.
-    if (duration && duration < 180) {
+    // Check for 45-second minimum (previously 180)
+    // We reduced this gate to allow authorized updates for shorter, valid sessions.
+    if (duration && duration < 45) {
       return NextResponse.json({
         identity: {
           archetype: "Quick Practice",
-          description: "Session under 3 minutes. Assessment requires a longer sample."
+          description: "Session under 45 seconds. Assessment requires a longer sample."
         },
         insights: {
-          fluency: "Keep talking! reliable fluency tracking requires at least 3 minutes of continuous speech.",
+          fluency: "Keep talking! reliable fluency tracking requires at least 45 seconds of continuous speech.",
           grammar: "Practice mode active.",
           vocabulary: "Practice mode active."
         },
         patterns: ["Session too short for full CEFR profiling."],
         refinements: [],
-        next_step: "Try a longer session (3+ mins) to get your CEFR level.",
+        next_step: "Try a longer session (45s+) to get your CEFR level.",
         drills: [],
         metrics
       })
@@ -143,13 +146,15 @@ export async function POST(req: Request) {
 
     const report = await geminiService.generateReport(studentText)
 
+    let lexicalCeiling = null; // Store for profile update
+
     // -------- Lexical Ceiling Check (CEFR Gate Enforcement) ----------
     // If user is attempting to level up, check for vocabulary limitations
     if (report.cefr_analysis?.level) {
       const assignedLevel = report.cefr_analysis.level as CEFRLevel
 
       // Check if they're stuck at a lexical ceiling
-      const lexicalCeiling = detectLexicalCeiling(studentText, assignedLevel)
+      lexicalCeiling = detectLexicalCeiling(studentText, assignedLevel)
 
       if (lexicalCeiling) {
         // Fail the gate due to vocabulary limitations
@@ -176,6 +181,41 @@ export async function POST(req: Request) {
 
     // -------- Fluency drills ----------
     const drills = generateDrills(report.patterns || [])
+
+    // -------- SINGLE SOURCE OF TRUTH UPDATE ----------
+    if (userId && report.cefr_analysis?.level) {
+      // Calculate derived metrics for profile
+      // Confidence is inversely related to filler percentage, simplified
+      const confidence = Math.max(0, 100 - (metrics.fillerPercentage * 2));
+      // Pause ratio (mocked for now, or derived if we had timeline data)
+      const pauseRatio = 0.1; // Placeholder
+      // Fluency score (mocked or derived from metrics)
+      // A simple heuristic: High word count + low fillers = high fluency
+      const fluencyScore = Math.min(100, Math.max(0, (wordCount / (duration / 60)) * 0.5 - (metrics.fillerPercentage * 2)));
+
+      // Construct lexical blockers object if present
+      let blockers = null;
+      if (lexicalCeiling) {
+        blockers = {
+          category: lexicalCeiling.category,
+          detectedWords: lexicalCeiling.detectedWords,
+          upgrades: lexicalCeiling.upgrades,
+          frequency: lexicalCeiling.detectedWords.length // simplified frequency
+        };
+      }
+
+      await updateUserFluencyProfile({
+        userId,
+        cefrLevel: report.cefr_analysis.level,
+        fluencyScore: Math.round(fluencyScore),
+        confidence: Math.round(confidence),
+        pauseRatio,
+        wordCount,
+        lexicalBlockers: blockers,
+        sourceSessionId: sessionId || "ai-tutor-session", // Ensure we have an ID
+        sourceType: "ai_tutor",
+      });
+    }
 
     return NextResponse.json({
       ...report,

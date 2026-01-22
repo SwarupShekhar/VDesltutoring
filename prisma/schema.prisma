@@ -356,3 +356,18 @@ model blog_posts {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model user_fluency_profile {
+  user_id           String   @id
+  cefr_level        String
+  fluency_score     Float
+  confidence        Float
+  pause_ratio       Float
+  word_count        Int
+  last_updated      DateTime @updatedAt
+
+  lexical_blockers  Json?
+  source_session_id String?
+  source_type       String // "ai_tutor" | "live_practice"
+}
+

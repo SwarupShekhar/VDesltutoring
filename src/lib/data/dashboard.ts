@@ -1,6 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { computeSkillScores, type SkillMetrics, type CEFRProfile } from '@/engines/cefr/cefrEngine'
+import { computeSkillScores, createSkillScore, type SkillMetrics, type CEFRProfile } from '@/engines/cefr/cefrEngine'
 import { computeFluencyScore, type FluencyMetrics } from '@/engines/fluency/fluencyScore'
 
 export type DashboardData = {
@@ -15,6 +15,8 @@ export type DashboardData = {
     trialCooldown?: boolean;
     timeUntilNextTrial?: number;
     error?: string;
+    blockers?: any;
+    status?: string;
 }
 
 export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Promise<DashboardData> {
@@ -276,6 +278,9 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                             { user_b: user.id }
                         ]
                     },
+                    include: {
+                        summaries: true
+                    },
                     orderBy: { started_at: 'desc' },
                     take: 10
                 })
@@ -309,24 +314,42 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             }));
 
             // Normalize Live Sessions (P2P)
-            const p2pSessions = liveSessions.map(s => ({
-                id: s.id,
-                date: s.started_at,
-                type: 'P2P_PRACTICE',
-                report: {
+            const p2pSessions = liveSessions.map(s => {
+                // Find summary for this user
+                const summary = s.summaries.find((sum: any) => sum.user_id === user.id);
+
+                let report = {
                     identity: { archetype: "Live Peer Session" },
-                    // Placeholder until we have P2P analytics
                     cefr_analysis: { level: 'Unassessed', reason: 'Peer conversation.' },
-                    patterns: [
-                        `Peer Session • Status: ${s.status}`
-                    ],
-                    metrics: {
-                        // We would need to join with live_metrics to get real data
-                        wordCount: 0,
-                        fillerPercentage: 0
-                    }
+                    patterns: [`Peer Session • Status: ${s.status}`],
+                    metrics: { wordCount: 0, fillerPercentage: 0 }
+                };
+
+                if (summary) {
+                    report = {
+                        identity: { archetype: "Live Partnership" },
+                        cefr_analysis: {
+                            level: summary.fluency_score >= 80 ? 'Advanced' : 'Intermediate',
+                            reason: `Training Session (Score: ${summary.fluency_score})`
+                        },
+                        patterns: [
+                            `Fluency Score: ${summary.fluency_score}/100`,
+                            ...(summary.weaknesses as string[] || []).map(w => `Detected Weakness: ${w}`)
+                        ],
+                        metrics: {
+                            wordCount: 100, // Placeholder as summary doesn't store word count directly, unless we join metrics
+                            fillerPercentage: 0
+                        }
+                    };
                 }
-            }));
+
+                return {
+                    id: s.id,
+                    date: s.started_at,
+                    type: 'P2P_PRACTICE',
+                    report
+                };
+            });
 
             // Merge & Sort
             formattedAiSessions = [...chats, ...practices, ...p2pSessions]
@@ -335,120 +358,39 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
 
             // CALCULATE REAL CEFR PROFILE
             // ----------------------------------------------------------------
-            // 1. Aggregate metrics from last 5 sessions for stability
-            const recentSessions = practiceSessions.slice(0, 5);
-            let aggregatedMetrics: SkillMetrics = {
-                fluency: 0,
-                pronunciation: 0,
-                grammar: 0,
-                vocabulary: 0
-            };
-            let totalSpeakingTime = 0;
-            let totalWords = 0;
+            // SINGLE SOURCE OF TRUTH: user_fluency_profile
+            const fluencyProfile = await (prisma as any).user_fluency_profile.findUnique({
+                where: { user_id: user.id }
+            });
 
-            if (recentSessions.length > 0) {
-                // Calculate average metrics
-                let totalFluencyScore = 0;
-                let totalFillers = 0; // lower is better
-                let totalPauses = 0;  // lower is better
-                // totalWords is now declared outside
-
-                // For now, we simulate pronunciation/grammar/vocab as we don't have deepgram phonemes stored yet
-                // In production, these would come from stored session analysis
-
-                recentSessions.forEach(s => {
-                    const metrics = (s.rounds as any[]).reduce((acc, r) => ({
-                        wordCount: acc.wordCount + r.metrics.wordCount,
-                        duration: acc.duration + (r.metrics.duration || 0),
-                        fillerCount: acc.fillerCount + (r.metrics.fillerCount || 0)
-                    }), { wordCount: 0, duration: 0, fillerCount: 0 });
-
-                    totalWords += metrics.wordCount;
-
-                    // Estimate speaking time (avg 3s per word if duration missing)
-                    const duration = metrics.duration || (metrics.wordCount * 3);
-                    totalSpeakingTime += duration;
-
-                    totalFluencyScore += s.average_score;
-
-                    // Normalize metrics for skill computation
-                    if (metrics.wordCount > 0) {
-                        totalFillers += (metrics.fillerCount / metrics.wordCount);
-                    }
-                });
-
-                // 🛡️ Guard: Insufficient Data (Prevent "B1 on Silence")
-                // If user spoke fewer than 25 total words across all sessions, force 0.
-                if (totalWords < 25) {
-                    console.log(`[Dashboard] Insufficient data (${totalWords} total words). Forcing 0 CEFR scores.`);
-                    aggregatedMetrics = {
-                        fluency: 0,
-                        pronunciation: 0,
-                        grammar: 0,
-                        vocabulary: 0
-                    };
-                } else {
-                    const count = recentSessions.length;
-                    const avgFluency = totalFluencyScore / count;
-                    const avgFillerRate = totalFillers / count;
-
-                    // Map to SkillMetrics (0-1 scale)
-                    aggregatedMetrics = {
-                        fluency: avgFluency, // Directly from fluency engine
-                        // INFERENCE: High fluency usually correlates with other skills until we have specific engines
-                        pronunciation: Math.min(1, avgFluency * 0.9 + 0.1), // Placeholder inference
-                        grammar: Math.min(1, avgFluency * 0.85 + 0.15),     // Placeholder inference
-                        vocabulary: Math.min(1, avgFluency * 0.8 + 0.2)     // Placeholder inference
-                    };
-                }
-
-                // Adjust based on specific signals if we had them (e.g. grammar error count)
-            }
-
-            // 2. Compute Base CEFR Profile from Mechanics (Initialize as Null)
             let cefrProfile = null;
+            let blockers = null;
 
-            // Only compute profile if we have enough data (>= 25 words)
-            if (recentSessions.length > 0 && totalWords >= 25) {
-                cefrProfile = computeSkillScores(aggregatedMetrics, totalSpeakingTime);
-            }
+            if (fluencyProfile) {
+                // Construct CEFR Profile from the canonical source
+                // Since we currently only store one derived "fluency_score", we project it to the full profile
+                // In the future, we should expand the table to store granular skill scores.
 
-            // 3. OVERRIDE with Strict AI Audit Level if available
-            // Find the latest AI Audit session that has a valid CEFR analysis
-            const latestAudit = chats.find(c => c.report?.cefr_analysis?.level);
+                // We use the helper to create a consistent score object
+                const scoreObj = createSkillScore(fluencyProfile.fluency_score);
 
-            if (latestAudit && latestAudit.report.cefr_analysis) {
-                console.log(`[Dashboard] Found AI Audit: ${latestAudit.report.cefr_analysis.level}`);
+                cefrProfile = {
+                    fluency: scoreObj,
+                    pronunciation: scoreObj, // Projected
+                    grammar: scoreObj,      // Projected
+                    vocabulary: scoreObj,   // Projected
+                    overall: {
+                        score: fluencyProfile.fluency_score,
+                        cefr: fluencyProfile.cefr_level as any,
+                        label: scoreObj.label
+                    },
+                    formatted_level: fluencyProfile.cefr_level,
+                    weakest: 'vocabulary', // Placeholder since we don't store this yet
+                    strongest: 'fluency',
+                    speakingTime: fluencyProfile.word_count * 0.6 // Rough estimate
+                };
 
-                // If profile was null (low data) but we have an audit, force create one based on the audit
-                if (!cefrProfile) {
-                    cefrProfile = computeSkillScores(aggregatedMetrics, totalSpeakingTime);
-                }
-
-                // Override the overall CEFR level with the Strict Gate result
-                cefrProfile.overall.cefr = latestAudit.report.cefr_analysis.level;
-                cefrProfile.overall.label = `Verified ${latestAudit.report.cefr_analysis.level}`;
-
-                // Add the specific reason if we can (might need to extend the type)
-                // For now, the Level is the most critical piece.
-            }
-
-            // 4. Cooldown Logic
-            // Check if last audit was recent (< 24h) and failed?
-            // For now, let's just enforce a 12h cooldown between attempts if the user has an established level
-            let trialCooldown = false;
-            let timeUntilNextTrial = 0;
-
-            if (latestAudit) {
-                const lastAuditTime = new Date(latestAudit.date).getTime();
-                const now = Date.now();
-                const hoursSince = (now - lastAuditTime) / (1000 * 60 * 60);
-
-                // If it was a TRIAL (implied by strict audit), enforce 12h cooldown
-                if (hoursSince < 12) {
-                    trialCooldown = true;
-                    timeUntilNextTrial = Math.ceil(12 - hoursSince);
-                }
+                blockers = fluencyProfile.lexical_blockers;
             }
 
             return {
@@ -456,8 +398,8 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 sessions: formattedSessions,
                 aiSessions: formattedAiSessions,
                 cefrProfile,
-                trialCooldown, // New Flag
-                timeUntilNextTrial
+                blockers, // New field for UI
+                status: fluencyProfile ? 'assessed' : 'unassessed'
             };
         }
 

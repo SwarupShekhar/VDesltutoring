@@ -386,19 +386,11 @@ export default function LivePracticePage() {
 
                         {/* New Feature: View Last Report */}
                         <div className="grid grid-cols-2 gap-3 mt-4">
-                                // Navigate to history or last report? 
-                                // Ideally we fetch the last report ID. For now just linking to static 'latest' or hidden until we fetch.
-                                // Let's keep it simple: A "View my Progress" button that goes to history (if we had one) or just info.
-                                // Actually, user requested "Dashboard Integration".
-                                // Let's add a "View Reports" button that goes to a hypothetical /live-practice/history
-                                // But we don't have that page yet.
-                                // Maybe just a placeholder for now or checking if they have a last session in localStorage?
-                                // Better: Don't clutter unless we have data.
-                                onClick={() => alert("Feature coming soon: View your past sessions!")}
+                            <button
+                                onClick={() => window.location.href = '/en/history'}
                                 className="px-4 py-3 bg-white dark:bg-slate-700/50 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-200 dark:border-slate-600 flex items-center justify-center gap-2"
                             >
-                                <TriangleAlert className="w-4 h-4 text-amber-500" />
-                                View History
+                                📊 View History
                             </button>
                             <div className="px-4 py-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-500/20 text-sm font-medium flex items-center justify-center gap-2">
                                 <Zap className="w-4 h-4" />
@@ -412,127 +404,127 @@ export default function LivePracticePage() {
                     </div>
                 )}
 
-            {status === "CHECKING_PERMISSIONS" && (
-                <div className="flex flex-col items-center py-4">
-                    <Loader2 className="h-10 w-10 text-blue-600 animate-spin mb-4" />
-                    <p className="text-slate-600 dark:text-slate-300 font-medium">Checking microphone...</p>
-                </div>
-            )}
-
-            {status === "MATCHING" && (
-                <div className="flex flex-col items-center py-4">
-                    <div className="relative mb-6">
-                        <div className="absolute inset-0 rounded-full bg-blue-500 opacity-20 animate-ping"></div>
-                        <div className="relative bg-white dark:bg-slate-700 p-4 rounded-full border border-blue-100 dark:border-blue-800">
-                            <Radio className="h-8 w-8 text-blue-600 dark:text-blue-400 animate-pulse" />
-                        </div>
+                {status === "CHECKING_PERMISSIONS" && (
+                    <div className="flex flex-col items-center py-4">
+                        <Loader2 className="h-10 w-10 text-blue-600 animate-spin mb-4" />
+                        <p className="text-slate-600 dark:text-slate-300 font-medium">Checking microphone...</p>
                     </div>
-                    <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-1">Finding a partner</h3>
-                    <p className="text-slate-500 dark:text-slate-400 mb-4">Time elapsed: <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{formatTime(matchTime)}</span></p>
+                )}
 
-                    <button
-                        onClick={() => {
-                            setStatus("IDLE");
-                            if (matchTimerRef.current) clearInterval(matchTimerRef.current);
-                        }}
-                        className="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-                    >
-                        Cancel
-                    </button>
-                </div>
-            )}
-
-            {status === "CONNECTING" && (
-                <div className="flex flex-col items-center py-4">
-                    <Loader2 className="h-10 w-10 text-green-500 animate-spin mb-4" />
-                    <p className="text-slate-700 dark:text-slate-200 font-medium text-lg">Match found! Connecting...</p>
-                </div>
-            )}
-
-
-
-            {status === "IN_CALL" && (
-                <div className="fixed inset-0 bg-white dark:bg-slate-900 z-50 flex flex-col items-center justify-between p-6 animate-in fade-in duration-300">
-                    {/* Top Bar */}
-                    <div className="w-full flex justify-between items-center max-w-lg mt-8">
-                        <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-full">
-                            <span className="relative flex h-2.5 w-2.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                            </span>
-                            <span className="text-green-700 dark:text-green-300 text-xs font-bold tracking-wide uppercase">Live</span>
+                {status === "MATCHING" && (
+                    <div className="flex flex-col items-center py-4">
+                        <div className="relative mb-6">
+                            <div className="absolute inset-0 rounded-full bg-blue-500 opacity-20 animate-ping"></div>
+                            <div className="relative bg-white dark:bg-slate-700 p-4 rounded-full border border-blue-100 dark:border-blue-800">
+                                <Radio className="h-8 w-8 text-blue-600 dark:text-blue-400 animate-pulse" />
+                            </div>
                         </div>
-                        <div className="text-slate-400 text-sm font-mono">
-                            {formatTime(matchTime)}
-                        </div>
+                        <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-1">Finding a partner</h3>
+                        <p className="text-slate-500 dark:text-slate-400 mb-4">Time elapsed: <span className="font-mono font-medium text-slate-700 dark:text-slate-300">{formatTime(matchTime)}</span></p>
+
+                        <button
+                            onClick={() => {
+                                setStatus("IDLE");
+                                if (matchTimerRef.current) clearInterval(matchTimerRef.current);
+                            }}
+                            className="text-sm text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                        >
+                            Cancel
+                        </button>
                     </div>
+                )}
 
-                    {/* Main Visuals */}
-                    <div className="flex-1 flex flex-col items-center justify-center w-full max-w-lg gap-12">
-                        {/* Partner Profile */}
-                        <div className="flex flex-col items-center gap-4">
-                            <div className="relative">
-                                <div className="h-32 w-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white dark:ring-slate-800">
-                                    <span className="text-5xl">👤</span>
+                {status === "CONNECTING" && (
+                    <div className="flex flex-col items-center py-4">
+                        <Loader2 className="h-10 w-10 text-green-500 animate-spin mb-4" />
+                        <p className="text-slate-700 dark:text-slate-200 font-medium text-lg">Match found! Connecting...</p>
+                    </div>
+                )}
+
+
+
+                {status === "IN_CALL" && (
+                    <div className="fixed inset-0 bg-white dark:bg-slate-900 z-50 flex flex-col items-center justify-between p-6 animate-in fade-in duration-300">
+                        {/* Top Bar */}
+                        <div className="w-full flex justify-between items-center max-w-lg mt-8">
+                            <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-full">
+                                <span className="relative flex h-2.5 w-2.5">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                                </span>
+                                <span className="text-green-700 dark:text-green-300 text-xs font-bold tracking-wide uppercase">Live</span>
+                            </div>
+                            <div className="text-slate-400 text-sm font-mono">
+                                {formatTime(matchTime)}
+                            </div>
+                        </div>
+
+                        {/* Main Visuals */}
+                        <div className="flex-1 flex flex-col items-center justify-center w-full max-w-lg gap-12">
+                            {/* Partner Profile */}
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="relative">
+                                    <div className="h-32 w-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white dark:ring-slate-800">
+                                        <span className="text-5xl">👤</span>
+                                    </div>
+                                    <div className="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg">
+                                        <div className="h-4 w-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-800"></div>
+                                    </div>
                                 </div>
-                                <div className="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg">
-                                    <div className="h-4 w-4 bg-green-500 rounded-full border-2 border-white dark:border-slate-800"></div>
+                                <div className="text-center">
+                                    <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">
+                                        {partner?.full_name || "Partner"}
+                                    </h2>
+                                    <p className="text-slate-500 dark:text-slate-400 text-sm">Speaking English</p>
                                 </div>
                             </div>
-                            <div className="text-center">
-                                <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-1">
-                                    {partner?.full_name || "Partner"}
-                                </h2>
-                                <p className="text-slate-500 dark:text-slate-400 text-sm">Speaking English</p>
+
+                            {/* Connection Line */}
+                            <div className="w-px h-16 bg-gradient-to-b from-blue-200 to-transparent dark:from-blue-800"></div>
+
+                            {/* User Profile (Smaller) */}
+                            <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full opacity-60">
+                                <div className="h-8 w-8 bg-slate-300 dark:bg-slate-600 rounded-full flex items-center justify-center">
+                                    <span className="text-sm">You</span>
+                                </div>
+                                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Listening...</span>
                             </div>
                         </div>
 
-                        {/* Connection Line */}
-                        <div className="w-px h-16 bg-gradient-to-b from-blue-200 to-transparent dark:from-blue-800"></div>
+                        {/* Control Bar */}
+                        <div className="w-full max-w-md mb-8">
+                            <div className="flex items-center justify-center gap-6 bg-white dark:bg-slate-800 px-8 py-5 rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700">
+                                <button
+                                    onClick={toggleMute}
+                                    className={`h-14 w-14 rounded-full flex items-center justify-center transition-all duration-200 ${isMuted
+                                        ? "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
+                                        : "bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-600"
+                                        }`}
+                                >
+                                    {isMuted ? <Mic className="h-6 w-6 opacity-40" /> : <Mic className="h-6 w-6" />}
+                                </button>
 
-                        {/* User Profile (Smaller) */}
-                        <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full opacity-60">
-                            <div className="h-8 w-8 bg-slate-300 dark:bg-slate-600 rounded-full flex items-center justify-center">
-                                <span className="text-sm">You</span>
+                                <button
+                                    onClick={endCall}
+                                    className="h-16 w-32 bg-red-500 hover:bg-red-600 text-white rounded-2xl shadow-lg shadow-red-500/30 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                                >
+                                    <PhoneOff className="h-8 w-8" />
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        const reason = prompt("Report user reason:");
+                                        if (reason) alert("Report submitted.");
+                                    }}
+                                    className="h-14 w-14 rounded-full bg-white hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 text-slate-400 hover:text-amber-500 transition-colors flex items-center justify-center"
+                                >
+                                    <TriangleAlert className="h-6 w-6" />
+                                </button>
                             </div>
-                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Listening...</span>
                         </div>
                     </div>
-
-                    {/* Control Bar */}
-                    <div className="w-full max-w-md mb-8">
-                        <div className="flex items-center justify-center gap-6 bg-white dark:bg-slate-800 px-8 py-5 rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] border border-slate-100 dark:border-slate-700">
-                            <button
-                                onClick={toggleMute}
-                                className={`h-14 w-14 rounded-full flex items-center justify-center transition-all duration-200 ${isMuted
-                                    ? "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
-                                    : "bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-600"
-                                    }`}
-                            >
-                                {isMuted ? <Mic className="h-6 w-6 opacity-40" /> : <Mic className="h-6 w-6" />}
-                            </button>
-
-                            <button
-                                onClick={endCall}
-                                className="h-16 w-32 bg-red-500 hover:bg-red-600 text-white rounded-2xl shadow-lg shadow-red-500/30 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-                            >
-                                <PhoneOff className="h-8 w-8" />
-                            </button>
-
-                            <button
-                                onClick={() => {
-                                    const reason = prompt("Report user reason:");
-                                    if (reason) alert("Report submitted.");
-                                }}
-                                className="h-14 w-14 rounded-full bg-white hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 dark:hover:bg-slate-700 text-slate-400 hover:text-amber-500 transition-colors flex items-center justify-center"
-                            >
-                                <TriangleAlert className="h-6 w-6" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
         </div >
     );
 }

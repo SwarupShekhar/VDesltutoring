@@ -315,7 +315,6 @@ export default function PracticePage() {
     async function fetchNextTurn() {
         try {
             setError(null)
-            // Rotate Listening Clip - REMOVED (Legacy)
 
             // Get recent fluency score for adaptive difficulty
             let avgFluencyScore = 0.5
@@ -325,23 +324,33 @@ export default function PracticePage() {
                     const recentScores = history.slice(-5).map((h: any) => h.fluencyScore || 0.5)
                     avgFluencyScore = recentScores.reduce((a: number, b: number) => a + b, 0) / recentScores.length
                 }
-            } catch (e) {
-                // Fallback to default
-            }
+            } catch (e) { }
 
-            const res = await fetch(`/api/practice/turn?mode=${mode}&fluencyScore=${avgFluencyScore.toFixed(2)}`)
+            // NEW: Anti-Repetition Logic
+            const seenIds = JSON.parse(localStorage.getItem('esl_seen_questions') || '[]')
+            const excludeIds = seenIds.join(',')
+
+            const res = await fetch(`/api/practice/turn?mode=${mode}&fluencyScore=${avgFluencyScore.toFixed(2)}&excludeIds=${excludeIds}`)
             if (!res.ok) {
                 const err = await res.text()
                 throw new Error(`Failed to load turn: ${res.status} ${err}`)
             }
             const data = await res.json()
+
+            // Update seen list (Limit to last 20)
+            if (data.id) {
+                const newSeen = seenIds.filter((id: string) => id !== data.id) // Remove if exists (move to end)
+                newSeen.push(data.id)
+                if (newSeen.length > 20) newSeen.shift() // Keep last 20
+                localStorage.setItem('esl_seen_questions', JSON.stringify(newSeen))
+            }
+
             setTurn(data)
             setTranscript("")
             setTextInput("") // Reset text input
             setFeedback("")
             setCurrentMetrics(null) // Reset metrics
             setMicroLesson(null)
-            // Don't reset gamification state! (stars, streak, skill persist)
         } catch (err) {
             console.error("Fetch Next Turn Error:", err)
             setError("Could not load a practice challenge. Please ensure you are logged in.")

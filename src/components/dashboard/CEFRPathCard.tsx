@@ -66,7 +66,7 @@ export function CEFRPathCard() {
     if (!data.assessed) {
         return (
             <div
-                onClick={() => router.push("/ai-tutor")}
+                onClick={() => router.push("/ai-tutor?mode=challenge&targetLevel=B1")}
                 className="relative overflow-hidden bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-pink-900/20 rounded-2xl border border-white/20 backdrop-blur-md p-6 cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all group"
             >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>

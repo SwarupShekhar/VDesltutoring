@@ -554,20 +554,34 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
 
         // 3. Pipe Audio Frames
         try {
-            const reader = audioStream.getReader();
+            console.log(`[AudioPipe] Starting frame loop for user ${userId}`);
 
+            // Using a while loop with a type-cast to avoid async iterator lint issues
+            // while ensuring we get frames from the rtc-node AudioStream
+            const stream = audioStream as any;
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
-                if (value) {
-                    if (dgConnection.getReadyState() === 1) { // Open
-                        // Create a compact ArrayBuffer copy to ensure no offset issues and satisfy types
-                        const cleanBuffer = value.data.slice().buffer;
-                        dgConnection.send(cleanBuffer);
+            // In older versions of rtc-node, we might need to use 'data' events
+            // In newer ones, it is an async iterator. Let's try to support both.
+            if (typeof stream[Symbol.asyncIterator] === 'function') {
+                for await (const frame of stream) {
+                    if (dgConnection.getReadyState() === 1 && frame && frame.data) {
+                        // Send raw PCM data (linear16)
+                        const buffer = Buffer.from(frame.data.buffer, frame.data.byteOffset, frame.data.byteLength);
+                        dgConnection.send(buffer);
+                    } else if (dgConnection.getReadyState() > 1) {
+                        break;
                     }
                 }
+            } else {
+                console.warn(`[AudioPipe] AudioStream for ${userId} does not support AsyncIterator. falling back to data events.`);
+                stream.on('data', (frame: any) => {
+                    if (dgConnection.getReadyState() === 1 && frame && frame.data) {
+                        const buffer = Buffer.from(frame.data.buffer, frame.data.byteOffset, frame.data.byteLength);
+                        dgConnection.send(buffer);
+                    }
+                });
             }
+            console.log(`[AudioPipe] Loop/Event setup finished for user ${userId}`);
         } catch (err) {
             console.error(`Audio pipe error for user ${userId}:`, err);
         }
@@ -575,8 +589,9 @@ async function handleAudioTrack(track: any, userId: string, sessionId: string) {
 
     dgConnection.on(LiveTranscriptionEvents.Transcript, async (data) => {
         const transcript = data.channel.alternatives[0].transcript;
+        console.log(`[Deepgram] Raw transcript for ${userId}: "${transcript}" (is_final: ${data.is_final})`);
         if (transcript && data.is_final && transcript.trim().length > 0) {
-            console.log(`[${userId}]: ${transcript}`);
+            console.log(`[Worker] SAVING FINAL TRANSCRIPT [${userId}]: ${transcript}`);
 
             // A. Store raw transcript
             await prisma.live_transcripts.create({

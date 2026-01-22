@@ -57,15 +57,13 @@ export async function GET(req: Request) {
         }
 
         // Check if user has been assessed
-        // ULTRA-STRICT CHECK: Sessions must be "real" with actual conversation data
         // Requirements:
-        // 1. Must have valid scores (fluency > 0, confidence > 0)
-        // 2. Must have cumulative vocal interaction (total word_count > 25)
-        // 3. Must have at least 2 "real" sessions (baseline + practice)
+        // 1. Must have valid scores (fluency > 0)
+        // 2. Must have some vocal interaction (total word_count > 10)
+        // 3. Must have at least 1 "real" session
 
         const realSessions = user.live_session_summaries.filter(summary => {
-            return typeof summary.fluency_score === 'number' && summary.fluency_score > 0 &&
-                typeof summary.confidence_score === 'number' && summary.confidence_score > 0;
+            return typeof summary.fluency_score === 'number' && summary.fluency_score > 0;
         });
 
         // Sum up total words from these potentially real sessions
@@ -75,7 +73,7 @@ export async function GET(req: Request) {
         }, 0);
 
         const latestRealSession = realSessions[0];
-        const hasBeenAssessed = realSessions.length >= 2 && totalWords >= 25 && latestRealSession;
+        const hasBeenAssessed = realSessions.length >= 1 && totalWords >= 10 && latestRealSession;
 
         if (!hasBeenAssessed) {
             // Return unassessed state - no fake progress

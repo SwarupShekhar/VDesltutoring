@@ -135,7 +135,7 @@ export function CEFRDashboard({
                     return (
                         <div className="flex flex-col items-center gap-2">
                             <button
-                                onClick={() => !isCooldown && router.push(`/${locale}/ai-tutor?mode=challenge&targetLevel=${nextLevel}`)}
+                                onClick={() => !isCooldown && router.push(`/ai-tutor?mode=challenge&targetLevel=${nextLevel}`)}
                                 disabled={isCooldown}
                                 className={`group relative inline-flex items-center gap-3 px-8 py-4 rounded-full font-bold text-lg transition-all overflow-hidden ring-4 ring-slate-100 dark:ring-slate-800 ${isCooldown
                                     ? 'bg-slate-400 cursor-not-allowed opacity-70'

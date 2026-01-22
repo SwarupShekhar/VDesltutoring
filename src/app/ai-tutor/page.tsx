@@ -202,7 +202,7 @@ export default function AITutor() {
         router.push(redirectUrl)
     }
 
-    const speak = async (text: string) => {
+    const speak = async (text: string, addToHistory = true) => {
         try {
             // Barge-in: Stop current audio if any
             if (audioRef.current) {
@@ -213,7 +213,9 @@ export default function AITutor() {
             setProcessing(true)
 
             // Add to chat history
-            setChats(prev => [...prev, { role: "assistant", content: text, timestamp: new Date() }])
+            if (addToHistory) {
+                setChats(prev => [...prev, { role: "assistant", content: text, timestamp: new Date() }])
+            }
 
             const tts = await fetch("/api/tts", {
                 method: "POST",
@@ -358,14 +360,16 @@ export default function AITutor() {
                         setChats(prev => [...prev, aiMessage])
 
                         setAiResponse(ai.response)
-                        await speak(ai.response)
+                        // Don't add to history again, we just did it above with corrections
+                        await speak(ai.response, false)
 
                     } catch (err) {
                         console.error("AI/Fluency Pipeline Error:", err)
                         if (requestCounter.current === currentRequestId) {
                             setAiResponse("I'm having trouble connecting. Could you say that again?")
                             setProcessing(false)
-                            await speak("I didn't quite catch that.")
+                            // Error messages should be added to history so user sees what happened
+                            await speak("I didn't quite catch that.", true)
                         }
                     }
                 } else {

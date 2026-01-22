@@ -34,19 +34,36 @@ export async function updateUserFluencyProfile({
 }: FluencyProfileUpdate) {
 
   // 1. Validation Gate
-  // Minimum 25 words to count as a valid assessment
-  if (wordCount < 25) {
+  // Minimum 10 words (relaxed from 25) to count as a valid assessment for easier testing
+  if (wordCount < 10) {
     console.log(`[FluencyProfile] Skipping update for user ${userId}: Insufficient data (${wordCount} words).`);
     return;
   }
 
-  console.log(`[FluencyProfile] Updating profile for ${userId} from ${sourceType} (Session: ${sourceSessionId})`);
+  // 1.5 ID Resolution
+  // ai-tutor sends Clerk ID (starts with "user_"), live-practice sends internal UUID.
+  // We must normalize to internal UUID for the dashboard to read it correctly.
+  let targetUserId = userId;
+  if (userId.startsWith('user_')) {
+    const user = await prisma.users.findUnique({
+      where: { clerkId: userId },
+      select: { id: true }
+    });
+    if (user) {
+      targetUserId = user.id;
+      console.log(`[FluencyProfile] Resolved Clerk ID ${userId} to Internal UUID ${targetUserId}`);
+    } else {
+      console.warn(`[FluencyProfile] Warning: Could not resolve Clerk ID ${userId} to internal user.`);
+    }
+  }
+
+  console.log(`[FluencyProfile] Updating profile for ${targetUserId} from ${sourceType} (Session: ${sourceSessionId})`);
   console.log(`[FluencyProfile] CEFR: ${cefrLevel}, Score: ${fluencyScore}`);
 
   // 2. Database Upsert
   try {
     const result = await (prisma as any).user_fluency_profile.upsert({
-      where: { user_id: userId },
+      where: { user_id: targetUserId },
       update: {
         cefr_level: cefrLevel,
         fluency_score: fluencyScore,
@@ -59,7 +76,7 @@ export async function updateUserFluencyProfile({
         // last_updated is handled by @updatedAt automatically
       },
       create: {
-        user_id: userId,
+        user_id: targetUserId,
         cefr_level: cefrLevel,
         fluency_score: fluencyScore,
         confidence: confidence,

@@ -47,7 +47,6 @@ THE GATES (Check sequentially):
 
 ---
 OUTPUT JSON:
-{
   "cefr_analysis": {
     "level": "B1",
     "failed_gate": "B2",
@@ -64,9 +63,11 @@ OUTPUT JSON:
 `
 
 export async function POST(req: Request) {
+  console.log("[API/Report] Received request. Processing..."); // DEBUG
   try {
     const { userId } = await auth()
     const { transcript, duration, sessionId } = await req.json()
+    console.log(`[API/Report] User: ${userId}, Duration: ${duration}, TranscriptLen: ${transcript?.length}`); // DEBUG
 
     // Filter out AI speech to check if STUDENT actually spoke
     const studentText = transcript
@@ -125,6 +126,7 @@ export async function POST(req: Request) {
     }
 
     if (!studentText || wordCount < 10) {
+      console.log(`[API/Report] Failed Word Count Gate: ${wordCount} < 10`); // DEBUG
       // Return "Insufficient Data" instead of a placeholder report
       return NextResponse.json({
         identity: {
@@ -204,6 +206,7 @@ export async function POST(req: Request) {
         };
       }
 
+      console.log(`[API/Report] Calling updateProfile for ${userId} with Level ${report.cefr_analysis.level}`); // DEBUG
       await updateUserFluencyProfile({
         userId,
         cefrLevel: report.cefr_analysis.level,

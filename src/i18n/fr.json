@@ -34,6 +34,31 @@
             }
         }
     },
+    "microHeadlines": {
+        "title": "De Connaître l'Anglais → Penser en Anglais",
+        "subtitle": "Un chemin clair de la traduction au réflexe, vers une expression professionnelle confiante — mesuré par les signaux CEFR, pas des tests de grammaire.",
+        "card1": {
+            "title": "Vous N'avez Pas Besoin de Plus de Grammaire",
+            "desc": "Vous \"connaissez\" déjà l'anglais. Le fossé est la vitesse — votre cerveau traduit au lieu de répondre.",
+            "link": "Pourquoi cela arrive"
+        },
+        "card2": {
+            "title": "Le CEFR concerne le Traitement, Pas le Vocabulaire",
+            "desc": "B2 n'est pas des mots plus durs. C'est des pauses naturelles, des idées structurées et penser sans détours.",
+            "link": "Voir la feuille de route"
+        },
+        "card3": {
+            "title": "La Fluidité se Conditionne, Ne s'Étudie Pas",
+            "desc": "Interaction en direct, micro-feedback et entraînement par blocs construisent ce que les manuels ne peuvent pas : le réflexe.",
+            "link1": "Essayer le Tuteur IA",
+            "link2": "Parler à un partenaire"
+        },
+        "trustLine": "Utilisé par des professionnels pour passer de \"Je sais quoi dire\" → \"Je peux le dire maintenant.\"",
+        "conversion": {
+            "label": "Pas sûr de votre niveau ?",
+            "link": "Obtenez votre aperçu oral CEFR en 2 minutes"
+        }
+    },
     "hero": {
         "headline": "Arrêtez de traduire dans votre tête.<br /><span>Commencez à parler comme vous-même.</span>",
         "subtext": "L'approche boutique pour la fluidité. Pour les professionnels qui se sentent coincés dans le silence entre la pensée et la parole.",

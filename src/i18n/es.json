@@ -22,6 +22,31 @@
             }
         }
     },
+    "microHeadlines": {
+        "title": "De Saber Inglés → A Pensar en Inglés",
+        "subtitle": "Un camino claro de la traducción al reflejo, para hablar con confianza profesional — medido con señales CEFR, no tests de gramática.",
+        "card1": {
+            "title": "No Necesitas Más Gramática",
+            "desc": "Ya \"sabes\" inglés. La brecha es la velocidad — tu cerebro está traduciendo en lugar de responder.",
+            "link": "Por qué sucede esto"
+        },
+        "card2": {
+            "title": "CEFR es Procesamiento, No Vocabulario",
+            "desc": "B2 no son palabras más difíciles. Son pausas naturales, ideas estructuradas y pensar sin desvíos.",
+            "link": "Ver la hoja de ruta"
+        },
+        "card3": {
+            "title": "La Fluidez se Condiciona, No se Estudia",
+            "desc": "Interacción en vivo, micro-feedback y entrenamiento en bloques construyen lo que los libros no pueden: reflejo.",
+            "link1": "Probar Tutor IA",
+            "link2": "Hablar con un compañero"
+        },
+        "trustLine": "Usado por profesionales para pasar de \"Sé qué decir\" → \"Puedo decirlo ahora.\"",
+        "conversion": {
+            "label": "¿No estás seguro de tu nivel?",
+            "link": "Obtén tu instantánea de habla CEFR en 2 minutos"
+        }
+    },
     "hero": {
         "headline": "Deja de traducir en tu cabeza.<br /><span>Empieza a hablar como tú mismo/a.</span>",
         "subtext": "El enfoque boutique para la fluidez. Para profesionales que se sienten atrapados en el silencio entre el pensamiento y el habla.",

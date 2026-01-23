@@ -34,6 +34,31 @@
             }
         }
     },
+    "microHeadlines": {
+        "title": "Vom Englischwissen → Zum Englischdenken",
+        "subtitle": "Ein klarer Weg von der Übersetzung zum Reflex, zu sicherem professionellem Sprechen — gemessen an CEFR-Signalen, nicht an Grammatiktests.",
+        "card1": {
+            "title": "Du brauchst nicht mehr Grammatik",
+            "desc": "Du „kennst“ Englisch bereits. Die Lücke ist die Geschwindigkeit — dein Gehirn übersetzt anstatt zu reagieren.",
+            "link": "Warum das passiert"
+        },
+        "card2": {
+            "title": "CEFR geht um Verarbeitung, nicht um Vokabeln",
+            "desc": "B2 sind keine schwierigeren Wörter. Es sind natürliche Pausen, strukturierte Ideen und Denken ohne Umwege.",
+            "link": "Siehe die Roadmap"
+        },
+        "card3": {
+            "title": "Fließendheit ist konditioniert, nicht gelernt",
+            "desc": "Live-Interaktion, Mikro-Feedback und Chunk-Training bauen auf, was Lehrbücher nicht können: Reflex.",
+            "link1": "KI-Tutor ausprobieren",
+            "link2": "Mit einem Partner sprechen"
+        },
+        "trustLine": "Genutzt von Profis auf dem Weg von „Ich weiß, was ich sagen will“ → „Ich kann es jetzt sagen.“",
+        "conversion": {
+            "label": "Nicht sicher, wo du stehst?",
+            "link": "Hol dir deinen CEFR-Sprech-Snapshot in 2 Minuten"
+        }
+    },
     "hero": {
         "headline": "Hör auf, im Kopf zu übersetzen.<br /><span>Fang an, wie du selbst zu sprechen.</span>",
         "subtext": "Der Boutique-Ansatz zur Fließendheit. Für Profis, die in der Stille feststecken.",

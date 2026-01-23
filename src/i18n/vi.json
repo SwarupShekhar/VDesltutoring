@@ -16,6 +16,31 @@
         "language": "Ngôn ngữ",
         "interfaceOnly": "Chỉ giao diện. Nội dung học tập vẫn bằng tiếng Anh."
     },
+    "microHeadlines": {
+        "title": "Từ Biết Tiếng Anh → Tư Duy Bằng Tiếng Anh",
+        "subtitle": "Một lộ trình rõ ràng từ dịch thuật, đến phản xạ, đến nói chuyện chuyên nghiệp tự tin — được đo lường bằng tín hiệu CEFR, không phải bài kiểm tra ngữ pháp.",
+        "card1": {
+            "title": "Bạn Không Cần Thêm Ngữ Pháp",
+            "desc": "Bạn đã \"biết\" tiếng Anh. Khoảng cách là tốc độ — bộ não của bạn đang dịch thay vì phản hồi.",
+            "link": "Tại sao điều này xảy ra"
+        },
+        "card2": {
+            "title": "CEFR Là Về Xử Lý, Không Phải Từ Vựng",
+            "desc": "B2 không phải là từ khó hơn. Đó là những khoảng dừng tự nhiên, ý tưởng có cấu trúc và suy nghĩ không vòng vo.",
+            "link": "Xem lộ trình"
+        },
+        "card3": {
+            "title": "Sự Trôi Chảy Là Phản Xạ, Không Phải Học Thuộc",
+            "desc": "Tương tác trực tiếp, phản hồi vi mô và luyện tập theo cụm xây dựng điều mà sách giáo khoa không thể: phản xạ.",
+            "link1": "Thử Gia sư AI",
+            "link2": "Nói chuyện với đối tác"
+        },
+        "trustLine": "Được các chuyên gia sử dụng để chuyển từ \"Tôi biết phải nói gì\" → \"Tôi có thể nói ngay bây giờ.\"",
+        "conversion": {
+            "label": "Không chắc bạn đang ở đâu?",
+            "link": "Lấy hồ sơ nói CEFR của bạn trong 2 phút"
+        }
+    },
     "hero": {
         "headline": "Ngừng dịch trong đầu.<br /><span>Bắt đầu nói như chính bạn.</span>",
         "subtext": "Phương pháp tiếp cận tinh hoa để lưu loát. Dành cho những chuyên gia cảm thấy bị mắc kẹt trong sự im lặng giữa suy nghĩ và lời nói.",

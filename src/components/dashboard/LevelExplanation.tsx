@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { XCircle, AlertTriangle, CheckCircle, Target, Lock, ArrowRight } from "lucide-react"
-import { CEFRLevel } from "@/lib/cefr-lexical-triggers"
+import { CEFRLevel, GATE_FAILURE_EXPLANATIONS, CEFR_PROMOTION_GATES, getNextCEFRLevel } from "@/lib/cefr/cefrPromotionConfig"
 
 interface LevelExplanationProps {
     profile: any; // CEFRProfile
@@ -14,86 +14,63 @@ export function LevelExplanation({ profile, audit, blockers }: LevelExplanationP
     if (!profile) return null;
 
     const currentLevel = profile.overall.cefr as CEFRLevel;
-    const nextLevel = getNextLevel(currentLevel);
+    const nextLevel = getNextCEFRLevel(currentLevel);
 
-    // Parse Audit Data
-    const gates = audit?.gates || [];
-    const inputs = audit?.inputs || {};
-    const audioMetrics = inputs.audioMetrics || {};
+    // Parse Gate Failures
+    const gateFailures = profile.gate_failures || [];
+    const aggregatedMetrics = profile.aggregated_metrics || {};
 
     // 🔴 BLOCKERS (Hard Stops)
-    const activeBlockers = [];
-
-    // 1. Reliability Gates
-    const reliabilityGate = gates.find((g: any) => g.type === "Reliability");
-    if (reliabilityGate) {
-        activeBlockers.push({
-            title: "Insufficient Data",
-            desc: `Your speech sample was too short (${inputs.wordCount} words) to verify a ${reliabilityGate.from} level. Speak longer to prove consistency.`
-        });
-    }
-
-    // 2. Confidence Gates
-    const confidenceGate = gates.find((g: any) => g.type === "Confidence");
-    if (confidenceGate) {
-        activeBlockers.push({
-            title: "Confidence Mismatch",
-            desc: `You have the vocabulary for ${confidenceGate.from}, but your hesitation pattern (Low Confidence) restricts you to ${confidenceGate.to}.`
-        });
-    }
-
-    // 3. Lexical Gates
-    if (blockers?.level_capped) {
-        activeBlockers.push({
-            title: "Vocabulary Ceiling",
-            desc: blockers.explanation || "You are relying on basic words like 'good' or 'nice'. Use precise vocabulary to unlock higher levels."
-        });
-    }
+    const activeBlockers = gateFailures.map((code: string) => {
+        const expl = GATE_FAILURE_EXPLANATIONS[code];
+        return {
+            title: expl?.title || code,
+            desc: expl?.description || "You need to meet all behavioral requirements to advance."
+        };
+    });
 
     // 🟡 NEAR-MISSES (Almost Passed)
     const nearMisses = [];
-    // If not capped, but score is high (e.g. > 70/100 for current level bracket)
-    // Note: This relies on internal knowledge that levels shift at ~35, 50, 65, 80, 90
-    // Simplified logic: If score is within 5 points of next level
-    // A2(35), B1(50), B2(65), C1(80), C2(90)
-    const thresholds = { "A1": 35, "A2": 50, "B1": 65, "B2": 80, "C1": 90 };
-    const nextThreshold = thresholds[currentLevel as keyof typeof thresholds] || 100;
-
-    if (!activeBlockers.length && profile.overall.score >= nextThreshold - 10) {
-        nearMisses.push({
-            title: "Fluency Score",
-            desc: `You are ${nextThreshold - profile.overall.score} points away from ${nextLevel}. Keep practicing to bridge the gap.`
-        });
-    }
-
-    // Check Audio Metrics for Near Misses
-    if (audioMetrics.confidenceBand === "Medium" && ["B2", "C1"].includes(nextLevel)) {
-        nearMisses.push({
-            title: "Confidence Band",
-            desc: "Your confidence is 'Medium'. You need 'High' confidence (automaticity) to unlock C1."
-        });
+    if (activeBlockers.length === 0 && nextLevel) {
+        // If no hard blockers but they haven't moved up yet, it might be due to raw score or recent consistency
+        if (profile.overall.score >= 70) {
+            nearMisses.push({
+                title: "Consistency",
+                desc: "Your latest session was excellent. Maintain this level of performance in 1-2 more sessions to confirm your new level."
+            });
+        }
     }
 
     // 🟢 STRENGTHS
     const strengths = [];
-    if (audioMetrics.confidence > 60) strengths.push({ title: "High Confidence", desc: "You speak with authority and minimal hesitation." });
-    if (audioMetrics.recoveryScore > 0.6) strengths.push({ title: "Strong Recovery", desc: "You handle mistakes smoothly without breaking flow." });
-    if (inputs.wordCount > 200) strengths.push({ title: "Volume", desc: "You are comfortable holding the floor for long periods." });
-    if ((profile?.vocabulary?.score || 0) > 75) strengths.push({ title: "Rich Vocabulary", desc: "You use a diverse range of words." });
+    if (aggregatedMetrics.confidenceBand === "High") strengths.push({ title: "High Confidence", desc: "You speak with authority and minimal hesitation." });
+    if (aggregatedMetrics.totalWords > 500) strengths.push({ title: "Volume", desc: "You are comfortable holding the floor for long periods." });
+    if (aggregatedMetrics.avgMidSentencePause < 1.0) strengths.push({ title: "Steady Flow", desc: "You maintain a consistent speaking rhythm." });
+    if (!gateFailures.includes("LEXICAL_CEILING") && (profile?.vocabulary?.score || 0) > 75) {
+        strengths.push({ title: "Rich Vocabulary", desc: "You use a diverse range of words and avoid repetitive basic nouns." });
+    }
 
-    // Limit strengths to 2
-    const displayStrengths = strengths.slice(0, 2);
+    // Limit strengths to 3
+    const displayStrengths = strengths.slice(0, 3);
 
     // 🎯 UNLOCK CONDITION
-    const unlockConditions: Record<string, string> = {
-        "A2": "Speak for at least 1 minute using simple descriptors other than 'good/bad'.",
-        "B1": "Connect sentences with 'because' or 'so' and minimize silence.",
-        "B2": "Maintain 'Medium' confidence and speak for >100 words without relying on translation pauses.",
-        "C1": "Achieve 'High' confidence (automatic) and use precise nuance words (e.g. 'substantially').",
-        "C2": "Demonstrate complete automaticity (no planning pauses) and sophisticated vocabulary.",
-        "Mastery": "You have reached the highest measurable level!"
-    };
-    const unlockText = unlockConditions[nextLevel] || "Continue regular practice to build consistency.";
+    let unlockText = "Continue regular practice to build consistency.";
+    if (nextLevel && nextLevel !== "A1") {
+        const gate = CEFR_PROMOTION_GATES[nextLevel as Exclude<CEFRLevel, "A1">];
+        if (gate) {
+            unlockText = gate.description;
+
+            // Add specific requirements if we have failure specifics
+            if (gateFailures.includes("INSUFFICIENT_SPEECH_TIME")) {
+                const remaining = Math.max(0, gate.minTotalSpeakingSeconds - (aggregatedMetrics.totalSeconds || 0));
+                unlockText = `Speak for ${Math.ceil(remaining / 60)} more minutes to meet the ${nextLevel} speech duration requirement.`;
+            } else if (gateFailures.includes("CONFIDENCE_TOO_LOW")) {
+                unlockText = `You need to achieve '${gate.requiredConfidenceBand}' confidence (automatic speaking) to unlock ${nextLevel}.`;
+            }
+        }
+    } else if (currentLevel === "C2") {
+        unlockText = "You have reached the highest measurable level! Consistency is now the goal.";
+    }
 
     return (
         <div className="space-y-6 mt-8">
@@ -114,7 +91,7 @@ export function LevelExplanation({ profile, audit, blockers }: LevelExplanationP
                             Critical Blockers
                         </h4>
                         <div className="space-y-3">
-                            {activeBlockers.map((b, i) => (
+                            {activeBlockers.map((b: any, i: number) => (
                                 <div key={i} className="flex gap-3">
                                     <div className="w-1.5 h-1.5 rounded-full bg-red-400 mt-2 shrink-0" />
                                     <div>
@@ -179,9 +156,3 @@ export function LevelExplanation({ profile, audit, blockers }: LevelExplanationP
     );
 }
 
-function getNextLevel(current: string): string {
-    const map: Record<string, string> = {
-        "A1": "A2", "A2": "B1", "B1": "B2", "B2": "C1", "C1": "C2", "C2": "Mastery"
-    };
-    return map[current] || "Next Level";
-}

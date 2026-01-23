@@ -1,5 +1,10 @@
-
 import { prisma } from "@/lib/prisma";
+import {
+  CEFRLevel,
+  aggregateUserSpeechMetrics,
+  evaluateCEFRPromotion,
+  cacheAggregatedMetrics
+} from "@/lib/cefr";
 
 import { CEFR_MODEL_VERSION } from "./constants";
 export { CEFR_MODEL_VERSION };
@@ -101,118 +106,48 @@ export async function updateUserFluencyProfile({
   console.log(`[FluencyProfile] Updating profile for ${targetUserId} from ${sourceType} (Session: ${sourceSessionId})`);
   console.log(`[FluencyProfile] Original CEFR: ${cefrLevel}, Score: ${fluencyScore}`);
 
-  // 1.7 Reliability Gate Enforcement (Global single source of truth)
-  // We enforce hard limits on high levels to ensure credibility, regardless of the source.
-  // Note: we don't have exact duration here, but we use wordCount as a reliable proxy.
-  let finalCefrLevel = cefrLevel;
-  let capped = false;
+  // --- 2. NEW BEHAVIOR-BASED CEFR PROMOTION ---
+  // We aggregate metrics across ALL sessions (including this one if persisted)
+  // and use the single authority Promotion Engine.
 
-  // Step-down logic:
-  // C2 requires ~300 words
-  if (finalCefrLevel === "C2" && wordCount < 300) {
-    finalCefrLevel = "C1";
-    capped = true;
-  }
-  // C1 requires ~200 words
-  if (finalCefrLevel === "C1" && wordCount < 200) {
-    finalCefrLevel = "B2";
-    capped = true;
-  }
-  // B2 requires ~100 words
-  if (finalCefrLevel === "B2" && wordCount < 100) {
-    finalCefrLevel = "B1";
-    capped = true;
-  }
+  const metrics = await aggregateUserSpeechMetrics(targetUserId);
 
-  if (capped) {
-    console.log(`[FluencyProfile] Reliability Cap applied (WordCount): ${cefrLevel} -> ${finalCefrLevel} (Words: ${wordCount})`);
-    auditTrail.gates.push({
-      type: "Reliability",
-      result: "Capped",
-      reason: `Word count ${wordCount} insufficient for ${cefrLevel}`,
-      from: cefrLevel,
-      to: finalCefrLevel
-    });
-  }
+  // Update metrics with current session if not yet persisted or to ensure freshness
+  // (We'll use the provided WordCount/FluencyScore etc. to supplement the aggregated view)
+  metrics.totalWords += wordCount;
+  metrics.totalSeconds += (avgPauseMs || 0) > 0 ? (wordCount * 1.5) : 0; // rough estimate if no duration provided
 
-  // 1.8 Confidence Gate Enforcement (Audio-First Control)
-  // CORE RULE: You cannot be C1/C2 with "Low" or "Medium" confidence. 
-  // High levels require High Control.
-  if (confidenceBand === "Low") {
-    if (["B2", "C1", "C2"].includes(finalCefrLevel)) {
-      console.log(`[FluencyProfile] Confidence Gate (Low): ${finalCefrLevel} -> B1`);
-      const prev = finalCefrLevel;
-      finalCefrLevel = "B1";
-      capped = true;
-      auditTrail.gates.push({
-        type: "Confidence",
-        result: "Capped",
-        reason: "Low confidence band restricts level to B1 max",
-        from: prev,
-        to: finalCefrLevel
-      });
-    }
-  } else if (confidenceBand === "Medium") {
-    if (["C1", "C2"].includes(finalCefrLevel)) {
-      console.log(`[FluencyProfile] Confidence Gate (Medium): ${finalCefrLevel} -> B2`);
-      const prev = finalCefrLevel;
-      finalCefrLevel = "B2";
-      capped = true;
-      auditTrail.gates.push({
-        type: "Confidence",
-        result: "Capped",
-        reason: "Medium confidence band restricts level to B2 max",
-        from: prev,
-        to: finalCefrLevel
-      });
-    }
-  }
+  const currentProfile = await (prisma as any).user_fluency_profile.findUnique({
+    where: { user_id: targetUserId }
+  });
 
-  // 1.8.5 Lexical Gate Logging
-  if (lexicalBlockers && lexicalBlockers.level_capped) {
-    auditTrail.gates.push({
-      type: "Lexical",
-      result: "Capped",
-      reason: lexicalBlockers.explanation || "Vocabulary ceiling detected",
-      from: lexicalBlockers.preliminary_level || cefrLevel,
-      to: finalCefrLevel
-    });
+  const currentLevel = (currentProfile?.cefr_level as CEFRLevel) || "A1";
+  const promotion = evaluateCEFRPromotion(currentLevel, metrics);
+
+  let finalCefrLevel = currentLevel;
+  if (promotion.eligible && promotion.nextLevel) {
+    console.log(`[FluencyProfile] PROMOTION: ${currentLevel} -> ${promotion.nextLevel}`);
+    finalCefrLevel = promotion.nextLevel;
   }
 
   // 1.8.8 Final Decision
   auditTrail.finalDecision = {
     level: finalCefrLevel,
     score: fluencyScore,
-    isCapped: capped || !!lexicalBlockers?.level_capped
+    isCapped: !promotion.eligible,
+    promotionResult: promotion
   };
 
-  // Ensure blockers tracks the cap status if not already present
+  // Ensure blockers tracks the cap status
   const finalLexicalBlockers = {
     ...(lexicalBlockers || {}),
-    level_capped: capped || !!lexicalBlockers?.level_capped,
-    preliminary_level: capped ? cefrLevel : (lexicalBlockers?.preliminary_level || null)
+    level_capped: !promotion.eligible,
+    gate_failures: promotion.failures,
+    preliminary_level: cefrLevel
   };
-  // 1.9 Persistent Blocker Logging (Audit Trail)
-  // We save lexical triggers to live_micro_fixes so they show up in history/tutor dashboards
-  if (lexicalBlockers && lexicalBlockers.category) {
-    console.log(`[FluencyProfile] Logging persistent blocker: ${lexicalBlockers.category}`);
-    try {
-      await prisma.live_micro_fixes.create({
-        data: {
-          user_id: targetUserId,
-          session_id: sourceSessionId || "ai-tutor-audit",
-          category: lexicalBlockers.category,
-          detected_words: lexicalBlockers.detectedWords || [],
-          upgrades: lexicalBlockers.upgrades || [],
-          explanation: lexicalBlockers.explanation || "Limited vocabulary range detected.",
-          target_level: lexicalBlockers.targetLevel || "B1",
-          current_limit: lexicalBlockers.currentLimit || "A2",
-        }
-      });
-    } catch (logErr) {
-      console.error("[FluencyProfile] Blocker logging failed:", logErr);
-    }
-  }
+
+  // Cache metrics and gate failures
+  await cacheAggregatedMetrics(targetUserId, metrics);
 
   try {
     const result = await (prisma as any).user_fluency_profile.upsert({
@@ -235,7 +170,12 @@ export async function updateUserFluencyProfile({
         source_type: sourceType,
         cefr_model_version: CEFR_MODEL_VERSION,
         assessment_audit: auditTrail,
-        // last_updated is handled by @updatedAt automatically
+
+        // New Promotion Fields
+        gate_failures: promotion.failures as any,
+        aggregated_metrics: metrics as any,
+        last_aggregation: new Date(),
+        unique_practice_types: metrics.practiceTypes,
       },
       create: {
         user_id: targetUserId,
@@ -256,6 +196,12 @@ export async function updateUserFluencyProfile({
         source_type: sourceType,
         cefr_model_version: CEFR_MODEL_VERSION,
         assessment_audit: auditTrail,
+
+        // New Promotion Fields
+        gate_failures: promotion.failures as any,
+        aggregated_metrics: metrics as any,
+        last_aggregation: new Date(),
+        unique_practice_types: metrics.practiceTypes,
       },
     });
 

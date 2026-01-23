@@ -11,6 +11,7 @@ import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { detectLexicalCeiling } from "@/lib/fluency-engine"
 import type { CEFRLevel } from "@/lib/cefr-lexical-triggers"
+import { AI_LEVEL_BEHAVIOR, getNextCEFRLevel, CEFR_LEVEL_LABELS } from "@/lib/cefr"
 
 
 export async function POST(req: Request) {
@@ -24,21 +25,32 @@ export async function POST(req: Request) {
         // Fetch User Context / Memory
         let coachMemory: any = null
         let firstName = reqName || "Student"
+        let currentCEFRLevel: CEFRLevel = "A1"
+        let fluencyProfile: any = null
 
         if (clerkId) {
             try {
                 const user = await prisma.users.findUnique({
                     where: { clerkId },
-                    select: { full_name: true, coach_memory: true } as any
+                    include: { user_fluency_profile: true }
                 })
                 if (user) {
                     firstName = (user as any).full_name?.split(' ')[0] || firstName
                     coachMemory = (user as any).coach_memory
+                    fluencyProfile = (user as any).user_fluency_profile
+                    if (fluencyProfile?.cefr_level) {
+                        currentCEFRLevel = fluencyProfile.cefr_level as CEFRLevel
+                    }
                 }
             } catch (e) {
                 console.warn("Failed to fetch user memory", e)
             }
         }
+
+        // Get level-adaptive behavior configuration
+        const levelBehavior = AI_LEVEL_BEHAVIOR[currentCEFRLevel]
+        const nextCEFRTarget = getNextCEFRLevel(currentCEFRLevel) || currentCEFRLevel
+        const levelLabel = CEFR_LEVEL_LABELS[currentCEFRLevel]
 
         if (!transcript || transcript.trim().length < 2) {
             return NextResponse.json({ response: "" })
@@ -125,7 +137,7 @@ Example: "Welcome back ${firstName}. Last time we worked on ${lastWeakness}. Let
         }
 
         // Select System Prompt based on Mode
-        const { systemPromptType, targetLevel } = body
+        const { systemPromptType, targetLevel: bodyTargetLevel } = body
         let SYSTEM_PROMPT = ""
 
         // Only inject memory if this is the START of the conversation (no history)
@@ -135,7 +147,7 @@ Example: "Welcome back ${firstName}. Last time we worked on ${lastWeakness}. Let
         if (systemPromptType === 'TRIAL') {
             SYSTEM_PROMPT = `
 You are THE EXAMINER. You are a strict, neutral, professional CEFR Assessor.
-The student (${firstName}) is attempting to pass the ${targetLevel || 'B2'} LEVEL GATE.
+The student (${firstName}) is attempting to pass the ${bodyTargetLevel || 'B2'} LEVEL GATE.
 
 Your Role:
 - DO NOT act like a teacher or helper.
@@ -149,7 +161,7 @@ EXAM PROTOCOL:
 3. Round 3: Challenge their opinion or ask for clarification (e.g., "But isn't that contradictory? Explain why.").
 
 CURRENT STATE:
-- Level to Prove: ${targetLevel}
+- Level to Prove: ${bodyTargetLevel || nextCEFRTarget}
 - Current Englivo Score: ${englivoScore}/100
 
 YOUR RESPONSE RULES:
@@ -165,7 +177,7 @@ Return your response in this JSON format:
 }
 `
         } else {
-            // STANDARD TUTOR PROMPT
+            // STANDARD TUTOR PROMPT WITH LEVEL-ADAPTIVE BEHAVIOR
             SYSTEM_PROMPT = `
 You are Englivo — a friendly English speaking coach who genuinely cares about helping students.
 The student's name is: ${firstName}
@@ -174,6 +186,39 @@ You are NOT a grammar teacher or a strict examiner. You are a supportive speakin
 Your job: Help ${firstName} feel confident, speak smoothly, and enjoy the conversation.
 
 ${memoryPrompt}
+
+CURRENT STUDENT LEVEL:
+- CEFR Level: ${currentCEFRLevel} (${levelLabel.name} - "${levelLabel.title}")
+- Target Level: ${nextCEFRTarget}
+- Your Pace: ${levelBehavior.paceDescription}
+- Prompt Style: ${levelBehavior.promptStyle}
+- Pause Tolerance: ${levelBehavior.pauseTolerance} seconds
+- Focus Areas: ${levelBehavior.focusAreas.join(', ')}
+
+LEVEL-ADAPTIVE BEHAVIOR:
+${currentCEFRLevel === 'A1' || currentCEFRLevel === 'A2' ? `
+- Be VERY patient. Allow up to ${levelBehavior.pauseTolerance}s pauses without rushing.
+- Use simple vocabulary and short sentences.
+- Scaffold their responses: "You could start with..."
+- Celebrate small wins enthusiastically.
+` : ''}
+${currentCEFRLevel === 'B1' || currentCEFRLevel === 'B2' ? `
+- Push for more complex responses: "Can you explain why?"
+- Gently interrupt long pauses to maintain momentum.
+- Introduce connectors: "How about using 'however' or 'therefore'?"
+- If they use basic vocabulary, model more precise alternatives.
+` : ''}
+${currentCEFRLevel === 'C1' || currentCEFRLevel === 'C2' ? `
+- Act as a peer, not a teacher. Challenge their ideas.
+- Expect quick, articulate responses.
+- Probe for nuance: "But isn't there another perspective?"
+- If they pause too long, it's a sign they're not ready for promotion.
+- Do NOT reward incomplete fluency with encouragement.
+` : ''}
+
+Your job is to test readiness for ${nextCEFRTarget}.
+If the user pauses mid-sentence or relies on basic vocabulary, probe deeper instead of encouraging.
+Do NOT reward incomplete fluency.
 
 CURRENT ENGLIVO DATA:
 - Englivo Score: ${englivoScore}/100

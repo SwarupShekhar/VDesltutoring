@@ -194,6 +194,10 @@ model fluency_snapshots {
   word_count           Int      @default(0)
   wpm                  Int      @default(0)
   user                 users    @relation(fields: [user_id], references: [id])
+  
+  // English-Only enforcement
+  language_confidence Float?    @default(1.0)
+  detected_language   String?   @default("en")
 }
 
 model live_queue {
@@ -352,6 +356,12 @@ model user_fluency_profile {
   source_type       String
   cefr_model_version String? @default("v1.0")
   assessment_audit   Json?   // Audit trail of inputs -> gates -> decision
+  
+  // CEFR Promotion System Fields
+  gate_failures          Json?     // Array of failed gate codes from last evaluation
+  aggregated_metrics     Json?     // Cached aggregated metrics from all session types
+  last_aggregation       DateTime? // When metrics were last aggregated
+  unique_practice_types  String[]  // Types of practice completed (ai_tutor, live_practice, human_tutor)
 }
 
 enum session_status {

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { detectNonEnglish } from "@/lib/speech/detectNonEnglish"
 
 const FILLER_WORDS = [
     "um",
@@ -43,6 +44,14 @@ export async function POST(req: Request) {
 
         const text = transcript.toLowerCase()
         const words = deepgram?.results?.channels?.[0]?.alternatives?.[0]?.words || []
+
+        // --- PART 6: English-Only Enforcement ---
+        const langCheck = detectNonEnglish(deepgram)
+        const isEnglish = langCheck.isEnglish
+
+        if (!isEnglish) {
+            console.warn(`[FluencyAnalyze] Non-English detected: ${langCheck.detectedLanguage} (${langCheck.confidence})`);
+        }
 
         // ------------------------------------------------------------------
         // Fluency Pattern Buckets
@@ -172,9 +181,12 @@ export async function POST(req: Request) {
                 grammar_scaffold: PATTERNS.GRAMMAR_SCAFFOLD,
                 translation_thinking: PATTERNS.TRANSLATION_THINKING,
                 wpm: wpm,
-                word_count: wordCount
-            }
+                word_count: isEnglish ? wordCount : 0, // ❌ Do NOT count non-English words toward promotion
+                language_confidence: langCheck.confidence,
+                detected_language: langCheck.detectedLanguage
+            } as any
         })
+
 
         // ------------------------------------------------------------------
         // Final response
@@ -185,14 +197,16 @@ export async function POST(req: Request) {
             transcript,
             corrected: correction,
             patterns: rankedPatterns, // Top-level for easy consumption by AI API
+            isEnglish,
+            warning: !isEnglish ? "English only — stay in English to progress" : null,
             analysis: {
                 wpm,
                 fillers: foundFillers,
                 fillerRate,
                 patterns: rankedPatterns,
                 patternScores: PATTERNS,
-                suggestion,
-                type
+                suggestion: !isEnglish ? "English only — stay in English to progress" : suggestion,
+                type: !isEnglish ? "neutral" : type
             }
         })
 

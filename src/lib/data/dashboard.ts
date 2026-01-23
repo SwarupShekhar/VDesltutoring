@@ -1,6 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
-import { computeSkillScores, createSkillScore, type SkillMetrics, type CEFRProfile, scoreToCEFR, CEFR_THRESHOLDS, type Skill } from '@/engines/cefr/cefrEngine'
+import { computeSkillScores, createSkillScore, type SkillMetrics, type CEFRProfile, scoreToCEFR, CEFR_THRESHOLDS, type Skill, type CEFRLevel } from '@/engines/cefr/cefrEngine'
 import { computeFluencyScore, type FluencyMetrics } from '@/engines/fluency/fluencyScore'
 
 export type DashboardData = {
@@ -438,7 +438,10 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     vocabularyScore * 0.20
                 );
 
-                const finalLevel = scoreToCEFR(overallScore);
+                // CRITICAL: Use the database's cefr_level as the authoritative source
+                // This level has already been through the gating system (Confidence, Lexical, Reliability)
+                // and represents the user's TRUE level, not just their raw score
+                const authoritativeLevel = fluencyProfile.cefr_level as CEFRLevel;
 
                 cefrProfile = {
                     fluency: fluencyObj,
@@ -447,10 +450,10 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     vocabulary: vocabObj,
                     overall: {
                         score: overallScore,
-                        cefr: finalLevel,
-                        label: CEFR_THRESHOLDS[finalLevel].label
+                        cefr: authoritativeLevel,
+                        label: CEFR_THRESHOLDS[authoritativeLevel]?.label || fluencyProfile.cefr_level
                     },
-                    formatted_level: finalLevel,
+                    formatted_level: authoritativeLevel,
                     weakest: (['fluency', 'pronunciation', 'grammar', 'vocabulary'] as Skill[])
                         .sort((a, b) => {
                             const scores: Record<string, number> = { fluency: fluencyScore, pronunciation: pronunciationScore, grammar: grammarScore, vocabulary: vocabularyScore };
@@ -461,10 +464,13 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                             const scores: Record<string, number> = { fluency: fluencyScore, pronunciation: pronunciationScore, grammar: grammarScore, vocabulary: vocabularyScore };
                             return scores[b] - scores[a];
                         })[0],
-                    speakingTime: fluencyProfile.word_count * 0.6,
+                    speakingTime: (fluencyProfile.aggregated_metrics as any)?.totalSeconds || fluencyProfile.word_count * 0.6,
                     isPreliminary: !!fluencyProfile.lexical_blockers?.level_capped || fluencyProfile.word_count < 250,
                     confidenceBand: fluencyProfile.confidence_band,
-                    confidenceExplanation: fluencyProfile.confidence_explanation
+                    confidenceExplanation: fluencyProfile.confidence_explanation,
+                    gate_failures: fluencyProfile.gate_failures,
+                    aggregated_metrics: fluencyProfile.aggregated_metrics,
+                    assessment_audit: fluencyProfile.assessment_audit
                 };
 
                 blockers = fluencyProfile.lexical_blockers;

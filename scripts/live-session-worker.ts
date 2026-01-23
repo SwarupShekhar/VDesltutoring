@@ -253,7 +253,7 @@ async function summarizeSession(session: any) {
         });
 
         // Flatten all words from all transcripts for this session
-        const allWords = transcripts.flatMap(t => (t.word_data as any) || []);
+        const allWords = transcripts.flatMap(t => ((t as any).word_data as any) || []);
         const totalDurationLive = (session.ended_at ? new Date(session.ended_at).getTime() : Date.now()) - new Date(session.started_at).getTime();
 
         const audioAnalysis = analyzeAudioConfidence(allWords, totalDurationLive / 1000);

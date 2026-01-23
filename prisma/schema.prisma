@@ -227,6 +227,7 @@ model live_transcripts {
   user_id    String        @db.Uuid
   text       String
   timestamp  DateTime      @default(now()) @db.Timestamptz(6)
+  word_data  Json?
   session    live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
   user       users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

@@ -1,7 +1,8 @@
 
 import { prisma } from "@/lib/prisma";
 
-export const CEFR_MODEL_VERSION = "v1.2";
+import { CEFR_MODEL_VERSION } from "./constants";
+export { CEFR_MODEL_VERSION };
 
 export type FluencyProfileUpdate = {
   userId: string;

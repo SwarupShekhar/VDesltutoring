@@ -12,7 +12,7 @@ import { WeaknessPanel } from './WeaknessPanel'
 import type { CEFRProfile, Skill } from '@/lib/cefrEngine'
 import { SKILL_LABELS, generateProfileSummary } from '@/lib/cefrEngine'
 import { LevelUpModal } from './LevelUpModal'
-import { CEFR_MODEL_VERSION as CURRENT_VERSION } from "@/lib/assessment/updateUserFluencyProfile"
+import { CEFR_MODEL_VERSION as CURRENT_VERSION } from "@/lib/assessment/constants"
 import { AssessmentUpdateBanner } from "./AssessmentUpdateBanner"
 import { LevelExplanation } from "./LevelExplanation"
 

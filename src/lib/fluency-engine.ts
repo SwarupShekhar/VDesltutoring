@@ -1,6 +1,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { CEFR_LEXICAL_TRIGGERS, LEXICAL_ENGINE_CONFIG, CEFRLevel } from "./cefr-lexical-triggers";
+import { CEFR_MODEL_VERSION } from "./assessment/updateUserFluencyProfile";
 
 // --- Formula Constants & Logic ---
 
@@ -292,7 +293,8 @@ export class FluencyEngine {
                 confidence_score: Math.round(confidenceScore),
                 fluency_score: Math.round(fluencyScore),
                 weaknesses: topWeaknesses,
-                drill_plan: drillPlan
+                drill_plan: drillPlan,
+                cefr_model_version: CEFR_MODEL_VERSION
             },
             create: {
                 session_id: sessionId,
@@ -300,7 +302,8 @@ export class FluencyEngine {
                 confidence_score: Math.round(confidenceScore),
                 fluency_score: Math.round(fluencyScore),
                 weaknesses: topWeaknesses,
-                drill_plan: drillPlan
+                drill_plan: drillPlan,
+                cefr_model_version: CEFR_MODEL_VERSION
             }
         });
 

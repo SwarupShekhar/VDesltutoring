@@ -12,6 +12,9 @@ import { WeaknessPanel } from './WeaknessPanel'
 import type { CEFRProfile, Skill } from '@/lib/cefrEngine'
 import { SKILL_LABELS, generateProfileSummary } from '@/lib/cefrEngine'
 import { LevelUpModal } from './LevelUpModal'
+import { CEFR_MODEL_VERSION as CURRENT_VERSION } from "@/lib/assessment/updateUserFluencyProfile"
+import { AssessmentUpdateBanner } from "./AssessmentUpdateBanner"
+import { LevelExplanation } from "./LevelExplanation"
 
 interface CEFRDashboardProps {
     profile: CEFRProfile
@@ -26,6 +29,9 @@ interface CEFRDashboardProps {
         lastWordCount: number;
         improvementNote: string;
     } | null;
+    cefrModelVersion?: string;
+    assessmentAudit?: any;
+    blockers?: any;
 }
 
 /**
@@ -46,7 +52,10 @@ export function CEFRDashboard({
     trialCooldown = false,
     timeUntilNextTrial = 0,
     dict = {},
-    delta = null
+    delta = null,
+    cefrModelVersion,
+    assessmentAudit,
+    blockers
 }: CEFRDashboardProps) {
     const router = useRouter()
     const params = useParams()
@@ -91,6 +100,18 @@ export function CEFRDashboard({
                     dict={dict}
                 />
             )}
+
+            <AssessmentUpdateBanner
+                currentVersion={CURRENT_VERSION}
+                profileVersion={cefrModelVersion}
+                onUpdate={() => router.push("/ai-tutor")}
+            />
+
+            <LevelExplanation
+                profile={profile}
+                audit={assessmentAudit}
+                blockers={blockers}
+            />
 
             {/* NEW: What's Changed Section */}
             {delta && (

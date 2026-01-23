@@ -114,6 +114,9 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
           timeUntilNextTrial={timeUntilNextTrial}
           dict={t}
           delta={(me as any).delta}
+          cefrModelVersion={(me as any).cefrModelVersion}
+          assessmentAudit={(me as any).assessmentAudit}
+          blockers={(me as any).blockers}
         />
       ) : (
         <div className="flex flex-col items-center justify-center p-12 text-center rounded-3xl bg-slate-50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-800 space-y-6">

@@ -7,32 +7,31 @@ datasource db {
 }
 
 model users {
-  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clerkId           String?             @unique
-  email             String              @unique
-  full_name         String
-  role              user_role?          @default(LEARNER)
-  profile_image_url String?
-  is_active         Boolean?            @default(true)
-  last_login        DateTime?           @db.Timestamptz(6)
-  created_at        DateTime?           @default(now()) @db.Timestamptz(6)
-  notifications     notifications[]
-  student_profiles  student_profiles?
-  tutor_profiles    tutor_profiles?
-  fluency_sessions  fluency_sessions[]  @relation("UserFluency")
-  ai_chat_sessions  ai_chat_sessions[]
-  fluency_snapshots fluency_snapshots[]
-  coach_memory        Json?
-  live_queue          live_queue[]
-  live_sessions_as_a  live_sessions[]     @relation("LiveSessionUserA")
-  live_sessions_as_b  live_sessions[]     @relation("LiveSessionUserB")
-  live_transcripts    live_transcripts[]
-  live_metrics        live_metrics[]
+  id                     String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkId                String?                @unique
+  email                  String                 @unique
+  full_name              String
+  role                   user_role?             @default(LEARNER)
+  profile_image_url      String?
+  is_active              Boolean?               @default(true)
+  last_login             DateTime?              @db.Timestamptz(6)
+  created_at             DateTime?              @default(now()) @db.Timestamptz(6)
+  coach_memory           Json?
+  ai_chat_sessions       ai_chat_sessions[]
+  fluency_sessions       fluency_sessions[]     @relation("UserFluency")
+  fluency_snapshots      fluency_snapshots[]
+  live_metrics           live_metrics[]
+  live_micro_fixes       live_micro_fixes[]
+  live_queue             live_queue?
   live_session_summaries live_session_summary[]
-  live_weaknesses     live_weaknesses[]
-  live_micro_fixes    live_micro_fixes[]
-  daily_plans         user_daily_plan[]
-  user_fluency_profile user_fluency_profile?
+  live_sessions_as_a     live_sessions[]        @relation("LiveSessionUserA")
+  live_sessions_as_b     live_sessions[]        @relation("LiveSessionUserB")
+  live_transcripts       live_transcripts[]
+  live_weaknesses        live_weaknesses[]
+  notifications          notifications[]
+  student_profiles       student_profiles?
+  tutor_profiles         tutor_profiles?
+  daily_plans            user_daily_plan[]
 }
 
 model packages {
@@ -153,22 +152,7 @@ model fluency_sessions {
   average_score Float
   rounds        Json
   created_at    DateTime @default(now())
-
-  user users @relation("UserFluency", fields: [user_clerk_id], references: [clerkId])
-}
-
-enum session_status {
-  SCHEDULED
-  LIVE
-  COMPLETED
-  CANCELLED
-  NO_SHOW
-}
-
-enum user_role {
-  ADMIN
-  TUTOR
-  LEARNER
+  user          users    @relation("UserFluency", fields: [user_clerk_id], references: [clerkId])
 }
 
 model ai_chat_sessions {
@@ -189,7 +173,7 @@ model ai_chat_sessions {
 model ai_chat_messages {
   id         String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   session_id String           @db.Uuid
-  role       String // "user" or "assistant"
+  role       String
   content    String
   timestamp  DateTime         @default(now()) @db.Timestamptz(6)
   session    ai_chat_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
@@ -198,19 +182,17 @@ model ai_chat_messages {
 }
 
 model fluency_snapshots {
-  id          String   @id @default(uuid())
-  user_id     String   @db.Uuid
-  user        users    @relation(fields: [user_id], references: [id])
-
-  hesitation            Int
-  fillers               Int
-  pronunciation         Int
-  grammar_scaffold      Int
+  id                   String   @id @default(uuid())
+  created_at           DateTime @default(now())
+  hesitation           Int
+  pronunciation        Int
+  user_id              String   @db.Uuid
+  fillers              Int
+  grammar_scaffold     Int
   translation_thinking Int
-  wpm                   Int      @default(0)
-  word_count            Int      @default(0)
-
-  created_at DateTime @default(now())
+  word_count           Int      @default(0)
+  wpm                  Int      @default(0)
+  user                 users    @relation(fields: [user_id], references: [id])
 }
 
 model live_queue {
@@ -223,22 +205,20 @@ model live_queue {
 }
 
 model live_sessions {
-  id         String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  room_name  String
-  user_a     String              @db.Uuid
-  user_b     String              @db.Uuid
-  status     live_session_status @default(waiting)
-  started_at DateTime            @default(now()) @db.Timestamptz(6)
-  ended_at   DateTime?           @db.Timestamptz(6)
-  
-  user_a_rel users               @relation("LiveSessionUserA", fields: [user_a], references: [id], onDelete: Cascade)
-  user_b_rel users               @relation("LiveSessionUserB", fields: [user_b], references: [id], onDelete: Cascade)
-
-  transcripts live_transcripts[]
+  id          String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  room_name   String
+  user_a      String                 @db.Uuid
+  user_b      String                 @db.Uuid
+  status      live_session_status    @default(waiting)
+  started_at  DateTime               @default(now()) @db.Timestamptz(6)
+  ended_at    DateTime?              @db.Timestamptz(6)
   metrics     live_metrics[]
-  summaries   live_session_summary[]
-  weaknesses  live_weaknesses[]
   micro_fixes live_micro_fixes[]
+  summaries   live_session_summary[]
+  user_a_rel  users                  @relation("LiveSessionUserA", fields: [user_a], references: [id], onDelete: Cascade)
+  user_b_rel  users                  @relation("LiveSessionUserB", fields: [user_b], references: [id], onDelete: Cascade)
+  transcripts live_transcripts[]
+  weaknesses  live_weaknesses[]
 }
 
 model live_transcripts {
@@ -246,123 +226,101 @@ model live_transcripts {
   session_id String        @db.Uuid
   user_id    String        @db.Uuid
   text       String
-  word_data  Json?         // Array of {word, start, end, confidence}
   timestamp  DateTime      @default(now()) @db.Timestamptz(6)
-  
   session    live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
   user       users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
-enum live_session_status {
-  waiting
-  live
-  ended
-}
-
 model live_metrics {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  session_id      String   @db.Uuid
-  user_id         String   @db.Uuid
-  speaking_time   Float    @default(0) // in seconds
-  word_count      Int      @default(0)
-  hesitation_count Int     @default(0)
-  filler_count    Int      @default(0)
-  grammar_errors  Int      @default(0)
-  speech_rate     Float    @default(0) // words per minute
-  
-  // New Audio-First Metrics
-  avg_pause_ms             Float?    @default(0)
-  mid_sentence_pause_ratio Float?    @default(0)
-  pause_variance           Float?    @default(0)
-  speech_rate_variance     Float?    @default(0)
-  recovery_score           Float?    @default(0)
-
-  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-
-  session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
-  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id       String        @db.Uuid
+  user_id          String        @db.Uuid
+  speaking_time    Float         @default(0)
+  word_count       Int           @default(0)
+  hesitation_count Int           @default(0)
+  filler_count     Int           @default(0)
+  grammar_errors   Int           @default(0)
+  speech_rate      Float         @default(0)
+  updated_at       DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  session          live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user             users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([session_id, user_id])
 }
 
 model live_session_summary {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  session_id      String   @db.Uuid
-  user_id         String   @db.Uuid
-  confidence_score Float   @default(0)
-  confidence_band  String?  // "Low" | "Medium" | "High"
+  id               String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id       String        @db.Uuid
+  user_id          String        @db.Uuid
+  confidence_score Float         @default(0)
+  confidence_band  String?
   confidence_explanation String?
-  fluency_score   Float    @default(0)
-  weaknesses      Json     // Array of strings ["HESITATION", "SPEED"]
-  drill_plan      Json     // Array of objects [{exercise: "...", weakness: "..."}]
-  created_at      DateTime @default(now()) @db.Timestamptz(6)
-
-  session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
-  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  fluency_score    Float         @default(0)
+  created_at       DateTime      @default(now()) @db.Timestamptz(6)
+  cefr_model_version String?     @default("v1.0")
+  drill_plan       Json
+  weaknesses       Json
+  session          live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user             users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([session_id, user_id])
 }
 
 model live_weaknesses {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  session_id  String   @db.Uuid
-  user_id     String   @db.Uuid
-  tag         String   // HESITATION, SPEED, TENSE, CONFIDENCE, VOCAB
-  severity    Float    @default(0)
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-
-  session     live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
-  user        users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id         String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id String        @db.Uuid
+  user_id    String        @db.Uuid
+  tag        String
+  severity   Float         @default(0)
+  created_at DateTime      @default(now()) @db.Timestamptz(6)
+  session    live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user       users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model live_micro_fixes {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  session_id      String   @db.Uuid
-  user_id         String   @db.Uuid
-  category        String   // Vocabulary, Connectors, Nuance
-  detected_words  Json     // Array of detected basic words
-  upgrades        Json     // Array of suggested upgrades
-  explanation     String   // Why this is a ceiling
-  target_level    String   // CEFR level they're attempting (B1, B2, C1, C2)
-  current_limit   String   // CEFR level they're stuck at (A2, B1, B2, C1)
-  created_at      DateTime @default(now()) @db.Timestamptz(6)
-
-  session         live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
-  user            users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id             String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  session_id     String        @db.Uuid
+  user_id        String        @db.Uuid
+  category       String
+  detected_words Json
+  upgrades       Json
+  explanation    String
+  target_level   String
+  current_limit  String
+  created_at     DateTime      @default(now()) @db.Timestamptz(6)
+  session        live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  user           users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@index([session_id, user_id], map: "idx_micro_fixes_session_user")
 }
 
-
 model fluency_exercises {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   weakness_tag String
   prompt       String
   difficulty   String
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  
+  created_at   DateTime          @default(now()) @db.Timestamptz(6)
   daily_plans  user_daily_plan[]
 }
 
 model user_daily_plan {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id     String   @db.Uuid
-  date        DateTime @db.Date // Store just the date part ideally, or timestamp
-  exercise_id String   @db.Uuid
-  status      String   @default("pending") // pending, completed
-  created_at  DateTime @default(now()) @db.Timestamptz(6)
-
-  user        users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id          String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id     String            @db.Uuid
+  date        DateTime          @db.Date
+  exercise_id String            @db.Uuid
+  status      String            @default("pending")
+  created_at  DateTime          @default(now()) @db.Timestamptz(6)
   exercise    fluency_exercises @relation(fields: [exercise_id], references: [id], onDelete: Cascade)
+  user        users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model blog_posts {
   id        String   @id @default(uuid())
   title     String
   slug      String   @unique
-  content   String   // HTML from Tiptap or Markdown
+  content   String
   cover     String?
-  status    String   // draft | published
+  status    String
   author_id String
   views     Int      @default(0)
   createdAt DateTime @default(now())
@@ -370,11 +328,11 @@ model blog_posts {
 }
 
 model user_fluency_profile {
-  user_id           String   @id @db.Uuid
+  user_id           String   @id
   cefr_level        String
   fluency_score     Float
   confidence        Float
-  confidence_band   String?  // "Low" | "Medium" | "High"
+  confidence_band   String?
   confidence_explanation String?
   
   pause_ratio       Float
@@ -383,14 +341,32 @@ model user_fluency_profile {
   pause_variance           Float?    @default(0)
   speech_rate_variance     Float?    @default(0)
   recovery_score           Float?    @default(0)
-
+  
   word_count        Int
   last_updated      DateTime @updatedAt
-
   lexical_blockers  Json?
   source_session_id String?
-  source_type       String // "ai_tutor" | "live_practice"
-
-  user              users    @relation(fields: [user_id], references: [id])
+  source_type       String
+  cefr_model_version String? @default("v1.0")
+  assessment_audit   Json?   // Audit trail of inputs -> gates -> decision
 }
 
+enum session_status {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum user_role {
+  ADMIN
+  TUTOR
+  LEARNER
+}
+
+enum live_session_status {
+  waiting
+  live
+  ended
+}

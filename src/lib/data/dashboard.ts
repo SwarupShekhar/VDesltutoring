@@ -12,6 +12,8 @@ export type DashboardData = {
     pastSessions?: any[];
     aiSessions?: any[];
     cefrProfile?: any; // CEFRProfile type
+    cefrModelVersion?: string;
+    assessmentAudit?: any; // Full audit log inputs -> gates -> decision
     trialCooldown?: boolean;
     timeUntilNextTrial?: number;
     error?: string;
@@ -37,7 +39,8 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
             where: { clerkId },
             include: {
                 student_profiles: true,
-                tutor_profiles: true
+                tutor_profiles: true,
+                user_fluency_profile: true
             }
         });
 
@@ -81,6 +84,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     include: {
                         student_profiles: { include: { users: true } },
                         tutor_profiles: { include: { users: true } },
+                        user_fluency_profile: true
                     }
                 });
             });
@@ -453,6 +457,8 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 sessions: formattedSessions,
                 aiSessions: formattedAiSessions,
                 cefrProfile,
+                cefrModelVersion: (user as any).user_fluency_profile?.cefr_model_version || "v1.0",
+                assessmentAudit: (user as any).user_fluency_profile?.assessment_audit || null,
                 delta, // Session-to-session comparison
                 blockers, // New field for UI
                 status: fluencyProfile ? 'assessed' : 'unassessed'

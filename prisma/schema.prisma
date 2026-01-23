@@ -31,6 +31,7 @@ model users {
   notifications          notifications[]
   student_profiles       student_profiles?
   tutor_profiles         tutor_profiles?
+  user_fluency_profile   user_fluency_profile?
   daily_plans            user_daily_plan[]
 }
 
@@ -329,7 +330,8 @@ model blog_posts {
 }
 
 model user_fluency_profile {
-  user_id           String   @id
+  user_id           String   @id @db.Uuid
+  user              users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
   cefr_level        String
   fluency_score     Float
   confidence        Float

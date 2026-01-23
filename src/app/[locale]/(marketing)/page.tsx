@@ -130,7 +130,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         <LiveNowBanner locale={locale} />
 
         {/* 1.3 MICRO-HEADLINES (Pillar + Problem/Solution) */}
-        <MicroHeadlines locale={locale} />
+        <MicroHeadlines locale={locale} dict={t.microHeadlines} isLoggedIn={isLoggedIn} />
 
         {/* 1.5 FLUENCY ENGINE (Sticky Scroll Reveal) */}
         <FluencyReflexSection dict={t.fluencyEngine} />

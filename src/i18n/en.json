@@ -64,6 +64,31 @@
         "language": "Language",
         "interfaceOnly": "Interface only. Learning content remains in English."
     },
+    "microHeadlines": {
+        "title": "From Knowing English → Thinking in English",
+        "subtitle": "A clear path from translation, to reflex, to confident professional speaking — measured with CEFR signals, not grammar tests.",
+        "card1": {
+            "title": "You Don’t Need More Grammar",
+            "desc": "You already “know” English. The gap is speed — your brain is translating instead of responding.",
+            "link": "Why this happens"
+        },
+        "card2": {
+            "title": "CEFR Is About Processing, Not Vocabulary",
+            "desc": "B2 isn’t harder words. It’s natural pauses, structured ideas, and thinking without detours.",
+            "link": "See the roadmap"
+        },
+        "card3": {
+            "title": "Fluency Is Conditioned, Not Studied",
+            "desc": "Live interaction, micro-feedback, and chunk training build what textbooks cannot: reflex.",
+            "link1": "Try AI Tutor",
+            "link2": "Talk to a partner"
+        },
+        "trustLine": "Used by professionals to move from “I know what to say” → “I can say it now.”",
+        "conversion": {
+            "label": "Not sure where you stand?",
+            "link": "Get your CEFR speaking snapshot in 2 minutes"
+        }
+    },
     "methodPage": {
         "hero": {
             "title": "The Fluency Engine™",

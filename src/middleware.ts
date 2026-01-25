@@ -29,6 +29,12 @@ const isPublicRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
     const { pathname } = req.nextUrl;
 
+    // Log client platform for debugging (optional, can be removed in production)
+    const clientPlatform = req.headers.get('x-client') || 'web';
+    if (pathname.startsWith('/api') && clientPlatform === 'app') {
+        console.log(`[API] Mobile app request: ${req.method} ${pathname}`);
+    }
+
     // 1. i18n Routing Logic
     // Check if we need to redirect to a locale
     const pathnameIsMissingLocale = locales.every(

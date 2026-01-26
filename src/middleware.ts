@@ -26,6 +26,7 @@ const isPublicRoute = createRouteMatcher([
     '/:locale/blog/(.*)',
     '/sitemap.xml',
     '/robots.txt',
+    '/googlee0719812a88d81a6.html',
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

@@ -52,8 +52,9 @@ export default clerkMiddleware(async (auth, req) => {
         const locale = defaultLocale;
         const newUrl = new URL(`/${locale}${pathname === '/' ? '' : pathname}`, req.url);
         // Preserve query params
+        // Preserve query params
         newUrl.search = req.nextUrl.search;
-        return NextResponse.redirect(newUrl);
+        return NextResponse.redirect(newUrl, { status: 301 });
     }
 
     // 2. Authentication Logic
@@ -78,7 +79,8 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
     matcher: [
         // Skip Next.js internals and all static files, unless found in search params
-        '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+        // Added xml, txt, ico to exclusion list
+        '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|xml|txt)).*)',
         // Always run for API routes
         '/(api|trpc)(.*)',
     ],

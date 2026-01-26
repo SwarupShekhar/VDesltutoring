@@ -1,4 +1,15 @@
 {
+    "headers": [
+        {
+            "source": "/(sitemap.xml|robots.txt)",
+            "headers": [
+                {
+                    "key": "X-Robots-Tag",
+                    "value": "all"
+                }
+            ]
+        }
+    ],
     "redirects": [
         {
             "source": "/:path*",

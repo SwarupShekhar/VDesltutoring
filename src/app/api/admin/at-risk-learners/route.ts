@@ -39,13 +39,35 @@ export async function GET() {
                 ai_chat_sessions: {
                     orderBy: { started_at: 'desc' },
                     take: 1
+                },
+                live_sessions_as_a: {
+                    orderBy: { started_at: 'desc' }, // P2P as User A
+                    take: 1
+                },
+                live_sessions_as_b: {
+                    orderBy: { started_at: 'desc' }, // P2P as User B
+                    take: 1
+                },
+                user_fluency_profile: {
+                    select: { last_updated: true } // Check assessment activity
                 }
             }
         })
 
         const atRisk = learners.map(learner => {
             const snapshots = learner.fluency_snapshots
-            const lastActive = learner.last_login || learner.ai_chat_sessions[0]?.started_at || null
+
+            // Calculate true last active time from all sources
+            const timestamps = [
+                learner.last_login,
+                learner.ai_chat_sessions?.[0]?.started_at,
+                learner.live_sessions_as_a?.[0]?.started_at,
+                learner.live_sessions_as_b?.[0]?.started_at,
+                // @ts-ignore - user_fluency_profile included in query
+                learner.user_fluency_profile?.last_updated
+            ].filter(Boolean).map(d => new Date(d!).getTime())
+
+            const lastActive = timestamps.length > 0 ? new Date(Math.max(...timestamps)) : null
 
             let issue = ""
             let riskScore = 0

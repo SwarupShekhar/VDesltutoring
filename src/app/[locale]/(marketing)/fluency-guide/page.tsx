@@ -1,23 +1,23 @@
 import type { Metadata } from 'next';
 import { constructCanonicalMetadata } from '@/lib/seo';
-
-export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
-    const { locale } = await params;
-    return constructCanonicalMetadata('/fluency-guide', locale);
-}
-
 import { getDictionary, type Locale } from "@/i18n/getDictionary";
 import { FluencyGuideContent } from '@/components/content/FluencyGuideContent';
 
-export const metadata: Metadata = {
-    title: "Englivo Fluency Guide – From Translating to Thinking in English",
-    description: "Central roadmap from A2 to C1 speaking using reflex training, CEFR signals and live practice.",
-    openGraph: {
-        type: "article",
-        title: "Englivo Fluency Guide",
-        description: "From Translating → Thinking → Speaking. Your map from A2 → C1.",
-    }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const { locale } = await params;
+    const seo = constructCanonicalMetadata('/fluency-guide', locale);
+
+    return {
+        title: "Englivo Fluency Guide – From Translating to Thinking in English",
+        description: "Central roadmap from A2 to C1 speaking using reflex training, CEFR signals and live practice.",
+        openGraph: {
+            type: "article",
+            title: "Englivo Fluency Guide",
+            description: "From Translating → Thinking → Speaking. Your map from A2 → C1.",
+        },
+        ...seo
+    };
+}
 
 export default async function FluencyGuidePage({ params }: { params: Promise<{ locale: string }> }) {
     const { locale } = await params;

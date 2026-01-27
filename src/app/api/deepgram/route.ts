@@ -28,7 +28,7 @@ export async function POST(request: Request) {
             audioBuffer,
             {
                 mimetype: mimeType || "audio/webm",
-                model: "nova-2",
+                model: "nova-3",
                 language: "en-US",
                 smart_format: true,
                 punctuate: true,

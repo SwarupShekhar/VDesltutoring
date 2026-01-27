@@ -266,6 +266,7 @@ model live_session_summary {
   cefr_model_version String?     @default("v1.0")
   drill_plan       Json
   weaknesses       Json
+  ai_feedback      Json?
   session          live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
   user             users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 

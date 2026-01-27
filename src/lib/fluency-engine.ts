@@ -2,6 +2,7 @@
 import { prisma } from "@/lib/prisma";
 import { CEFR_LEXICAL_TRIGGERS, LEXICAL_ENGINE_CONFIG, CEFRLevel } from "./cefr-lexical-triggers";
 import { CEFR_MODEL_VERSION } from "./assessment/updateUserFluencyProfile";
+import { geminiService } from "@/lib/gemini-service";
 
 // --- Formula Constants & Logic ---
 
@@ -97,11 +98,11 @@ export class FluencyEngine {
         const userIds = new Set(session.metrics.map(m => m.user_id));
 
         for (const userId of userIds) {
-            await this.evaluateUser(sessionId, userId, durationMinutes, session.metrics);
+            await this.evaluateUser(sessionId, userId, durationMinutes, session.metrics, session.transcripts);
         }
     }
 
-    private async evaluateUser(sessionId: string, userId: string, durationMinutes: number, allMetrics: any[]) {
+    private async evaluateUser(sessionId: string, userId: string, durationMinutes: number, allMetrics: any[], allTranscripts: any[]) {
         const metrics = allMetrics.find(m => m.user_id === userId);
         if (!metrics) return;
 
@@ -281,6 +282,27 @@ export class FluencyEngine {
             }
         }
 
+        // --- G. AI Feedback Generation (Personalized) ---
+        let aiFeedback = null;
+        if (metrics.word_count > 15) {
+            const userText = allTranscripts
+                .filter(t => t.user_id === userId)
+                .map(t => t.text)
+                .join(" ");
+
+            if (userText.length >= 20) {
+                try {
+                    const band = confidenceScore > 75 ? "High" : confidenceScore > 40 ? "Medium" : "Low";
+                    aiFeedback = await geminiService.generateReport(userText, {
+                        band,
+                        explanation: `Speaking Ratio: ~${Math.round((metrics.speaking_time / 60) / durationMinutes * 100)}%`
+                    });
+                } catch (e) {
+                    console.warn(`[FluencyEngine] AI Feedback generation failed for user ${userId}:`, e);
+                }
+            }
+        }
+
         // --- F. Save Summary ---
         await prisma.live_session_summary.upsert({
             where: {
@@ -294,7 +316,8 @@ export class FluencyEngine {
                 fluency_score: Math.round(fluencyScore),
                 weaknesses: topWeaknesses,
                 drill_plan: drillPlan,
-                cefr_model_version: CEFR_MODEL_VERSION
+                cefr_model_version: CEFR_MODEL_VERSION,
+                ai_feedback: aiFeedback || undefined
             },
             create: {
                 session_id: sessionId,
@@ -303,11 +326,12 @@ export class FluencyEngine {
                 fluency_score: Math.round(fluencyScore),
                 weaknesses: topWeaknesses,
                 drill_plan: drillPlan,
-                cefr_model_version: CEFR_MODEL_VERSION
+                cefr_model_version: CEFR_MODEL_VERSION,
+                ai_feedback: aiFeedback || undefined
             }
         });
 
-        console.log(`[FluencyEngine] User ${userId} | Score: ${fluencyScore.toFixed(1)} | Weaknesses: ${topWeaknesses.join(", ")}`);
+        console.log(`[FluencyEngine] User ${userId} | Score: ${fluencyScore.toFixed(1)} | AI Feedback: ${aiFeedback ? 'Generated' : 'Skipped'}`);
     }
 }
 

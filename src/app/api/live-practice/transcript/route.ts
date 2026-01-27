@@ -67,6 +67,23 @@ export async function POST(req: NextRequest) {
             }
         });
 
+        // RE-EVALUATION TRIGGER:
+        // If the session has already ended, this might be a late-arriving transcript (e.g. from the disconnecting user).
+        // We must re-run the evaluation to ensure their score includes these words.
+        const session = await prisma.live_sessions.findUnique({
+            where: { id: sessionId },
+            select: { status: true }
+        });
+
+        if (session?.status === 'ended') {
+            console.log(`[Transcript] Late transcript for ended session ${sessionId}. Triggering re-evaluation.`);
+            // Fire and forget or await? Safer to fire-and-forget to not block client, 
+            // but for reliability in Next.js serverless, we generally want to await critical updates.
+            // Since this is likely the final request, awaiting is better.
+            const { fluencyEngine } = await import("@/lib/fluency-engine");
+            await fluencyEngine.evaluateSession(sessionId);
+        }
+
         return NextResponse.json({ success: true });
 
     } catch (error) {

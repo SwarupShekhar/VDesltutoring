@@ -62,15 +62,22 @@ export async function GET(
         const transcriptText = transcripts.map(t => t.text).join(" ").trim();
 
         // Gemini feedback (best-effort; do not block base report)
-        let aiReport: any = null;
-        try {
-            // Only call Gemini if we have meaningful speech
-            if (transcriptText.split(/\s+/).filter(Boolean).length >= 10) {
-                aiReport = await geminiService.generateReport(transcriptText);
+        // 1. Try to use persisted feedback from Async Worker (Fastest)
+        // @ts-ignore - ai_feedback exists in DB but TS might lag
+        let aiReport: any = summary.ai_feedback;
+
+        if (!aiReport) {
+            // 2. Fallback: Generate on-the-fly if missing (Slower)
+            try {
+                // Only call Gemini if we have meaningful speech
+                if (transcriptText.split(/\s+/).filter(Boolean).length >= 10) {
+                    console.log(`[Report] Generating fallback AI report for session ${sessionId}`);
+                    aiReport = await geminiService.generateReport(transcriptText);
+                }
+            } catch (e) {
+                console.error("Gemini report generation failed:", e);
+                aiReport = null;
             }
-        } catch (e) {
-            console.error("Gemini report generation failed:", e);
-            aiReport = null;
         }
 
         // Prepare Response

@@ -2,6 +2,8 @@ import { auth } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { apiSuccess, ApiErrors } from '@/lib/api-response'
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     // 1. Authenticate user

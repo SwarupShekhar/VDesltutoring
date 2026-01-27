@@ -5,25 +5,36 @@ const locales = ["en", "de", "fr", "es", "vi", "ja"];
 const defaultLocale = "en";
 
 // Define public routes (accessible without login)
-// Note: We need to match both root and localized paths
+// English routes are at root level (no /en prefix)
+// Other languages use locale prefix (/de, /fr, /es, /vi, /ja)
 const isPublicRoute = createRouteMatcher([
     '/',
-    '/:locale',
+    '/sign-in(.*)',
+    '/sign-up(.*)',
+    '/about',
+    '/method',
+    '/how-it-works',
+    '/assessment',
+    '/blog',
+    '/blog/(.*)',
+    '/fluency-guide',
+    '/tutors',
+    '/practice', // Public practice page
+    '/live-practice', // Public live practice page
+    '/:locale', // For non-English locales
     '/:locale/sign-in(.*)',
     '/:locale/sign-up(.*)',
-    '/sign-in(.*)', // for redirect handling
-    '/sign-up(.*)',
     '/:locale/about',
     '/:locale/method',
     '/:locale/how-it-works',
-    '/:locale/assessment', // Assessment might be public? User didn't specify, but often is.
+    '/:locale/assessment',
+    '/:locale/blog',
+    '/:locale/blog/(.*)',
+    '/:locale/fluency-guide',
+    '/:locale/tutors',
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response
     '/api/live-practice(.*)', // Public stats for landing page
-    '/blog',
-    '/blog/(.*)',
-    '/:locale/blog',
-    '/:locale/blog/(.*)',
     '/sitemap.xml',
     '/robots.txt',
     '/googlee0719812a88d81a6.html',
@@ -49,21 +60,37 @@ export default clerkMiddleware(async (auth, req) => {
     }
 
     // 1. i18n Routing Logic
-    // Check if we need to redirect to a locale
-    const pathnameIsMissingLocale = locales.every(
-        (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+    // NEW APPROACH: English content is served at root (no /en prefix)
+    // Other languages use locale prefix (/de, /fr, /es, /vi, /ja)
+
+    // Check if pathname has a non-English locale
+    const nonDefaultLocales = locales.filter(l => l !== defaultLocale); // ["de", "fr", "es", "vi", "ja"]
+    const hasNonDefaultLocale = nonDefaultLocales.some(
+        (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
     );
 
-    // Exclude API, internal files, static files from i18n redirection
+    // Check if pathname has the default locale (en)
+    const hasDefaultLocale = pathname.startsWith(`/${defaultLocale}/`) || pathname === `/${defaultLocale}`;
+
+    // Exclude API, internal files, static files from i18n handling
     const isIgnoredPath = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.') || pathname.startsWith('/ai-tutor');
 
-    if (pathnameIsMissingLocale && !isIgnoredPath) {
-        const locale = defaultLocale;
-        const newUrl = new URL(`/${locale}${pathname === '/' ? '' : pathname}`, req.url);
+    // If URL has /en, redirect to remove it (e.g., /en/practice -> /practice)
+    if (hasDefaultLocale && !isIgnoredPath) {
+        const pathWithoutLocale = pathname.replace(`/${defaultLocale}`, '') || '/';
+        const newUrl = new URL(pathWithoutLocale, req.url);
         newUrl.search = req.nextUrl.search;
-        // Use 308 for Permanent Redirect (Next.js/SEO Standard)
         return NextResponse.redirect(newUrl, { status: 308 });
     }
+
+    // If URL has no locale prefix and is not a non-default locale, rewrite to /en internally
+    // This serves English content at the root without showing /en in the URL
+    if (!hasNonDefaultLocale && !hasDefaultLocale && !isIgnoredPath) {
+        const rewriteUrl = new URL(`/${defaultLocale}${pathname}`, req.url);
+        rewriteUrl.search = req.nextUrl.search;
+        return NextResponse.rewrite(rewriteUrl);
+    }
+
 
     // 2. Authentication Logic
     const currentLocale = locales.find(

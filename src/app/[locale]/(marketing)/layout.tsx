@@ -6,18 +6,16 @@ import type { Locale } from '@/i18n/getDictionary'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params
-
-    // Get the current path without the locale prefix
-    // For the homepage, this will be just '/'
     const baseUrl = 'https://englivo.com'
 
-    // For the marketing homepage, canonical should always point to the base domain
-    // without the locale prefix (i.e., https://englivo.com instead of https://englivo.com/en)
+    // English content is served at root (no /en prefix)
+    // Other languages use locale prefix (/de, /fr, /es, /vi, /ja)
     return {
         alternates: {
-            canonical: baseUrl,
+            canonical: baseUrl, // Always points to root for homepage
             languages: {
-                'en': `${baseUrl}/en`,
+                'x-default': baseUrl, // Default language (English)
+                'en': baseUrl, // English at root
                 'de': `${baseUrl}/de`,
                 'fr': `${baseUrl}/fr`,
                 'es': `${baseUrl}/es`,

@@ -51,7 +51,8 @@ export async function GET(
                             take: 10
                         }
                     }
-                }
+                },
+                user_fluency_profile: true
             }
         })
 
@@ -87,7 +88,8 @@ export async function GET(
                                     take: 10
                                 }
                             }
-                        }
+                        },
+                        user_fluency_profile: true
                     }
                 })
             }
@@ -97,28 +99,47 @@ export async function GET(
             return NextResponse.json({ error: 'Student not found' }, { status: 404 })
         }
 
-        // Latest CEFR Radar
-        const latestSnapshot = student.fluency_snapshots[0]
-        const cefrProfile = latestSnapshot ? computeSkillScores({
-            fluency: (latestSnapshot.wpm > 120 ? 1 : latestSnapshot.wpm / 120),
-            pronunciation: latestSnapshot.pronunciation / 100,
-            grammar: latestSnapshot.grammar_scaffold / 100,
-            vocabulary: 0.5
-        }) : null
+        // Latest CEFR Radar - Source from user_fluency_profile (Authoritative)
+        let cefrProfile = null;
+        if (student.user_fluency_profile) {
+            const fp = student.user_fluency_profile;
+            // Normalize scores (assuming 0-100 scale for inputs, need 0-1 for chart)
+            cefrProfile = computeSkillScores({
+                fluency: (fp.fluency_score || 0) / 100,
+                pronunciation: (fp.recovery_score || 50) / 100, // Use recovery as proxy or default
+                grammar: 0.6, // Default for now if not tracked in profile
+                vocabulary: 0.6 // Default for now
+            });
+            // Override with stored profile logic if available in aggregated metrics
+            // (Skipping deep parsing for minimal response time/complexity)
+        } else {
+            // Fallback to legacy snapshots
+            const latestSnapshot = student.fluency_snapshots[0]
+            if (latestSnapshot) {
+                cefrProfile = computeSkillScores({
+                    fluency: (latestSnapshot.wpm > 120 ? 1 : latestSnapshot.wpm / 120),
+                    pronunciation: latestSnapshot.pronunciation / 100,
+                    grammar: latestSnapshot.grammar_scaffold / 100,
+                    vocabulary: 0.5
+                })
+            }
+        }
 
         // Risk Score
         let riskScore = 0
         if (!student.last_login || (new Date().getTime() - new Date(student.last_login).getTime()) > 3 * 24 * 60 * 60 * 1000) {
             riskScore += 40
         }
-        if (student.fluency_snapshots.length >= 2) {
-            if (student.fluency_snapshots[0].wpm < student.fluency_snapshots[1].wpm) riskScore += 30
+        // Trend Risk
+        if (student.user_fluency_profile && student.user_fluency_profile.fluency_score < 40) {
+            riskScore += 20;
         }
 
         return NextResponse.json({
             name: student.full_name,
             email: student.email,
             cefrProfile,
+            // Combine history sources if needed, or just return snapshots for legacy chart + current state
             fluencyHistory: student.fluency_snapshots.map(s => ({
                 date: s.created_at,
                 wpm: s.wpm,

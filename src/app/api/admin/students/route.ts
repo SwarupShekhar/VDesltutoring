@@ -39,6 +39,7 @@ export async function GET() {
             id: true,
             full_name: true,
             email: true,
+            user_fluency_profile: true
           }
         }
       },
@@ -55,6 +56,9 @@ export async function GET() {
       name: student.users?.full_name || 'Unknown',
       email: student.users?.email || 'Unknown',
       credits: student.credits,
+      cefr_level: student.users?.user_fluency_profile?.cefr_level || 'A1',
+      fluency_score: student.users?.user_fluency_profile?.fluency_score || 0,
+      word_count: student.users?.user_fluency_profile?.word_count || 0
     }))
 
     return apiSuccess({

@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import { subDays } from 'date-fns'
 import { computeSkillScores } from '@/lib/cefrEngine'
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         const { userId } = await auth()

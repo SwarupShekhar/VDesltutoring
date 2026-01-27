@@ -82,7 +82,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
     <>
       <nav className="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-slate-950/80 border-b border-gray-100 dark:border-white/5 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20 items-center">
+          <div className="flex justify-between h-24 items-center">
 
             {/* LEFT: BRAND */}
             <Link href={`/${locale}`} className="flex-shrink-0 cursor-pointer group flex items-center gap-3" onClick={scrollToTop}>
@@ -109,28 +109,56 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
             </Link>
 
             {/* CENTER: NAVIGATION */}
-            <div className="hidden md:flex items-center space-x-6 lg:space-x-10">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  onClick={link.onClick}
-                  className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group cursor-pointer whitespace-nowrap"
-                >
-                  {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
-                </a>
-              ))}
+            <div className="hidden md:flex items-center space-x-8 lg:space-x-12">
+              <Link href={`/${locale}/method`} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
+                {t.approach || 'Method'}
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
+              </Link>
+
+              <Link href={`/${locale}/practice`} onClick={handlePracticeClick} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
+                {t.practice || 'Practice'}
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
+              </Link>
+
+              <Link href={`/${locale}/pricing`} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
+                {t.pricing || 'Pricing'}
+                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
+              </Link>
+
+              {/* Resources Dropdown */}
+              <Dropdown
+                trigger={
+                  <button className="flex items-center gap-1 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors group">
+                    {t.resources || 'Resources'}
+                    <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-300" />
+                  </button>
+                }
+                align="center"
+              >
+                <div className="p-1 min-w-[200px]">
+                  <DropdownItem onClick={() => router.push(`/${locale}/fluency-guide`)}>
+                    Fluency Guide
+                  </DropdownItem>
+                  <DropdownItem onClick={() => router.push(`/${locale}/how-it-works`)}>
+                    {t.howItWorks || 'How It Works'}
+                  </DropdownItem>
+                  <DropdownItem onClick={() => router.push(`/${locale}/blog`)}>
+                    {t.blog || 'Blog'}
+                  </DropdownItem>
+                  <DropdownItem onClick={() => router.push(`/${locale}/about`)}>
+                    {t.about || 'About Us'}
+                  </DropdownItem>
+                </div>
+              </Dropdown>
             </div>
 
             {/* RIGHT: ACTIONS */}
             <div className="hidden md:flex items-center gap-6">
-              {/* Language Switcher Desktop */}
-              <div className="border-r border-gray-200 dark:border-white/10 pr-4">
+              {/* Settings Group */}
+              <div className="flex items-center gap-4 border-r border-gray-200 dark:border-white/10 pr-6">
                 <LanguageSelector currentLocale={locale} />
+                <ThemeToggle />
               </div>
-
-              <ThemeToggle />
 
               {isLoaded && user ? (
                 <>

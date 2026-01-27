@@ -23,7 +23,6 @@ const dmSerif = DM_Serif_Display({
 export const metadata: Metadata = {
     metadataBase: new URL("https://englivo.com"),
     alternates: {
-        canonical: "https://englivo.com",
     },
     title: {
         default: "Englivo — English Fluency for Professionals",

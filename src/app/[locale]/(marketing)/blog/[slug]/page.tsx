@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Calendar, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
+import { constructCanonicalMetadata } from '@/lib/seo';
 import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer";
 import { RelatedFromPillar } from '@/components/blog/RelatedFromPillar';
 
@@ -64,9 +65,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description: description,
             images: images.map(img => img.url),
         },
-        alternates: {
-            canonical: url,
-        }
+        ...constructCanonicalMetadata(`/blog/${slug}`, locale)
     }
 }
 

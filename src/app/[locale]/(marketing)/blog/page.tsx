@@ -1,11 +1,13 @@
 import { getPublishedPosts } from "@/actions/blog";
 import Link from "next/link";
 import { Calendar, ArrowRight } from "lucide-react";
-import { Metadata } from "next";
+import type { Metadata } from 'next';
+import { constructCanonicalMetadata } from '@/lib/seo';
+import { getDictionary, type Locale } from "@/i18n/getDictionary";
 
-export const metadata: Metadata = {
-    title: "Blog - English Learning Tips | Englivo",
-    description: "Read the latest articles on English learning, fluency tips, and the Englivo methodology.",
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const { locale } = await params;
+    return constructCanonicalMetadata('/blog', locale);
 }
 
 interface PageProps {

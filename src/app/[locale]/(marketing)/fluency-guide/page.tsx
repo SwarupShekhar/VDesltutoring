@@ -1,4 +1,12 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
+import { constructCanonicalMetadata } from '@/lib/seo';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const { locale } = await params;
+    return constructCanonicalMetadata('/fluency-guide', locale);
+}
+
+import { getDictionary, type Locale } from "@/i18n/getDictionary";
 import { FluencyGuideContent } from '@/components/content/FluencyGuideContent';
 
 export const metadata: Metadata = {

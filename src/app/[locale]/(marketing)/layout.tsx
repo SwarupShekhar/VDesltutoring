@@ -10,19 +10,13 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 
     // English content is served at root (no /en prefix)
     // Other languages use locale prefix (/de, /fr, /es, /vi, /ja)
+
+    // Base metadata for the layout
+    // Canonical tags are now handled by individual pages to ensure subpages (like /method)
+    // have correct self-referencing URLs.
+
     return {
-        alternates: {
-            canonical: baseUrl, // Always points to root for homepage
-            languages: {
-                'x-default': baseUrl, // Default language (English)
-                'en': baseUrl, // English at root
-                'de': `${baseUrl}/de`,
-                'fr': `${baseUrl}/fr`,
-                'es': `${baseUrl}/es`,
-                'vi': `${baseUrl}/vi`,
-                'ja': `${baseUrl}/ja`,
-            }
-        }
+        // Base metadata can go here if needed
     }
 }
 

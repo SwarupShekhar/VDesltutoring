@@ -7,11 +7,18 @@ import { currentUser } from '@clerk/nextjs/server';
 import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
 import dynamic from 'next/dynamic';
 
-export const metadata: Metadata = {
-  title: "Englivo — English Fluency for Professionals",
-  description:
-    "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
-};
+import { constructCanonicalMetadata } from '@/lib/seo';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const seo = constructCanonicalMetadata('/', locale);
+
+  return {
+    title: "Englivo — English Fluency for Professionals",
+    description: "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
+    ...seo
+  };
+}
 
 const DynamicText = dynamic(() => import('@/components/ui/dynamic-text'));
 const FAQSection = dynamic(() => import('@/components/FAQSection').then(mod => mod.FAQSection));

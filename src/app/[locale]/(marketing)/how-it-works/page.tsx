@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+import { constructCanonicalMetadata } from '@/lib/seo';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+    const { locale } = await params;
+    return constructCanonicalMetadata('/how-it-works', locale);
+}
 
 import { getDictionary, type Locale } from "@/i18n/getDictionary";
 import { HowItWorksPageContent } from "@/components/HowItWorksPageContent";

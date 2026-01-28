@@ -1,10 +1,10 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../prisma";
 import {
   CEFRLevel,
   aggregateUserSpeechMetrics,
   evaluateCEFRPromotion,
   cacheAggregatedMetrics
-} from "@/lib/cefr";
+} from "../cefr";
 
 import { CEFR_MODEL_VERSION } from "./constants";
 export { CEFR_MODEL_VERSION };

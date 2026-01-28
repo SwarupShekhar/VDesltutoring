@@ -99,6 +99,7 @@ export async function GET() {
                 confidenceScore: summary?.confidence_score || 0,
                 weaknesses: (summary?.weaknesses as string[]) || [],
                 drillPlan: (summary?.drill_plan as any[]) || [],
+                aiFeedback: summary?.ai_feedback || null,
                 transcript: session.transcripts.map(t => ({
                     text: t.text,
                     timestamp: t.timestamp

@@ -97,7 +97,7 @@ Assessment Criteria:
 1. Identity: Choose the archetype that fits BEST and write a 1-sentence description that cites WHY.
 2. Insights: 1 short sentence each for Fluency (rhythm/pauses), Grammar (tense/structure), and Vocabulary (range/repetition).
 3. Patterns: List 3 specific speaking habits observed.
-4. Refinements: 3 corrections of their actual speech.
+4. Refinements: 5 corrections of their actual speech (focus on grammar/natural phrasing).
 5. Next Step: One actionable CEFR-aligned goal.
 6. CEFR Analysis: Provide a level (A1-C2) and a deep reason explaining WHICH gate they passed or failed.
    - IMPORTANT: If AUDIO BEHAVIOR METADATA is provided, prioritize it over text accuracy. B2+ levels REQUIRE High or Medium confidence. If confidence is Low, do not assign above B1 regardless of vocabulary.

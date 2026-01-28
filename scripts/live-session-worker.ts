@@ -8,8 +8,6 @@ import { AccessToken } from "livekit-server-sdk";
 import { Room, RoomEvent, AudioStream, TrackKind } from "@livekit/rtc-node";
 import type { RemoteTrack, Track } from "@livekit/rtc-node";
 import "dotenv/config";
-import { detectLexicalCeiling } from "../src/lib/fluency-engine";
-import type { CEFRLevel } from "../src/lib/cefr-lexical-triggers";
 import { updateUserFluencyProfile } from "../src/lib/assessment/updateUserFluencyProfile";
 import { analyzeAudioConfidence } from "../src/lib/speech/audioConfidenceAnalyzer";
 
@@ -491,66 +489,23 @@ async function joinSessionAndTranscribe(session: any) {
  */
 async function checkLexicalCeiling(sessionId: string, userId: string) {
     try {
-        // Get user's target CEFR level from their profile
-        const user = await prisma.users.findUnique({
-            where: { id: userId },
-            include: { student_profiles: true }
-        });
-
-        // Default to B1 if no profile or target level
-        const targetLevel: CEFRLevel = "B1"; // TODO: Get from user profile when available
-
-        // Get recent transcripts (last 45 seconds worth)
-        const recentTranscripts = await prisma.live_transcripts.findMany({
-            where: {
-                session_id: sessionId,
-                user_id: userId,
-                timestamp: {
-                    gte: new Date(Date.now() - 45000) // Last 45 seconds
-                }
-            },
-            orderBy: { timestamp: 'desc' }
-        });
-
-        if (recentTranscripts.length === 0) return;
-
-        // Combine transcripts into a single text window
-        const transcriptWindow = recentTranscripts.map(t => t.text).join(' ');
-
-        // Run lexical detection
-        const lexicalFix = detectLexicalCeiling(transcriptWindow, targetLevel);
-
-        if (lexicalFix) {
-            // Check if we already logged this issue recently (avoid spam)
-            const recentFix = await prisma.live_micro_fixes.findFirst({
-                where: {
-                    session_id: sessionId,
-                    user_id: userId,
-                    category: lexicalFix.category,
-                    created_at: {
-                        gte: new Date(Date.now() - 60000) // Within last minute
-                    }
-                }
-            });
-
-            if (!recentFix) {
-                // Log the micro-fix
-                await prisma.live_micro_fixes.create({
-                    data: {
-                        session_id: sessionId,
-                        user_id: userId,
-                        category: lexicalFix.category,
-                        detected_words: lexicalFix.detectedWords,
-                        upgrades: lexicalFix.upgrades,
-                        explanation: lexicalFix.explanation,
-                        target_level: lexicalFix.targetLevel,
-                        current_limit: lexicalFix.currentLimit
-                    }
-                });
-
-                console.log(`[Lexical Fix] User ${userId}: ${lexicalFix.category} ceiling detected (${lexicalFix.detectedWords.join(', ')})`);
-            }
-        }
+        // NOTE:
+        // Real-time lexical ceiling detection in the worker depended on importing
+        // `detectLexicalCeiling` from the Next.js app code. That import causes
+        // runtime module resolution issues when running this script via ts-node.
+        //
+        // The more important, authoritative lexical analysis still runs inside
+        // `FluencyEngine.evaluateSession(...)` in the app code after the session
+        // ends, so this worker-level check is optional.
+        //
+        // To keep the worker stable and ensure transcripts + metrics are
+        // recorded (so FluencyEngine and Gemini feedback work), we temporarily
+        // disable the worker's own lexical ceiling check.
+        //
+        // If needed later, this logic can be reintroduced by duplicating the
+        // lexical detection code inside this script instead of importing from
+        // the app bundle.
+        return;
     } catch (err) {
         console.error(`Error in lexical ceiling check for user ${userId}:`, err);
     }

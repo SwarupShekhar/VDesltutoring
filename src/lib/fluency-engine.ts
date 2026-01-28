@@ -1,8 +1,8 @@
 
-import { prisma } from "@/lib/prisma";
+import { prisma } from "./prisma";
 import { CEFR_LEXICAL_TRIGGERS, LEXICAL_ENGINE_CONFIG, CEFRLevel } from "./cefr-lexical-triggers";
 import { CEFR_MODEL_VERSION } from "./assessment/updateUserFluencyProfile";
-import { geminiService } from "@/lib/gemini-service";
+import { geminiService } from "./gemini-service";
 
 // --- Formula Constants & Logic ---
 

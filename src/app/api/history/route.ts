@@ -100,6 +100,7 @@ export async function GET() {
                 weaknesses: (summary?.weaknesses as string[]) || [],
                 drillPlan: (summary?.drill_plan as any[]) || [],
                 aiFeedback: summary?.ai_feedback || null,
+                performanceAnalytics: summary?.performance_analytics || null,
                 transcript: session.transcripts.map(t => ({
                     text: t.text,
                     timestamp: t.timestamp

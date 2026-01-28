@@ -6,6 +6,11 @@ import { Badge } from "@/components/ui/Badge"
 import { Button } from "@/components/ui/Button"
 import { Loader2, MessageSquare, Users, ChevronDown, ChevronUp } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { PerformanceIntelligenceDashboard } from "@/components/performance/PerformanceIntelligenceDashboard"
+import { PerformanceStreakBadge } from "@/components/performance/PerformanceStreakBadge"
+import { HistoricalTrendingChart } from "@/components/performance/HistoricalTrendingChart"
+import { CustomDrillPanel } from "@/components/performance/CustomDrillPanel"
+import type { PerformanceAnalytics } from "@/lib/performance-engine"
 
 type AISession = {
     id: string
@@ -29,6 +34,7 @@ type LiveSession = {
     weaknesses: string[]
     drillPlan: any[]
     aiFeedback?: any
+    performanceAnalytics?: PerformanceAnalytics | null
     transcript: Array<{ text: string; timestamp: Date }>
 }
 
@@ -40,7 +46,12 @@ export default function HistoryPage() {
     const [filter, setFilter] = useState<'all' | 'ai_tutor' | 'live_practice'>('all')
     const [expandedId, setExpandedId] = useState<string | null>(null)
 
+    // Phase 3: Performance history data
+    const [performanceHistory, setPerformanceHistory] = useState<any>(null)
+    const [historyLoading, setHistoryLoading] = useState(true)
+
     useEffect(() => {
+        // Fetch session history
         fetch('/api/history')
             .then(res => res.json())
             .then(data => {
@@ -50,6 +61,18 @@ export default function HistoryPage() {
             .catch(err => {
                 console.error('Failed to load history:', err)
                 setLoading(false)
+            })
+
+        // Fetch performance trending data
+        fetch('/api/performance/history?limit=10')
+            .then(res => res.json())
+            .then(data => {
+                setPerformanceHistory(data)
+                setHistoryLoading(false)
+            })
+            .catch(err => {
+                console.error('Failed to load performance history:', err)
+                setHistoryLoading(false)
             })
     }, [])
 
@@ -71,6 +94,15 @@ export default function HistoryPage() {
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Conversation History</h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-2">Review your past AI Tutor sessions and Live Practice conversations</p>
             </div>
+
+            {/* Phase 3: Performance Streak Badge */}
+            {!historyLoading && performanceHistory?.streak?.improving && (
+                <PerformanceStreakBadge
+                    count={performanceHistory.streak.count}
+                    system={performanceHistory.streak.system}
+                    improving={performanceHistory.streak.improving}
+                />
+            )}
 
             {/* Filters */}
             <div className="flex gap-2">
@@ -95,6 +127,14 @@ export default function HistoryPage() {
                     Live Practice ({history.filter(s => s.type === 'live_practice').length})
                 </Button>
             </div>
+
+            {/* Phase 3: Historical Trending Chart */}
+            {!historyLoading && performanceHistory?.sessions && performanceHistory.sessions.length > 0 && (
+                <HistoricalTrendingChart
+                    sessions={performanceHistory.sessions}
+                    highlightedSystem={performanceHistory.sessions[performanceHistory.sessions.length - 1]?.primaryLimiter?.system}
+                />
+            )}
 
             {/* Session List */}
             {filteredHistory.length === 0 ? (
@@ -217,6 +257,18 @@ export default function HistoryPage() {
                                                                     </div>
                                                                 ))}
                                                             </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Performance Intelligence Dashboard */}
+                                                    {session.performanceAnalytics && (
+                                                        <div className="mb-6">
+                                                            <h4 className="font-semibold mb-4 text-xl text-slate-900 dark:text-white flex items-center gap-2">
+                                                                <span className="text-2xl">🧠</span> Performance Intelligence Analysis
+                                                            </h4>
+                                                            <PerformanceIntelligenceDashboard
+                                                                analytics={session.performanceAnalytics}
+                                                            />
                                                         </div>
                                                     )}
 

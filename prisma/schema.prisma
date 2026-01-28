@@ -267,6 +267,8 @@ model live_session_summary {
   drill_plan       Json
   weaknesses       Json
   ai_feedback      Json?
+  performance_analytics Json?
+  transcript_full       Json?    // Full conversation log with speaker + timestamp
   session          live_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
   user             users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
 

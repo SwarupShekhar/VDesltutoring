@@ -303,6 +303,38 @@ export class FluencyEngine {
             }
         }
 
+        // --- H. Performance Intelligence Analytics (NEW) ---
+        let performanceAnalytics = null;
+        if (metrics.word_count > 20) {
+            try {
+                const { PerformanceEngine } = await import('./performance-engine');
+
+                const transcriptSegments = allTranscripts
+                    .map(t => ({
+                        text: t.text,
+                        timestamp: t.timestamp,
+                        userId: t.user_id,
+                        wordData: t.word_data
+                    }));
+
+                performanceAnalytics = PerformanceEngine.analyze(
+                    transcriptSegments,
+                    {
+                        speakingTime: metrics.speaking_time,
+                        wordCount: metrics.word_count,
+                        fillerCount: metrics.filler_count,
+                        grammarErrors: metrics.grammar_errors,
+                        speechRate: metrics.speech_rate
+                    },
+                    durationMinutes * 60 // Convert back to seconds
+                );
+
+                console.log(`[FluencyEngine] Generated performance analytics for user ${userId}`);
+            } catch (e) {
+                console.warn(`[FluencyEngine] Performance analytics generation failed for user ${userId}:`, e);
+            }
+        }
+
         // --- F. Save Summary ---
         await prisma.live_session_summary.upsert({
             where: {
@@ -317,7 +349,8 @@ export class FluencyEngine {
                 weaknesses: topWeaknesses,
                 drill_plan: drillPlan,
                 cefr_model_version: CEFR_MODEL_VERSION,
-                ai_feedback: aiFeedback || undefined
+                ai_feedback: aiFeedback || undefined,
+                performance_analytics: performanceAnalytics || undefined
             },
             create: {
                 session_id: sessionId,
@@ -327,7 +360,8 @@ export class FluencyEngine {
                 weaknesses: topWeaknesses,
                 drill_plan: drillPlan,
                 cefr_model_version: CEFR_MODEL_VERSION,
-                ai_feedback: aiFeedback || undefined
+                ai_feedback: aiFeedback || undefined,
+                performance_analytics: performanceAnalytics || undefined
             }
         });
 

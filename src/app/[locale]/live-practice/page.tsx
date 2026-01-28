@@ -18,6 +18,7 @@ export default function LivePracticePage() {
     const [lastReportSessionId, setLastReportSessionId] = useState<string | null>(null);
     const [isLoadingReport, setIsLoadingReport] = useState(false);
     const [report, setReport] = useState<any | null>(null);
+    const [reportDebug, setReportDebug] = useState<string | null>(null);
 
     const matchTimerRef = useRef<NodeJS.Timeout | null>(null);
     const callTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -30,6 +31,7 @@ export default function LivePracticePage() {
     const fetchReportWithRetry = useCallback(async (sessionId: string) => {
         setIsLoadingReport(true);
         setReport(null);
+        setReportDebug(null);
         setLastReportSessionId(sessionId);
 
         // Initial delay: Give FluencyEngine time to process the session summary
@@ -43,10 +45,19 @@ export default function LivePracticePage() {
                     const data = await res.json();
                     setReport(data);
                     setIsLoadingReport(false);
+                    setReportDebug(null);
                     return;
+                } else {
+                    const data = await res.json().catch(() => ({}));
+                    setReportDebug(
+                        `Report attempt ${attempt + 1}/${maxAttempts} failed: ` +
+                        `status ${res.status}${data.error ? ` – ${data.error}` : ""}`
+                    );
                 }
-            } catch (e) {
-                // ignore and retry
+            } catch (e: any) {
+                setReportDebug(
+                    `Report attempt ${attempt + 1}/${maxAttempts} network error: ${e?.message || "unknown error"}`
+                );
             }
 
             // Backoff: 2.5s between polls
@@ -326,7 +337,7 @@ export default function LivePracticePage() {
                             Start Live Practice
                         </button>
 
-                        {(isLoadingReport || report) && (
+                        {(isLoadingReport || report || reportDebug) && (
                             <div className="mt-6 text-left rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/40 p-4">
                                 <div className="flex items-center justify-between gap-3 mb-3">
                                     <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">Your end-of-call feedback</p>
@@ -391,6 +402,14 @@ export default function LivePracticePage() {
                                                 Refresh feedback
                                             </button>
                                         )}
+                                    </div>
+                                )}
+
+                                {!isLoadingReport && !report && reportDebug && (
+                                    <div className="mt-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-3">
+                                        <p className="text-xs font-mono text-amber-800 dark:text-amber-200">
+                                            Technical detail: {reportDebug}
+                                        </p>
                                     </div>
                                 )}
                             </div>

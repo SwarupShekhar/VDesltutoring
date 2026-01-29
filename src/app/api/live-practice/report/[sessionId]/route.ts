@@ -113,12 +113,13 @@ export async function GET(
                             60) || 60
                     );
 
-                    performanceAnalytics = analytics;
+                    // Store as plain JSON objects to satisfy JsonValue typing
+                    performanceAnalytics = analytics as any;
                     coachingFeedback = PerformanceEngine.generateCoachingFeedback(
                         analytics,
                         [], // corrections
                         transcriptSegments
-                    );
+                    ) as any;
 
                     console.log(`[Report API] Generated on-the-fly coaching feedback for session ${sessionId}`);
                 }

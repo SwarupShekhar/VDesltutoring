@@ -222,7 +222,8 @@ export default function HistoryPage() {
                                                             <P2PCoachingFeedback
                                                                 coachingFeedback={session.coachingFeedback}
                                                                 primaryLimiter={session.performanceAnalytics?.primaryLimiter || { system: 'Unknown', label: 'Analysis Pending', score: 0, insight: '' }}
-                                                                corrections={[]}
+                                                                // Use AI feedback refinements (if available) as concrete correction examples
+                                                                corrections={session.aiFeedback?.refinements || []}
                                                             />
                                                             {session.transcriptFull && (
                                                                 <div className="mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800">

@@ -338,7 +338,24 @@ export class FluencyEngine {
             }
         }
 
-        // --- F. Save Summary ---
+        // --- F. Conversation Transcript Snapshot (for history UI) ---
+        let transcriptFull: any = null;
+        if (allTranscripts && allTranscripts.length > 0) {
+            const sorted = [...allTranscripts].sort(
+                (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
+            );
+
+            const conversation = sorted.map((t) => ({
+                speaker: t.user_id === userId ? 'user' : 'peer',
+                text: t.text,
+                // Store as ISO; UI can format as needed
+                timestamp: t.timestamp.toISOString(),
+            }));
+
+            transcriptFull = { conversation };
+        }
+
+        // --- G. Save Summary ---
         await prisma.live_session_summary.upsert({
             where: {
                 session_id_user_id: {
@@ -354,7 +371,8 @@ export class FluencyEngine {
                 cefr_model_version: CEFR_MODEL_VERSION,
                 ai_feedback: aiFeedback as any || undefined,
                 performance_analytics: performanceAnalytics as any || undefined,
-                coaching_feedback: coachingFeedback as any || undefined
+                coaching_feedback: coachingFeedback as any || undefined,
+                transcript_full: transcriptFull || undefined
             },
             create: {
                 session_id: sessionId,
@@ -366,7 +384,8 @@ export class FluencyEngine {
                 cefr_model_version: CEFR_MODEL_VERSION,
                 ai_feedback: aiFeedback as any || undefined,
                 performance_analytics: performanceAnalytics as any || undefined,
-                coaching_feedback: coachingFeedback as any || undefined
+                coaching_feedback: coachingFeedback as any || undefined,
+                transcript_full: transcriptFull || undefined
             }
         });
 

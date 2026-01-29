@@ -87,7 +87,7 @@ export async function GET() {
 
         // Transform Live Practice sessions
         const liveHistory = liveSessions.map(session => {
-            const summary = session.summaries[0];
+            const summary = session.summaries[0] as any; // Cast to any to avoid strict typing issues with dynamic JSON fields
             return {
                 id: session.id,
                 type: 'live_practice' as const,
@@ -101,6 +101,9 @@ export async function GET() {
                 drillPlan: (summary?.drill_plan as any[]) || [],
                 aiFeedback: summary?.ai_feedback || null,
                 performanceAnalytics: summary?.performance_analytics || null,
+                coachingFeedback: summary?.coaching_feedback || null,
+                transcriptFull: summary?.transcript_full || null,
+                // Fallback to raw transcripts if full transcript missing
                 transcript: session.transcripts.map(t => ({
                     text: t.text,
                     timestamp: t.timestamp

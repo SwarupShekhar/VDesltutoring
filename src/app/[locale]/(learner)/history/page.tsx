@@ -10,7 +10,9 @@ import { PerformanceIntelligenceDashboard } from "@/components/performance/Perfo
 import { PerformanceStreakBadge } from "@/components/performance/PerformanceStreakBadge"
 import { HistoricalTrendingChart } from "@/components/performance/HistoricalTrendingChart"
 import { CustomDrillPanel } from "@/components/performance/CustomDrillPanel"
-import type { PerformanceAnalytics } from "@/lib/performance-engine"
+import { P2PCoachingFeedback } from "@/components/performance/P2PCoachingFeedback"
+import { ConversationViewer } from "@/components/performance/ConversationViewer"
+import type { PerformanceAnalytics, CoachingFeedback } from "@/lib/performance-engine"
 
 type AISession = {
     id: string
@@ -35,6 +37,8 @@ type LiveSession = {
     drillPlan: any[]
     aiFeedback?: any
     performanceAnalytics?: PerformanceAnalytics | null
+    coachingFeedback?: CoachingFeedback | null
+    transcriptFull?: { conversation: any[] } | null
     transcript: Array<{ text: string; timestamp: Date }>
 }
 
@@ -212,100 +216,120 @@ export default function HistoryPage() {
                                                     </div>
                                                 </div>
                                             ) : (
-                                                <div className="space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        <div>
-                                                            <p className="text-sm text-gray-600 dark:text-gray-400">Fluency Score</p>
-                                                            <p className="text-2xl font-bold">{session.fluencyScore}/100</p>
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm text-gray-600 dark:text-gray-400">Confidence</p>
-                                                            <p className="text-2xl font-bold">{session.confidenceScore}/100</p>
-                                                        </div>
-                                                    </div>
-                                                    {session.weaknesses.length > 0 && (
-                                                        <div>
-                                                            <h4 className="font-semibold mb-2">Areas to Improve</h4>
-                                                            <div className="flex gap-2 flex-wrap">
-                                                                {session.weaknesses.map((w, i) => (
-                                                                    <Badge key={i} variant="outline">{w}</Badge>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                    {/* AI Feedback / Refinements Section */}
-                                                    {session.aiFeedback?.refinements && session.aiFeedback.refinements.length > 0 && (
-                                                        <div className="mt-6 mb-6">
-                                                            <h4 className="font-semibold mb-3 text-red-600 dark:text-red-400 flex items-center gap-2">
-                                                                <span className="text-xl">🛠️</span> Top 5 Corrections
-                                                            </h4>
-                                                            <div className="grid gap-3">
-                                                                {session.aiFeedback.refinements.map((ref: any, idx: number) => (
-                                                                    <div key={idx} className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 p-3 rounded-lg text-sm">
-                                                                        <div className="flex gap-2 mb-1">
-                                                                            <span className="text-slate-500 dark:text-slate-400 w-16 shrink-0">You said:</span>
-                                                                            <span className="text-red-600 dark:text-red-400 line-through decoration-red-400/50">{ref.original}</span>
-                                                                        </div>
-                                                                        <div className="flex gap-2 mb-1">
-                                                                            <span className="text-slate-500 dark:text-slate-400 w-16 shrink-0">Better:</span>
-                                                                            <span className="text-green-600 dark:text-green-400 font-semibold">{ref.better}</span>
-                                                                        </div>
-                                                                        <div className="flex gap-2">
-                                                                            <span className="text-slate-400 dark:text-slate-500 w-16 shrink-0 text-xs">Why:</span>
-                                                                            <span className="text-slate-600 dark:text-slate-300 italic text-xs">{ref.explanation}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Performance Intelligence Dashboard */}
-                                                    {session.performanceAnalytics && (
-                                                        <div className="mb-6">
-                                                            <h4 className="font-semibold mb-4 text-xl text-slate-900 dark:text-white flex items-center gap-2">
-                                                                <span className="text-2xl">🧠</span> Performance Intelligence Analysis
-                                                            </h4>
-                                                            <PerformanceIntelligenceDashboard
-                                                                analytics={session.performanceAnalytics}
+                                                <div className="space-y-8">
+                                                    {session.coachingFeedback ? (
+                                                        <div className="space-y-8">
+                                                            <P2PCoachingFeedback
+                                                                coachingFeedback={session.coachingFeedback}
+                                                                primaryLimiter={session.performanceAnalytics?.primaryLimiter || { system: 'Unknown', label: 'Analysis Pending', score: 0, insight: '' }}
+                                                                corrections={[]}
                                                             />
+                                                            {session.transcriptFull && (
+                                                                <div className="mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+                                                                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2 dark:text-white">
+                                                                        <span>💬</span> Conversation Replay
+                                                                    </h3>
+                                                                    <ConversationViewer conversation={session.transcriptFull.conversation} />
+                                                                </div>
+                                                            )}
                                                         </div>
-                                                    )}
-
-                                                    {session.transcript.length > 0 && (
-                                                        <div>
-                                                            <h4 className="font-semibold mb-2">Transcript & Analysis</h4>
-                                                            <div className="space-y-1 max-h-96 overflow-y-auto">
-                                                                {session.transcript.map((msg, i) => {
-                                                                    // Simple highlight logic: if msg.text contains any 'original' mistake, highlight it
-                                                                    // Note: This is a loose match (includes substr). For robust matching we'd need exact offsets.
-                                                                    let content = <span className="text-slate-700 dark:text-slate-300">{msg.text}</span>;
-
-                                                                    if (session.aiFeedback?.refinements) {
-                                                                        const mistakes = session.aiFeedback.refinements
-                                                                            .filter((r: any) => msg.text.toLowerCase().includes(r.original.toLowerCase()));
-
-                                                                        if (mistakes.length > 0) {
-                                                                            // Render with highlight
-                                                                            // For now, just marking the whole line as containing an error for visibility
-                                                                            content = (
-                                                                                <span>
-                                                                                    {msg.text}
-                                                                                    <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
-                                                                                        Error detected
-                                                                                    </span>
-                                                                                </span>
-                                                                            );
-                                                                        }
-                                                                    }
-
-                                                                    return (
-                                                                        <div key={i} className="text-sm p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg mb-1 border-l-2 border-transparent hover:border-blue-300 transition-colors">
-                                                                            <p>{content}</p>
-                                                                        </div>
-                                                                    )
-                                                                })}
+                                                    ) : (
+                                                        <div className="space-y-4">
+                                                            <div className="grid grid-cols-2 gap-4">
+                                                                <div>
+                                                                    <p className="text-sm text-gray-600 dark:text-gray-400">Fluency Score</p>
+                                                                    <p className="text-2xl font-bold">{session.fluencyScore}/100</p>
+                                                                </div>
+                                                                <div>
+                                                                    <p className="text-sm text-gray-600 dark:text-gray-400">Confidence</p>
+                                                                    <p className="text-2xl font-bold">{session.confidenceScore}/100</p>
+                                                                </div>
                                                             </div>
+                                                            {session.weaknesses.length > 0 && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-2">Areas to Improve</h4>
+                                                                    <div className="flex gap-2 flex-wrap">
+                                                                        {session.weaknesses.map((w, i) => (
+                                                                            <Badge key={i} variant="outline">{w}</Badge>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                            {/* AI Feedback / Refinements Section */}
+                                                            {session.aiFeedback?.refinements && session.aiFeedback.refinements.length > 0 && (
+                                                                <div className="mt-6 mb-6">
+                                                                    <h4 className="font-semibold mb-3 text-red-600 dark:text-red-400 flex items-center gap-2">
+                                                                        <span className="text-xl">🛠️</span> Top 5 Corrections
+                                                                    </h4>
+                                                                    <div className="grid gap-3">
+                                                                        {session.aiFeedback.refinements.map((ref: any, idx: number) => (
+                                                                            <div key={idx} className="bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 p-3 rounded-lg text-sm">
+                                                                                <div className="flex gap-2 mb-1">
+                                                                                    <span className="text-slate-500 dark:text-slate-400 w-16 shrink-0">You said:</span>
+                                                                                    <span className="text-red-600 dark:text-red-400 line-through decoration-red-400/50">{ref.original}</span>
+                                                                                </div>
+                                                                                <div className="flex gap-2 mb-1">
+                                                                                    <span className="text-slate-500 dark:text-slate-400 w-16 shrink-0">Better:</span>
+                                                                                    <span className="text-green-600 dark:text-green-400 font-semibold">{ref.better}</span>
+                                                                                </div>
+                                                                                <div className="flex gap-2">
+                                                                                    <span className="text-slate-400 dark:text-slate-500 w-16 shrink-0 text-xs">Why:</span>
+                                                                                    <span className="text-slate-600 dark:text-slate-300 italic text-xs">{ref.explanation}</span>
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Performance Intelligence Dashboard */}
+                                                            {session.performanceAnalytics && (
+                                                                <div className="mb-6">
+                                                                    <h4 className="font-semibold mb-4 text-xl text-slate-900 dark:text-white flex items-center gap-2">
+                                                                        <span className="text-2xl">🧠</span> Performance Intelligence Analysis
+                                                                    </h4>
+                                                                    <PerformanceIntelligenceDashboard
+                                                                        analytics={session.performanceAnalytics}
+                                                                    />
+                                                                </div>
+                                                            )}
+
+                                                            {session.transcript.length > 0 && (
+                                                                <div>
+                                                                    <h4 className="font-semibold mb-2">Transcript & Analysis</h4>
+                                                                    <div className="space-y-1 max-h-96 overflow-y-auto">
+                                                                        {session.transcript.map((msg, i) => {
+                                                                            // Simple highlight logic: if msg.text contains any 'original' mistake, highlight it
+                                                                            // Note: This is a loose match (includes substr). For robust matching we'd need exact offsets.
+                                                                            let content = <span className="text-slate-700 dark:text-slate-300">{msg.text}</span>;
+
+                                                                            if (session.aiFeedback?.refinements) {
+                                                                                const mistakes = session.aiFeedback.refinements
+                                                                                    .filter((r: any) => msg.text.toLowerCase().includes(r.original.toLowerCase()));
+
+                                                                                if (mistakes.length > 0) {
+                                                                                    // Render with highlight
+                                                                                    // For now, just marking the whole line as containing an error for visibility
+                                                                                    content = (
+                                                                                        <span>
+                                                                                            {msg.text}
+                                                                                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                                                                Error detected
+                                                                                            </span>
+                                                                                        </span>
+                                                                                    );
+                                                                                }
+                                                                            }
+
+                                                                            return (
+                                                                                <div key={i} className="text-sm p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg mb-1 border-l-2 border-transparent hover:border-blue-300 transition-colors">
+                                                                                    <p>{content}</p>
+                                                                                </div>
+                                                                            )
+                                                                        })}
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     )}
                                                 </div>

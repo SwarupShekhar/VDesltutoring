@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * GET /api/performance/history
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
             where: {
                 user_id: userId,
                 performance_analytics: {
-                    not: null
+                    not: Prisma.JsonNull
                 }
             },
             orderBy: {

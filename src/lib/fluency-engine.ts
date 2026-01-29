@@ -305,6 +305,7 @@ export class FluencyEngine {
 
         // --- H. Performance Intelligence Analytics (NEW) ---
         let performanceAnalytics = null;
+        let coachingFeedback = null;
         if (metrics.word_count > 20) {
             try {
                 const { PerformanceEngine } = await import('./performance-engine');
@@ -329,7 +330,21 @@ export class FluencyEngine {
                     durationMinutes * 60 // Convert back to seconds
                 );
 
-                console.log(`[FluencyEngine] Generated performance analytics for user ${userId}`);
+                // Phase 2: Generate Coaching Feedback
+                // Only generate if we have performance analytics
+                if (performanceAnalytics) {
+                    // Extract corrections for pattern detection (mock or empty if not yet tracked separately)
+                    // TODO: Pass real corrections when available
+                    const corrections: any[] = [];
+
+                    coachingFeedback = PerformanceEngine.generateCoachingFeedback(
+                        performanceAnalytics,
+                        corrections,
+                        transcriptSegments
+                    );
+                }
+
+                console.log(`[FluencyEngine] Generated performance analytics & coaching feedback for user ${userId}`);
             } catch (e) {
                 console.warn(`[FluencyEngine] Performance analytics generation failed for user ${userId}:`, e);
             }
@@ -349,8 +364,9 @@ export class FluencyEngine {
                 weaknesses: topWeaknesses,
                 drill_plan: drillPlan,
                 cefr_model_version: CEFR_MODEL_VERSION,
-                ai_feedback: aiFeedback || undefined,
-                performance_analytics: performanceAnalytics || undefined
+                ai_feedback: aiFeedback as any || undefined,
+                performance_analytics: performanceAnalytics as any || undefined,
+                coaching_feedback: coachingFeedback as any || undefined
             },
             create: {
                 session_id: sessionId,
@@ -360,12 +376,13 @@ export class FluencyEngine {
                 weaknesses: topWeaknesses,
                 drill_plan: drillPlan,
                 cefr_model_version: CEFR_MODEL_VERSION,
-                ai_feedback: aiFeedback || undefined,
-                performance_analytics: performanceAnalytics || undefined
+                ai_feedback: aiFeedback as any || undefined,
+                performance_analytics: performanceAnalytics as any || undefined,
+                coaching_feedback: coachingFeedback as any || undefined
             }
         });
 
-        console.log(`[FluencyEngine] User ${userId} | Score: ${fluencyScore.toFixed(1)} | AI Feedback: ${aiFeedback ? 'Generated' : 'Skipped'}`);
+        console.log(`[FluencyEngine] User ${userId} | Score: ${fluencyScore.toFixed(1)} | AI Feedback: ${aiFeedback ? 'Generated' : 'Skipped'} `);
     }
 }
 

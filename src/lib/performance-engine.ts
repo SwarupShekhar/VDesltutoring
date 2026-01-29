@@ -414,6 +414,8 @@ export class PerformanceEngine {
         const lexicalMaturityIndex = Math.min(100, (avgLevel / 6) * 100);
 
         // Verb Sophistication
+        let bestMoment: { timestamp: Date; context: string } | null = null;
+        let dropMoment: { timestamp: Date; context: string } | null = null;
         let verbScore = 0;
         let verbCount = 0;
         words.forEach(word => {
@@ -796,51 +798,79 @@ export class PerformanceEngine {
         if (transcript.length === 0) {
             return {
                 bestMoment: null,
-                confidenceDrop: null
+                confidenceDrop: null,
+                bestMomentContext: undefined,
+                dropContext: undefined
             };
         }
 
-        let bestMoment: { timestamp: Date; context: string } | null = null;
-        let dropMoment: { timestamp: Date; context: string } | null = null;
+        const startTime = transcript[0].timestamp;
 
-        const chunks = this.chunkByTimeWindow(transcript, 15); // 15-second windows
-
-        chunks.forEach((chunk, idx) => {
-            const wordCount = chunk.reduce((sum, seg) => sum + seg.text.split(/\s+/).length, 0);
-            const wpm = (wordCount / 15) * 60;
-            const fillerCount = this.countStruggleFillers(chunk);
-
-            // Best moment: high WPM, no fillers, stable
-            const isStable = Math.abs(wpm - 130) < 20; // Near target WPM
-            if (isStable && fillerCount === 0 && wordCount > 10) {
-                if (!bestMoment) {
-                    bestMoment = {
-                        timestamp: chunk[0].timestamp,
-                        context: chunk[0].text.substring(0, 50) + '...'
-                    };
-                }
-            }
-
-            // Check for long pauses within this chunk
-            for (let i = 1; i < chunk.length; i++) {
-                const delay = (chunk[i].timestamp.getTime() - chunk[i - 1].timestamp.getTime()) / 1000;
-                if (delay > 2.5 && !dropMoment) {
-                    dropMoment = {
-                        timestamp: chunk[i].timestamp,
-                        context: chunk[i].text.substring(0, 50) + '...'
-                    };
-                }
-            }
-        });
-
-        const formatTime = (date: Date, startTime: Date) => {
-            const seconds = Math.floor((date.getTime() - startTime.getTime()) / 1000);
+        const formatTime = (date: Date, start: Date) => {
+            const seconds = Math.floor((date.getTime() - start.getTime()) / 1000);
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         };
 
-        const startTime = transcript[0].timestamp;
+        // Find best moment (stable WPM, no fillers, low pause)
+        let bestMoment: { timestamp: Date; context: string } | null = null;
+        let bestMomentScore = -Infinity;
+
+        const chunks = this.chunkByTimeWindow(transcript, 15); // 15-second windows
+
+        for (const chunk of chunks) {
+            const wordCount = chunk.reduce((sum, seg) => sum + seg.text.split(/\s+/).length, 0);
+            const wpm = (wordCount / 15) * 60;
+            const fillerCount = this.countStruggleFillers(chunk);
+
+            // Best moment candidate: high WPM, no fillers, stable
+            // Stability check: WPM deviation from target (e.g. 130)
+            const isStable = Math.abs(wpm - 130) < 30;
+
+            // Score the chunk: stability + fluency - fillers
+            // Simple heuristic score
+            const fluidityScore = (wordCount * 1.5) - (fillerCount * 5);
+
+            if (isStable && fillerCount === 0 && wordCount > 5) {
+                if (fluidityScore > bestMomentScore) {
+                    bestMomentScore = fluidityScore;
+                    bestMoment = {
+                        timestamp: chunk[0].timestamp,
+                        context: chunk[0].text.substring(0, 50) + "..."
+                    };
+                }
+            }
+        }
+
+        // Fallback: If no "perfect" chunk found, scan individual segments for a good run
+        if (!bestMoment) {
+            for (const seg of transcript) {
+                const score = (seg.text.length * 0.5) - ((seg.text.match(/\bum\b|\buh\b/gi) || []).length * 10);
+                if (score > bestMomentScore && score > 5) { // Threshold for "good"
+                    bestMomentScore = score;
+                    bestMoment = {
+                        timestamp: seg.timestamp,
+                        context: seg.text.slice(0, 50)
+                    };
+                }
+            }
+        }
+
+        // Find confidence drop (long pause >2.5s)
+        let dropMoment: { timestamp: Date; context: string } | null = null;
+
+        // Check for long pauses between segments
+        for (let i = 1; i < transcript.length; i++) {
+            const pause = (transcript[i].timestamp.getTime() - transcript[i - 1].timestamp.getTime()) / 1000;
+            if (pause > 2.5) {
+                dropMoment = {
+                    timestamp: transcript[i].timestamp,
+                    context: transcript[i].text.slice(0, 50)
+                };
+                break; // Just find the first major drop for now
+            }
+        }
 
         return {
             bestMoment: bestMoment ? formatTime(bestMoment.timestamp, startTime) : null,
@@ -1011,14 +1041,15 @@ export class PerformanceEngine {
 
         // Analyze correction types
         const types = corrections.map(c => c.type || 'grammar');
-        const typeCounts = types.reduce((acc: any, type: string) => {
+
+        const counts = types.reduce((acc: any, type: string) => {
             acc[type] = (acc[type] || 0) + 1;
             return acc;
         }, {});
 
         // Find most common issue
-        const mostCommon = Object.entries(typeCounts)
-            .sort((a: any, b: any) => b[1] - a[1])[0];
+        const mostCommon = Object.entries(counts)
+            .sort((a: any, b: any) => b[1] - a[1])[0] as [string, number] | undefined;
 
         if (!mostCommon || mostCommon[1] < 2) return null;
 

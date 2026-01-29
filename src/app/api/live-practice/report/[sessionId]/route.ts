@@ -89,6 +89,9 @@ export async function GET(
             confidenceScore: summary.confidence_score,
             weaknesses: summary.weaknesses,
             drillPlan: summary.drill_plan,
+            coachingFeedback: summary.coaching_feedback,
+            performanceAnalytics: summary.performance_analytics,
+            transcriptFull: summary.transcript_full,
             metrics: {
                 speakingTime: metrics.speaking_time,
                 wordCount: metrics.word_count,

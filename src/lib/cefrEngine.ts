@@ -167,12 +167,19 @@ export function computeSkillScores(
     confidenceBand?: string,
     confidenceExplanation?: string
 ): CEFRProfile {
-    const to100 = (v: number) => Math.round(Math.max(0, Math.min(1, v)) * 100)
+    // CALIBRATION: Use non-linear power curve to prevent grade inflation.
+    // Raw 0.9 (90%) -> 0.9^1.5 = 0.85 (85 score = C2 threshold)
+    // Raw 0.8 (80%) -> 0.8^1.5 = 0.71 (71 score = C1 threshold)
+    // Raw 0.7 (70%) -> 0.7^1.5 = 0.58 (58 score = B2 threshold)
+    const calibrate = (v: number) => {
+        const raw = Math.max(0, Math.min(1, v));
+        return Math.round(Math.pow(raw, 1.5) * 100);
+    };
 
-    const fluencyScore = to100(m.fluency)
-    const pronunciationScore = to100(m.pronunciation)
-    const grammarScore = to100(m.grammar)
-    const vocabularyScore = to100(m.vocabulary)
+    const fluencyScore = calibrate(m.fluency)
+    const pronunciationScore = calibrate(m.pronunciation)
+    const grammarScore = calibrate(m.grammar)
+    const vocabularyScore = calibrate(m.vocabulary)
 
     // Weighted average for overall score
     // Fluency is most important for speaking, followed by pronunciation

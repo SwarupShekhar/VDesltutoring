@@ -270,7 +270,8 @@ export class PerformanceEngine {
 
         // Penalize slow responses (ideal <1s)
         if (avgTimeToFirstWord > 1.0) {
-            score -= Math.min((avgTimeToFirstWord - 1.0) * 20, 40);
+            // CALIBRATION: Increased penalty (was 20)
+            score -= Math.min((avgTimeToFirstWord - 1.0) * 30, 40);
         }
 
         // Penalize struggle fillers (ideal <2/min)
@@ -279,7 +280,8 @@ export class PerformanceEngine {
         }
 
         // Penalize long pauses
-        score -= Math.min(longPauseCount * 5, 20);
+        // CALIBRATION: Doubled penalty (was 5 -> 10, max 20 -> 40)
+        score -= Math.min(longPauseCount * 10, 40);
 
         score = Math.max(0, Math.min(100, score));
 

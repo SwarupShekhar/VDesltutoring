@@ -161,9 +161,9 @@ export class FluencyEngine {
 
         // 2. Hesitation (Fillers)
         const fillersPerMin = metrics.filler_count / durationMinutes;
-        // Example: 2 fillers/min -> 2 * 15 = 30 penalty -> 70 score.
-        // 6 fillers/min -> 90 penalty -> 10 score.
-        let hesitationScore = 100 - Math.min(Math.max(fillersPerMin * 15, 0), 100);
+        // CALIBRATION UPDATE: Stricter penalty.
+        // 1 filler/min -> -25 points. 4 fillers/min -> 0 score.
+        let hesitationScore = 100 - Math.min(Math.max(fillersPerMin * 25, 0), 100);
 
         // 3. Speed (WPM)
         // metrics.speech_rate should be populated by worker. If 0, fallback to word_count/time
@@ -173,13 +173,16 @@ export class FluencyEngine {
         }
 
         const idealWpm = 130;
-        let speedScore = 100 - (Math.abs(wpm - idealWpm) / idealWpm) * 100;
+        // CALIBRATION UPDATE: Stricter deviation penalty (1.5x)
+        let speedScore = 100 - (Math.abs(wpm - idealWpm) / idealWpm) * 150;
         speedScore = Math.min(Math.max(speedScore, 0), 100);
 
         // 4. Grammar
         // We need sentences count. If not tracked, estimate: word_count / 10?
         const estimatedSentences = Math.max(metrics.word_count / 10, 1);
-        let grammarScore = 100 - ((metrics.grammar_errors / estimatedSentences) * 100);
+        // CALIBRATION UPDATE: 2.5x penalty per error rate.
+        // 1 error in 10 sentences (10% rate) -> -25 points (75 score).
+        let grammarScore = 100 - ((metrics.grammar_errors / estimatedSentences) * 250);
         grammarScore = Math.min(Math.max(grammarScore, 0), 100);
 
         // --- B. Weighted Fluency Score ---

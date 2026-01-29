@@ -227,9 +227,12 @@ export default function HistoryPage() {
                                                             />
                                                             {session.transcriptFull && (
                                                                 <div className="mt-8 pt-8 border-t border-zinc-200 dark:border-zinc-800">
-                                                                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2 dark:text-white">
-                                                                        <span>💬</span> Conversation Replay
+                                                                    <h3 className="text-xl font-bold mb-2 flex items-center gap-2 dark:text-white">
+                                                                        <span>💬</span> Full analyzed transcript
                                                                     </h3>
+                                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                                                                        Review your entire conversation, turn by turn, alongside the feedback above.
+                                                                    </p>
                                                                     <ConversationViewer conversation={session.transcriptFull.conversation} />
                                                                 </div>
                                                             )}

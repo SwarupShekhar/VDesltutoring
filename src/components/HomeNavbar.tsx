@@ -20,11 +20,16 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   const { user, isLoaded } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   const t = dict || {};
   const locales = ['en', 'de', 'fr', 'es', 'vi', 'ja'];
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     async function fetchRole() {
@@ -160,7 +165,16 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                 <ThemeToggle />
               </div>
 
-              {isLoaded && user ? (
+              {/* Hydration safe rendering */}
+              {(!isMounted || !isLoaded) ? (
+                // Loading state / Server matching state (render a neutral skeleton)
+                // This matches what the server renders (since isMounted is false on server)
+                // and what the client renders on first pass (isMounted starts false)
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-8 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
+                  <div className="w-24 h-10 bg-slate-100 dark:bg-slate-800 rounded-full animate-pulse" />
+                </div>
+              ) : user ? (
                 <>
                   <Link
                     href={`/${locale}/dashboard`}

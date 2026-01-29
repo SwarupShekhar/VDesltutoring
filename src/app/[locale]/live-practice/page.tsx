@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Room, RoomEvent, Track, DisconnectReason } from "livekit-client";
 import { useUser } from "@clerk/nextjs";
-import { Mic, Headphones, Loader2, AlertCircle, PhoneOff, Radio, TriangleAlert, Zap } from "lucide-react";
+import { Mic, MicOff, Headphones, Loader2, AlertCircle, PhoneOff, Radio, TriangleAlert, Zap } from "lucide-react";
 
 type ConnectionStatus = "IDLE" | "CHECKING_PERMISSIONS" | "MATCHING" | "CONNECTING" | "IN_CALL";
 
@@ -528,11 +528,11 @@ export default function LivePracticePage() {
                                 <button
                                     onClick={toggleMute}
                                     className={`h-14 w-14 rounded-full flex items-center justify-center transition-all duration-200 ${isMuted
-                                        ? "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300"
+                                        ? "bg-slate-100 text-red-500 hover:bg-slate-200 dark:bg-slate-700 dark:text-red-400"
                                         : "bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:text-white dark:border-slate-600"
                                         }`}
                                 >
-                                    {isMuted ? <Mic className="h-6 w-6 opacity-40" /> : <Mic className="h-6 w-6" />}
+                                    {isMuted ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
                                 </button>
 
                                 <button

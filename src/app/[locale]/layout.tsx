@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google'
 import '../globals.css'
 import { BrowserExtensionFix } from '@/components/BrowserExtensionFix'
 import type { Locale } from '@/i18n/getDictionary'
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -49,9 +50,11 @@ export default async function RootLayout({
   const { locale } = await params
 
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}>
-      <BrowserExtensionFix />
-      {children}
-    </div>
+    <ClerkProvider>
+      <div className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased min-h-screen flex flex-col`}>
+        <BrowserExtensionFix />
+        {children}
+      </div>
+    </ClerkProvider>
   )
 }

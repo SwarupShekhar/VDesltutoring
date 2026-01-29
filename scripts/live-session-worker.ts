@@ -8,8 +8,6 @@ import { AccessToken } from "livekit-server-sdk";
 import { Room, RoomEvent, AudioStream, TrackKind } from "@livekit/rtc-node";
 import type { RemoteTrack, Track } from "@livekit/rtc-node";
 import "dotenv/config";
-import { updateUserFluencyProfile } from "../src/lib/assessment/updateUserFluencyProfile";
-import { analyzeAudioConfidence } from "../src/lib/speech/audioConfidenceAnalyzer";
 
 
 // Polyfill for Node.js environment overrides if needed
@@ -171,237 +169,41 @@ async function checkExpiredSessions() {
 }
 
 async function checkForEndedSessions() {
-    // Find sessions that ended recently but have no summary
-    // Since we don't track 'summarized' bit, checking missing summary relation is costly if many sessions.
-    // Better: Check sessions with 'ended' status and no summary record.
-
+    // NOTE:
+    // Originally this worker tried to directly call FluencyEngine here to
+    // backfill summaries for any 'ended' sessions missing summaries.
+    //
+    // FluencyEngine is now invoked reliably from:
+    // - /api/live-practice/leave
+    // - /api/webhooks/livekit
+    //
+    // To keep the worker decoupled from Next.js internals (and avoid module
+    // resolution issues when running via ts-node), this function now simply
+    // logs which sessions are missing summaries. The actual evaluation is
+    // handled in the app layer.
     const sessions = await prisma.live_sessions.findMany({
         where: {
             status: 'ended',
-            summaries: { none: {} } // Find sessions with no summaries yet
+            summaries: { none: {} }
         },
-        include: {
-            metrics: true // Get the metrics
-        }
+        select: { id: true, room_name: true }
     });
 
-    for (const session of sessions) {
-        await summarizeSession(session);
-    }
-}
-
-
-async function summarizeSession(session: any) {
-    console.log(`Summarizing session ${session.id}...`);
-
-    const users = [session.user_a, session.user_b];
-    // Calculate duration
-    const durationMs = (session.ended_at ? new Date(session.ended_at).getTime() : Date.now()) - new Date(session.started_at).getTime();
-    const durationMinutes = Math.max(durationMs / 1000 / 60, 0.5);
-
-    for (const userId of users) {
-        // Find metrics for this user
-        let metrics: any = session.metrics.find((m: any) => m.user_id === userId);
-
-        // If no metrics, default to 0s to avoid crash
-        if (!metrics) {
-            metrics = { speaking_time: 0, filler_count: 0, speech_rate: 0, word_count: 0, grammar_errors: 0 };
-        }
-
-        // 🛡️ Guard: Insufficient Data (Prevent "B1 on Silence")
-        if (metrics.word_count < 5) {
-            console.log(`[Worker] User ${userId} insufficient data (${metrics.word_count} words). Forcing 0.`);
-            await prisma.live_session_summary.upsert({
-                where: {
-                    session_id_user_id: {
-                        session_id: session.id,
-                        user_id: userId
-                    }
-                },
-                update: {
-                    confidence_score: 0,
-                    fluency_score: 0,
-                    weaknesses: ["PASSIVITY", "SILENCE"],
-                    drill_plan: [{
-                        weakness: "PASSIVITY",
-                        exercise: "Try to speak more next time so we can analyze your English.",
-                        difficulty: "Beginner"
-                    }]
-                },
-                create: {
-                    session_id: session.id,
-                    user_id: userId,
-                    confidence_score: 0,
-                    fluency_score: 0,
-                    weaknesses: ["PASSIVITY", "SILENCE"],
-                    drill_plan: [{
-                        weakness: "PASSIVITY",
-                        exercise: "Try to speak more next time so we can analyze your English.",
-                        difficulty: "Beginner"
-                    }]
-                }
-            });
-            continue; // Skip rest of loop for this user
-        }
-
-        // --- 1. Audio-First Confidence Analysis ---
-        const transcripts = await prisma.live_transcripts.findMany({
-            where: { session_id: session.id, user_id: userId },
-            orderBy: { timestamp: "asc" }
-        });
-
-        // Flatten all words from all transcripts for this session
-        const allWords = transcripts.flatMap(t => ((t as any).word_data as any) || []);
-        const totalDurationLive = (session.ended_at ? new Date(session.ended_at).getTime() : Date.now()) - new Date(session.started_at).getTime();
-
-        const audioAnalysis = analyzeAudioConfidence(allWords, totalDurationLive / 1000);
-
-        const confidenceScore = audioAnalysis.score;
-        const confidenceBand = audioAnalysis.band;
-        const confidenceExplanation = audioAnalysis.explanation;
-        const audioMetrics = audioAnalysis.metrics;
-
-        // --- 2. Hesitation (Audio-Based) ---
-        // We use the raw score from audio analysis as the baseline
-        let hesitationScore = 100 - (audioMetrics.midSentencePauseRatio * 200); // 0.5 ratio is 0 score
-        hesitationScore = Math.max(0, Math.min(100, hesitationScore));
-
-        // --- 3. Speed (WPM) ---
-        let wpm = metrics.speech_rate || 0;
-        if (wpm === 0 && metrics.speaking_time > 0) {
-            wpm = metrics.word_count / (metrics.speaking_time / 60);
-        }
-        const idealWpm = 130;
-        let speedScore = 100 - (Math.abs(wpm - idealWpm) / idealWpm) * 100;
-        speedScore = Math.min(Math.max(speedScore, 0), 100);
-
-        // --- 4. Grammar ---
-        const estimatedSentences = Math.max(metrics.word_count / 10, 1);
-        let grammarScore = 100 - ((metrics.grammar_errors / estimatedSentences) * 100);
-        grammarScore = Math.min(Math.max(grammarScore, 0), 100);
-
-        // --- Weighted Fluency Score ---
-        const fluencyScore = (
-            (0.30 * confidenceScore) +
-            (0.25 * hesitationScore) +
-            (0.25 * speedScore) +
-            (0.20 * grammarScore)
+    if (sessions.length > 0) {
+        console.log(
+            `[Worker] Found ${sessions.length} ended live_sessions without summaries. ` +
+            `These will be evaluated by FluencyEngine via API/webhook on subsequent requests.`
         );
-
-        // --- Weakness Diagnosis ---
-        const weaknesses: string[] = [];
-        if (audioAnalysis.hesitationFlags.midPauseHigh || hesitationScore < 60) weaknesses.push("HESITATION");
-        if (speedScore < 60) weaknesses.push("SPEED");
-        if (grammarScore < 70) weaknesses.push("GRAMMAR");
-        if (confidenceBand === "Low") weaknesses.push("CONFIDENCE");
-        if (audioMetrics.speechRateWpm < 60) weaknesses.push("PASSIVITY");
-
-        const topWeaknesses = weaknesses.slice(0, 3);
-
-        // --- Drill Plan ---
-        const drillPlan = [];
-        if (topWeaknesses.length > 0) {
-            const drills = await prisma.fluency_exercises.findMany({
-                where: { weakness_tag: { in: topWeaknesses } }
-            });
-            for (const tag of topWeaknesses) {
-                const candidates = drills.filter((d: any) => d.weakness_tag === tag);
-                if (candidates.length > 0) {
-                    const pick = candidates[Math.floor(Math.random() * candidates.length)];
-                    drillPlan.push({
-                        weakness: tag,
-                        exercise: pick.prompt,
-                        difficulty: pick.difficulty
-                    });
-                }
-            }
-        }
-        // Fallback drill
-        if (drillPlan.length === 0) {
-            drillPlan.push({
-                weakness: "MAINTENANCE",
-                exercise: "Reflect on your conversation and identify one thing you did well.",
-                difficulty: "All"
-            });
-        }
-
-        // --- Save to DB ---
-        await prisma.live_session_summary.upsert({
-            where: {
-                session_id_user_id: {
-                    session_id: session.id,
-                    user_id: userId
-                }
-            },
-            update: {
-                confidence_score: Math.round(confidenceScore),
-                confidence_band: confidenceBand,
-                confidence_explanation: confidenceExplanation,
-                fluency_score: Math.round(fluencyScore),
-                weaknesses: topWeaknesses,
-                drill_plan: drillPlan
-            },
-            create: {
-                session_id: session.id,
-                user_id: userId,
-                confidence_score: Math.round(confidenceScore),
-                confidence_band: confidenceBand,
-                confidence_explanation: confidenceExplanation,
-                fluency_score: Math.round(fluencyScore),
-                weaknesses: topWeaknesses,
-                drill_plan: drillPlan
-            }
-        });
-
-        // --- SINGLE SOURCE OF TRUTH UPDATE ---
-        // Also update the centralized user_fluency_profile
-        try {
-            await updateUserFluencyProfile({
-                userId: userId,
-                // Map Live Practice "fluencyScore" (0-100) to CEFR vaguely if needed, 
-                // but since we don't have strict CEFR audit here, we might want to preserve existing level 
-                // OR map purely based on score?
-                // The requirements say: "Any AI Tutor session OR Live Practice session... MUST update the user dashboard"
-                // For Live Practice, we don't have a strict CEFR level from an auditor prompt.
-                // We should probably read their EXISTING level or estimate one?
-                // actually, let's look at the requirements: "Create ONE canonical table... All systems WRITE to this."
-                // "Live Practice... ALSO call updateUserFluencyProfile(...)"
-                // But Live Practice doesn't generate a CEFR level in the current code (it generates 0-100 scores).
-                // The prompt example shows:
-                // await updateUserFluencyProfile({ userId, cefrLevel, fluencyScore, ... })
-                // Where does 'cefrLevel' come from in Live Practice?
-                // Looking at the code, it's NOT computed.
-                // However, the OBJECTIVE says: "No heuristic guessing."
-                // If we don't have a new CEFR level, maybe we should NOT overwrite the CEFR level?
-                // OR we strictly map scores: >90 = C2, >80 = C1 etc?
-                // The strict auditor in AI Tutor is "Authoritative". Live Practice is "Practice".
-                // But the requirement says: "Live Systems... MUST update the user dashboard".
-                // Let's use a safe mapping or preserve existing if possible.
-                // Using a simple mapping for now to ensure it writes *something* valid if it's the first session.
-
-                cefrLevel: fluencyScore >= 90 ? "C2" : fluencyScore >= 80 ? "C1" : fluencyScore >= 65 ? "B2" : fluencyScore >= 50 ? "B1" : fluencyScore >= 35 ? "A2" : "A1",
-                fluencyScore: Math.round(fluencyScore),
-                confidence: Math.round(confidenceScore),
-                confidenceBand: confidenceBand,
-                confidenceExplanation: confidenceExplanation,
-                pauseRatio: audioMetrics.midSentencePauseRatio,
-                avgPauseMs: audioMetrics.avgPauseMs,
-                midSentencePauseRatio: audioMetrics.midSentencePauseRatio,
-                pauseVariance: audioMetrics.pauseVariance,
-                speechRateVariance: audioMetrics.speechRateVariance,
-                recoveryScore: audioMetrics.recoveryScore,
-                wordCount: metrics.word_count,
-                lexicalBlockers: null,
-                sourceSessionId: session.id,
-                sourceType: "live_practice"
-            });
-        } catch (err) {
-            console.error(`[Worker] Failed to update fluency profile for ${userId}:`, err);
-        }
-
-        console.log(`[Worker] Summarized for User ${userId}: Fluency ${fluencyScore.toFixed(1)}`);
     }
 }
+
+
+// REDUNDANT - Replaced by FluencyEngine.evaluateSession
+/*
+async function summarizeSession(session: any) {
+... (truncated logic) ...
+}
+*/
 
 async function joinSessionAndTranscribe(session: any) {
     try {

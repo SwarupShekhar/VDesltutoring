@@ -94,61 +94,46 @@ export class FluencyEngine {
         const durationMinutes = Math.max(durationMs / 1000 / 60, 0.5); // Minimum 0.5 min to avoid div/0
 
         // 2. Process Each User
-        // We evaluate everyone present in metrics
-        const userIds = new Set(session.metrics.map(m => m.user_id));
+        // We evaluate everyone in the session (user_a and user_b)
+        const userIds = new Set<string>();
+        if (session.user_a) userIds.add(session.user_a);
+        if (session.user_b) userIds.add(session.user_b);
 
-        for (const userId of userIds) {
+        // Also add anyone from metrics just in case
+        session.metrics.forEach(m => userIds.add(m.user_id));
+
+        if (userIds.size === 0) {
+            console.warn(`[FluencyEngine] Session ${sessionId} has no users?`);
+            // Create a dummy summary to prevent infinite loop of "summaries: { none: {} }"
+            // But we don't have a user_id to attach to. This case is pathological.
+            // Best we can do is maybe log it and return. 
+            // The worker query `summaries: { none: {} }` will assume ANY summary breaks the "none".
+            // So we need to create a summary for SOMEONE.
+            // If user_a exists, we are good.
+            return;
+        }
+
+        for (const userId of Array.from(userIds)) {
             await this.evaluateUser(sessionId, userId, durationMinutes, session.metrics, session.transcripts);
         }
     }
 
     private async evaluateUser(sessionId: string, userId: string, durationMinutes: number, allMetrics: any[], allTranscripts: any[]) {
-        const metrics = allMetrics.find(m => m.user_id === userId);
-        if (!metrics) return;
+        let metrics = allMetrics.find(m => m.user_id === userId);
+
+        // If no metrics, mock them as zero so we still generate a "silence" summary
+        if (!metrics) {
+            metrics = {
+                user_id: userId,
+                word_count: 0,
+                speaking_time: 0,
+                filler_count: 0,
+                speech_rate: 0,
+                grammar_errors: 0
+            };
+        }
 
         // --- A. Compute Raw Scores ---
-
-        // 🛡️ Guard: Insufficient Data (Prevent "B1 on Silence")
-        // If user said fewer than 5 words, they get 0.
-        if (metrics.word_count < 5) {
-            console.log(`[FluencyEngine] User ${userId} insufficient data (${metrics.word_count} words). Forcing 0.`);
-            // Force 0 scores
-            const zeroScore = 0;
-            const topWeaknesses = ["PASSIVITY", "SILENCE"];
-
-            // Save immediately to avoid skewing logic
-            await prisma.live_session_summary.upsert({
-                where: {
-                    session_id_user_id: {
-                        session_id: sessionId,
-                        user_id: userId
-                    }
-                },
-                create: {
-                    session_id: sessionId,
-                    user_id: userId,
-                    confidence_score: 0,
-                    fluency_score: 0,
-                    weaknesses: topWeaknesses,
-                    drill_plan: [{
-                        weakness: "PASSIVITY",
-                        exercise: "Try to speak more next time so we can analyze your English.",
-                        difficulty: "Beginner"
-                    }]
-                },
-                update: {
-                    confidence_score: 0,
-                    fluency_score: 0,
-                    weaknesses: topWeaknesses,
-                    drill_plan: [{
-                        weakness: "PASSIVITY",
-                        exercise: "Try to speak more next time so we can analyze your English.",
-                        difficulty: "Beginner"
-                    }]
-                }
-            });
-            return;
-        }
 
         // 1. Confidence (Speaking Time)
         // Ideal is 50% of the time (in a duo). 

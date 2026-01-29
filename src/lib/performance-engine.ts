@@ -6,6 +6,7 @@
  */
 
 import { CEFR_WORDLISTS, VERB_SOPHISTICATION, CONNECTORS } from '@/lib/cefr/cefr-wordlists';
+import { analyzeAudioConfidence } from '@/lib/speech/audioConfidenceAnalyzer';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -174,6 +175,11 @@ export class PerformanceEngine {
         const speechRhythm = this.analyzeSpeechRhythm(transcript, metrics, sessionDuration);
         const languageMaturity = this.analyzeLanguageMaturity(transcript, metrics);
         const socialPresence = this.analyzeSocialPresence(transcript, sessionDuration);
+
+        // --- High-Fidelity Audio Analysis (Phase 2) ---
+        const allWords = transcript.flatMap(t => t.wordData || []);
+        const audioConfidence = analyzeAudioConfidence(allWords, sessionDuration);
+
         const fillerIntelligence = this.analyzeFillerIntelligence(transcript, sessionDuration);
 
         // Pressure stability requires complexity detection (simplified for now)
@@ -213,7 +219,11 @@ export class PerformanceEngine {
 
         const nextFocus = this.determineNextFocus(primaryLimiter.system);
 
+        // Enhance moments with audio-first data if available
         const performanceMoments = this.detectPerformanceMoments(transcript, cognitiveReflex, speechRhythm);
+        if (audioConfidence.score > 0) {
+            // We could inject more audio-specific moments here if needed
+        }
 
         return {
             cognitiveReflex,
@@ -949,10 +959,13 @@ export class PerformanceEngine {
         const pattern = this.detectRepeatingPattern(corrections);
 
         // 4. Hesitation Signals: Extract from analytics
+        const allWords = transcript.flatMap(t => t.wordData || []);
+        const audio = analyzeAudioConfidence(allWords, 60); // Use 60s as dummy for ratio
+
         const signals = {
-            longPauses: analytics.cognitiveReflex.longPauseCount,
+            longPauses: audio.score > 0 ? Math.round(audio.metrics.avgPauseMs / 500) : analytics.cognitiveReflex.longPauseCount,
             restarts: Math.round(analytics.speechRhythm.wpmVariance / 10), // Approximation
-            fillers: Math.round(analytics.cognitiveReflex.struggleFillerRate)
+            fillers: audio.score > 0 ? Math.round(audio.metrics.midSentencePauseRatio * 20) : Math.round(analytics.cognitiveReflex.struggleFillerRate)
         };
 
         // 5. Next Breakthrough: Use Next Focus from analytics

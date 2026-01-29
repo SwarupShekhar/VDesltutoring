@@ -4,7 +4,8 @@ import { motion } from 'framer-motion';
 import { PerformanceMeter } from './PerformanceMeter';
 import { SpeechStabilityCurve } from './SpeechStabilityCurve';
 import { CustomDrillPanel } from './CustomDrillPanel';
-import type { PerformanceAnalytics } from '@/lib/performance-engine';
+import { P2PCoachingFeedback } from './P2PCoachingFeedback';
+import type { PerformanceAnalytics, CoachingFeedback } from '@/lib/performance-engine';
 import { AlertCircle, Lightbulb } from 'lucide-react';
 
 interface PerformanceIntelligenceDashboardProps {
@@ -38,6 +39,25 @@ export function PerformanceIntelligenceDashboard({ analytics, userId }: Performa
         performanceMoments
     } = analytics;
 
+    const normalizedCoachingFeedback: CoachingFeedback = {
+        performanceSummary: performanceDiagnosis,
+        performanceImpact: [],
+        patternInsight: null,
+        hesitationSignals: {
+            longPauses: analytics.cognitiveReflex.longPauseCount,
+            restarts: Math.round(analytics.speechRhythm.wpmVariance / 10),
+            fillers: Math.round(analytics.cognitiveReflex.struggleFillerRate)
+        },
+        nextBreakthrough: {
+            target: nextFocus.target,
+            action: nextFocus.action
+        },
+        performanceMoments: {
+            strongest: performanceMoments.bestMoment,
+            drop: performanceMoments.confidenceDrop
+        }
+    };
+
     return (
         <div className="space-y-8">
             {/* ============================================================
@@ -45,161 +65,26 @@ export function PerformanceIntelligenceDashboard({ analytics, userId }: Performa
                 Position ABOVE detailed analytics for UX hierarchy
             ============================================================ */}
 
-            {/* PRIMARY LIMITER BADGE (Red - Attention) */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="bg-red-50 dark:bg-red-900/10 border-l-4 border-red--400 dark:border-red-500 p-5 rounded-xl shadow-sm"
-            >
-                <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">⚠️</span>
-                    </div>
-                    <div className="flex-1">
-                        <h3 className="text-sm font-bold uppercase tracking-wide text-red-600 dark:text-red-400 mb-1">
-                            Primary Limiter
-                        </h3>
-                        <div className="text-lg font-semibold text-slate-900 dark:text-white mb-1">
-                            {primaryLimiter.label}
-                            <span className="ml-2 text-base font-normal text-slate-600 dark:text-slate-400">({primaryLimiter.score}/100)</span>
-                        </div>
-                        <p className="text-sm text-slate-700 dark:text-slate-300">{primaryLimiter.insight}</p>
+            <P2PCoachingFeedback
+                coachingFeedback={normalizedCoachingFeedback}
+                primaryLimiter={primaryLimiter}
+                corrections={[]}
+            />
 
-                        {/* Phase 3: Custom Drill Generator */}
-                        {userId && (
-                            <CustomDrillPanel
-                                primaryLimiter={primaryLimiter}
-                                userId={userId}
-                            />
-                        )}
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* NEXT FOCUS PANEL (Blue - Action) */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 p-5 rounded-xl shadow-sm"
-            >
-                <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">🎯</span>
-                    </div>
-                    <div className="flex-1">
-                        <h3 className="text-sm font-bold uppercase tracking-wide text-blue-600 dark:text-blue-400 mb-2">
-                            Next Breakthrough Focus
-                        </h3>
-                        <div className="space-y-2">
-                            <div>
-                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Target:</span>
-                                <p className="text-base font-semibold text-slate-900 dark:text-white mt-0.5">{nextFocus.target}</p>
-                            </div>
-                            <div>
-                                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">Action:</span>
-                                <p className="text-sm text-slate-700 dark:text-slate-300 mt-0.5">{nextFocus.action}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* PERFORMANCE MOMENTS PANEL (Neutral - Reflection) */}
-            {(performanceMoments.bestMoment || performanceMoments.confidenceDrop) && (
+            {/* Custom Drills (Phase 3) */}
+            {userId && (
                 <motion.div
-                    initial={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 p-5 rounded-xl shadow-sm"
+                    transition={{ delay: 0.3 }}
                 >
-                    <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
-                            <span className="text-xl">✨</span>
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-sm font-bold uppercase tracking-wide text-slate-600 dark:text-slate-400 mb-3">
-                                Key Performance Moments
-                            </h3>
-                            <div className="space-y-2">
-                                {performanceMoments.bestMoment && (
-                                    <div className="flex items-start gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg border border-emerald-200 dark:border-emerald-800">
-                                        <span className="text-lg">🎯</span>
-                                        <div>
-                                            <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-100">
-                                                Strongest moment at {performanceMoments.bestMoment}
-                                            </p>
-                                            {performanceMoments.bestMomentContext && (
-                                                <p className="text-xs text-emerald-700 dark:text-emerald-300 mt-1 italic">
-                                                    "{performanceMoments.bestMomentContext}"
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                                {performanceMoments.confidenceDrop && (
-                                    <div className="flex items-start gap-3 p-3 bg-amber-50 dark:bg-amber-900/10 rounded-lg border border-amber-200 dark:border-amber-800">
-                                        <span className="text-lg">⚠️</span>
-                                        <div>
-                                            <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
-                                                Confidence dip at {performanceMoments.confidenceDrop}
-                                            </p>
-                                            {performanceMoments.dropContext && (
-                                                <p className="text-xs text-amber-700 dark:text-amber-300 mt-1 italic">
-                                                    "{performanceMoments.dropContext}"
-                                                </p>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                    <CustomDrillPanel
+                        primaryLimiter={primaryLimiter}
+                        userId={userId}
+                    />
                 </motion.div>
             )}
 
-            {/* ============================================================
-                PHASE 1: PERFORMANCE DIAGNOSIS & DETAILED ANALYTICS
-            ============================================================ */}
-
-            {/* 1. PERFORMANCE DIAGNOSIS (Hero Panel) */}
-            <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="p-6 rounded-3xl bg-gradient-to-br from-slate-50 via-white to-slate-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg"
-            >
-                <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-                        <span className="text-2xl">🧠</span>
-                    </div>
-                    <div className="flex-1">
-                        <h2 className="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-2">
-                            Performance Diagnosis
-                        </h2>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                            className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white leading-relaxed"
-                        >
-                            {performanceDiagnosis}
-                        </motion.p>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.5 }}
-                            className="mt-3 text-sm text-slate-600 dark:text-slate-400"
-                        >
-                            Focus on {cognitiveReflex.score < 60 ? 'reflex speed' :
-                                speechRhythm.score < 60 ? 'rhythm stability' :
-                                    socialPresence.score < 60 ? 'social presence' :
-                                        'maintaining consistency'}.
-                        </motion.p>
-                    </div>
-                </div>
-            </motion.div>
 
             {/* 2. CORE PERFORMANCE SYSTEMS (4 Meters) */}
             <div>
@@ -438,6 +323,6 @@ export function PerformanceIntelligenceDashboard({ analytics, userId }: Performa
                     ))}
                 </div>
             </motion.div>
-        </div>
+        </div >
     );
 }

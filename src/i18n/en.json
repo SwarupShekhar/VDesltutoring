@@ -809,5 +809,46 @@
         "backToDashboard": "Back to Dashboard",
         "startSession": "Start Session",
         "completeChecklist": "Complete the coaching checklist above, then click Start Session"
+    },
+    "signalSystem": {
+        "title": "System Logic",
+        "subtitle": "How Englivo rewires your speaking response",
+        "step1": {
+            "title": "Listen",
+            "sub": "AI Detects Patterns"
+        },
+        "step2": {
+            "title": "Speak",
+            "sub": "Real-time Response"
+        },
+        "step3": {
+            "title": "Analyze",
+            "sub": "Feedback Loop"
+        }
+    },
+    "aiVsCoaching": {
+        "title_line1": "Apps help you practice.",
+        "title_line2_pre": "Coaches help you",
+        "title_line2_highlight": "transform",
+        "microcopy": "Most platforms stop at practice. Fluency improves when someone guides you.",
+        "appsCard": {
+            "title": "Practice Apps",
+            "items": [
+                "You practice alone",
+                "Generic lessons",
+                "Motivation fades",
+                "Scores & streaks"
+            ]
+        },
+        "englivoCard": {
+            "title": "Englivo",
+            "items": [
+                "Guided by expert tutors",
+                "Feedback on your speaking",
+                "Structured live sessions",
+                "Real skill development"
+            ],
+            "anchor": "AI shows the gap. Tutors close it."
+        }
     }
 }

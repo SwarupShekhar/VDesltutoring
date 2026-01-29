@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { StickyScroll } from "./ui/sticky-scroll-reveal";
+import { motion } from "framer-motion";
 
 interface FluencyReflexSectionProps {
     dict: {
@@ -138,8 +139,38 @@ export function FluencyReflexSection({ dict }: FluencyReflexSectionProps) {
     ];
 
     return (
-        <section className="py-24 bg-background overflow-hidden border-y border-border">
-            <div className="container mx-auto px-6 max-w-6xl">
+        <section className="py-24 bg-background overflow-hidden border-y border-border relative">
+            {/* Ambient Reflex Animation: Light Streak */}
+            <div className="absolute inset-0 pointer-events-none opacity-10">
+                <motion.div
+                    className="absolute top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-400 to-transparent blur-sm"
+                    animate={{
+                        x: ["-100%", "100%"],
+                        opacity: [0, 1, 0]
+                    }}
+                    transition={{
+                        duration: 8,
+                        ease: "linear",
+                        repeat: Infinity,
+                        repeatDelay: 2
+                    }}
+                />
+                <motion.div
+                    className="absolute top-1/3 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-electric to-transparent blur-[1px]"
+                    animate={{
+                        x: ["-100%", "100%"],
+                        opacity: [0, 0.5, 0]
+                    }}
+                    transition={{
+                        duration: 12,
+                        ease: "linear",
+                        repeat: Infinity,
+                        delay: 4
+                    }}
+                />
+            </div>
+
+            <div className="w-full max-w-[95%] mx-auto px-2 relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="font-serif text-3xl md:text-5xl mb-6">{dict.title}</h2>
                     <p className="text-muted-foreground text-lg max-w-2xl mx-auto">

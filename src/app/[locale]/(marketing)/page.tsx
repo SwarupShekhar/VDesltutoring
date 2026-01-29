@@ -40,6 +40,8 @@ const CEFRJourney = dynamic(() => import('@/components/home/CEFRJourney').then(m
 const MicroHeadlines = dynamic(() => import('@/components/MicroHeadlines').then(mod => mod.MicroHeadlines));
 import ColourfulText from "@/components/ui/colourful-text";
 import { PerspectiveButton } from "@/components/ui/PerspectiveButton";
+const AIVsCoachingSection = dynamic(() => import('@/components/AIVsCoachingSection').then(mod => mod.AIVsCoachingSection));
+const SignalSystemVisual = dynamic(() => import('@/components/SignalSystemVisual').then(mod => mod.SignalSystemVisual));
 
 
 const tutors = [
@@ -147,7 +149,15 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         {/* 1.3 MICRO-HEADLINES (Pillar + Problem/Solution) */}
         <MicroHeadlines locale={locale} dict={t.microHeadlines} isLoggedIn={isLoggedIn} />
 
-        {/* 1.5 FLUENCY ENGINE (Sticky Scroll Reveal) */}
+        {/* 1.4 AI VS COACHING COMPARISON */}
+        {/* @ts-ignore */}
+        <AIVsCoachingSection dict={t.aiVsCoaching} />
+
+        {/* 1.5 SIGNAL SYSTEM VISUAL */}
+        {/* @ts-ignore */}
+        <SignalSystemVisual dict={t.signalSystem} />
+
+        {/* 1.6 FLUENCY ENGINE (Sticky Scroll Reveal) */}
         <FluencyReflexSection dict={t.fluencyEngine} />
 
         {/* 2. THE FLUENCY MIRROR (Unified Activity) */}

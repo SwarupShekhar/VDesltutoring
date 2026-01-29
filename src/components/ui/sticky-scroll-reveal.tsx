@@ -27,7 +27,7 @@ export const StickyScroll = ({
 
     return (
         <motion.div
-            className="h-[25rem] overflow-y-auto flex justify-center relative space-x-10 rounded-3xl p-10 scrollbar-hide scroll-smooth bg-white/80 dark:bg-slate-950/50 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-2xl w-full"
+            className="h-[30rem] overflow-y-auto flex justify-center relative space-x-10 rounded-3xl p-10 scrollbar-hide scroll-smooth bg-white/80 dark:bg-slate-950/50 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-2xl w-full"
             ref={ref}
         >
             <div className="relative flex items-start px-4 w-full md:w-auto">
@@ -49,7 +49,7 @@ export const StickyScroll = ({
             </div>
             <div
                 className={cn(
-                    "hidden lg:block h-80 w-[500px] rounded-2xl bg-white dark:bg-slate-900 sticky top-10 overflow-hidden shadow-xl border border-black/5 dark:border-white/10 self-start",
+                    "hidden lg:block h-80 w-[500px] rounded-2xl bg-white dark:bg-slate-900 sticky top-20 overflow-hidden shadow-xl border border-black/5 dark:border-white/10 self-start",
                     contentClassName
                 )}
             >
@@ -73,7 +73,7 @@ export const StickyScroll = ({
 // Helper component to track visibility
 function StickyItem({ item, index, activeCard, setActiveCard }: any) {
     const ref = useRef(null);
-    const isInView = useInView(ref, { margin: "-20% 0px -50% 0px" }); // Trigger when item is near center-top
+    const isInView = useInView(ref, { margin: "-45% 0px -45% 0px" }); // Trigger when item is passing the middle band
 
     // Update active card when in view
     if (isInView && activeCard !== index) {
@@ -90,7 +90,7 @@ function StickyItem({ item, index, activeCard, setActiveCard }: any) {
     }, [isInView, index, setActiveCard]);
 
     return (
-        <div ref={ref} className="my-40 pl-12 relative">
+        <div ref={ref} className="my-30 pl-12 relative">
             {/* Timeline Dot */}
             <motion.div
                 animate={{

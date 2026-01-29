@@ -35,9 +35,16 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Track active connections to avoid duplicates
 const activeSessions = new Set<string>();
+// Track blocked sessions (e.g. auth failures) to avoid log spam
+const blockedSessions = new Set<string>();
 
 async function startWorker() {
     console.log("Starting Live Session Worker...");
+    console.log("--------------------------------------------------");
+    console.log(`LIVEKIT_URL:        ${LIVEKIT_URL}`);
+    console.log(`LIVEKIT_API_KEY:    ${LIVEKIT_API_KEY ? LIVEKIT_API_KEY.slice(0, 4) + '****' : 'MISSING'}`);
+    console.log(`LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET ? LIVEKIT_API_SECRET.slice(0, 4) + '****' : 'MISSING'}`);
+    console.log("--------------------------------------------------");
 
     // 1. Sanity Check on Startup
     await syncLiveSessions();
@@ -119,14 +126,20 @@ async function checkForNewSessions() {
     });
 
     for (const session of sessions) {
-        if (!activeSessions.has(session.id)) {
+        if (!activeSessions.has(session.id) && !blockedSessions.has(session.id)) {
             console.log(`Found active session ${session.id}, joining...`);
             activeSessions.add(session.id);
             // Don't await this inside the loop so one failure doesn't block others
             // But catch its errors
-            joinSessionAndTranscribe(session).catch(e =>
-                console.error(`Failed to join session ${session.id}:`, e)
-            );
+            joinSessionAndTranscribe(session).catch(e => {
+                console.error(`Failed to join session ${session.id}:`, e);
+                // If it was an auth error, block it to prevent spam
+                if (String(e).includes("401") || String(e).includes("Unauthorized")) {
+                    console.error(`Blocking session ${session.id} due to Auth failure to prevent log spam.`);
+                    blockedSessions.add(session.id);
+                }
+                activeSessions.delete(session.id);
+            });
         }
     }
 }

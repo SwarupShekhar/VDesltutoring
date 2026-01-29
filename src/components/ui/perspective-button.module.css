@@ -1,0 +1,186 @@
+.container_button {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: "bt-1 bt-2 bt-3"
+    "bt-4 bt-5 bt-6";
+  position: relative;
+  perspective: 800px;
+  padding: 0;
+  width: 170px;
+  /* Increased slightly for "Start Reflection" text */
+  height: 54px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.container_button:active {
+  transform: scale(0.95);
+}
+
+.hover {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+}
+
+.bt_1 {
+  grid-area: bt-1;
+}
+
+.bt_2 {
+  grid-area: bt-2;
+}
+
+.bt_3 {
+  grid-area: bt-3;
+}
+
+.bt_4 {
+  grid-area: bt-4;
+}
+
+.bt_5 {
+  grid-area: bt-5;
+}
+
+.bt_6 {
+  grid-area: bt-6;
+}
+
+.button_face {
+  position: absolute;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  font-size: 16px;
+  font-weight: 700;
+  border: 3px solid #3b82f6;
+  /* Electric Blue */
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  pointer-events: none;
+  /* Let clicks pass through if needed, but wrapper handles it */
+}
+
+/* Background layer */
+.button_face::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(59, 130, 246, 0.9);
+  /* Electric Blue filled */
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  z-index: -1;
+}
+
+/* Text layer "Start Reflection" */
+.button_face::after {
+  content: attr(data-text);
+  /* Dynamic Text */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 50px;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* 3D Transforms on Hover */
+
+.bt_1:hover~.button_face {
+  transform: rotateX(15deg) rotateY(-15deg) rotateZ(0deg);
+  box-shadow: -2px -2px rgba(24, 24, 24, 0.5);
+}
+
+.bt_1:hover~.button_face::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: -2px -2px rgba(24, 24, 24, 0.5);
+}
+
+.bt_3:hover~.button_face {
+  transform: rotateX(15deg) rotateY(15deg) rotateZ(0deg);
+  box-shadow: 2px -2px rgba(24, 24, 24, 0.5);
+}
+
+.bt_3:hover~.button_face::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: 2px -2px rgba(24, 24, 24, 0.5);
+}
+
+.bt_4:hover~.button_face {
+  transform: rotateX(-15deg) rotateY(-15deg) rotateZ(0deg);
+  box-shadow: -2px 2px rgba(24, 24, 24, 0.5);
+}
+
+.bt_4:hover~.button_face::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: -2px 2px rgba(24, 24, 24, 0.5);
+}
+
+.bt_6:hover~.button_face {
+  transform: rotateX(-15deg) rotateY(15deg) rotateZ(0deg);
+  box-shadow: 2px 2px rgba(24, 24, 24, 0.5);
+}
+
+.bt_6:hover~.button_face::after {
+  animation: shake 0.5s ease-in-out 0.3s;
+  text-shadow: 2px 2px rgba(24, 24, 24, 0.5);
+}
+
+/* Middle Hover State (Replacing "Click") */
+.hover:hover~.button_face::before {
+  background-color: #2563eb;
+  /* Darker Blue */
+}
+
+.hover:hover~.button_face::after {
+  content: "Meet Your Tutor";
+  top: -110%;
+  transform: translate(-50%, 0);
+  font-size: 20px;
+  color: #f19c2b;
+  /* Gold accent */
+}
+
+@keyframes shake {
+  0% {
+    left: 45%;
+  }
+
+  25% {
+    left: 54%;
+  }
+
+  50% {
+    left: 48%;
+  }
+
+  75% {
+    left: 52%;
+  }
+
+  100% {
+    left: 50%;
+  }
+}

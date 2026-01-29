@@ -9,7 +9,8 @@ export const StickyScroll = ({
 }: {
     content: {
         title: string;
-        description: string;
+
+        description: string | React.ReactNode;
         content?: React.ReactNode | any;
         // color prop removed
     }[];

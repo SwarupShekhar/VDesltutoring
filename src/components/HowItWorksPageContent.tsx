@@ -25,9 +25,31 @@ export function HowItWorksPageContent({ dict }: { dict: any }) {
                 {/* Connector Line */}
                 <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-electric/0 via-electric/30 to-electric/0 -translate-x-1/2 hidden md:block" />
 
-                {t.steps.map((step: any, index: number) => (
-                    <Step key={index} step={step} index={index} />
-                ))}
+                {/* INJECTED TUTOR STEP */}
+                {(() => {
+                    const tutorStep = {
+                        step: "The Core Differentiator",
+                        title: "Tutor Coaching",
+                        description: "This is where improvement actually happens. Not just: “You meet a tutor.” But:",
+                        details: [
+                            "Expert tutors analyze your speech patterns",
+                            "Fix hesitation habits",
+                            "Improve sentence formation",
+                            "Train real-time speaking flow",
+                            "Explain why something sounds unnatural"
+                        ],
+                        footer: "👉 Tutor = Transformation",
+                        isFeatured: true
+                    };
+
+                    // Insert after Step 3 (index 2)
+                    const items = [...t.steps];
+                    items.splice(3, 0, tutorStep);
+
+                    return items.map((step: any, index: number) => (
+                        <Step key={index} step={step} index={index} />
+                    ));
+                })()}
             </div>
 
             {/* Final */}
@@ -79,7 +101,10 @@ function Step({ step, index }: { step: any, index: number }) {
 
             {/* Content Side */}
             <div className="flex-1 text-left md:text-right w-full">
-                <div className={`p-8 rounded-2xl glass-card border border-electric/10 bg-gradient-to-br from-white/50 to-white/10 dark:from-slate-900/50 dark:to-slate-900/10 ${isEven ? 'md:text-right' : 'md:text-left'}`}>
+                <div className={`p-8 rounded-2xl border ${step.isFeatured
+                    ? 'border-electric bg-electric/10 shadow-[0_0_30px_rgba(59,130,246,0.2)] md:p-12 scale-105'
+                    : 'glass-card border-electric/10 bg-gradient-to-br from-white/50 to-white/10 dark:from-slate-900/50 dark:to-slate-900/10'
+                    } ${isEven ? 'md:text-right' : 'md:text-left'}`}>
                     <span className="text-electric font-bold uppercase tracking-widest text-xs mb-2 block">{step.step}</span>
                     <h3 className="text-3xl font-serif mb-4 text-foreground">{step.title}</h3>
                     <p className="text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">{step.description}</p>

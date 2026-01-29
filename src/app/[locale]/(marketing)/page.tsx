@@ -38,6 +38,8 @@ const FluencyGlobe = dynamic(() => import('@/components/FluencyGlobe').then(mod 
 const LiveNowBanner = dynamic(() => import('@/components/LiveNowBanner').then(mod => mod.LiveNowBanner));
 const CEFRJourney = dynamic(() => import('@/components/home/CEFRJourney').then(mod => mod.CEFRJourney));
 const MicroHeadlines = dynamic(() => import('@/components/MicroHeadlines').then(mod => mod.MicroHeadlines));
+import ColourfulText from "@/components/ui/colourful-text";
+import { PerspectiveButton } from "@/components/ui/PerspectiveButton";
 
 
 const tutors = [
@@ -114,15 +116,21 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
               </div>
             </div>
 
+            {/* NEW: Colourful Text Lines (Single Line Layout) */}
+            <div className="mb-8 font-medium text-foreground/90 flex flex-wrap justify-center gap-2 items-center text-xl md:text-2xl">
+              <span>AI-powered practice.</span>
+              <span>Expert <ColourfulText text="human coaching" />.</span>
+              <span>Real-world speaking confidence.</span>
+            </div>
+
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10 font-light">
               {t.hero.subtext}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href={isLoggedIn ? `/${locale}/practice` : `/${locale}/sign-in`}>
-                <Button size="lg" className="rounded-full bg-electric hover:bg-electric/90 text-white font-medium px-8 h-12 text-base shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all hover:scale-105">
-                  {t.hero.ctaReflection}
-                </Button>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              {/* Logic: If Logged In -> Practice. If Logged Out -> Book Session (as requested) */}
+              <Link href={`/${locale}/sessions/book`}>
+                <PerspectiveButton label="Book Session" />
               </Link>
               <Link href={`/${locale}/fluency-guide`}>
                 <Button variant="ghost" size="lg" className="rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/10 px-8 h-12 text-base">
@@ -288,6 +296,6 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
           </div>
         </section>
       </main>
-    </div>
+    </div >
   );
 }

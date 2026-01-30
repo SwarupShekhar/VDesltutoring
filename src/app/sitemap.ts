@@ -66,11 +66,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             select: { slug: true, updatedAt: true }
         });
 
-        const blogRoutes = posts.map((post: { slug: string; updatedAt: Date }) => ({
-            url: `${baseUrl}/blog/${post.slug}`,
-            lastModified: post.updatedAt,
-            priority: 0.7,
-        }));
+        const blogRoutes = posts.map((post: { slug: string; updatedAt: Date }) => {
+            // Clean slug: remove leading 'blog/' if it exists to avoid double prefix
+            const cleanSlug = post.slug.startsWith('blog/') ? post.slug.replace('blog/', '') : post.slug;
+            return {
+                url: `${baseUrl}/blog/${cleanSlug}`,
+                lastModified: post.updatedAt,
+                priority: 0.7,
+            };
+        });
 
         return [...routes, ...blogRoutes];
     } catch (error) {

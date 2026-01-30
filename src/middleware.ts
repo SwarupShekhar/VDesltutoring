@@ -44,13 +44,23 @@ export default clerkMiddleware(async (auth, req) => {
     const { pathname } = req.nextUrl;
 
     // 0. EXPLICIT SEO EXCLUSIONS (Avoid any redirects for bots)
+    const userAgent = req.headers.get('user-agent') || '';
+    const isBot = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|discordbot|applebot/i.test(userAgent);
+
     if (
         pathname === '/sitemap.xml' ||
         pathname === '/robots.txt' ||
         pathname === '/favicon.ico' ||
-        pathname.includes('googlee0719812a88d81a6')
+        pathname.includes('googlee0719812a88d81a6') ||
+        (isBot && pathname === '/')
     ) {
-        return NextResponse.next();
+        // For bots on the root, we'll let it fall through to the rewrite or next
+        // But we avoid any 308 redirects for them here.
+        if (pathname === '/' && !isBot) {
+            // regular flow continues below
+        } else if (pathname !== '/') {
+            return NextResponse.next();
+        }
     }
 
     // Log client platform for debugging
@@ -76,7 +86,8 @@ export default clerkMiddleware(async (auth, req) => {
     const isIgnoredPath = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.') || pathname.startsWith('/ai-tutor');
 
     // If URL has /en, redirect to remove it (e.g., /en/practice -> /practice)
-    if (hasDefaultLocale && !isIgnoredPath) {
+    // EXCEPT FOR BOTS to avoid unnecessary redirect cycles
+    if (hasDefaultLocale && !isIgnoredPath && !isBot) {
         const pathWithoutLocale = pathname.replace(`/${defaultLocale}`, '') || '/';
         const newUrl = new URL(pathWithoutLocale, req.url);
         newUrl.search = req.nextUrl.search;
@@ -84,9 +95,10 @@ export default clerkMiddleware(async (auth, req) => {
     }
 
     // If URL has no locale prefix and is not a non-default locale, rewrite to /en internally
-    // This serves English content at the root without showing /en in the URL
     if (!hasNonDefaultLocale && !hasDefaultLocale && !isIgnoredPath) {
-        const rewriteUrl = new URL(`/${defaultLocale}${pathname}`, req.url);
+        // Use a strictly clean path for the internal rewrite to avoid trailing slash issues
+        const cleanPath = pathname === '/' ? '' : pathname;
+        const rewriteUrl = new URL(`/${defaultLocale}${cleanPath}`, req.url);
         rewriteUrl.search = req.nextUrl.search;
         return NextResponse.rewrite(rewriteUrl);
     }

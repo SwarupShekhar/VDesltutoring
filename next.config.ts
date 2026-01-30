@@ -12,10 +12,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Specify the correct root directory to avoid workspace detection issues
-  turbopack: {
-    root: join(__dirname, ".")
-  }
+  outputFileTracingRoot: join(__dirname, "."),
 };
 
 export default nextConfig;

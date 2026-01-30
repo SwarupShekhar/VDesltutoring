@@ -26,14 +26,14 @@ export function FluencyGuideContent({ locale }: { locale: string }) {
 
                 {/* HERO TITLE */}
                 <header className="text-center mb-24">
-                    <motion.h1
+                    <motion.h2
                         initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
                         className="font-serif text-4xl md:text-6xl text-slate-900 dark:text-white mb-6 leading-tight"
                     >
-                        Englivo Fluency Guide<br />
-                        <span className="text-indigo-600 dark:text-indigo-400 text-3xl md:text-5xl">From Translating → Thinking → Speaking</span>
-                    </motion.h1>
+                        Stop Translating. Start <span className="text-indigo-600 dark:text-indigo-400 text-3xl md:text-5xl">From Translating → Thinking → Speaking</span>
+                    </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}

@@ -72,14 +72,14 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any }) => {
         <section className="py-24 px-6 relative z-10">
             <div className="max-w-6xl mx-auto">
                 <div className="mb-16 text-center">
-                    <motion.h3
+                    <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="text-3xl md:text-4xl font-serif text-gray-900 dark:text-white mb-4"
                     >
                         {headline}
-                    </motion.h3>
+                    </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -106,9 +106,9 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any }) => {
                             {/* Gentle Glow */}
                             <div className="absolute inset-0 bg-gradient-to-br from-electric/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                            <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-3 relative z-10">
+                            <h4 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-3 relative z-10">
                                 {moment.title}
-                            </h3>
+                            </h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed relative z-10">
                                 {moment.description}
                             </p>
@@ -144,9 +144,9 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any }) => {
                             </button>
 
                             <div className="p-8">
-                                <h3 className="text-2xl font-serif text-gray-900 dark:text-white mb-6 pr-8">
+                                <h4 className="text-2xl font-serif text-gray-900 dark:text-white mb-6 pr-8">
                                     {activeMoment.title}
-                                </h3>
+                                </h4>
 
                                 <div className="space-y-6">
                                     <div className="bg-gray-50 dark:bg-white/5 p-4 rounded-lg border-l-4 border-electric">

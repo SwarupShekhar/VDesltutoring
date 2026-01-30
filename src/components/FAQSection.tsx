@@ -48,9 +48,9 @@ export function FAQSection({ content }: FAQSectionProps) {
         <section className="py-24 bg-muted/20 border-t border-border">
             <div className="container mx-auto px-6 max-w-4xl">
                 <div className="text-center mb-16">
-                    <h3 className="font-serif text-3xl md:text-4xl mb-4">
+                    <h2 className="font-serif text-3xl md:text-4xl mb-4">
                         {content.headline}
-                    </h3>
+                    </h2>
                 </div>
                 <div className="w-full max-w-xl mx-auto">
                     <Accordion
@@ -67,9 +67,9 @@ export function FAQSection({ content }: FAQSectionProps) {
                                             <span className="text-muted-foreground/50 font-mono">
                                                 {item.id}
                                             </span>
-                                            <h3 className="text-lg md:text-xl font-semibold">
+                                            <h4 className="text-lg md:text-xl font-semibold">
                                                 {item.title}
-                                            </h3>
+                                            </h4>
                                         </div>
                                         <div className="bg-primary/10 duration-500 rounded-sm flex items-center p-2">
                                             <Plus

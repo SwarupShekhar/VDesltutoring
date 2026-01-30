@@ -24,7 +24,7 @@ export function AIVsCoachingSection({ dict }: AIVsCoachingSectionProps) {
             <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
 
                 {/* Title */}
-                <motion.h3
+                <motion.h2
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7 }}
@@ -34,7 +34,7 @@ export function AIVsCoachingSection({ dict }: AIVsCoachingSectionProps) {
                     <span className="text-muted-foreground">
                         <ColourfulText text="Coaches" /> {dict.title_line2_pre.replace("Coaches ", "")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric to-purple-400 font-extrabold drop-shadow-sm">{dict.title_line2_highlight}</span>.
                     </span>
-                </motion.h3>
+                </motion.h2>
 
                 {/* Animated Divider */}
                 <motion.div

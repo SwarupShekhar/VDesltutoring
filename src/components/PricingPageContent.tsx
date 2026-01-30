@@ -21,7 +21,7 @@ export function PricingPageContent({ dict, locale }: { dict: any, locale: string
                 transition={{ duration: 0.8 }}
                 className="text-center mb-24"
             >
-                <h1 className="font-serif text-5xl md:text-7xl mb-8 text-foreground">{t.hero.title}</h1>
+                <h2 className="font-serif text-5xl md:text-7xl mb-8 text-foreground">{t.hero.title}</h2>
                 <p className="text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mx-auto" dangerouslySetInnerHTML={{ __html: t.hero.subtitle }} />
             </motion.div>
 

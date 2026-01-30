@@ -64,9 +64,9 @@ export function FAQSection({ content }: FAQSectionProps) {
                                 <AccordionTrigger className="text-left hover:pl-3 hover:[&_div.bg-primary]:bg-secondary duration-1000 hover:no-underline cursor-pointer [data-slot=accordion-trigger] [&>svg]:hidden hover:[&_svg]:rotate-90 hover:[&_svg]:text-primary">
                                     <div className="flex flex-1 items-start justify-between gap-4">
                                         <div className="flex gap-3 items-center">
-                                            <h1 className="text-muted-foreground/50 font-mono">
+                                            <span className="text-muted-foreground/50 font-mono text-lg font-bold">
                                                 {item.id}
-                                            </h1>
+                                            </span>
                                             <h3 className="text-lg md:text-xl font-semibold">
                                                 {item.title}
                                             </h3>

@@ -20,7 +20,7 @@ export function SituationalGateway({ dict, isLoggedIn }: { dict: any; isLoggedIn
         e.preventDefault();
         setIsNavigating(true);
         setTimeout(() => {
-            router.push(`/${locale}/${isLoggedIn ? 'practice' : 'sign-up'}`);
+            router.push(locale === 'en' ? (isLoggedIn ? '/practice' : '/sign-up') : `/${locale}/${isLoggedIn ? 'practice' : 'sign-up'}`);
         }, 600); // 0.6s delay for the "ceremony"
     };
 

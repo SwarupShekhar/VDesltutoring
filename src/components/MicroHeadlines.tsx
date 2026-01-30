@@ -62,7 +62,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                         <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
                             {dict?.card1?.desc || "You already “know” English. The gap is speed — your brain is translating instead of responding."}
                         </p>
-                        <Link href={`/${locale}/blog/stop-translating-in-head`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
+                        <Link href={locale === 'en' ? '/blog/stop-translating-in-head' : `/${locale}/blog/stop-translating-in-head`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
                             {dict?.card1?.link || "Why this happens"} <ArrowRight size={16} className="ml-1" />
                         </Link>
                     </motion.div>
@@ -76,7 +76,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                         <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
                             {dict?.card2?.desc || "B2 isn’t harder words. It’s natural pauses, structured ideas, and thinking without detours."}
                         </p>
-                        <Link href={`/${locale}/fluency-guide`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
+                        <Link href={locale === 'en' ? '/fluency-guide' : `/${locale}/fluency-guide`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
                             {dict?.card2?.link || "See the roadmap"} <ArrowRight size={16} className="ml-1" />
                         </Link>
                     </motion.div>
@@ -91,10 +91,10 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                             {dict?.card3?.desc || "Live interaction, micro-feedback, and chunk training build what textbooks cannot: reflex."}
                         </p>
                         <div className="flex flex-col gap-2 mt-auto">
-                            <Link href={isLoggedIn ? "/ai-tutor" : `/${locale}/sign-in`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline">
+                            <Link href={isLoggedIn ? "/ai-tutor" : (locale === 'en' ? '/sign-in' : `/${locale}/sign-in`)} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline">
                                 <span className="mr-2">👉</span> {dict?.card3?.link1 || "Try AI Tutor"}
                             </Link>
-                            <Link href={`/${locale}/live-practice`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline">
+                            <Link href={locale === 'en' ? '/live-practice' : `/${locale}/live-practice`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline">
                                 <span className="mr-2">👉</span> {dict?.card3?.link2 || "Talk to a partner"}
                             </Link>
                         </div>
@@ -110,7 +110,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
 
                 {/* Optional: Tiny Conversion Bar */}
                 <div className="flex justify-center">
-                    <Link href={isLoggedIn ? "/ai-tutor" : `/${locale}/sign-in`} className="group flex items-center gap-2 text-sm text-foreground hover:text-indigo-600 transition-colors">
+                    <Link href={isLoggedIn ? "/ai-tutor" : (locale === 'en' ? '/sign-in' : `/${locale}/sign-in`)} className="group flex items-center gap-2 text-sm text-foreground hover:text-indigo-600 transition-colors">
                         <span className="text-muted-foreground">{dict?.conversion?.label || "Not sure where you stand?"}</span>
                         <span className="font-semibold underline decoration-indigo-500/30 group-hover:decoration-indigo-500">{dict?.conversion?.link || "Get your CEFR speaking snapshot in 2 minutes"}</span>
                         <ArrowRight size={16} className="text-indigo-500 group-hover:translate-x-1 transition-transform" />

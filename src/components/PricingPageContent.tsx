@@ -10,7 +10,7 @@ export function PricingPageContent({ dict, locale }: { dict: any, locale: string
     const router = useRouter();
 
     const handlePlanClick = (plan: string) => {
-        router.push(`/${locale}/checkout?plan=${plan}`);
+        router.push(locale === 'en' ? `/checkout?plan=${plan}` : `/${locale}/checkout?plan=${plan}`);
     };
 
     return (

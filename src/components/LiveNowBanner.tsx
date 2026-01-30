@@ -40,7 +40,7 @@ export function LiveNowBanner({ locale }: { locale: string }) {
                 transition={{ duration: 0.5, ease: "easeOut" }}
                 className="w-full flex justify-center py-8 relative z-20 pointer-events-none"
             >
-                <Link href={`/${locale}/live-practice`} className="pointer-events-auto">
+                <Link href={locale === 'en' ? '/live-practice' : `/${locale}/live-practice`} className="pointer-events-auto">
                     <button type="button" className={styles.btn}>
                         <span className={styles.text}>
                             {count > 0 ? (

@@ -28,7 +28,7 @@ export function ColourfulHero({ locale, isLoggedIn }: ColourfulHeroProps) {
                     Real-world speaking confidence.
                 </h1>
 
-                <Link href={isLoggedIn ? `/${locale}/practice` : `/${locale}/book/session`}>
+                <Link href={isLoggedIn ? (locale === 'en' ? '/practice' : `/${locale}/practice`) : (locale === 'en' ? '/book/session' : `/${locale}/book/session`)}>
                     <Button
                         size="lg"
                         className="rounded-full bg-white text-black hover:bg-white/90 font-bold px-10 h-14 text-lg shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all hover:scale-105"

@@ -12,7 +12,7 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
                     {/* Brand Column */}
                     <div className="md:col-span-1">
-                        <Link href={`/${locale}`} className="inline-block mb-6">
+                        <Link href={locale === 'en' ? '/' : `/${locale}`} className="inline-block mb-6">
                             <BubbleText />
                         </Link>
                         <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
@@ -75,9 +75,9 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                         <div>
                             <h3 className="font-semibold text-slate-900 dark:text-white mb-4">{columns.product?.title || 'Product'}</h3>
                             <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
-                                <li><Link href={`/${locale}/method`} className="hover:text-electric transition-colors">{columns.product?.method || 'Method'}</Link></li>
-                                <li><Link href={`/${locale}/pricing`} className="hover:text-electric transition-colors">{columns.product?.pricing || 'Pricing'}</Link></li>
-                                <li><Link href={`/${locale}/practice`} className="hover:text-electric transition-colors">{columns.product?.practice || 'Practice'}</Link></li>
+                                <li><Link href={locale === 'en' ? '/method' : `/${locale}/method`} className="hover:text-electric transition-colors">{columns.product?.method || 'Method'}</Link></li>
+                                <li><Link href={locale === 'en' ? '/pricing' : `/${locale}/pricing`} className="hover:text-electric transition-colors">{columns.product?.pricing || 'Pricing'}</Link></li>
+                                <li><Link href={locale === 'en' ? '/practice' : `/${locale}/practice`} className="hover:text-electric transition-colors">{columns.product?.practice || 'Practice'}</Link></li>
                             </ul>
                         </div>
 
@@ -85,7 +85,7 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                         <div>
                             <h3 className="font-semibold text-slate-900 dark:text-white mb-4">{columns.company?.title || 'Company'}</h3>
                             <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
-                                <li><Link href={`/${locale}/about`} className="hover:text-electric transition-colors">{columns.company?.about || 'About'}</Link></li>
+                                <li><Link href={locale === 'en' ? '/about' : `/${locale}/about`} className="hover:text-electric transition-colors">{columns.company?.about || 'About'}</Link></li>
                                 <li><a href="#" className="hover:text-electric transition-colors">{columns.company?.careers || 'Careers'}</a></li>
                                 <li><a href="#" className="hover:text-electric transition-colors">{columns.company?.contact || 'Contact'}</a></li>
                             </ul>
@@ -95,8 +95,8 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                         <div>
                             <h3 className="font-semibold text-slate-900 dark:text-white mb-4">{columns.legal?.title || 'Legal'}</h3>
                             <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
-                                <li><Link href={`/${locale}/privacy`} className="hover:text-electric transition-colors">{columns.legal?.privacy || 'Privacy'}</Link></li>
-                                <li><Link href={`/${locale}/terms`} className="hover:text-electric transition-colors">{columns.legal?.terms || 'Terms'}</Link></li>
+                                <li><Link href={locale === 'en' ? '/privacy' : `/${locale}/privacy`} className="hover:text-electric transition-colors">{columns.legal?.privacy || 'Privacy'}</Link></li>
+                                <li><Link href={locale === 'en' ? '/terms' : `/${locale}/terms`} className="hover:text-electric transition-colors">{columns.legal?.terms || 'Terms'}</Link></li>
                             </ul>
                         </div>
                     </div>

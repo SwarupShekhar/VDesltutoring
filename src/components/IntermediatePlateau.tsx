@@ -7,9 +7,9 @@ export function IntermediatePlateau({ dict }: { dict: any }) {
         <section className="py-24 bg-slate-50 dark:bg-slate-900/50 relative overflow-hidden">
             <div className="container mx-auto px-6 relative z-10">
                 <div className="text-center mb-20">
-                    <h2 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">
+                    <h3 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">
                         {dict.headline}
-                    </h2>
+                    </h3>
                     <p className="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">
                         {dict.subtext}
                     </p>

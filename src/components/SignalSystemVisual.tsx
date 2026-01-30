@@ -54,9 +54,9 @@ export function SignalSystemVisual({ dict }: SignalSystemVisualProps) {
                     viewport={{ once: true }}
                     className="text-center mb-20"
                 >
-                    <h2 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-4">
+                    <h3 className="text-3xl md:text-5xl font-serif font-bold text-foreground mb-4">
                         {dict.title}
-                    </h2>
+                    </h3>
                     <p className="text-muted-foreground uppercase tracking-widest text-sm font-medium">
                         {dict.subtitle}
                     </p>

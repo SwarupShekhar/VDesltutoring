@@ -41,7 +41,7 @@ export function SituationalGateway({ dict, isLoggedIn }: { dict: any; isLoggedIn
                             transition={{ duration: 0.5 }}
                         >
                             <div className="text-center mb-16">
-                                <h2 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">{dict.headline}</h2>
+                                <h3 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">{dict.headline}</h3>
                                 <p className="text-slate-500 dark:text-slate-400 font-light max-w-xl mx-auto text-lg">
                                     {dict.subtext}
                                 </p>

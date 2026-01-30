@@ -71,9 +71,9 @@ export const CEFRJourney = ({ dict, locale }: CEFRJourneyProps) => {
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
                     >
-                        <h2 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white mb-4 tracking-tight">
+                        <h3 className="text-4xl md:text-5xl font-serif font-bold text-slate-900 dark:text-white mb-4 tracking-tight">
                             {dict.headline}
-                        </h2>
+                        </h3>
                         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-light">
                             {dict.subtext}
                         </p>

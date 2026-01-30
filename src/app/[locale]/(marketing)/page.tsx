@@ -146,165 +146,210 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         {/* 1.2 LIVE NOW BANNER */}
         <LiveNowBanner locale={locale} />
 
-        {/* 1.3 MICRO-HEADLINES (Pillar + Problem/Solution) */}
-        <MicroHeadlines locale={locale} dict={t.microHeadlines} isLoggedIn={isLoggedIn} />
-
-        {/* 1.4 AI VS COACHING COMPARISON */}
-        {/* @ts-ignore */}
-        <AIVsCoachingSection dict={t.aiVsCoaching} />
-
-        {/* 1.5 SIGNAL SYSTEM VISUAL */}
-        {/* @ts-ignore */}
-        <SignalSystemVisual dict={t.signalSystem} />
-
-        {/* 1.6 FLUENCY ENGINE (Sticky Scroll Reveal) */}
-        <FluencyReflexSection dict={t.fluencyEngine} />
-
-        {/* 2. THE FLUENCY MIRROR (Unified Activity) */}
-        <section id="practice">
-          <FluencyMirror />
-        </section>
-
-        {/* 2.0 CEFR JOURNEY (Aspirational Prestige Ladder) */}
-        <CEFRJourney dict={t.cefrJourney} locale={locale} />
-
-        <SituationalGateway dict={t.situationalGateway} isLoggedIn={isLoggedIn} />
-
-        {/* 2.75 FLUENCY GLOBE (Global Context) */}
-        <FluencyGlobe dict={t.fluencyGlobe} />
-
-
-
-        {/* 3. SPEAKING MOMENTS (Empathy Grid) */}
-        <SpeakingMomentsGrid dict={t.speakingMoments} />
-
-        {/* 3.5 THEORY (The Why) */}
-        <IntermediatePlateau dict={t.intermediatePlateau} />
-
-        {/* 4. THE INTERMEDIATE PLATEAU (Education) -> Renaming ID/Section or Keeping as "Approach" */}
-        <section id="approach" className="py-24 border-t border-border">
-          {/* ... existing content from Approach? Actually page.tsx line 81 was empty! */}
-          {/* It said { /* ... existing content ... * / }. I will leave it empty as placeholder or just assume IntermediatePlateau *IS* the approach visual now? */}
-          {/* Providing content for Approach section if it was empty? The previous view_file showed it empty with comments. */}
-          {/* I will Insert DailyRoutine here as the practical method */}
-          <DailyRoutine dict={t.dailyRoutine} />
-        </section>
-
-        {/* 4.5 TRANSFORMATION (The Result) */}
-        <AudioTransformation dict={t.audioTransformation} />
-
-        {/* 4.6 FLUENCY ENGINE SHOWCASE (New Section) */}
-        <FluencyEngineShowcase dict={t.fluencyShowcase} />
-
-        {/* 5. IMPACT STORIES (Social Proof) */}
-        <TestimonialsCarousel
-          stories={t.testimonials.stories}
-          headline={t.testimonials.headline}
-          subtext={t.testimonials.subtext}
-        />
-
-        {/* 6. THE FACULTY (Bento Grid) */}
-        <section id="tutors" className="py-24 bg-muted/20">
+        {/* CHAPTER 1: THE CORE PROBLEM */}
+        <section className="py-20 border-t border-border bg-slate-50/50 dark:bg-slate-950/50">
           <div className="container mx-auto px-6 max-w-6xl">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-              <div>
-                <h2 className="font-serif text-3xl md:text-4xl mb-4 text-foreground">{t.tutors.headline}</h2>
-                <p className="text-muted-foreground max-w-xl">{t.tutors.subtext}</p>
-              </div>
-              <Link href={`/${locale}/tutors`} className="text-electric hover:text-electric/80 transition-colors flex items-center gap-2 text-sm font-medium tracking-wide uppercase">
-                {t.tutors.viewAll} <ArrowRight size={16} />
-              </Link>
-            </div>
+            <h2 className="font-serif text-4xl md:text-6xl mb-16 text-center tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              The Core Problem: Why Speaking Feels Hard
+            </h2>
 
-            {/* Simulated Bento Layout by varying sizes in Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="md:col-span-2">
-                <TutorCard {...tutors[0]} />
-              </div>
-              <div>
-                <TutorCard {...tutors[1]} />
-              </div>
-              <div>
-                <TutorCard {...tutors[2]} />
-              </div>
-              <div className="md:col-span-2">
-                <TutorCard {...tutors[3]} />
-              </div>
-            </div>
+            {/* 1.3 MICRO-HEADLINES (Pillar + Problem/Solution) */}
+            <MicroHeadlines locale={locale} dict={t.microHeadlines} isLoggedIn={isLoggedIn} />
+
+            {/* 1.4 AI VS COACHING COMPARISON */}
+            {/* @ts-ignore */}
+            <AIVsCoachingSection dict={t.aiVsCoaching} />
           </div>
         </section>
 
-        {/* 6. THE ROADMAP (Process) with Vertical Line */}
-        <section id="method" className="py-32 bg-background relative overflow-hidden">
+        {/* CHAPTER 2: THE INTELLIGENCE */}
+        <section className="py-20 border-t border-border">
+          <div className="container mx-auto px-6 max-w-6xl">
+            <h2 className="font-serif text-4xl md:text-6xl mb-16 text-center tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              The Intelligence: AI Meets Human Expertise
+            </h2>
 
-          <div className="container mx-auto px-6 max-w-4xl relative z-10">
-            <div className="text-center mb-24">
-              <h2 className="font-serif text-3xl md:text-5xl mb-6">{t.roadmap.headline}</h2>
-            </div>
+            {/* 1.5 SIGNAL SYSTEM VISUAL */}
+            {/* @ts-ignore */}
+            <SignalSystemVisual dict={t.signalSystem} />
 
-            <div className="relative">
-              {/* The Path (Vertical Line) */}
-              <div className="absolute left-[30px] md:left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-electric/30 to-transparent -translate-x-1/2">
-                <div
-                  className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-electric to-transparent w-[2px] -translate-x-[0.5px] blur-[1px] animate-[pulse_3s_ease-in-out_infinite]"
-                // Replaced motion.div with standard div and tailwind animation/class to avoid client-side animation sync issues in RSC or keep it simple.
-                // Or assume global CSS handles pulse.
-                />
-              </div>
+            {/* 1.6 FLUENCY ENGINE (Sticky Scroll Reveal) */}
+            <FluencyReflexSection dict={t.fluencyEngine} />
+          </div>
+        </section>
 
-              {[
-                { step: "01", title: t.roadmap.audit.title, desc: t.roadmap.audit.desc },
-                { step: "02", title: t.roadmap.plan.title, desc: t.roadmap.plan.desc },
-                { step: "03", title: t.roadmap.immersion.title, desc: t.roadmap.immersion.desc }
-              ].map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`flex flex-col md:flex-row items-center gap-8 mb-20 relative ${idx % 2 === 0 ? 'md:flex-row-reverse text-left md:text-left' : 'text-left md:text-right'}`}
-                // Removed motion.div for server component simplicity or keeping framer requires client component.
-                // BUT 'Home' is a Server Component. It can't render motion.div directly?
-                // Wait, motion.div works in Server Components? NO. It renders as normal div but animation is client side?
-                // The original page.tsx was 'use client'!
-                // Line 1: 'use client'; in original file.
-                // I REMOVED 'use client' because I need 'await params' and 'getDictionary'.
-                // THIS IS A CONFLICT.
-                // I MUST split the Client parts into a Client Component.
-                >
-                  <div className={`flex-1 ${idx % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                    <h3 className="text-2xl font-serif text-foreground mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+        {/* CHAPTER 3: THE EXPERIENCE */}
+        <section className="py-20 border-t border-border bg-muted/20">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <h2 className="font-serif text-4xl md:text-6xl mb-16 text-center tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              The Experience: Interactive Practice Environment
+            </h2>
+
+            {/* 2. THE FLUENCY MIRROR (Unified Activity) */}
+            <section id="practice">
+              <FluencyMirror />
+            </section>
+
+            <SituationalGateway dict={t.situationalGateway} isLoggedIn={isLoggedIn} />
+          </div>
+        </section>
+
+        {/* CHAPTER 4: THE STANDARDS */}
+        <section className="py-20 border-t border-border">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <h2 className="font-serif text-4xl md:text-6xl mb-16 text-center tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              The Standards: Measured Global Progress
+            </h2>
+
+            {/* 2.0 CEFR JOURNEY (Aspirational Prestige Ladder) */}
+            <CEFRJourney dict={t.cefrJourney} locale={locale} />
+
+            {/* 2.75 FLUENCY GLOBE (Global Context) */}
+            <FluencyGlobe dict={t.fluencyGlobe} />
+
+            {/* 4.6 FLUENCY ENGINE SHOWCASE (New Section) */}
+            <FluencyEngineShowcase dict={t.fluencyShowcase} />
+          </div>
+        </section>
+
+        {/* CHAPTER 5: THE METHOD */}
+        <section className="py-20 border-t border-border bg-muted/20">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <h2 className="font-serif text-4xl md:text-6xl mb-16 text-center tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              The Method: Building Your Speaking Reflex
+            </h2>
+
+            {/* 3. SPEAKING MOMENTS (Empathy Grid) */}
+            <SpeakingMomentsGrid dict={t.speakingMoments} />
+
+            {/* 3.5 THEORY (The Why) */}
+            <IntermediatePlateau dict={t.intermediatePlateau} />
+
+            {/* 4. THE INTERMEDIATE PLATEAU (Education) */}
+            <section id="approach" className="py-12">
+              <DailyRoutine dict={t.dailyRoutine} />
+            </section>
+
+            {/* 4.5 TRANSFORMATION (The Result) */}
+            <AudioTransformation dict={t.audioTransformation} />
+
+            {/* 6. THE ROADMAP (Process) with Vertical Line */}
+            <div id="method" className="py-20 relative overflow-hidden">
+              <div className="container mx-auto px-6 max-w-4xl relative z-10">
+                <h3 className="font-serif text-3xl md:text-5xl mb-16 text-center">{t.roadmap.headline}</h3>
+
+                <div className="relative">
+                  {/* The Path (Vertical Line) */}
+                  <div className="absolute left-[30px] md:left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-electric/30 to-transparent -translate-x-1/2">
+                    <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-electric to-transparent w-[2px] -translate-x-[0.5px] blur-[1px] animate-[pulse_3s_ease-in-out_infinite]" />
                   </div>
 
-                  <div className="w-[60px] flex justify-center z-10 relative">
-                    <div className="w-16 h-16 rounded-full bg-background border border-electric flex items-center justify-center font-serif text-xl text-electric shadow-[0_0_20px_rgba(59,130,246,0.2)]">
-                      {item.step}
+                  {[
+                    { step: "01", title: t.roadmap.audit.title, desc: t.roadmap.audit.desc },
+                    { step: "02", title: t.roadmap.plan.title, desc: t.roadmap.plan.desc },
+                    { step: "03", title: t.roadmap.immersion.title, desc: t.roadmap.immersion.desc }
+                  ].map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex flex-col md:flex-row items-center gap-8 mb-20 relative ${idx % 2 === 0 ? 'md:flex-row-reverse text-left md:text-left' : 'text-left md:text-right'}`}
+                    >
+                      <div className={`flex-1 ${idx % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+                        <h4 className="text-2xl font-serif text-foreground mb-2">{item.title}</h4>
+                        <p className="text-muted-foreground leading-relaxed text-sm">{item.desc}</p>
+                      </div>
+
+                      <div className="w-[60px] flex justify-center z-10 relative">
+                        <div className="w-16 h-16 rounded-full bg-background border border-electric flex items-center justify-center font-serif text-xl text-electric shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+                          {item.step}
+                        </div>
+                      </div>
+
+                      <div className="flex-1 hidden md:block" />
                     </div>
-                  </div>
-
-                  <div className="flex-1 hidden md:block" />
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>
 
+        {/* CHAPTER 6: THE PROOF */}
+        <section className="py-20 border-t border-border">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <h2 className="font-serif text-4xl md:text-6xl mb-16 text-center tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              The Proof: Success Stories from the Faculty
+            </h2>
 
-        {/* 8. METHODOLOGY FAQ */}
-        <FAQSection content={t.faq} />
+            {/* 5. IMPACT STORIES (Social Proof) */}
+            <TestimonialsCarousel
+              stories={t.testimonials.stories}
+              headline={t.testimonials.headline}
+              subtext={t.testimonials.subtext}
+            />
 
-        {/* 9. FINAL CTA */}
-        <section className="py-32 flex justify-center text-center px-6">
-          <div className="max-w-3xl">
-            <h2 className="font-serif text-4xl md:text-6xl mb-8 leading-tight">{t.ctaBottom.headline}</h2>
-            <div className="flex flex-col gap-6 items-center">
-              <Link href={isLoggedIn ? `/${locale}/book/session` : `/${locale}/sign-in`}>
-                <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium px-12 h-16 text-lg tracking-wide shadow-2xl">
-                  {t.ctaBottom.button}
-                </Button>
-              </Link>
-              <p className="text-muted-foreground text-sm">{t.ctaBottom.guarantee}</p>
+            {/* 6. THE FACULTY (Bento Grid) */}
+            <section id="tutors" className="py-20 bg-muted/20 rounded-3xl overflow-hidden mt-12">
+              <div className="container mx-auto px-6 max-w-6xl">
+                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                  <div>
+                    <h3 className="font-serif text-3xl md:text-4xl mb-4 text-foreground">{t.tutors.headline}</h3>
+                    <p className="text-muted-foreground max-w-xl">{t.tutors.subtext}</p>
+                  </div>
+                  <Link href={`/${locale}/tutors`} className="text-electric hover:text-electric/80 transition-colors flex items-center gap-2 text-sm font-medium tracking-wide uppercase">
+                    {t.tutors.viewAll} <ArrowRight size={16} />
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="md:col-span-2">
+                    <TutorCard {...tutors[0]} />
+                  </div>
+                  <div>
+                    <TutorCard {...tutors[1]} />
+                  </div>
+                  <div>
+                    <TutorCard {...tutors[2]} />
+                  </div>
+                  <div className="md:col-span-2">
+                    <TutorCard {...tutors[3]} />
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        {/* CHAPTER 7: SUPPORT */}
+        <section className="py-20 border-t border-border bg-muted/10">
+          <div className="container mx-auto px-6 max-w-7xl">
+            <h2 className="font-serif text-4xl md:text-6xl mb-16 text-center tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              Support: Frequently Asked Questions
+            </h2>
+            <FAQSection content={t.faq} />
+          </div>
+        </section>
+
+        {/* CHAPTER 8: FINAL ACTION */}
+        <section className="py-32 flex justify-center text-center px-6 border-t border-border relative overflow-hidden">
+          <div className="absolute inset-0 bg-electric/5 pointer-events-none" />
+          <div className="max-w-4xl relative z-10">
+            <h2 className="font-serif text-5xl md:text-7xl mb-12 tracking-tight text-foreground underline decoration-electric/30 underline-offset-8">
+              Final Action: Ready to Find Your Flow?
+            </h2>
+            <div className="max-w-3xl mx-auto">
+              <h3 className="font-serif text-3xl md:text-5xl mb-8 leading-tight">{t.ctaBottom.headline}</h3>
+              <div className="flex flex-col gap-6 items-center">
+                <Link href={isLoggedIn ? `/${locale}/book/session` : `/${locale}/sign-in`}>
+                  <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium px-12 h-16 text-lg tracking-wide shadow-2xl">
+                    {t.ctaBottom.button}
+                  </Button>
+                </Link>
+                <p className="text-muted-foreground text-sm">{t.ctaBottom.guarantee}</p>
+              </div>
             </div>
           </div>
         </section>
+
       </main>
     </div >
   );

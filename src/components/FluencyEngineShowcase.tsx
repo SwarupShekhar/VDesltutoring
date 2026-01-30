@@ -111,9 +111,9 @@ export function FluencyEngineShowcase({ dict }: { dict: any }) {
 
                 {/* HEADLINE */}
                 <motion.div variants={itemVariants} className="text-center mb-16 max-w-3xl mx-auto">
-                    <h2 className="font-serif text-3xl md:text-5xl mb-6 text-slate-900 dark:text-white">
+                    <h3 className="font-serif text-3xl md:text-5xl mb-6 text-slate-900 dark:text-white">
                         {t.headline}
-                    </h2>
+                    </h3>
                     <p className="text-lg text-slate-500 dark:text-slate-400">
                         {t.subtext}
                     </p>

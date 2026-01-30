@@ -24,7 +24,7 @@ export function AIVsCoachingSection({ dict }: AIVsCoachingSectionProps) {
             <div className="max-w-6xl mx-auto px-6 text-center relative z-10">
 
                 {/* Title */}
-                <motion.h2
+                <motion.h3
                     initial={{ opacity: 0, y: 40 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7 }}
@@ -34,7 +34,7 @@ export function AIVsCoachingSection({ dict }: AIVsCoachingSectionProps) {
                     <span className="text-muted-foreground">
                         <ColourfulText text="Coaches" /> {dict.title_line2_pre.replace("Coaches ", "")} <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric to-purple-400 font-extrabold drop-shadow-sm">{dict.title_line2_highlight}</span>.
                     </span>
-                </motion.h2>
+                </motion.h3>
 
                 {/* Animated Divider */}
                 <motion.div
@@ -64,9 +64,9 @@ export function AIVsCoachingSection({ dict }: AIVsCoachingSectionProps) {
                         transition={{ duration: 0.9, ease: "easeOut" }}
                         className="p-8 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-sm grayscale-[0.5] opacity-80 hover:opacity-100 transition-opacity"
                     >
-                        <h3 className="text-xl font-serif font-medium mb-8 text-muted-foreground flex items-center justify-center gap-2">
+                        <h4 className="text-xl font-serif font-medium mb-8 text-muted-foreground flex items-center justify-center gap-2">
                             {dict.appsCard.title}
-                        </h3>
+                        </h4>
                         <ul className="space-y-5 text-muted-foreground/70 text-lg text-left max-w-xs mx-auto">
                             {dict.appsCard.items.map((item, i) => (
                                 <li key={i} className="flex items-center gap-3">
@@ -86,9 +86,9 @@ export function AIVsCoachingSection({ dict }: AIVsCoachingSectionProps) {
                         {/* Subtle corner accent */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-electric/20 to-transparent rounded-tr-3xl" />
 
-                        <h3 className="text-2xl font-serif font-bold mb-8 text-foreground flex items-center justify-center gap-2">
+                        <h4 className="text-2xl font-serif font-bold mb-8 text-foreground flex items-center justify-center gap-2">
                             {dict.englivoCard.title}
-                        </h3>
+                        </h4>
                         <ul className="space-y-6 text-foreground text-lg text-left max-w-xs mx-auto font-medium">
                             {dict.englivoCard.items.map((item, i) => (
                                 <li key={i} className="flex items-center gap-3">

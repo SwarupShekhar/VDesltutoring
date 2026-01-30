@@ -93,14 +93,14 @@ export const TestimonialsCarousel = ({ stories, headline, subtext }: { stories: 
 
             <div className="container mx-auto px-6 max-w-7xl relative z-10">
                 <div className="text-center mb-16 md:mb-24">
-                    <motion.h2
+                    <motion.h3
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="font-serif text-4xl md:text-6xl mb-6 tracking-tight text-slate-900 dark:text-white"
                     >
                         {headline}
-                    </motion.h2>
+                    </motion.h3>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}

@@ -26,14 +26,14 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
 
                 {/* 1) Section Title Block */}
                 <div className="text-center mb-16">
-                    <motion.h2
+                    <motion.h3
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="font-serif text-3xl md:text-5xl mb-6 text-foreground"
                     >
                         {dict?.title || "From Knowing English → Thinking in English"}
-                    </motion.h2>
+                    </motion.h3>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -58,7 +58,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                         <div className="w-12 h-12 mb-6 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
                             <Brain size={24} />
                         </div>
-                        <h3 className="font-semibold text-xl mb-3 text-foreground">{dict?.card1?.title || "You Don’t Need More Grammar"}</h3>
+                        <h4 className="font-semibold text-xl mb-3 text-foreground">{dict?.card1?.title || "You Don’t Need More Grammar"}</h4>
                         <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
                             {dict?.card1?.desc || "You already “know” English. The gap is speed — your brain is translating instead of responding."}
                         </p>
@@ -72,7 +72,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                         <div className="w-12 h-12 mb-6 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
                             <Compass size={24} />
                         </div>
-                        <h3 className="font-semibold text-xl mb-3 text-foreground">{dict?.card2?.title || "CEFR Is About Processing, Not Vocabulary"}</h3>
+                        <h4 className="font-semibold text-xl mb-3 text-foreground">{dict?.card2?.title || "CEFR Is About Processing, Not Vocabulary"}</h4>
                         <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
                             {dict?.card2?.desc || "B2 isn’t harder words. It’s natural pauses, structured ideas, and thinking without detours."}
                         </p>
@@ -86,7 +86,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                         <div className="w-12 h-12 mb-6 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
                             <Mic size={24} />
                         </div>
-                        <h3 className="font-semibold text-xl mb-3 text-foreground">{dict?.card3?.title || "Fluency Is Conditioned, Not Studied"}</h3>
+                        <h4 className="font-semibold text-xl mb-3 text-foreground">{dict?.card3?.title || "Fluency Is Conditioned, Not Studied"}</h4>
                         <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
                             {dict?.card3?.desc || "Live interaction, micro-feedback, and chunk training build what textbooks cannot: reflex."}
                         </p>

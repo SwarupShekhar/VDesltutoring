@@ -172,7 +172,7 @@ export function FluencyReflexSection({ dict }: FluencyReflexSectionProps) {
 
             <div className="w-full max-w-[95%] mx-auto px-2 relative z-10">
                 <div className="text-center mb-16">
-                    <h2 className="font-serif text-3xl md:text-5xl mb-6">{dict.title}</h2>
+                    <h3 className="font-serif text-3xl md:text-5xl mb-6">{dict.title}</h3>
                     <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
                         {dict.subtitle}
                     </p>

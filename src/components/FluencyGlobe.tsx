@@ -151,9 +151,9 @@ export function FluencyGlobe({ dict }: { dict?: any }) {
                         <div className="inline-block px-3 py-1 mb-4 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-semibold tracking-wide uppercase">
                             {t.tag}
                         </div>
-                        <h2 className="font-serif text-4xl md:text-5xl mb-6 text-slate-900 dark:text-white leading-tight">
+                        <h3 className="font-serif text-4xl md:text-5xl mb-6 text-slate-900 dark:text-white leading-tight">
                             {t.headline}
-                        </h2>
+                        </h3>
                         <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 leading-relaxed">
                             {t.subtext}
                         </p>

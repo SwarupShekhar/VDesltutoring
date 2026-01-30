@@ -411,9 +411,9 @@ export const FluencyMirror = () => {
                                     <span className="text-xs font-bold tracking-widest text-muted-foreground uppercase opacity-70">
                                         Your Pattern
                                     </span>
-                                    <h2 className="font-serif text-3xl md:text-4xl mt-2 text-foreground">
+                                    <h4 className="font-serif text-3xl md:text-4xl mt-2 text-foreground">
                                         {FEEDBACK_DATA[pattern].title}
-                                    </h2>
+                                    </h4>
                                 </div>
 
                                 <div className="space-y-6">
@@ -470,10 +470,10 @@ export const FluencyMirror = () => {
                             transition={{ delay: 1, duration: 1 }}
                             className="text-center mt-12 space-y-8"
                         >
-                            <h3 className="font-serif text-2xl md:text-3xl text-foreground/90 italic">
+                            <h4 className="font-serif text-2xl md:text-3xl text-foreground/90 italic">
                                 "Nothing is wrong with your English.<br className="hidden md:block" />
                                 You’re just trying to speak too late."
-                            </h3>
+                            </h4>
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                                 <Link href="/sign-up">
@@ -496,5 +496,6 @@ export const FluencyMirror = () => {
                 )}
             </AnimatePresence>
         </section>
+
     );
 };

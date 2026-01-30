@@ -48,9 +48,9 @@ export function FAQSection({ content }: FAQSectionProps) {
         <section className="py-24 bg-muted/20 border-t border-border">
             <div className="container mx-auto px-6 max-w-4xl">
                 <div className="text-center mb-16">
-                    <h2 className="font-serif text-3xl md:text-4xl mb-4">
+                    <h3 className="font-serif text-3xl md:text-4xl mb-4">
                         {content.headline}
-                    </h2>
+                    </h3>
                 </div>
                 <div className="w-full max-w-xl mx-auto">
                     <Accordion

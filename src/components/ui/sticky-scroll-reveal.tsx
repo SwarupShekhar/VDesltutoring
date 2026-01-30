@@ -101,13 +101,13 @@ function StickyItem({ item, index, activeCard, setActiveCard }: any) {
                 className="absolute left-[-4px] top-3 w-3 h-3 rounded-full transition-colors text-slate-400 dark:text-slate-600 bg-slate-400 dark:bg-slate-600"
             />
 
-            <motion.h2
+            <motion.h4
                 initial={{ opacity: 0 }}
                 animate={{ opacity: activeCard === index ? 1 : 0.3 }}
                 className="text-3xl md:text-4xl font-serif font-bold text-slate-900 dark:text-slate-100"
             >
                 {item.title}
-            </motion.h2>
+            </motion.h4>
             <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: activeCard === index ? 1 : 0.3 }}

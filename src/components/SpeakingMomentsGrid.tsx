@@ -72,14 +72,14 @@ export const SpeakingMomentsGrid = ({ dict }: { dict?: any }) => {
         <section className="py-24 px-6 relative z-10">
             <div className="max-w-6xl mx-auto">
                 <div className="mb-16 text-center">
-                    <motion.h2
+                    <motion.h3
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="text-3xl md:text-4xl font-serif text-gray-900 dark:text-white mb-4"
                     >
                         {headline}
-                    </motion.h2>
+                    </motion.h3>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}

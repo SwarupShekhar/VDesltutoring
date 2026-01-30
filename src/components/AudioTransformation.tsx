@@ -113,9 +113,9 @@ export function AudioTransformation({ dict }: { dict: any }) {
                 />
 
                 <div className="text-center mb-16">
-                    <h2 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">
+                    <h3 className="font-serif text-3xl md:text-5xl mb-4 text-slate-900 dark:text-white">
                         {dict.headline}
-                    </h2>
+                    </h3>
                     <p className="text-slate-500 dark:text-slate-400 text-lg">
                         {dict.subtext}
                     </p>

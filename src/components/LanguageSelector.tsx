@@ -24,13 +24,38 @@ export function LanguageSelector({ currentLocale, align = 'right' }: LanguageSel
     const pathname = usePathname();
 
     const switchLocale = (newLocale: string) => {
-        const segments = pathname.split("/");
-        if (segments.length > 1) {
-            segments[1] = newLocale;
-            router.push(segments.join("/"));
+        // Get current path segments, filtering empty strings
+        const segments = pathname.split("/").filter(Boolean);
+        const locales = ["en", "de", "fr", "es", "vi", "ja"];
+
+        // Check if first segment is a locale
+        const firstSegment = segments[0];
+        const isFirstSegmentLocale = locales.includes(firstSegment);
+
+        let newPath = '';
+
+        if (isFirstSegmentLocale) {
+            // Replace existing locale
+            if (newLocale === 'en') {
+                // Remove locale prefix for English
+                newPath = '/' + segments.slice(1).join('/');
+            } else {
+                // Replace locale with new one
+                segments[0] = newLocale;
+                newPath = '/' + segments.join('/');
+            }
         } else {
-            router.push(`/${newLocale}`);
+            // No current locale (implies 'en' or root)
+            if (newLocale === 'en') {
+                // Stay as is (already English/root)
+                newPath = pathname;
+            } else {
+                // Add new locale prefix
+                newPath = `/${newLocale}${pathname === '/' ? '' : pathname}`;
+            }
         }
+
+        router.push(newPath || '/');
     };
 
     return (

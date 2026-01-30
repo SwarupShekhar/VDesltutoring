@@ -131,10 +131,10 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               {/* Logic: If Logged In -> Practice. If Logged Out -> Book Session (as requested) */}
-              <Link href={`/${locale}/sessions/book`}>
+              <Link href={locale === 'en' ? '/sessions/book' : `/${locale}/sessions/book`}>
                 <PerspectiveButton label="Book Session" />
               </Link>
-              <Link href={`/${locale}/fluency-guide`}>
+              <Link href={locale === 'en' ? '/fluency-guide' : `/${locale}/fluency-guide`}>
                 <Button variant="ghost" size="lg" className="rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/10 px-8 h-12 text-base">
                   Explore Fluency Guide →
                 </Button>
@@ -211,7 +211,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
                 <h2 className="font-serif text-3xl md:text-4xl mb-4 text-foreground">{t.tutors.headline}</h2>
                 <p className="text-muted-foreground max-w-xl">{t.tutors.subtext}</p>
               </div>
-              <Link href={`/${locale}/tutors`} className="text-electric hover:text-electric/80 transition-colors flex items-center gap-2 text-sm font-medium tracking-wide uppercase">
+              <Link href={locale === 'en' ? '/tutors' : `/${locale}/tutors`} className="text-electric hover:text-electric/80 transition-colors flex items-center gap-2 text-sm font-medium tracking-wide uppercase">
                 {t.tutors.viewAll} <ArrowRight size={16} />
               </Link>
             </div>
@@ -296,7 +296,7 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
           <div className="max-w-3xl">
             <h2 className="font-serif text-4xl md:text-6xl mb-8 leading-tight">{t.ctaBottom.headline}</h2>
             <div className="flex flex-col gap-6 items-center">
-              <Link href={isLoggedIn ? `/${locale}/book/session` : `/${locale}/sign-in`}>
+              <Link href={isLoggedIn ? (locale === 'en' ? '/book/session' : `/${locale}/book/session`) : (locale === 'en' ? '/sign-in' : `/${locale}/sign-in`)}>
                 <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium px-12 h-16 text-lg tracking-wide shadow-2xl">
                   {t.ctaBottom.button}
                 </Button>

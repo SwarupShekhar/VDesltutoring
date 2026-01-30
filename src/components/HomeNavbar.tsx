@@ -50,13 +50,37 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   }, [user]);
 
   const switchLocale = (newLocale: string) => {
-    const segments = pathname.split('/');
-    if (segments.length > 1) {
-      segments[1] = newLocale;
-      router.push(segments.join('/'));
+    // Get current path segments
+    const segments = pathname.split('/').filter(Boolean); // Remove empty strings
+
+    // Check if first segment is a locale
+    const firstSegment = segments[0];
+    const isFirstSegmentLocale = locales.includes(firstSegment);
+
+    let newPath = '';
+
+    if (isFirstSegmentLocale) {
+      // Replace existing locale
+      if (newLocale === 'en') {
+        // Remove locale prefix for English
+        newPath = '/' + segments.slice(1).join('/');
+      } else {
+        // Replace locale with new one
+        segments[0] = newLocale;
+        newPath = '/' + segments.join('/');
+      }
     } else {
-      router.push(`/${newLocale}`);
+      // No current locale (implies 'en' or root)
+      if (newLocale === 'en') {
+        // Stay as is (already English/root)
+        newPath = pathname;
+      } else {
+        // Add new locale prefix
+        newPath = `/${newLocale}${pathname === '/' ? '' : pathname}`;
+      }
     }
+
+    router.push(newPath || '/');
   };
 
   // Custom Navigation Logic
@@ -70,13 +94,13 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
   };
 
   const navLinks = [
-    { label: t.approach || 'Our Method', href: `/${locale}/method` },
-    { label: 'Fluency Guide', href: `/${locale}/fluency-guide` }, // Added Fluency Guide
-    { label: t.howItWorks || 'How It Works', href: `/${locale}/how-it-works` },
-    { label: t.practice || 'Practice', href: `/${locale}/practice`, onClick: handlePracticeClick },
-    { label: t.pricing || 'Pricing', href: `/${locale}/pricing` },
-    { label: t.about || 'About Us', href: `/${locale}/about` },
-    { label: t.blog || 'Blog', href: `/${locale}/blog` }, // Added Blog
+    { label: t.approach || 'Our Method', href: locale === 'en' ? '/method' : `/${locale}/method` },
+    { label: 'Fluency Guide', href: locale === 'en' ? '/fluency-guide' : `/${locale}/fluency-guide` }, // Added Fluency Guide
+    { label: t.howItWorks || 'How It Works', href: locale === 'en' ? '/how-it-works' : `/${locale}/how-it-works` },
+    { label: t.practice || 'Practice', href: locale === 'en' ? '/practice' : `/${locale}/practice`, onClick: handlePracticeClick },
+    { label: t.pricing || 'Pricing', href: locale === 'en' ? '/pricing' : `/${locale}/pricing` },
+    { label: t.about || 'About Us', href: locale === 'en' ? '/about' : `/${locale}/about` },
+    { label: t.blog || 'Blog', href: locale === 'en' ? '/blog' : `/${locale}/blog` }, // Added Blog
   ];
 
   const scrollToTop = () => {

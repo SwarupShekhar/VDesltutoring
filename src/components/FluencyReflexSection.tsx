@@ -51,6 +51,8 @@ interface FluencyReflexSectionProps {
 export function FluencyReflexSection({ dict }: FluencyReflexSectionProps) {
     // Helper to highlight keywords
     const highlightKeywords = (text: string) => {
+        if (!text || typeof text !== 'string') return <span>{text}</span>;
+
         const parts = text.split(/(AI|human coaching|human tutor|tutor|Tutors)/g);
         return (
             <span>

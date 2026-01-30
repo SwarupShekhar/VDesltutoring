@@ -490,7 +490,49 @@
         "prepTitle": "Préparation de la session",
         "prepSubtitle": "Examinez les bloqueurs CECRL avant de commencer avec {studentName}",
         "backToDashboard": "Retour au tableau de bord",
-        "startSession": "Commencer la session",
-        "completeChecklist": "Remplissez la liste de contrôle ci-dessus, puis cliquez sur Commencer la session"
+        "noBlockers": "Aucun bloqueur identifié",
+        "analysis": "Analyse",
+        "recommendation": "Recommandation"
+    },
+    "signalSystem": {
+        "title": "System Logic",
+        "subtitle": "How Englivo rewires your speaking response",
+        "step1": {
+            "title": "Listen",
+            "sub": "AI Detects Patterns"
+        },
+        "step2": {
+            "title": "Speak",
+            "sub": "Real-time Response"
+        },
+        "step3": {
+            "title": "Analyze",
+            "sub": "Feedback Loop"
+        }
+    },
+    "aiVsCoaching": {
+        "title_line1": "Apps help you practice.",
+        "title_line2_pre": "Coaches help you",
+        "title_line2_highlight": "transform",
+        "microcopy": "Most platforms stop at practice. Fluency improves when someone guides you.",
+        "appsCard": {
+            "title": "Practice Apps",
+            "items": [
+                "You practice alone",
+                "Generic lessons",
+                "Motivation fades",
+                "Scores & streaks"
+            ]
+        },
+        "englivoCard": {
+            "title": "Englivo",
+            "items": [
+                "Guided by expert tutors",
+                "Feedback on your speaking",
+                "Structured live sessions",
+                "Real skill development"
+            ],
+            "anchor": "AI shows the gap. Tutors close it."
+        }
     }
 }

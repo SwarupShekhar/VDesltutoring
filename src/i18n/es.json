@@ -478,7 +478,51 @@
         "prepTitle": "Preparación de la sesión",
         "prepSubtitle": "Revisa los bloqueos de MCER antes de empezar con {studentName}",
         "backToDashboard": "Volver al panel",
+        "noBlockers": "No se identificaron bloqueos",
+        "analysis": "Análisis",
+        "recommendation": "Recomendación",
         "startSession": "Iniciar sesión",
         "completeChecklist": "Completa la lista de verificación arriba y luego inicia la sesión"
+    },
+    "signalSystem": {
+        "title": "Lógica del Sistema",
+        "subtitle": "Cómo Englivo reconfigura tu respuesta hablada",
+        "step1": {
+            "title": "Escuchar",
+            "sub": "IA Detecta Patrones"
+        },
+        "step2": {
+            "title": "Hablar",
+            "sub": "Respuesta en Tiempo Real"
+        },
+        "step3": {
+            "title": "Analizar",
+            "sub": "Ciclo de Retroalimentación"
+        }
+    },
+    "aiVsCoaching": {
+        "title_line1": "Las apps te ayudan a practicar.",
+        "title_line2_pre": "Los coaches te ayudan a",
+        "title_line2_highlight": "transformar",
+        "microcopy": "La mayoría de las plataformas se detienen en la práctica. La fluidez mejora cuando alguien te guía.",
+        "appsCard": {
+            "title": "Apps de Práctica",
+            "items": [
+                "Practicas solo",
+                "Lecciones genéricas",
+                "La motivación se desvanece",
+                "Puntajes y rachas"
+            ]
+        },
+        "englivoCard": {
+            "title": "Englivo",
+            "items": [
+                "Guiado por tutores expertos",
+                "Retroalimentación sobre tu habla",
+                "Sesiones en vivo estructuradas",
+                "Desarrollo de habilidades reales"
+            ],
+            "anchor": "La IA muestra la brecha. Los tutores la cierran."
+        }
     }
 }

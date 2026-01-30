@@ -418,5 +418,46 @@
         "backToDashboard": "Quay lại Dashboard",
         "startSession": "Bắt đầu buổi học",
         "completeChecklist": "Hoàn thành danh sách kiểm tra ở trên, sau đó nhấp vào Bắt đầu buổi học"
+    },
+    "signalSystem": {
+        "title": "Logic Hệ Thống",
+        "subtitle": "Cách Englivo điều chỉnh lại phản xạ nói của bạn",
+        "step1": {
+            "title": "Nghe",
+            "sub": "AI Phát Hiện Mẫu"
+        },
+        "step2": {
+            "title": "Nói",
+            "sub": "Phản Hồi Thời Gian Thực"
+        },
+        "step3": {
+            "title": "Phân Tích",
+            "sub": "Vòng Lặp Phản Hồi"
+        }
+    },
+    "aiVsCoaching": {
+        "title_line1": "Ứng dụng giúp bạn luyện tập.",
+        "title_line2_pre": "Huấn luyện viên giúp bạn",
+        "title_line2_highlight": "chuyển hóa",
+        "microcopy": "Hầu hết các nền tảng dừng lại ở việc luyện tập. Sự trôi chảy cải thiện khi có người hướng dẫn bạn.",
+        "appsCard": {
+            "title": "Ứng dụng Luyện tập",
+            "items": [
+                "Bạn luyện tập một mình",
+                "Bài học chung chung",
+                "Động lực phai nhạt",
+                "Điểm số & chuỗi"
+            ]
+        },
+        "englivoCard": {
+            "title": "Englivo",
+            "items": [
+                "Được hướng dẫn bởi gia sư chuyên nghiệp",
+                "Phản hồi về cách nói của bạn",
+                "Các buổi trực tiếp có cấu trúc",
+                "Phát triển kỹ năng thực tế"
+            ],
+            "anchor": "AI chỉ ra khoảng cách. Gia sư lấp đầy nó."
+        }
     }
 }

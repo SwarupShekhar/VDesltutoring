@@ -495,5 +495,46 @@
         "backToDashboard": "Zurück zum Dashboard",
         "startSession": "Sitzung starten",
         "completeChecklist": "Checkliste oben ausfüllen, dann Sitzung starten"
+    },
+    "signalSystem": {
+        "title": "Systemlogik",
+        "subtitle": "Wie Englivo Ihre Sprachantwort neu verdrahtet",
+        "step1": {
+            "title": "Zuhören",
+            "sub": "KI erkennt Muster"
+        },
+        "step2": {
+            "title": "Sprechen",
+            "sub": "Echtzeit-Antwort"
+        },
+        "step3": {
+            "title": "Analysieren",
+            "sub": "Feedback-Schleife"
+        }
+    },
+    "aiVsCoaching": {
+        "title_line1": "Apps helfen beim Üben.",
+        "title_line2_pre": "Coaches helfen beim",
+        "title_line2_highlight": "Transformieren",
+        "microcopy": "Die meisten Plattformen hören beim Üben auf. Flüssigkeit verbessert sich, wenn Sie angeleitet werden.",
+        "appsCard": {
+            "title": "Übungs-Apps",
+            "items": [
+                "Sie üben alleine",
+                "Generische Lektionen",
+                "Motivation schwindet",
+                "Punkte & Streaks"
+            ]
+        },
+        "englivoCard": {
+            "title": "Englivo",
+            "items": [
+                "Geleitet von Experten",
+                "Feedback zu Ihrem Sprechen",
+                "Strukturierte Live-Sitzungen",
+                "Echte Kompetenzentwicklung"
+            ],
+            "anchor": "KI zeigt die Lücke. Tutoren schließen sie."
+        }
     }
 }

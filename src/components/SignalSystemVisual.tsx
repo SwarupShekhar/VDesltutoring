@@ -38,6 +38,8 @@ const containerVariants = {
 };
 
 export function SignalSystemVisual({ dict }: SignalSystemVisualProps) {
+    if (!dict || !dict.title) return null;
+
     return (
         <section className="w-full py-28 bg-background relative border-t border-white/5 overflow-hidden">
             {/* 4. Depth: Ambient Glow & Noise */}

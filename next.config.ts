@@ -12,7 +12,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  outputFileTracingRoot: join(__dirname, "."),
 };
 
 export default nextConfig;

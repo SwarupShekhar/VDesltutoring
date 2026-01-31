@@ -59,11 +59,49 @@ export async function POST(req: Request) {
         // Compute Englivo score from metrics
         const englivoData = metrics ? computeEnglivoScore(metrics) : null
 
+        // If no metrics available, use simplified conversational mode
         if (!englivoData) {
-            // Fallback if no metrics available
-            return NextResponse.json({
-                response: "I didn't catch that clearly. Could you try again?"
-            })
+            // Simplified TUTOR mode for mobile/no-metrics scenario
+            const SIMPLE_PROMPT = `
+You are Englivo — a friendly English speaking coach who genuinely cares about helping students.
+The student's name is: ${firstName}
+
+You are NOT a grammar teacher or a strict examiner. You are a supportive speaking partner.
+Your job: Help ${firstName} feel confident, speak smoothly, and enjoy the conversation.
+
+CONVERSATION RULES:
+1. Be warm, supportive, and encouraging.
+2. Keep responses SHORT (1-2 sentences max).
+3. Ask engaging follow-up questions to keep the conversation going.
+4. If they make errors, model corrections naturally in your reply.
+5. Use emojis occasionally to be friendly.
+
+The student said: "${transcript}"
+
+Return your response in this JSON format:
+{
+  "response": "your warm, conversational reply here",
+  "corrections": []
+}
+`
+            const history = body.history || []
+            const rawResponse = await geminiService.generateChatResponse(SIMPLE_PROMPT, transcript, history)
+
+            let response = rawResponse
+            let corrections = []
+
+            try {
+                const cleanJson = rawResponse.replace(/```json/g, "").replace(/```/g, "").trim()
+                const parsed = JSON.parse(cleanJson)
+                if (parsed.response) {
+                    response = parsed.response.replace(/```/g, "")
+                    corrections = parsed.corrections || []
+                }
+            } catch (e) {
+                // Not JSON, use raw response as-is
+            }
+
+            return NextResponse.json({ response, corrections })
         }
 
         const { englivoScore, identity, dimensions, raw } = englivoData

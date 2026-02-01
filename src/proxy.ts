@@ -116,6 +116,15 @@ export default clerkMiddleware(async (auth, req) => {
         const { userId, redirectToSignIn } = await auth();
 
         if (!userId) {
+            // For API routes, return JSON 401 instead of HTML redirect
+            // This is critical for mobile apps that expect JSON responses
+            if (pathname.startsWith('/api/')) {
+                console.log(`[Auth] Unauthorized API request: ${req.method} ${pathname}`);
+                return NextResponse.json(
+                    { error: 'Unauthorized', message: 'Authentication required' },
+                    { status: 401 }
+                );
+            }
             return redirectToSignIn({ returnBackUrl: req.url });
         }
     }

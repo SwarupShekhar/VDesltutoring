@@ -12,7 +12,7 @@ interface FontWeightProps {
 export const FontWeight = ({ text, fontSize = 24, className }: FontWeightProps) => {
     return (
         <div className={cn("flex items-center justify-center", className)}>
-            <h1
+            <div
                 style={{ fontSize: `${fontSize}px` }}
                 className="font-serif font-bold tracking-tight"
             >
@@ -27,7 +27,7 @@ export const FontWeight = ({ text, fontSize = 24, className }: FontWeightProps) 
                         {char === ' ' ? '\u00A0' : char}
                     </motion.span>
                 ))}
-            </h1>
+            </div>
         </div>
     );
 };

@@ -2,7 +2,7 @@
 
 import { useUser, SignOutButton } from '@clerk/nextjs';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 import { Avatar } from '@/components/ui/Avatar';
 import { Dropdown, DropdownItem } from '@/components/ui/Dropdown';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -22,19 +22,28 @@ interface NavbarProps {
 export function Navbar({ role }: NavbarProps) {
   const { user } = useUser();
   const pathname = usePathname();
+  const params = useParams();
+  const locale = (params?.locale as string) || 'en';
+
+  const safePath = (path: string) => {
+    if (locale === 'en') {
+      return path.startsWith('/') ? path : `/${path}`;
+    }
+    return `/${locale}${path.startsWith('/') ? path : `/${path}`}`;
+  };
 
   const navItems: Record<string, NavItem[]> = {
     LEARNER: [
-      { name: 'Dashboard', href: '/dashboard' },
-      { name: 'Live Practice', href: '/live-practice' },
-      { name: 'Book Session', href: '/sessions/book' },
-      { name: 'Blog', href: '/blog' },
+      { name: 'Dashboard', href: safePath('/dashboard') },
+      { name: 'Live Practice', href: safePath('/live-practice') },
+      { name: 'Book Session', href: safePath('/sessions/book') },
+      { name: 'Blog', href: safePath('/blog') },
     ],
     TUTOR: [
-      { name: 'Dashboard', href: '/tutor/dashboard' },
+      { name: 'Dashboard', href: safePath('/tutor/dashboard') },
     ],
     ADMIN: [
-      { name: 'Dashboard', href: '/admin/dashboard' },
+      { name: 'Dashboard', href: safePath('/admin/dashboard') },
     ],
   };
 
@@ -46,7 +55,7 @@ export function Navbar({ role }: NavbarProps) {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="flex items-center gap-2">
+              <Link href={safePath('/')} className="flex items-center gap-2">
                 <div className="relative h-8 w-8">
                   <Image
                     src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
@@ -105,7 +114,7 @@ export function Navbar({ role }: NavbarProps) {
                 </div>
 
                 <DropdownItem>
-                  <Link href="/dashboard" className="block w-full text-left">
+                  <Link href={safePath('/dashboard')} className="block w-full text-left">
                     Dashboard
                   </Link>
                 </DropdownItem>

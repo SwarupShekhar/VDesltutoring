@@ -93,14 +93,22 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
     }
   };
 
+  // Helper to generate cleaner paths (stripping /en)
+  const safePath = (path: string) => {
+    if (locale === 'en') {
+      return path.startsWith('/') ? path : `/${path}`;
+    }
+    return `/${locale}${path.startsWith('/') ? path : `/${path}`}`;
+  };
+
   const navLinks = [
-    { label: t.approach || 'Our Method', href: locale === 'en' ? '/method' : `/${locale}/method` },
-    { label: 'Fluency Guide', href: locale === 'en' ? '/fluency-guide' : `/${locale}/fluency-guide` }, // Added Fluency Guide
-    { label: t.howItWorks || 'How It Works', href: locale === 'en' ? '/how-it-works' : `/${locale}/how-it-works` },
-    { label: t.practice || 'Practice', href: locale === 'en' ? '/practice' : `/${locale}/practice`, onClick: handlePracticeClick },
-    { label: t.pricing || 'Pricing', href: locale === 'en' ? '/pricing' : `/${locale}/pricing` },
-    { label: t.about || 'About Us', href: locale === 'en' ? '/about' : `/${locale}/about` },
-    { label: t.blog || 'Blog', href: locale === 'en' ? '/blog' : `/${locale}/blog` }, // Added Blog
+    { label: t.approach || 'Our Method', href: safePath('/method') },
+    { label: 'Fluency Guide', href: safePath('/fluency-guide') },
+    { label: t.howItWorks || 'How It Works', href: safePath('/how-it-works') },
+    { label: t.practice || 'Practice', href: safePath('/practice'), onClick: handlePracticeClick },
+    { label: t.pricing || 'Pricing', href: safePath('/pricing') },
+    { label: t.about || 'About Us', href: safePath('/about') },
+    { label: t.blog || 'Blog', href: safePath('/blog') },
   ];
 
   const scrollToTop = () => {
@@ -114,7 +122,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
           <div className="flex justify-between h-24 items-center">
 
             {/* LEFT: BRAND */}
-            <Link href={`/${locale}`} className="flex-shrink-0 cursor-pointer group flex items-center gap-3" onClick={scrollToTop}>
+            <Link href={safePath('/')} className="flex-shrink-0 cursor-pointer group flex items-center gap-3" onClick={scrollToTop}>
               <div className="relative h-10 w-10">
                 <Image
                   src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
@@ -139,17 +147,17 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
             {/* CENTER: NAVIGATION */}
             <div className="hidden md:flex items-center space-x-8 lg:space-x-12">
-              <Link href={`/${locale}/method`} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
+              <Link href={safePath('/method')} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
                 {t.approach || 'Method'}
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
               </Link>
 
-              <Link href={`/${locale}/practice`} onClick={handlePracticeClick} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
+              <Link href={safePath('/practice')} onClick={handlePracticeClick} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
                 {t.practice || 'Practice'}
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
               </Link>
 
-              <Link href={`/${locale}/pricing`} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
+              <Link href={safePath('/pricing')} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
                 {t.pricing || 'Pricing'}
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
               </Link>
@@ -165,16 +173,16 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                 align="center"
               >
                 <div className="p-1 min-w-[200px]">
-                  <DropdownItem onClick={() => router.push(`/${locale}/fluency-guide`)}>
+                  <DropdownItem onClick={() => router.push(safePath('/fluency-guide'))}>
                     Fluency Guide
                   </DropdownItem>
-                  <DropdownItem onClick={() => router.push(`/${locale}/how-it-works`)}>
+                  <DropdownItem onClick={() => router.push(safePath('/how-it-works'))}>
                     {t.howItWorks || 'How It Works'}
                   </DropdownItem>
-                  <DropdownItem onClick={() => router.push(`/${locale}/blog`)}>
+                  <DropdownItem onClick={() => router.push(safePath('/blog'))}>
                     {t.blog || 'Blog'}
                   </DropdownItem>
-                  <DropdownItem onClick={() => router.push(`/${locale}/about`)}>
+                  <DropdownItem onClick={() => router.push(safePath('/about'))}>
                     {t.about || 'About Us'}
                   </DropdownItem>
                 </div>
@@ -192,8 +200,6 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
               {/* Hydration safe rendering */}
               {(!isMounted || !isLoaded) ? (
                 // Loading state / Server matching state (render a neutral skeleton)
-                // This matches what the server renders (since isMounted is false on server)
-                // and what the client renders on first pass (isMounted starts false)
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-8 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
                   <div className="w-24 h-10 bg-slate-100 dark:bg-slate-800 rounded-full animate-pulse" />
@@ -201,7 +207,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
               ) : user ? (
                 <>
                   <Link
-                    href={`/${locale}/dashboard`}
+                    href={safePath('/dashboard')}
                     className="text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-electric transition-colors"
                   >
                     {t.dashboard || 'Dashboard'}
@@ -221,7 +227,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                     </div>
 
                     {userRole === 'ADMIN' && (
-                      <DropdownItem onClick={() => router.push(`/${locale}/admin/dashboard`)} className="flex items-center gap-2 text-electric font-medium">
+                      <DropdownItem onClick={() => router.push(safePath('/admin/dashboard'))} className="flex items-center gap-2 text-electric font-medium">
                         <ShieldAlert size={16} />
                         Admin Dashboard
                       </DropdownItem>
@@ -232,15 +238,15 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                       AI Tutor
                     </DropdownItem>
 
-                    <DropdownItem onClick={() => router.push(`/${locale}/dashboard`)} className="flex items-center gap-2">
+                    <DropdownItem onClick={() => router.push(safePath('/dashboard'))} className="flex items-center gap-2">
                       <User size={16} />
                       {t.dashboard || 'Dashboard'}
                     </DropdownItem>
-                    <DropdownItem onClick={() => router.push(`/${locale}/pricing`)} className="flex items-center gap-2">
+                    <DropdownItem onClick={() => router.push(safePath('/pricing'))} className="flex items-center gap-2">
                       <CreditCard size={16} />
                       {t.pricing || 'Pricing'}
                     </DropdownItem>
-                    <div className="h-px bg-gray-50 dark:bg-white/5 my-1" />
+                    <div className="h-px bg-gray-50 dark:bg-white/10 my-1" />
                     <SignOutButton>
                       <DropdownItem className="text-red-500 hover:text-red-600 flex items-center gap-2">
                         <LogOut size={16} />
@@ -251,10 +257,10 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                 </>
               ) : (
                 <div className="flex items-center gap-4">
-                  <Link href={`/${locale}/sign-in`} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
+                  <Link href={safePath('/sign-in')} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
                     {t.signIn || 'Sign In'}
                   </Link>
-                  <Link href={`/${locale}/sign-up`}>
+                  <Link href={safePath('/sign-up')}>
                     <GetStartedButton text={t.getStarted || 'Get Started'} />
                   </Link>
                 </div>
@@ -314,12 +320,11 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
 
               <div className="flex flex-col gap-6 text-center">
                 {/* Mobile Language Switcher */}
-                {/* Mobile Language Switcher */}
                 <div className="flex justify-center mb-8">
                   <LanguageSelector currentLocale={locale} align="center" />
                 </div>
 
-                <Link href={user ? `/${locale}/practice` : `/${locale}/sign-in`} onClick={() => setMobileMenuOpen(false)}>
+                <Link href={user ? safePath('/practice') : safePath('/sign-in')} onClick={() => setMobileMenuOpen(false)}>
                   <div className="bg-electric/10 text-electric py-4 rounded-xl font-medium text-lg">
                     {user ? (t.startReflection || 'Start Reflection') : (t.signInToPractice || 'Sign In to Practice')}
                   </div>
@@ -346,16 +351,16 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                 {user ? (
                   <>
                     {userRole === 'ADMIN' && (
-                      <Link href={`/${locale}/admin/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-electric">Admin Dashboard</Link>
+                      <Link href={safePath('/admin/dashboard')} onClick={() => setMobileMenuOpen(false)} className="text-lg font-bold text-electric">Admin Dashboard</Link>
                     )}
-                    <Link href={`/${locale}/dashboard`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.dashboard || 'Dashboard'}</Link>
-                    <Link href={`/${locale}/pricing`} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.pricing || 'Pricing'}</Link>
+                    <Link href={safePath('/dashboard')} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.dashboard || 'Dashboard'}</Link>
+                    <Link href={safePath('/pricing')} onClick={() => setMobileMenuOpen(false)} className="text-lg text-slate-600 dark:text-slate-400">{t.pricing || 'Pricing'}</Link>
                     <SignOutButton>
                       <button className="text-lg text-red-500 w-full">{t.signOut || 'Sign Out'}</button>
                     </SignOutButton>
                   </>
                 ) : (
-                  <Link href={`/${locale}/sign-up`} onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-900 dark:text-white">
+                  <Link href={safePath('/sign-up')} onClick={() => setMobileMenuOpen(false)} className="text-lg font-medium text-slate-900 dark:text-white">
                     {t.createAccount || 'Create Account'}
                   </Link>
                 )}

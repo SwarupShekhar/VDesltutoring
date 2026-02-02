@@ -101,6 +101,7 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                             <h3 className="font-semibold text-slate-900 dark:text-white mb-4">{columns.company?.title || 'Company'}</h3>
                             <ul className="space-y-3 text-sm text-slate-500 dark:text-slate-400">
                                 <li><Link href={locale === 'en' ? '/about' : `/${locale}/about`} className="hover:text-electric transition-colors">{columns.company?.about || 'About'}</Link></li>
+                                <li><Link href={locale === 'en' ? '/roadmap' : `/${locale}/roadmap`} className="hover:text-electric transition-colors">Roadmap</Link></li>
                                 <li><a href="#" className="hover:text-electric transition-colors">{columns.company?.careers || 'Careers'}</a></li>
                                 <li><a href="#" className="hover:text-electric transition-colors">{columns.company?.contact || 'Contact'}</a></li>
                             </ul>

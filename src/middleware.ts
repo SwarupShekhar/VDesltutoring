@@ -47,7 +47,7 @@ export default clerkMiddleware(async (auth, req) => {
 
     // 0. EXPLICIT SEO EXCLUSIONS (Avoid any redirects for bots)
     const userAgent = req.headers.get('user-agent') || '';
-    const isBot = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|discordbot|applebot/i.test(userAgent);
+    const isBot = /googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|discordbot|applebot|sitechecker|crawler|spider|robot|crawling/i.test(userAgent);
 
     if (
         pathname === '/sitemap.xml' ||

@@ -43,6 +43,7 @@ export function constructCanonicalMetadata(
         alternates: {
             canonical: canonicalUrl,
             languages: languages
-        }
+        },
+        robots: 'all'
     };
 }

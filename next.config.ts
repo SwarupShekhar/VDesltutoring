@@ -13,6 +13,19 @@ const nextConfig: NextConfig = {
     ],
   },
   outputFileTracingRoot: __dirname,
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'all',
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -162,15 +162,23 @@ export class GeminiService {
      * Drop-in replacement for OpenAIService.generateChatResponse
      * Allows dynamic system prompts for Honest Coaching with History.
      */
-    async generateChatResponse(systemPrompt: string, userMessage: string, history: Array<{ role: string, content: string }> = []): Promise<string> {
+    async generateChatResponse(systemPrompt: string, userMessage: string, history: Array<{ role: string, content?: string, parts?: any[] }> = []): Promise<string> {
         if (!userMessage || userMessage.trim().length === 0) {
             return "I didn't quite catch that.";
         }
 
-        // Format history into a script format
-        const historyText = history.map(msg =>
-            `${msg.role === 'user' ? 'User' : 'Tutor'}: ${msg.content}`
-        ).join('\n');
+        // Format history into a script format, handling both 'content' and 'parts'
+        const historyText = history.map(msg => {
+            const roleLabel = msg.role === 'user' ? 'User' : 'Tutor';
+            let content = msg.content || "";
+
+            // If the client sends 'parts' (standard AI SDK format), extract the text
+            if (!content && Array.isArray(msg.parts)) {
+                content = msg.parts.map(p => typeof p === 'string' ? p : (p.text || "")).join(" ");
+            }
+
+            return `${roleLabel}: ${content}`;
+        }).join('\n');
 
         // Combine system prompt, history, and user message
         const fullPrompt = `${systemPrompt}\n\nPREVIOUS CONVERSATION:\n${historyText}\n\nUser: ${userMessage}\nTutor:`;

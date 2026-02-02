@@ -8,6 +8,15 @@
                     "value": "all"
                 }
             ]
+        },
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "X-Robots-Tag",
+                    "value": "all"
+                }
+            ]
         }
     ],
     "redirects": [

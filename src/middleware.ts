@@ -18,6 +18,7 @@ const isPublicRoute = createRouteMatcher([
     '/blog',
     '/blog/(.*)',
     '/fluency-guide',
+    '/roadmap',
     '/tutors',
     '/practice', // Public practice page
     '/live-practice', // Public live practice page
@@ -31,6 +32,7 @@ const isPublicRoute = createRouteMatcher([
     '/:locale/blog',
     '/:locale/blog/(.*)',
     '/:locale/fluency-guide',
+    '/:locale/roadmap',
     '/:locale/tutors',
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response

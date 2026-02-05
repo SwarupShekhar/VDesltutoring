@@ -89,7 +89,7 @@ export default clerkMiddleware(async (auth, req) => {
     const hasDefaultLocale = pathname.startsWith(`/${defaultLocale}/`) || pathname === `/${defaultLocale}`;
 
     // Exclude API, internal files, static files from i18n handling
-    const isIgnoredPath = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.') || pathname.startsWith('/ai-tutor');
+    const isIgnoredPath = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.');
 
     // If URL has /en, redirect to remove it (e.g., /en/practice -> /practice)
     if (hasDefaultLocale && !isIgnoredPath) {

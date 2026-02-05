@@ -46,17 +46,17 @@ async function auditCefrLexical() {
 
     // Scenario A: Fluent Grammar (C1 Score) but Low Confidence -> Should Cap to B1
     console.log("Testing: C1 Score + Low Confidence -> Expect B1 Cap");
-    await updateUserFluencyProfile({
-        userId: TEST_USER_ID,
-        cefrLevel: "C1",
-        fluencyScore: 85,
+    await updateUserFluencyProfile(TEST_USER_ID, {
+        cefr_level: "C1",
+        fluency_score: 85,
         confidence: 40,
-        confidenceBand: "Low",
-        confidenceExplanation: "Frequent pauses.",
-        pauseRatio: 0.3,
-        wordCount: 300,
-        sourceType: "ai_tutor",
-        sourceSessionId: "audit-gate-1"
+        confidence_band: "Low",
+        confidence_explanation: "Frequent pauses.",
+        pause_ratio: 0.3,
+        word_count: 300,
+        session_type: "AI_TUTOR",
+        source_session_id: "audit-gate-1",
+        speaking_time_seconds: 120 // Estimate
     });
 
     let profile = await prisma.user_fluency_profile.findUnique({ where: { user_id: TEST_USER_ID } });
@@ -77,16 +77,16 @@ async function auditCefrLexical() {
     // Rule: C2 needs 300 words. C1 needs 200. B2 needs 100.
     // 50 words is < 100, so likely B1.
     console.log("\nTesting: C2 Level + 50 Words -> Expect Cap (Likely B1)");
-    await updateUserFluencyProfile({
-        userId: TEST_USER_ID,
-        cefrLevel: "C2",
-        fluencyScore: 95,
+    await updateUserFluencyProfile(TEST_USER_ID, {
+        cefr_level: "C2",
+        fluency_score: 95,
         confidence: 90,
-        confidenceBand: "High",
-        wordCount: 50,
-        pauseRatio: 0.1,
-        sourceType: "ai_tutor",
-        sourceSessionId: "audit-gate-2"
+        confidence_band: "High",
+        word_count: 50,
+        pause_ratio: 0.1,
+        session_type: "AI_TUTOR",
+        source_session_id: "audit-gate-2",
+        speaking_time_seconds: 30 // Estimate
     });
 
     profile = await prisma.user_fluency_profile.findUnique({ where: { user_id: TEST_USER_ID } });
@@ -127,17 +127,17 @@ async function auditCefrLexical() {
         }
     });
 
-    await updateUserFluencyProfile({
-        userId: TEST_USER_ID,
-        cefrLevel: "A2",
-        fluencyScore: 45,
+    await updateUserFluencyProfile(TEST_USER_ID, {
+        cefr_level: "A2",
+        fluency_score: 45,
         confidence: 60,
-        confidenceBand: "Medium",
-        wordCount: 200,
-        pauseRatio: 0.2,
-        lexicalBlockers: blockerObj,
-        sourceType: "ai_tutor",
-        sourceSessionId: "123e4567-e89b-12d3-a456-426614174000" // Valid UUID
+        confidence_band: "Medium",
+        word_count: 200,
+        pause_ratio: 0.2,
+        lexical_blockers: blockerObj,
+        session_type: "AI_TUTOR",
+        source_session_id: "123e4567-e89b-12d3-a456-426614174000",
+        speaking_time_seconds: 120 // Estimate
     });
 
     // Verify written to live_micro_fixes

@@ -23,19 +23,19 @@ async function verifyVersioning() {
 
     // Scenario: Capped by Confidence (B2 -> B1)
     console.log("\n[Scenario] Triggering Confidence Cap (B2 -> B1)");
-    await updateUserFluencyProfile({
-        userId: TEST_USER_ID,
-        cefrLevel: "B2",
-        fluencyScore: 70,
+    await updateUserFluencyProfile(TEST_USER_ID, {
+        cefr_level: "B2",
+        fluency_score: 70,
         confidence: 40,
-        confidenceBand: "Low",
-        confidenceExplanation: "Frequent long pauses.",
-        pauseRatio: 0.35,
-        avgPauseMs: 1200,
-        midSentencePauseRatio: 0.2,
-        wordCount: 150, // Enough for B2 reliability
-        sourceSessionId: "verify-session-1",
-        sourceType: "ai_tutor"
+        confidence_band: "Low",
+        confidence_explanation: "Frequent long pauses.",
+        pause_ratio: 0.35,
+        avg_pause_ms: 1200,
+        mid_sentence_pause_ratio: 0.2,
+        word_count: 150, // Enough for B2 reliability
+        source_session_id: "verify-session-1",
+        session_type: "AI_TUTOR",
+        speaking_time_seconds: 90 // Estimate
     });
 
     // Verify DB State

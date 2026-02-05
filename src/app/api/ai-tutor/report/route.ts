@@ -214,23 +214,22 @@ export async function POST(req: Request) {
       console.log(`[API/Report] Calling updateProfile for ${userId} with Level ${report.cefr_analysis.level}`); // DEBUG
 
       try {
-        await updateUserFluencyProfile({
-          userId,
-          cefrLevel: report.cefr_analysis.level,
-          fluencyScore: Math.round(fluencyScore),
+        await updateUserFluencyProfile(userId, {
+          cefr_level: report.cefr_analysis.level,
+          fluency_score: Math.round(fluencyScore),
           confidence: Math.round(confidence),
-          confidenceBand,
-          confidenceExplanation,
-          pauseRatio,
-          avgPauseMs: audioMetrics.avgPauseMs,
-          midSentencePauseRatio: audioMetrics.midSentencePauseRatio,
-          pauseVariance: audioMetrics.pauseVariance,
-          speechRateVariance: audioMetrics.speechRateVariance,
-          recoveryScore: audioMetrics.recoveryScore,
-          wordCount,
-          lexicalBlockers: blockers,
-          sourceSessionId: sessionId || "ai-tutor-session", // Ensure we have an ID
-          sourceType: "ai_tutor",
+          confidence_band: confidenceBand,
+          confidence_explanation: confidenceExplanation,
+          pause_ratio: pauseRatio,
+          avg_pause_ms: audioMetrics.avgPauseMs,
+          mid_sentence_pause_ratio: audioMetrics.midSentencePauseRatio,
+          pause_variance: audioMetrics.pauseVariance,
+          recovery_score: audioMetrics.recoveryScore,
+          word_count: wordCount,
+          speaking_time_seconds: duration,
+          lexical_blockers: blockers,
+          source_session_id: sessionId || "ai-tutor-session",
+          session_type: "AI_TUTOR",
         });
         console.log(`[API/Report] updateUserFluencyProfile completed successfully!`);
       } catch (updateError) {

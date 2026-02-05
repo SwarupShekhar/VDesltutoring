@@ -389,6 +389,22 @@ export class FluencyEngine {
             }
         });
 
+
+
+        // UPDATE DASHBOARD PROFILE (The Fix)
+        // Ensure this user's stats update specifically for Live Practice
+        try {
+            const { updateUserFluencyProfile } = await import('./assessment/updateUserFluencyProfile');
+            await updateUserFluencyProfile(userId, {
+                fluency_score: fluencyScore,
+                word_count: metrics.word_count,
+                speaking_time_seconds: metrics.speaking_time,
+                session_type: 'LIVE_PRACTICE'
+            });
+        } catch (e) {
+            console.error(`[FluencyEngine] Failed to update profile for ${userId}:`, e);
+        }
+
         console.log(`[FluencyEngine] User ${userId} | Score: ${fluencyScore.toFixed(1)} | AI Feedback: ${aiFeedback ? 'Generated' : 'Skipped'} `);
     }
 }

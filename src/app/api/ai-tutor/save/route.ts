@@ -1,3 +1,4 @@
+
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { prisma } from '@/lib/prisma';
@@ -62,6 +63,31 @@ export async function POST(req: Request) {
                 }
             } as any
         });
+
+        // UPDATE DASHBOARD PROFILE (The Fix)
+        try {
+            const { updateUserFluencyProfile } = await import('@/lib/assessment/updateUserFluencyProfile');
+
+            // Calculate proxy metrics since AI sessions don't always give raw scores
+            // 1 message ~ 15 words
+            const estimatedWords = messages.filter((m: any) => m.role === 'user').length * 15;
+
+            // Derive score from report if available, else standard estimation
+            let score = 50; // Default B1
+            if (report?.cefr_analysis?.level) {
+                const map: Record<string, number> = { 'A1': 20, 'A2': 35, 'B1': 50, 'B2': 65, 'C1': 80, 'C2': 95 };
+                score = map[report.cefr_analysis.level] || 50;
+            }
+
+            await updateUserFluencyProfile(dbUser.id, {
+                fluency_score: score,
+                word_count: estimatedWords,
+                speaking_time_seconds: duration || (estimatedWords * 0.5),
+                session_type: 'AI_TUTOR'
+            });
+        } catch (e) {
+            console.error("Failed to update fluency profile:", e);
+        }
 
         return NextResponse.json({ success: true, sessionId: session.id });
     } catch (error) {

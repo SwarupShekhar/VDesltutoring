@@ -37,7 +37,7 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
-  robots: 'all',
+  robots: 'index, follow',
 }
 
 

@@ -68,7 +68,7 @@ export const metadata: Metadata = {
             "Stop translating in your head. Build real English fluency with AI-powered speaking practice.",
         images: ["https://englivo.com/og-image.png"],
     },
-    robots: 'all',
+    robots: 'index, follow',
 };
 
 export default function RootLayout({

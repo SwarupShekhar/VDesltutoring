@@ -272,9 +272,9 @@ export default function FluencyCheckPage() {
                             className="space-y-8 w-full max-w-2xl"
                         >
                             <div className="text-center">
-                                <h1 className="text-3xl font-serif font-bold text-slate-900 dark:text-white mb-2">
+                                <h2 className="text-3xl font-serif font-bold text-slate-900 dark:text-white mb-2">
                                     Your Speaking Style
-                                </h1>
+                                </h2>
                                 <p className="text-slate-500 dark:text-slate-400">
                                     Here is what the data says about your pattern.
                                 </p>
@@ -470,9 +470,9 @@ export default function FluencyCheckPage() {
                                 <TrendingUp className="w-10 h-10" />
                             </div>
 
-                            <h1 className="text-4xl font-serif font-bold text-slate-900 dark:text-white">
+                            <h2 className="text-4xl font-serif font-bold text-slate-900 dark:text-white">
                                 You just changed your pattern.
-                            </h1>
+                            </h2>
 
                             <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-px bg-slate-100 dark:bg-slate-800">
                                 <div className="bg-white dark:bg-slate-900 p-4">

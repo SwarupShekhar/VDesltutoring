@@ -21,15 +21,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/our-method`,
+            url: `${baseUrl}/method`,
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/methodology`,
+            url: `${baseUrl}/about`,
             priority: 0.8,
         },
         {
-            url: `${baseUrl}/about`,
+            url: `${baseUrl}/pricing`,
             priority: 0.8,
         },
         {

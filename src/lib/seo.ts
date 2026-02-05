@@ -44,6 +44,6 @@ export function constructCanonicalMetadata(
             canonical: canonicalUrl,
             languages: languages
         },
-        robots: 'all'
+        robots: 'index, follow'
     };
 }

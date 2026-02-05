@@ -20,8 +20,10 @@ const isPublicRoute = createRouteMatcher([
     '/fluency-guide',
     '/roadmap',
     '/tutors',
+    '/pricing',
     '/practice', // Public practice page
     '/live-practice', // Public live practice page
+    '/sessions/book', // Public booking page
     '/:locale', // For non-English locales
     '/:locale/sign-in(.*)',
     '/:locale/sign-up(.*)',
@@ -34,6 +36,8 @@ const isPublicRoute = createRouteMatcher([
     '/:locale/fluency-guide',
     '/:locale/roadmap',
     '/:locale/tutors',
+    '/:locale/pricing',
+    '/:locale/sessions/book', // Public booking page
     '/api/webhooks(.*)', // Webhooks must be public
     '/api/livekit/token', // Handle auth in route handler for JSON response
     '/api/live-practice(.*)', // Public stats for landing page
@@ -88,8 +92,7 @@ export default clerkMiddleware(async (auth, req) => {
     const isIgnoredPath = pathname.startsWith('/api') || pathname.startsWith('/_next') || pathname.includes('.') || pathname.startsWith('/ai-tutor');
 
     // If URL has /en, redirect to remove it (e.g., /en/practice -> /practice)
-    // EXCEPT FOR BOTS to avoid unnecessary redirect cycles
-    if (hasDefaultLocale && !isIgnoredPath && !isBot) {
+    if (hasDefaultLocale && !isIgnoredPath) {
         const pathWithoutLocale = pathname.replace(`/${defaultLocale}`, '') || '/';
         const newUrl = new URL(pathWithoutLocale, req.url);
         newUrl.search = req.nextUrl.search;

@@ -27,6 +27,7 @@ interface ReportData {
         speed: number;
         grammarErrors: number;
     };
+    aiReport?: any;
     date: string;
 }
 
@@ -147,7 +148,7 @@ export default function ReportPage() {
                         <P2PCoachingFeedback
                             coachingFeedback={data.coachingFeedback!}
                             primaryLimiter={data.performanceAnalytics?.primaryLimiter || { system: 'Unknown', label: 'Analysis Pending' }}
-                            corrections={[]} // TODO: Pass real corrections if available in API
+                            corrections={data.aiReport?.refinements || []}
                         />
 
                         {data.transcriptFull && (

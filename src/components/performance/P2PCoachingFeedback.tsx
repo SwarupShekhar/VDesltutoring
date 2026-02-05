@@ -261,7 +261,7 @@ export function P2PCoachingFeedback({
                                     </span>
                                     {' → '}
                                     <span className="text-green-600 dark:text-green-400 font-semibold">
-                                        {correction.correction}
+                                        {correction.better || correction.correction}
                                     </span>
                                 </div>
                                 {correction.explanation && (

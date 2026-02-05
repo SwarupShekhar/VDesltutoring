@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import { ConfidenceMeter } from '@/components/ConfidenceMeter';
 import {
   Loader2,
@@ -56,8 +57,17 @@ export default function BookSessionPage() {
     return slots;
   }, []);
 
+  const { isSignedIn } = useUser();
+
   async function submit() {
     if (!selectedTime) return;
+
+    // Client-side auth check
+    if (!isSignedIn) {
+      const returnUrl = encodeURIComponent(window.location.pathname);
+      router.push(`/sign-in?redirect_url=${returnUrl}`);
+      return;
+    }
 
     setLoading(true);
     setError(null);
@@ -245,8 +255,8 @@ export default function BookSessionPage() {
                                     setSelectedTime(slot);
                                   }}
                                   className={`relative group p-4 rounded-2xl border-2 transition-all duration-200 text-center ${isSelected
-                                      ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-500/10'
-                                      : 'bg-slate-50 dark:bg-slate-800/50 border-transparent hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-200'
+                                    ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/30 ring-4 ring-blue-500/10'
+                                    : 'bg-slate-50 dark:bg-slate-800/50 border-transparent hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-200'
                                     }`}
                                 >
                                   {isRecommended && !isSelected && (
@@ -304,8 +314,8 @@ export default function BookSessionPage() {
                         onClick={submit}
                         disabled={loading || !selectedTime}
                         className={`w-full py-5 px-8 rounded-2.5xl text-xl font-bold transition-all relative overflow-hidden flex items-center justify-center gap-3 group ${loading || !selectedTime
-                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl shadow-blue-500/20 active:shadow-none'
+                          ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-xl shadow-blue-500/20 active:shadow-none'
                           }`}
                       >
                         {loading ? (

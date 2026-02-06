@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { LiveKitRoom } from "@livekit/components-react"
-import AIAvatar from "@/components/AIAvatar"
+import { Spiral } from "@/components/Spiral" // Added
 import { HomeNavbar } from "@/components/HomeNavbar"
 import { VoiceVisualizer } from "@/components/VoiceVisualizer"
 import { FluencyReportModal } from "@/components/FluencyReportModal"
@@ -10,6 +10,7 @@ import { ErrorCorrectionDisplay } from "@/components/ErrorCorrectionDisplay"
 import { useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
 import { Mic, MicOff, Square, Play } from "lucide-react"
+import { motion } from "framer-motion" // Added
 
 type ChatMessage = {
     role: "user" | "assistant"
@@ -32,6 +33,7 @@ export default function AITutor() {
     const [listening, setListening] = useState(false)
     const [speaking, setSpeaking] = useState(false)
     const [processing, setProcessing] = useState(false)
+
     const [started, setStarted] = useState(false)
     const [analyserNode, setAnalyserNode] = useState<AnalyserNode | null>(null)
     const [chats, setChats] = useState<ChatMessage[]>([])
@@ -59,23 +61,10 @@ export default function AITutor() {
     const startTimeRef = useRef<number>(0)
 
     const router = useRouter()
-    // Use searchParams for mode detection
-    // Note: In Next.js client components, we use useSearchParams()
-    // but here we can just parse window.location or similar if useSearchParams is not available directly on this version,
-    // assuming standard Next.js 13/14 app router, useSearchParams is best.
-    // For now, let's assume we can grab it from window as a fallback or add useSearchParams import.
-
-    // Quick Fix: Since we need `useSearchParams`, let's add it.
-    // However, I can't easily add the import at the top without replacing the whole file header.
-    // I already see `useRouter` from `next/navigation`. `useSearchParams` is in the same package.
-
-    // Let's rely on a simpler prop or state if possible, but reading URL is essential for the link from dashboard.
-    // I will use a utility to parse it safely inside useEffect to avoid import hassle if restricted,
-    // actually, I'll just add the import in a subsequent edit if needed, but wait:
-    // I can parse window.location in useEffect.
-
     const [mode, setMode] = useState<'practice' | 'challenge'>('practice')
     const [targetLevel, setTargetLevel] = useState<string>('')
+
+    const isBossMode = mode === 'challenge'
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -111,6 +100,14 @@ export default function AITutor() {
             }
         }
     }, [token, started])
+
+    // Helper for Spiral Colors based on state
+    const getSpiralColors = () => {
+        if (speaking) return [{ color: "#60A5FA" }, { color: "#3B82F6" }, { color: "#2563EB" }] // Blue Pulse
+        if (listening) return [{ color: "#4ADE80" }, { color: "#22C55E" }] // Green Listening
+        if (processing) return [{ color: "#A78BFA" }, { color: "#8B5CF6" }] // Purple Thinking
+        return [{ color: "#94A3B8" }, { color: "#CBD5E1" }] // Grey Idle
+    }
 
     const startSession = async () => {
         setStarted(true)
@@ -466,11 +463,10 @@ export default function AITutor() {
         }
     }
 
-    const isBossMode = mode === 'challenge'
 
     if (!token) {
         return (
-            <div className={`min-h-screen ${isBossMode ? 'bg-zinc-950 text-red-500' : 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white'} flex flex-col transition-colors duration-300`}>
+            <div className={`min-h-screen ${isBossMode ? 'bg-black text-red-500' : 'bg-black text-white'} flex flex-col transition-colors duration-300`}>
                 <HomeNavbar locale="en" dict={{}} />
                 <div className="flex-1 flex items-center justify-center">
                     <div className={`text-xl font-light animate-pulse ${isBossMode ? 'text-red-500 font-mono tracking-widest uppercase' : 'text-blue-600 dark:text-blue-400'}`}>
@@ -483,7 +479,7 @@ export default function AITutor() {
 
     if (!started) {
         return (
-            <div className={`min-h-screen ${isBossMode ? 'bg-zinc-950' : 'bg-slate-50 dark:bg-slate-950'} text-slate-900 dark:text-white flex flex-col transition-colors duration-300`}>
+            <div className={`min-h-screen ${isBossMode ? 'bg-black' : 'bg-black'} text-white flex flex-col transition-colors duration-300`}>
                 <HomeNavbar locale="en" dict={{}} />
                 <div className="flex-1 flex flex-col items-center justify-center space-y-12 p-10 relative overflow-hidden">
                     {/* Decorative Background */}
@@ -543,7 +539,7 @@ export default function AITutor() {
 
     // MAIN SESSION UI
     return (
-        <div className={`min-h-screen ${isBossMode ? 'bg-zinc-950 font-mono' : 'bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white'} flex flex-col relative overflow-hidden transition-colors duration-300`}>
+        <div className={`min-h-screen dark ${isBossMode ? 'bg-black font-mono' : 'bg-black text-white'} flex flex-col relative overflow-hidden transition-colors duration-300`}>
             {!isBossMode && <HomeNavbar locale="en" dict={{}} />}
 
             {/* Premium Background */}
@@ -563,7 +559,7 @@ export default function AITutor() {
             <div className="flex-1 flex flex-col items-center justify-between py-12 px-6 w-full max-w-6xl mx-auto z-10 h-full">
 
                 {/* Top Section: Avatar / Timer */}
-                <div className="flex-1 flex flex-col items-center justify-center w-full min-h-[300px]">
+                <div className="flex-1 flex flex-col items-center justify-center w-full min-h-[400px]">
                     {isBossMode ? (
                         <div className="flex flex-col items-center gap-4">
                             <div className={`w-32 h-32 rounded-full border-2 ${speaking ? 'border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.5)]' : 'border-zinc-800'} flex items-center justify-center bg-zinc-950 transition-all duration-300`}>
@@ -580,8 +576,37 @@ export default function AITutor() {
                             </div>
                         </div>
                     ) : (
-                        <div className={`transition-all duration-700 flex flex-col items-center transform ${listening ? 'scale-105' : 'scale-100'}`}>
-                            <AIAvatar state={speaking ? 'speaking' : processing ? 'processing' : listening ? 'listening' : 'idle'} />
+                        <div className={`transition-all duration-700 flex flex-col items-center w-full h-full justify-center transform scale-100`}>
+                            {/* SPIRAL INTERFACE */}
+                            {/* We use a motion div to pulse the size when speaking */}
+                            <motion.div
+                                animate={{
+                                    scale: speaking ? [1, 1.05, 1] : 1,
+                                    // rotate: processing ? 360 : 0 // Rotation feels a bit too broken with re-rendering SVG, let's stick to scale pulse
+                                    opacity: processing ? 0.7 : 1
+                                }}
+                                transition={{
+                                    scale: { repeat: Infinity, duration: 2, ease: "easeInOut" },
+                                    opacity: { duration: 0.5 }
+                                }}
+                                className="w-[300px] h-[300px] md:w-[400px] md:h-[400px] relative pointer-events-none"
+                            >
+                                <Spiral
+                                    totalDots={650}
+                                    dotRadius={2}
+                                    duration={processing ? 1.5 : 4} // Faster flow when thinking
+                                    minOpacity={0.2}
+                                    maxOpacity={speaking ? 1 : 0.6}
+                                    margin={0}
+                                    useMultipleColors={true}
+                                    colors={getSpiralColors()}
+                                />
+                            </motion.div>
+
+                            {/* State Text Indicator */}
+                            <div className="mt-8 text-sm font-medium tracking-wider uppercase text-slate-500 transition-colors duration-300">
+                                {speaking ? 'Speaking...' : listening ? 'Listening...' : processing ? 'Thinking...' : 'Ready'}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -592,15 +617,15 @@ export default function AITutor() {
                     <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${isBossMode
                         ? 'bg-zinc-900/80 border-zinc-800 text-zinc-300'
                         : listening
-                            ? 'bg-green-50/50 dark:bg-green-900/10 border-green-200/50 dark:border-green-500/30 shadow-[0_4px_20px_rgba(34,197,94,0.1)]'
-                            : 'bg-white/60 dark:bg-white/5 border-slate-200/50 dark:border-white/10 hover:bg-white/80 dark:hover:bg-white/10'}`}>
+                            ? 'bg-green-900/10 border-green-500/30 shadow-[0_4px_20px_rgba(34,197,94,0.1)]'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
 
                         <div className="flex justify-between items-start mb-4">
                             <span className={`text-xs font-bold uppercase tracking-widest ${isBossMode ? 'text-zinc-500' : 'text-slate-400 dark:text-gray-500'}`}>You</span>
                             {listening ? <Mic size={18} className={`${isBossMode ? 'text-red-500' : 'text-green-500'} animate-pulse`} /> : <MicOff size={18} className="text-slate-300 dark:text-gray-600" />}
                         </div>
-                        <p className={`text-xl font-light leading-relaxed ${isBossMode ? 'text-zinc-100' : 'text-slate-800 dark:text-gray-100'}`}>
-                            {transcript || <span className="text-slate-300 dark:text-gray-600 italic">Listening...</span>}
+                        <p className={`text-xl font-light leading-relaxed ${isBossMode ? 'text-zinc-100' : 'text-gray-100'}`}>
+                            {transcript || <span className="text-gray-600 italic">Listening...</span>}
                         </p>
                     </div>
 
@@ -608,8 +633,8 @@ export default function AITutor() {
                     <div className={`relative p-8 backdrop-blur-md border rounded-3xl min-h-[140px] flex flex-col justify-between transition-all duration-500 ${isBossMode
                         ? 'bg-red-950/10 border-red-900/20 text-red-100'
                         : speaking
-                            ? 'bg-blue-50/50 dark:bg-blue-900/10 border-blue-200/50 dark:border-blue-500/30 shadow-[0_4px_20px_rgba(59,130,246,0.15)]'
-                            : 'bg-blue-50/20 dark:bg-white/5 border-blue-100/30 dark:border-white/10'}`}>
+                            ? 'bg-blue-900/10 border-blue-500/30 shadow-[0_4px_20px_rgba(59,130,246,0.15)]'
+                            : 'bg-white/5 border-white/10'}`}>
 
                         <div className="flex justify-between items-start mb-4">
                             <span className={`text-xs font-bold uppercase tracking-widest ${isBossMode ? 'text-red-800' : 'text-blue-400 dark:text-blue-400'}`}>
@@ -617,8 +642,8 @@ export default function AITutor() {
                             </span>
                         </div>
                         <div>
-                            <p className={`text-xl font-light leading-relaxed ${isBossMode ? 'text-red-100' : 'text-blue-900 dark:text-blue-100'}`}>
-                                {aiResponse || <span className="text-blue-300 dark:text-gray-600 italic">...</span>}
+                            <p className={`text-xl font-light leading-relaxed ${isBossMode ? 'text-red-100' : 'text-blue-100'}`}>
+                                {aiResponse || <span className="text-gray-600 italic">...</span>}
                             </p>
                             {chats.length > 0 && chats[chats.length - 1].role === "assistant" && (
                                 <ErrorCorrectionDisplay corrections={chats[chats.length - 1].corrections || []} />
@@ -665,8 +690,7 @@ export default function AITutor() {
 function blobToBase64(blob: Blob): Promise<string> {
     return new Promise(resolve => {
         const reader = new FileReader()
-        reader.onloadend = () =>
-            resolve(reader.result?.toString().split(",")[1] || "")
+        reader.onloadend = () => resolve(reader.result?.toString().split(",")[1] || "")
         reader.readAsDataURL(blob)
     })
 }

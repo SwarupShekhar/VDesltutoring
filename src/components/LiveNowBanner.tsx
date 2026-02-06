@@ -45,10 +45,10 @@ export function LiveNowBanner({ locale }: { locale: string }) {
                         <span className={styles.text}>
                             {count > 0 ? (
                                 <>
-                                    {count} learners practicing right now &rarr;
+                                    {count} learners practicing right now →
                                 </>
                             ) : (
-                                "Start the first live session now &rarr;"
+                                "Start the first live session now →"
                             )}
                         </span>
                         <div className={styles.containerStars}>

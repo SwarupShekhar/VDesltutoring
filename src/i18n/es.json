@@ -380,12 +380,6 @@
         "button": "Reserva tu primera sesión",
         "guarantee": "Sin compromiso. Garantía de devolución del 100%."
     },
-    "methodPage": {
-        "hero": {
-            "title": "The Fluency Engine™",
-            "subtitle": "Most people don't fail at English..."
-        }
-    },
     "pricingPage": {
         "hero": {
             "title": "Elige tu camino",
@@ -523,6 +517,189 @@
                 "Desarrollo de habilidades reales"
             ],
             "anchor": "La IA muestra la brecha. Los tutores la cierran."
+        }
+    },
+    "methodPage": {
+        "hero": {
+            "title": "Creamos Hablantes de Inglés Seguros - No Solo Buenos Estudiantes",
+            "subtitle": "Englivo ayuda a los niños a hablar clara, natural y confiadamente a través de conversaciones reales, coaching de apoyo y práctica inteligente - sin aprendizaje de memoria ni miedo a equivocarse.",
+            "ctaPrimary": "Iniciar Prueba Gratuita",
+            "ctaSecondary": "Ver Cómo Funciona"
+        },
+        "problem": {
+            "title": "Por Qué los Niños Luchan para Hablar - Incluso Cuando \"Saben\" Inglés",
+            "copy": "Muchos niños entienden la gramática y el vocabulario pero aún vacilan cuando hablan. Piensan demasiado, se preocupan por los errores y pierden confianza en conversaciones reales.",
+            "listTitle": "El aprendizaje tradicional se enfoca demasiado en:",
+            "items": [
+                {
+                    "title": "Reglas",
+                    "desc": "sobre la comunicación real"
+                },
+                {
+                    "title": "Exámenes",
+                    "desc": "sobre el habla"
+                },
+                {
+                    "title": "Correcciones",
+                    "desc": "sobre la confianza"
+                }
+            ],
+            "conclusion": "Por eso hablar se siente estresante - no natural."
+        },
+        "solution": {
+            "title": "La Manera Englivo: Aprende Hablando",
+            "cards": [
+                {
+                    "title": "Hablar Primero",
+                    "content": "Los niños practican inglés a través de conversaciones reales y guiadas - la forma más rápida de construir fluidez."
+                },
+                {
+                    "title": "Confianza Primero",
+                    "content": "Nos enfocamos en el flujo, la claridad y la confianza - no solo en corregir errores."
+                },
+                {
+                    "title": "Inglés del Mundo Real",
+                    "content": "Los estudiantes practican conversaciones que realmente usarán en la escuela, la vida social y el mundo real."
+                }
+            ]
+        },
+        "howItWorks": {
+            "title": "Un Enfoque Equilibrado: IA + Guía Humana",
+            "cards": [
+                {
+                    "title": "Práctica en Vivo",
+                    "content": "Sesiones de habla seguras e interactivas que construyen confianza."
+                },
+                {
+                    "title": "Práctica Inteligente (Tutor IA)",
+                    "content": "Práctica suave y adaptativa que escucha y responde en tiempo real."
+                },
+                {
+                    "title": "Tutores Humanos",
+                    "content": "Guía experta, estructura y coaching personalizado cuando se necesita."
+                }
+            ]
+        },
+        "benefits": {
+            "title": "Lo Que Tu Hijo Gana",
+            "items": [
+                {
+                    "title": "Mayor Confianza",
+                    "icon": "trophy"
+                },
+                {
+                    "title": "Comunicación Más Clara",
+                    "icon": "speech"
+                },
+                {
+                    "title": "Fluidez Natural",
+                    "icon": "lightning"
+                },
+                {
+                    "title": "Preparación para la Vida Real",
+                    "icon": "globe"
+                }
+            ],
+            "quote": "“Desde discusiones en el aula hasta presentaciones, entrevistas y conversaciones diarias - tu hijo estará listo.”"
+        },
+        "differentiation": {
+            "title": "Por Qué Englivo Es Diferente",
+            "comparison": {
+                "others": "La mayoría de las plataformas entrenan la memoria.",
+                "us": "Englivo entrena la confianza, el flujo y la comunicación real."
+            },
+            "shift": {
+                "from": "En lugar de \"estudia más\", ayudamos a los niños a sentir:",
+                "to": "“Puedo hablar inglés - ahora mismo.”"
+            }
+        },
+        "finalCta": {
+            "headline": "Comienza el Viaje de Fluidez de Tu Hijo Hoy",
+            "ctaPrimary": "Iniciar Prueba Gratuita",
+            "ctaSecondary": "Reservar una Demo"
+        }
+    },
+    "fluencyGuide": {
+        "hero": {
+            "title": "Guía de Fluidez de Englivo",
+            "subtitle": "De Traducir → Pensar → Hablar",
+            "description": "Tu mapa de A2 → C1 sin sobrecarga de gramática."
+        },
+        "diagnosis": {
+            "title": "¿Dónde Estás Atascado?",
+            "cards": [
+                {
+                    "title": "Bucle de Traducción",
+                    "desc": "Construyes oraciones en tu idioma nativo primero, causando duda.",
+                    "linkText": "Leer guía"
+                },
+                {
+                    "title": "Brecha B1→B2",
+                    "desc": "Puedes hablar, pero persisten las pausas y el esfuerzo. La \"Meseta Intermedia\".",
+                    "linkText": "Leer guía"
+                },
+                {
+                    "title": "Sonar Natural",
+                    "desc": "Quieres expresiones reales y flujo, no inglés rígido de libro de texto.",
+                    "linkText": "Leer guía"
+                }
+            ]
+        },
+        "process": {
+            "title": "La Fluidez es Procesamiento, No Vocabulario",
+            "points": [
+                "Control de pausas (Dónde te detienes importa)",
+                "Estabilidad del ritmo (Variación de velocidad)",
+                "Fragmentos automáticos (No palabra por palabra)",
+                "Flujo de ideas (Conectando pensamientos)"
+            ],
+            "links": {
+                "b2Meaning": "Qué Significa Realmente B2",
+                "pauses": "Las Pausas Revelan Tu Nivel"
+            }
+        },
+        "method": {
+            "title": "El Método Englivo",
+            "steps": [
+                {
+                    "number": "1",
+                    "title": "Capa de Reflejos",
+                    "desc": "Entrena tu cerebro para responder al instante sin traducir.",
+                    "cta": "Probar Tutor IA"
+                },
+                {
+                    "number": "2",
+                    "title": "Capa de Estructura",
+                    "desc": "Practica conversaciones reales con compañeros y mentores.",
+                    "cta": "Práctica en Vivo"
+                },
+                {
+                    "number": "3",
+                    "title": "Capa de Matices",
+                    "desc": "Domina las muletillas, el tono y la sutileza cultural.",
+                    "cta": "Leer Guía"
+                }
+            ]
+        },
+        "startPoints": {
+            "title": "Puntos de Partida",
+            "diagnosis": {
+                "label": "Diagnóstico",
+                "text": "Si dudas antes de cada oración..."
+            },
+            "growth": {
+                "label": "Crecimiento",
+                "text": "Si te sientes atrapado en \"Intermedio\"..."
+            },
+            "career": {
+                "label": "Carrera",
+                "text": "Si necesitas inglés para el trabajo..."
+            }
+        },
+        "finalCta": {
+            "headline": "¿Listo para romper el silencio?",
+            "primary": "Probar Tutor IA",
+            "secondary": "Práctica en Vivo"
         }
     }
 }

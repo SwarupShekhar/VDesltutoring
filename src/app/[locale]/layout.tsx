@@ -100,6 +100,10 @@ export const metadata: Metadata = {
 }
 
 
+import { notFound } from 'next/navigation';
+
+// ... imports
+
 export default async function RootLayout({
   children,
   params,
@@ -108,6 +112,12 @@ export default async function RootLayout({
   params: Promise<{ locale: Locale }>
 }>) {
   const { locale } = await params
+
+  // Validate locale
+  const validLocales = ["en", "de", "fr", "es", "vi", "ja"];
+  if (!validLocales.includes(locale as string)) {
+    notFound();
+  }
 
   return (
     <ClerkProvider>

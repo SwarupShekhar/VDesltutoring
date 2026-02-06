@@ -19,8 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     };
 }
 
-export default async function FluencyGuidePage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function FluencyGuidePage({ params }: { params: Promise<{ locale: Locale }> }) {
     const { locale } = await params;
+    const dictionary = await getDictionary(locale);
 
     // JSON-LD
     const jsonLd = {
@@ -72,7 +73,7 @@ export default async function FluencyGuidePage({ params }: { params: Promise<{ l
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
             />
-            <FluencyGuideContent locale={locale} />
+            <FluencyGuideContent locale={locale} content={dictionary} />
         </>
     );
 }

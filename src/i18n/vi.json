@@ -459,5 +459,188 @@
             ],
             "anchor": "AI chỉ ra khoảng cách. Gia sư lấp đầy nó."
         }
+    },
+    "methodPage": {
+        "hero": {
+            "title": "Chúng tôi xây dựng những người nói tiếng Anh tự tin - Không chỉ là học sinh giỏi",
+            "subtitle": "Englivo giúp trẻ nói rõ ràng, tự nhiên và tự tin thông qua các cuộc trò chuyện thực tế, huấn luyện hỗ trợ và thực hành thông minh - không học vẹt hay sợ mắc lỗi.",
+            "ctaPrimary": "Bắt đầu dùng thử miễn phí",
+            "ctaSecondary": "Xem cách hoạt động"
+        },
+        "problem": {
+            "title": "Tại sao trẻ em gặp khó khăn khi nói - Ngay cả khi chúng \"biết\" tiếng Anh",
+            "copy": "Nhiều trẻ em hiểu ngữ pháp và từ vựng nhưng vẫn ngập ngừng khi nói. Các em suy nghĩ quá nhiều, lo lắng về việc mắc lỗi và mất tự tin trong các cuộc trò chuyện thực tế.",
+            "listTitle": "Cách học truyền thống tập trung quá nhiều vào:",
+            "items": [
+                {
+                    "title": "Quy tắc",
+                    "desc": "hơn là giao tiếp thực tế"
+                },
+                {
+                    "title": "Bài kiểm tra",
+                    "desc": "hơn là nói"
+                },
+                {
+                    "title": "Sửa lỗi",
+                    "desc": "hơn là sự tự tin"
+                }
+            ],
+            "conclusion": "Đó là lý do tại sao việc nói cảm thấy căng thẳng - không tự nhiên."
+        },
+        "solution": {
+            "title": "Cách của Englivo: Học bằng cách Nói",
+            "cards": [
+                {
+                    "title": "Nói trước",
+                    "content": "Trẻ em thực hành tiếng Anh thông qua các cuộc trò chuyện thực tế, có hướng dẫn - cách nhanh nhất để xây dựng sự trôi chảy."
+                },
+                {
+                    "title": "Tự tin trước",
+                    "content": "Chúng tôi tập trung vào sự trôi chảy, rõ ràng và tự tin - không chỉ sửa lỗi."
+                },
+                {
+                    "title": "Tiếng Anh thực tế",
+                    "content": "Học sinh thực hành các cuộc trò chuyện mà các em sẽ thực sự sử dụng ở trường, đời sống xã hội và thế giới thực."
+                }
+            ]
+        },
+        "howItWorks": {
+            "title": "Một cách tiếp cận cân bằng: AI + Hướng dẫn của con người",
+            "cards": [
+                {
+                    "title": "Thực hành trực tiếp",
+                    "content": "Các buổi nói chuyện an toàn, tương tác giúp xây dựng sự tự tin."
+                },
+                {
+                    "title": "Thực hành thông minh (Gia sư AI)",
+                    "content": "Thực hành nhẹ nhàng, thích ứng, lắng nghe và phản hồi trong thời gian thực."
+                },
+                {
+                    "title": "Gia sư con người",
+                    "content": "Hướng dẫn của chuyên gia, cấu trúc và huấn luyện cá nhân hóa khi cần thiết."
+                }
+            ]
+        },
+        "benefits": {
+            "title": "Những gì con bạn đạt được",
+            "items": [
+                {
+                    "title": "Tự tin hơn",
+                    "icon": "trophy"
+                },
+                {
+                    "title": "Giao tiếp rõ ràng hơn",
+                    "icon": "speech"
+                },
+                {
+                    "title": "Trôi chảy tự nhiên",
+                    "icon": "lightning"
+                },
+                {
+                    "title": "Sẵn sàng cho đời thực",
+                    "icon": "globe"
+                }
+            ],
+            "quote": "“Từ các cuộc thảo luận trong lớp đến thuyết trình, phỏng vấn và trò chuyện hàng ngày - con bạn sẽ sẵn sàng.”"
+        },
+        "differentiation": {
+            "title": "Tại sao Englivo khác biệt",
+            "comparison": {
+                "others": "Hầu hết các nền tảng rèn luyện trí nhớ.",
+                "us": "Englivo rèn luyện sự tự tin, sự trôi chảy và giao tiếp thực tế."
+            },
+            "shift": {
+                "from": "Thay vì \"học nhiều hơn\", chúng tôi giúp trẻ cảm thấy:",
+                "to": "“Tôi có thể nói tiếng Anh - ngay bây giờ.”"
+            }
+        },
+        "finalCta": {
+            "headline": "Bắt đầu hành trình trôi chảy của con bạn ngay hôm nay",
+            "ctaPrimary": "Bắt đầu dùng thử miễn phí",
+            "ctaSecondary": "Đặt lịch Demo"
+        }
+    },
+    "fluencyGuide": {
+        "hero": {
+            "title": "Hướng Dẫn Thành Thạo Englivo",
+            "subtitle": "Từ Dịch → Tư Duy → Nói",
+            "description": "Bản đồ của bạn từ A2 → C1 mà không quá tải ngữ pháp."
+        },
+        "diagnosis": {
+            "title": "Bạn Đang Gặp Khó Khăn Ở Đâu?",
+            "cards": [
+                {
+                    "title": "Vòng Lặp Dịch Thuật",
+                    "desc": "Bạn xây dựng câu bằng tiếng mẹ đẻ trước, gây ra sự ngập ngừng.",
+                    "linkText": "Đọc hướng dẫn"
+                },
+                {
+                    "title": "Khoảng Cách B1→B2",
+                    "desc": "Bạn có thể nói, nhưng vẫn còn ngập ngừng và tốn sức. \"Cao Nguyên Trung Cấp\".",
+                    "linkText": "Đọc hướng dẫn"
+                },
+                {
+                    "title": "Nghe Tự Nhiên",
+                    "desc": "Bạn muốn diễn đạt thực tế và trôi chảy, không phải tiếng Anh sách giáo khoa cứng nhắc.",
+                    "linkText": "Đọc hướng dẫn"
+                }
+            ]
+        },
+        "process": {
+            "title": "Thành Thạo Là Xử Lý, Không Phải Từ Vựng",
+            "points": [
+                "Kiểm soát ngắt nghỉ (Nơi bạn dừng lại rất quan trọng)",
+                "Ổn định nhịp điệu (Biến đổi tốc độ)",
+                "Cụm từ tự động (Không phải từng từ một)",
+                "Dòng chảy ý tưởng (Kết nối suy nghĩ)"
+            ],
+            "links": {
+                "b2Meaning": "B2 Thực Sự Có Nghĩa Là Gì",
+                "pauses": "Sự Ngập Ngừng Tiết Lộ Trình Độ Của Bạn"
+            }
+        },
+        "method": {
+            "title": "Phương Pháp Englivo",
+            "steps": [
+                {
+                    "number": "1",
+                    "title": "Lớp Phản Xạ",
+                    "desc": "Rèn luyện não bộ phản hồi ngay lập tức không cần dịch.",
+                    "cta": "Thử Gia Sư AI"
+                },
+                {
+                    "number": "2",
+                    "title": "Lớp Cấu Trúc",
+                    "desc": "Thực hành hội thoại thực tế với bạn bè và người hướng dẫn.",
+                    "cta": "Thực Hành Trực Tiếp"
+                },
+                {
+                    "number": "3",
+                    "title": "Lớp Sắc Thái",
+                    "desc": "Làm chủ từ đệm, giọng điệu và sự tinh tế văn hóa.",
+                    "cta": "Đọc Hướng Dẫn"
+                }
+            ]
+        },
+        "startPoints": {
+            "title": "Điểm Bắt Đầu",
+            "diagnosis": {
+                "label": "Chẩn Đoán",
+                "text": "Nếu bạn ngập ngừng trước mỗi câu..."
+            },
+            "growth": {
+                "label": "Phát Triển",
+                "text": "Nếu bạn cảm thấy kẹt ở mức \"Trung Cấp\"..."
+            },
+            "career": {
+                "label": "Sự Nghiệp",
+                "text": "Nếu bạn cần tiếng Anh cho công việc..."
+            }
+        },
+        "finalCta": {
+            "headline": "Sẵn sàng phá vỡ sự im lặng?",
+            "primary": "Thử Gia Sư AI",
+            "secondary": "Thực Hành Trực Tiếp"
+        }
     }
 }

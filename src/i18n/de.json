@@ -395,12 +395,6 @@
         "button": "Erste Sitzung buchen",
         "guarantee": "Keine Verpflichtung. 100% Geld-zurück-Garantie."
     },
-    "methodPage": {
-        "hero": {
-            "title": "Die Fluency Engine™",
-            "subtitle": "Most people don't fail at English..."
-        }
-    },
     "pricingPage": {
         "hero": {
             "title": "Wähle deinen Pfad",
@@ -535,6 +529,189 @@
                 "Echte Kompetenzentwicklung"
             ],
             "anchor": "KI zeigt die Lücke. Tutoren schließen sie."
+        }
+    },
+    "methodPage": {
+        "hero": {
+            "title": "Wir bilden selbstbewusste Englischsprecher aus – nicht nur gute Schüler",
+            "subtitle": "Englivo hilft Kindern, klar, natürlich und selbstbewusst zu sprechen durch echte Gespräche, unterstützendes Coaching und intelligentes Üben – kein Auswendiglernen oder Angst vor Fehlern.",
+            "ctaPrimary": "Kostenlose Testversion starten",
+            "ctaSecondary": "Sehen, wie es funktioniert"
+        },
+        "problem": {
+            "title": "Warum Kinder Probleme beim Sprechen haben – selbst wenn sie Englisch „kennen“",
+            "copy": "Viele Kinder verstehen Grammatik und Vokabeln, zögern aber immer noch beim Sprechen. Sie denken zu viel nach, sorgen sich um Fehler und verlieren das Vertrauen in echte Gespräche.",
+            "listTitle": "Traditionelles Lernen konzentriert sich zu sehr auf:",
+            "items": [
+                {
+                    "title": "Regeln",
+                    "desc": "statt echter Kommunikation"
+                },
+                {
+                    "title": "Tests",
+                    "desc": "statt Sprechen"
+                },
+                {
+                    "title": "Korrekturen",
+                    "desc": "statt Selbstvertrauen"
+                }
+            ],
+            "conclusion": "Deshalb fühlt sich Sprechen stressig an – nicht natürlich."
+        },
+        "solution": {
+            "title": "Der Englivo-Weg: Lernen durch Sprechen",
+            "cards": [
+                {
+                    "title": "Sprechen zuerst",
+                    "content": "Kinder üben Englisch durch echte, geführte Gespräche – der schnellste Weg zur Fließendheit."
+                },
+                {
+                    "title": "Selbstvertrauen zuerst",
+                    "content": "Wir konzentrieren uns auf Fluss, Klarheit und Selbstvertrauen – nicht nur auf Fehlerkorrektur."
+                },
+                {
+                    "title": "Englisch für die echte Welt",
+                    "content": "Schüler üben Gespräche, die sie tatsächlich in der Schule, im Sozialleben und in der realen Welt nutzen werden."
+                }
+            ]
+        },
+        "howItWorks": {
+            "title": "Ein ausgewogener Ansatz: KI + menschliche Anleitung",
+            "cards": [
+                {
+                    "title": "Live-Übung",
+                    "content": "Sichere, interaktive Sprechsitzungen, die Selbstvertrauen aufbauen."
+                },
+                {
+                    "title": "Intelligentes Üben (KI-Tutor)",
+                    "content": "Sanftes, adaptives Üben, das zuhört und in Echtzeit reagiert."
+                },
+                {
+                    "title": "Menschliche Tutoren",
+                    "content": "Expertenführung, Struktur und persönliches Coaching bei Bedarf."
+                }
+            ]
+        },
+        "benefits": {
+            "title": "Was Ihr Kind gewinnt",
+            "items": [
+                {
+                    "title": "Mehr Selbstvertrauen",
+                    "icon": "trophy"
+                },
+                {
+                    "title": "Klarere Kommunikation",
+                    "icon": "speech"
+                },
+                {
+                    "title": "Natürliche Fließendheit",
+                    "icon": "lightning"
+                },
+                {
+                    "title": "Bereitschaft für das echte Leben",
+                    "icon": "globe"
+                }
+            ],
+            "quote": "„Von Diskussionen im Klassenzimmer bis zu Präsentationen, Interviews und täglichen Gesprächen – Ihr Kind wird bereit sein.“"
+        },
+        "differentiation": {
+            "title": "Warum Englivo anders ist",
+            "comparison": {
+                "others": "Die meisten Plattformen trainieren das Gedächtnis.",
+                "us": "Englivo trainiert Selbstvertrauen, Fluss und echte Kommunikation."
+            },
+            "shift": {
+                "from": "Anstatt „lerne mehr“, helfen wir Kindern sich zu fühlen wie:",
+                "to": "„Ich kann Englisch sprechen – genau jetzt.“"
+            }
+        },
+        "finalCta": {
+            "headline": "Starten Sie heute die Sprachreise Ihres Kindes",
+            "ctaPrimary": "Kostenlose Testversion starten",
+            "ctaSecondary": "Demo buchen"
+        }
+    },
+    "fluencyGuide": {
+        "hero": {
+            "title": "Englivo Fluency Guide",
+            "subtitle": "Vom Übersetzen → Denken → Sprechen",
+            "description": "Dein Weg von A2 → C1 ohne Grammatik-Überlastung."
+        },
+        "diagnosis": {
+            "title": "Wo Steckst Du Fest?",
+            "cards": [
+                {
+                    "title": "Übersetzungsschleife",
+                    "desc": "Du bildest Sätze zuerst in deiner Muttersprache, was zu Zögern führt.",
+                    "linkText": "Leitfaden lesen"
+                },
+                {
+                    "title": "B1→B2 Lücke",
+                    "desc": "Du kannst sprechen, aber Pausen und Anstrengung bleiben. Das \"Mittelstufen-Plateau\".",
+                    "linkText": "Leitfaden lesen"
+                },
+                {
+                    "title": "Natürlich Klingen",
+                    "desc": "Du willst echte Ausdrücke und Redefluss, kein starres Lehrbuch-Englisch.",
+                    "linkText": "Leitfaden lesen"
+                }
+            ]
+        },
+        "process": {
+            "title": "Flüssigkeit ist Verarbeitung, Nicht Vokabeln",
+            "points": [
+                "Pausenkontrolle (Wo du stoppst, zählt)",
+                "Rhythmusstabilität (Geschwindigkeitsvarianz)",
+                "Automatische Chunks (Nicht Wort für Wort)",
+                "Ideenfluss (Gedanken verbinden)"
+            ],
+            "links": {
+                "b2Meaning": "Was B2 Wirklich Bedeutet",
+                "pauses": "Pausen Verraten Dein Niveau"
+            }
+        },
+        "method": {
+            "title": "Die Englivo Methode",
+            "steps": [
+                {
+                    "number": "1",
+                    "title": "Reflex-Ebene",
+                    "desc": "Trainiere dein Gehirn, sofort ohne Übersetzung zu antworten.",
+                    "cta": "KI-Tutor Testen"
+                },
+                {
+                    "number": "2",
+                    "title": "Struktur-Ebene",
+                    "desc": "Übe echte Gespräche mit Peers und Mentoren.",
+                    "cta": "Live-Übung"
+                },
+                {
+                    "number": "3",
+                    "title": "Nuancen-Ebene",
+                    "desc": "Meistere Füllwörter, Tonfall und kulturelle Feinheiten.",
+                    "cta": "Leitfaden Lesen"
+                }
+            ]
+        },
+        "startPoints": {
+            "title": "Startpunkte",
+            "diagnosis": {
+                "label": "Diagnose",
+                "text": "Wenn du vor jedem Satz zögerst..."
+            },
+            "growth": {
+                "label": "Wachstum",
+                "text": "Wenn du dich bei \"Mittelstufe\" festgefahren fühlst..."
+            },
+            "career": {
+                "label": "Karriere",
+                "text": "Wenn du Englisch für die Arbeit brauchst..."
+            }
+        },
+        "finalCta": {
+            "headline": "Bereit, das Schweigen zu brechen?",
+            "primary": "KI-Tutor Testen",
+            "secondary": "Live-Übung"
         }
     }
 }

@@ -898,5 +898,88 @@
             ],
             "anchor": "AI shows the gap. Tutors close it."
         }
+    },
+    "fluencyGuide": {
+        "hero": {
+            "title": "Englivo Fluency Guide",
+            "subtitle": "From Translating → Thinking → Speaking",
+            "description": "Your map from A2 → C1 without grammar overload."
+        },
+        "diagnosis": {
+            "title": "Where Are You Stuck?",
+            "cards": [
+                {
+                    "title": "Translation Loop",
+                    "desc": "You build sentences in your native language first, causing hesitation.",
+                    "linkText": "Read guide"
+                },
+                {
+                    "title": "B1→B2 Gap",
+                    "desc": "You can talk, but pauses and effort remain. The \"Intermediate Plateau\".",
+                    "linkText": "Read guide"
+                },
+                {
+                    "title": "Sounding Natural",
+                    "desc": "You want real expressions and flow, not rigid textbook English.",
+                    "linkText": "Read guide"
+                }
+            ]
+        },
+        "process": {
+            "title": "Fluency Is Processing, Not Vocabulary",
+            "points": [
+                "Pause control (Where you stop matters)",
+                "Rhythm stability (Speed variance)",
+                "Automatic chunks (Not word-by-word)",
+                "Idea flow (Connecting thoughts)"
+            ],
+            "links": {
+                "b2Meaning": "What B2 Actually Means",
+                "pauses": "Pauses Reveal Your Level"
+            }
+        },
+        "method": {
+            "title": "The Englivo Method",
+            "steps": [
+                {
+                    "number": "1",
+                    "title": "Reflex Layer",
+                    "desc": "Train your brain to respond instantly without translation.",
+                    "cta": "Try AI Tutor"
+                },
+                {
+                    "number": "2",
+                    "title": "Structure Layer",
+                    "desc": "Practice real conversations with peers and mentors.",
+                    "cta": "Live Practice"
+                },
+                {
+                    "number": "3",
+                    "title": "Nuance Layer",
+                    "desc": "Master fillers, tone, and cultural subtlety.",
+                    "cta": "Read Guide"
+                }
+            ]
+        },
+        "startPoints": {
+            "title": "Start Points",
+            "diagnosis": {
+                "label": "Diagnosis",
+                "text": "If you hesitate before every sentence..."
+            },
+            "growth": {
+                "label": "Growth",
+                "text": "If you feel stuck at \"Intermediate\"..."
+            },
+            "career": {
+                "label": "Career",
+                "text": "If you need English for work..."
+            }
+        },
+        "finalCta": {
+            "headline": "Ready to break the silence?",
+            "primary": "Try AI Tutor",
+            "secondary": "Live Practice"
+        }
     }
 }

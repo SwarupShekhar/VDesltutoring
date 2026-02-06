@@ -392,12 +392,6 @@
         "button": "Réserver votre première session",
         "guarantee": "Aucun engagement requis. Garantie de remboursement à 100 %."
     },
-    "methodPage": {
-        "hero": {
-            "title": "Le Fluency Engine™",
-            "subtitle": "Most people don't fail at English..."
-        }
-    },
     "pricingPage": {
         "hero": {
             "title": "Choisissez votre chemin",
@@ -533,6 +527,189 @@
                 "Real skill development"
             ],
             "anchor": "AI shows the gap. Tutors close it."
+        }
+    },
+    "methodPage": {
+        "hero": {
+            "title": "Nous formons des locuteurs anglais confiants - pas seulement de bons élèves",
+            "subtitle": "Englivo aide les enfants à parler clairement, naturellement et avec confiance grâce à de vraies conversations, un coaching de soutien et une pratique intelligente - sans apprentissage par cœur ni peur des erreurs.",
+            "ctaPrimary": "Démarrer l'essai gratuit",
+            "ctaSecondary": "Voir comment ça marche"
+        },
+        "problem": {
+            "title": "Pourquoi les enfants ont du mal à parler - même quand ils \"connaissent\" l'anglais",
+            "copy": "Beaucoup d'enfants comprennent la grammaire et le vocabulaire mais hésitent encore quand ils parlent. Ils réfléchissent trop, s'inquiètent des erreurs et perdent confiance dans les vraies conversations.",
+            "listTitle": "L'apprentissage traditionnel se concentre trop sur :",
+            "items": [
+                {
+                    "title": "Règles",
+                    "desc": "plutôt que la communication réelle"
+                },
+                {
+                    "title": "Tests",
+                    "desc": "plutôt que la parole"
+                },
+                {
+                    "title": "Corrections",
+                    "desc": "plutôt que la confiance"
+                }
+            ],
+            "conclusion": "C'est pourquoi parler est stressant - pas naturel."
+        },
+        "solution": {
+            "title": "La méthode Englivo : Apprendre en parlant",
+            "cards": [
+                {
+                    "title": "Parler d'abord",
+                    "content": "Les enfants pratiquent l'anglais à travers de vraies conversations guidées - le moyen le plus rapide de développer la fluidité."
+                },
+                {
+                    "title": "Confiance d'abord",
+                    "content": "Nous nous concentrons sur le flux, la clarté et la confiance - pas seulement sur la correction des erreurs."
+                },
+                {
+                    "title": "Anglais du monde réel",
+                    "content": "Les élèves pratiquent des conversations qu'ils utiliseront réellement à l'école, dans la vie sociale et dans le monde réel."
+                }
+            ]
+        },
+        "howItWorks": {
+            "title": "Une approche équilibrée : IA + Guidance humaine",
+            "cards": [
+                {
+                    "title": "Pratique en direct",
+                    "content": "Des sessions d'expression orale sûres et interactives qui renforcent la confiance."
+                },
+                {
+                    "title": "Pratique intelligente (Tuteur IA)",
+                    "content": "Une pratique douce et adaptative qui écoute et répond en temps réel."
+                },
+                {
+                    "title": "Tuteurs humains",
+                    "content": "Conseils d'experts, structure et coaching personnalisé en cas de besoin."
+                }
+            ]
+        },
+        "benefits": {
+            "title": "Ce que votre enfant gagne",
+            "items": [
+                {
+                    "title": "Plus grande confiance",
+                    "icon": "trophy"
+                },
+                {
+                    "title": "Communication plus claire",
+                    "icon": "speech"
+                },
+                {
+                    "title": "Fluidité naturelle",
+                    "icon": "lightning"
+                },
+                {
+                    "title": "Préparation à la vie réelle",
+                    "icon": "globe"
+                }
+            ],
+            "quote": "“Des discussions en classe aux présentations, entretiens et conversations quotidiennes - votre enfant sera prêt.”"
+        },
+        "differentiation": {
+            "title": "Pourquoi Englivo est différent",
+            "comparison": {
+                "others": "La plupart des plateformes entraînent la mémoire.",
+                "us": "Englivo entraîne la confiance, le flux et la communication réelle."
+            },
+            "shift": {
+                "from": "Au lieu de \"étudier plus\", nous aidons les enfants à se sentir :",
+                "to": "“Je peux parler anglais - maintenant.”"
+            }
+        },
+        "finalCta": {
+            "headline": "Commencez le voyage de fluidité de votre enfant aujourd'hui",
+            "ctaPrimary": "Démarrer l'essai gratuit",
+            "ctaSecondary": "Réserver une démo"
+        }
+    },
+    "fluencyGuide": {
+        "hero": {
+            "title": "Guide de Fluidité Englivo",
+            "subtitle": "De Traduire → Penser → Parler",
+            "description": "Votre carte de A2 → C1 sans surcharge grammaticale."
+        },
+        "diagnosis": {
+            "title": "Où Êtes-Vous Bloqué ?",
+            "cards": [
+                {
+                    "title": "Boucle de Traduction",
+                    "desc": "Vous construisez d'abord vos phrases dans votre langue maternelle, ce qui cause des hésitations.",
+                    "linkText": "Lire le guide"
+                },
+                {
+                    "title": "Écart B1→B2",
+                    "desc": "Vous pouvez parler, mais les pauses et l'effort demeurent. Le \"Plateau Intermédiaire\".",
+                    "linkText": "Lire le guide"
+                },
+                {
+                    "title": "Sonner Naturel",
+                    "desc": "Vous voulez des expressions réelles et de la fluidité, pas un anglais rigide de manuel.",
+                    "linkText": "Lire le guide"
+                }
+            ]
+        },
+        "process": {
+            "title": "La Fluidité est un Traitement, Pas du Vocabulaire",
+            "points": [
+                "Contrôle des pauses (Où vous vous arrêtez compte)",
+                "Stabilité du rythme (Variation de vitesse)",
+                "Blocs automatiques (Pas mot à mot)",
+                "Flux d'idées (Connecter les pensées)"
+            ],
+            "links": {
+                "b2Meaning": "Ce que B2 Signifie Vraiment",
+                "pauses": "Les Pauses Révèlent Votre Niveau"
+            }
+        },
+        "method": {
+            "title": "La Méthode Englivo",
+            "steps": [
+                {
+                    "number": "1",
+                    "title": "Couche Réflexe",
+                    "desc": "Entraînez votre cerveau à répondre instantanément sans traduction.",
+                    "cta": "Essayer le Tuteur IA"
+                },
+                {
+                    "number": "2",
+                    "title": "Couche Structure",
+                    "desc": "Pratiquez de vraies conversations avec des pairs et des mentors.",
+                    "cta": "Pratique en Direct"
+                },
+                {
+                    "number": "3",
+                    "title": "Couche Nuance",
+                    "desc": "Maîtrisez les mots de remplissage, le ton et la subtilité culturelle.",
+                    "cta": "Lire le Guide"
+                }
+            ]
+        },
+        "startPoints": {
+            "title": "Points de Départ",
+            "diagnosis": {
+                "label": "Diagnostic",
+                "text": "Si vous hésitez avant chaque phrase..."
+            },
+            "growth": {
+                "label": "Croissance",
+                "text": "Si vous vous sentez bloqué à \"Intermédiaire\"..."
+            },
+            "career": {
+                "label": "Carrière",
+                "text": "Si vous avez besoin de l'anglais pour le travail..."
+            }
+        },
+        "finalCta": {
+            "headline": "Prêt à rompre le silence ?",
+            "primary": "Essayer le Tuteur IA",
+            "secondary": "Pratique en Direct"
         }
     }
 }

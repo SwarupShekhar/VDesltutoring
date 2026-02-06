@@ -44,7 +44,7 @@ export function SignalSystemVisual({ dict }: SignalSystemVisualProps) {
         <section className="w-full py-28 bg-background relative border-t border-white/5 overflow-hidden">
             {/* 4. Depth: Ambient Glow & Noise */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-electric/5 rounded-full blur-[100px] pointer-events-none opacity-30" />
-            <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] animate-grain pointer-events-none mix-blend-overlay" />
+            {/* Removed missing noise texture to prevent 404/locale errors */}
 
             <div className="max-w-6xl mx-auto px-6 relative z-10">
 

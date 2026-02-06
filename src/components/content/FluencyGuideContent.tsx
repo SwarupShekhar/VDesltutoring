@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useUser } from '@clerk/nextjs';
 import { ArrowRight, Brain, Clock, Mic, Layers, MessageSquare, Zap, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -18,7 +19,13 @@ const item = {
 };
 
 export function FluencyGuideContent({ locale }: { locale: string }) {
+    const { user } = useUser();
     const blogPrefix = `/${locale || 'en'}/blog`; // Use locale or default
+    const currentLocale = locale || 'en';
+
+    // Secure Destinations
+    const aiTutorHref = user ? "/ai-tutor" : `/${currentLocale}/sign-up`;
+    const livePracticeHref = user ? `/${currentLocale}/live-practice` : `/${currentLocale}/sign-up`;
 
     return (
         <div className="min-h-screen bg-transparent pt-32 pb-20">
@@ -147,7 +154,7 @@ export function FluencyGuideContent({ locale }: { locale: string }) {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 dark:bg-slate-800 text-2xl font-serif mb-6">1</div>
                                 <h3 className="text-xl font-bold mb-2">Reflex Layer</h3>
                                 <p className="text-sm text-muted-foreground mb-6">Train your brain to respond instantly without translation.</p>
-                                <Link href="/ai-tutor">
+                                <Link href={aiTutorHref}>
                                     <span className="inline-block px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-full shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-colors">
                                         Try AI Tutor
                                     </span>
@@ -162,7 +169,7 @@ export function FluencyGuideContent({ locale }: { locale: string }) {
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 dark:bg-slate-800 text-2xl font-serif mb-6">2</div>
                                 <h3 className="text-xl font-bold mb-2">Structure Layer</h3>
                                 <p className="text-sm text-muted-foreground mb-6">Practice real conversations with peers and mentors.</p>
-                                <Link href={`/${locale || 'en'}/live-practice`}>
+                                <Link href={livePracticeHref}>
                                     <span className="inline-block px-4 py-2 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-sm font-medium rounded-full hover:border-indigo-400 transition-colors">
                                         Live Practice
                                     </span>
@@ -232,12 +239,12 @@ export function FluencyGuideContent({ locale }: { locale: string }) {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                        <Link href="/ai-tutor">
+                        <Link href={aiTutorHref}>
                             <button className="px-8 py-4 bg-indigo-600 text-white rounded-full font-bold text-lg shadow-xl shadow-indigo-600/20 hover:scale-105 transition-transform flex items-center">
                                 <Zap size={20} className="mr-2" /> Try AI Tutor
                             </button>
                         </Link>
-                        <Link href={`/${locale || 'en'}/live-practice`}>
+                        <Link href={livePracticeHref}>
                             <button className="px-8 py-4 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 rounded-full font-medium text-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center">
                                 <Mic size={20} className="mr-2" /> Live Practice
                             </button>

@@ -37,15 +37,19 @@ const dmSerif = DM_Serif_Display({
   display: "swap",
 });
 
+export const viewport = {
+  themeColor: '#6366f1',
+}
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://englivo.com"),
   title: {
-    default: "Englivo — English Fluency for Professionals",
+    default: "Englivo - English Fluency for Professionals",
     template: "%s | Englivo",
   },
   description: "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching for professionals.",
   manifest: '/manifest.json',
-  themeColor: '#6366f1',
+  // themeColor moved to viewport export
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -61,7 +65,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Englivo — English Fluency for Professionals",
+    title: "Englivo - English Fluency for Professionals",
     description: "AI-powered English fluency training for professionals. Stop translating. Start speaking naturally.",
     url: "https://englivo.com",
     siteName: "Englivo",
@@ -77,7 +81,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Englivo — English Fluency for Professionals",
+    title: "Englivo - English Fluency for Professionals",
     description: "Stop translating in your head. Build real English fluency with AI-powered speaking practice.",
     images: ["https://englivo.com/og-image.png"],
   },

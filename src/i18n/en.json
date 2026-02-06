@@ -66,10 +66,10 @@
     },
     "microHeadlines": {
         "title": "From Knowing English → Thinking in English",
-        "subtitle": "A clear path from translation, to reflex, to confident professional speaking — measured with CEFR signals, not grammar tests.",
+        "subtitle": "A clear path from translation, to reflex, to confident professional speaking - measured with CEFR signals, not grammar tests.",
         "card1": {
             "title": "You Don’t Need More Grammar",
-            "desc": "You already “know” English. The gap is speed — your brain is translating instead of responding.",
+            "desc": "You already “know” English. The gap is speed - your brain is translating instead of responding.",
             "link": "Why this happens"
         },
         "card2": {
@@ -91,54 +91,102 @@
     },
     "methodPage": {
         "hero": {
-            "title": "The Fluency Engine™",
-            "subtitle": "“Most people don’t fail at English.<br/>They fail at speaking under pressure.”"
+            "title": "We Build Confident English Speakers - Not Just Good Students",
+            "subtitle": "Englivo helps children speak clearly, naturally, and confidently through real conversations, supportive coaching, and smart practice - not rote learning or fear of mistakes.",
+            "ctaPrimary": "Start Free Trial",
+            "ctaSecondary": "See How It Works"
         },
-        "section1": {
-            "label": "The Hidden Problem",
-            "title": "Cognitive Overload",
-            "content": "Most learners believe their problem is Grammar, Vocabulary, or Accent. But when they speak in real life, something else happens: Their brain Hesitates, Translates, Freezes, and Loses flow. They know what to say. They just can’t say it fast enough. Traditional courses respond by adding more grammar, more rules, and more words. This increases mental load - and makes speaking even harder. Fluency doesn’t break because of ignorance. It breaks because of cognitive overload under pressure."
+        "problem": {
+            "title": "Why Kids Struggle to Speak - Even When They “Know” English",
+            "copy": "Many children understand grammar and vocabulary but still hesitate when they speak. They overthink, worry about mistakes, and lose confidence in real conversations.",
+            "listTitle": "Traditional learning focuses too much on:",
+            "items": [
+                {
+                    "title": "Rules",
+                    "desc": "over real communication"
+                },
+                {
+                    "title": "Tests",
+                    "desc": "over speaking"
+                },
+                {
+                    "title": "Corrections",
+                    "desc": "over confidence"
+                }
+            ],
+            "conclusion": "That’s why speaking feels stressful - not natural."
         },
-        "section2": {
-            "label": "Speaking Is Not Knowledge",
-            "title": "The Reflex Gap",
-            "content": "Reading and speaking use different parts of the brain. You can know English and still not be able to speak English. Because: Speaking is not memory. Speaking is a reflex. Reflexes are trained through Timing, Repetition, Feedback, and Emotional safety. Not through Explanations, Rules, or Textbooks. That’s why people who study for years still freeze when a real human speaks to them."
-        },
-        "section3": {
-            "label": "Introducing the Fluency Engine™",
-            "title": "Rewiring, Not Correcting",
-            "content": "The Fluency Engine™ is not a course. It is a speaking system that retrains how your brain produces English. It listens to your pauses, your filler words, your timing, your rhythm, and your hesitation patterns. And adjusts the conversation in real time. You are not corrected. You are rewired."
-        },
-        "section4": {
-            "label": "Our Four Core Principles",
-            "title": "Principles of Flow",
+        "solution": {
+            "title": "The Englivo Way: Learn by Speaking",
             "cards": [
                 {
-                    "title": "1) Live Reflex Training",
-                    "content": "You don’t become fluent by reading. You become fluent by Speaking, Hearing yourself, and Adjusting in the moment. Your Fluency Engine listens as you speak and responds instantly. This trains Speed, Flow, and Automaticity. Not memory. It builds the speaking reflex."
+                    "title": "Speak First",
+                    "content": "Kids practice English through real, guided conversations - the fastest way to build fluency."
                 },
                 {
-                    "title": "2) Pattern-Based Coaching",
-                    "content": "Other platforms say: “You made a grammar mistake.” We say: “You paused here,” “You restarted here,” “You hesitated before this word.” These are habits, not errors. We don’t fix English. We fix how you speak English. This is why your progress is permanent."
+                    "title": "Confidence First",
+                    "content": "We focus on flow, clarity, and confidence - not just correcting mistakes."
                 },
                 {
-                    "title": "3) Emotional Safety",
-                    "content": "People don’t freeze because they don’t know English. They freeze because they fear Sounding stupid, Being judged, or Being corrected. Your tutor never says Wrong, Incorrect, or Bad. It says: “Try this instead,” “That was good, let’s smooth it,” “Keep going.” Safety creates fluency."
-                },
-                {
-                    "title": "4) Situational Fluency",
-                    "content": "You don’t want “English.” You want Interviews, Meetings, Travel, Small talk, and Presentations. Your tutor practices these exact situations. So your brain learns: “I can speak in THIS moment.” That’s how confidence transfers to real life."
+                    "title": "Real-World English",
+                    "content": "Students practice conversations they’ll actually use in school, social life, and the real world."
                 }
             ]
         },
-        "section5": {
-            "label": "Why This Is Different From Traditional Audio-Based Methods",
-            "title": "Memory vs. Identity",
-            "content": "Traditional audio-based programs train memory. We train Hesitation, Timing, Flow, Confidence, and Speaking identity. They ask: “Can you remember this phrase?” We ask: “Can you speak without freezing?” That is what real fluency is."
+        "howItWorks": {
+            "title": "A Balanced Approach: AI + Human Guidance",
+            "cards": [
+                {
+                    "title": "Live Practice",
+                    "content": "Safe, interactive speaking sessions that build confidence."
+                },
+                {
+                    "title": "Smart Practice (AI Tutor)",
+                    "content": "Gentle, adaptive practice that listens and responds in real time."
+                },
+                {
+                    "title": "Human Tutors",
+                    "content": "Expert guidance, structure, and personalized coaching when needed."
+                }
+            ]
         },
-        "final": {
-            "label": "The Shift",
-            "content": "Most platforms make you feel: “I need to study more.” The Fluency Engine makes you feel: “I can speak right now.” That is the difference."
+        "benefits": {
+            "title": "What Your Child Gains",
+            "items": [
+                {
+                    "title": "Greater Confidence",
+                    "icon": "trophy"
+                },
+                {
+                    "title": "Clearer Communication",
+                    "icon": "speech"
+                },
+                {
+                    "title": "Natural Fluency",
+                    "icon": "lightning"
+                },
+                {
+                    "title": "Real-Life Readiness",
+                    "icon": "globe"
+                }
+            ],
+            "quote": "“From classroom discussions to presentations, interviews, and everyday conversations - your child will be ready.”"
+        },
+        "differentiation": {
+            "title": "Why Englivo Is Different",
+            "comparison": {
+                "others": "Most platforms train memory.",
+                "us": "Englivo trains confidence, flow, and real communication."
+            },
+            "shift": {
+                "from": "Instead of “study more,” we help children feel:",
+                "to": "“I can speak English - right now.”"
+            }
+        },
+        "finalCta": {
+            "headline": "Start Your Child’s Fluency Journey Today",
+            "ctaPrimary": "Start Free Trial",
+            "ctaSecondary": "Book a Demo"
         }
     },
     "howItWorksPage": {

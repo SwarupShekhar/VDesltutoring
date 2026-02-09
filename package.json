@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "type-check": "tsc --noEmit",
     "worker": "ts-node -r tsconfig-paths/register -O '{\"module\":\"commonjs\"}' scripts/live-session-worker.ts",
     "postinstall": "prisma generate"
   },

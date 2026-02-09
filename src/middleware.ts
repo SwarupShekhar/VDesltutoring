@@ -4,6 +4,13 @@ import { NextResponse } from 'next/server';
 const locales = ["en", "de", "fr", "es", "vi", "ja"];
 const defaultLocale = "en";
 
+// Helper function to add SEO headers to responses
+// This is CRITICAL: next.config.ts headers are NOT applied when middleware handles requests
+function addSeoHeaders(response: NextResponse): NextResponse {
+    response.headers.set('X-Robots-Tag', 'index, follow');
+    return response;
+}
+
 // Define public routes (accessible without login)
 // English routes are at root level (no /en prefix)
 // Other languages use locale prefix (/de, /fr, /es, /vi, /ja)
@@ -65,7 +72,7 @@ export default clerkMiddleware(async (auth, req) => {
         if (pathname === '/' && !isBot) {
             // regular flow continues below
         } else if (pathname !== '/') {
-            return NextResponse.next();
+            return addSeoHeaders(NextResponse.next());
         }
     }
 
@@ -96,7 +103,7 @@ export default clerkMiddleware(async (auth, req) => {
         const pathWithoutLocale = pathname.replace(`/${defaultLocale}`, '') || '/';
         const newUrl = new URL(pathWithoutLocale, req.url);
         newUrl.search = req.nextUrl.search;
-        return NextResponse.redirect(newUrl, { status: 308 });
+        return addSeoHeaders(NextResponse.redirect(newUrl, { status: 308 }));
     }
 
     // If URL has no locale prefix and is not a non-default locale, rewrite to /en internally
@@ -105,7 +112,7 @@ export default clerkMiddleware(async (auth, req) => {
         const cleanPath = pathname === '/' ? '' : pathname;
         const rewriteUrl = new URL(`/${defaultLocale}${cleanPath}`, req.url);
         rewriteUrl.search = req.nextUrl.search;
-        return NextResponse.rewrite(rewriteUrl);
+        return addSeoHeaders(NextResponse.rewrite(rewriteUrl));
     }
 
 
@@ -115,7 +122,7 @@ export default clerkMiddleware(async (auth, req) => {
     ) || defaultLocale;
 
     if (isPublicRoute(req)) {
-        return NextResponse.next();
+        return addSeoHeaders(NextResponse.next());
     } else {
         // Protect private routes
         const { userId, redirectToSignIn } = await auth();

@@ -59,22 +59,40 @@ export async function POST(req: Request) {
       .filter(Boolean)
       .join(' ') || 'User';
 
-    // Create user in database with clerkId AND default student profile
-    await prisma.users.create({
-      data: {
-        clerkId: validatedData.id,
-        email: validatedData.email_addresses[0].email_address,
-        full_name: fullName,
-        profile_image_url: validatedData.image_url,
-        role: 'LEARNER',
-        student_profiles: {
-          create: {
-            credits: 10, // Default free credits
-            learning_goals: "Getting started",
-          }
-        }
-      },
+    // Check if user already exists by email (to prevent unique constraint error)
+    const existingUser = await prisma.users.findUnique({
+      where: { email: validatedData.email_addresses[0].email_address },
     });
+
+    if (existingUser) {
+      // Update existing user with new Clerk ID
+      await prisma.users.update({
+        where: { id: existingUser.id },
+        data: {
+          clerkId: validatedData.id,
+          full_name: fullName,
+          profile_image_url: validatedData.image_url,
+          // Don't reset role or credits
+        },
+      });
+    } else {
+      // Create new user
+      await prisma.users.create({
+        data: {
+          clerkId: validatedData.id,
+          email: validatedData.email_addresses[0].email_address,
+          full_name: fullName,
+          profile_image_url: validatedData.image_url,
+          role: 'LEARNER',
+          student_profiles: {
+            create: {
+              credits: 10, // Default free credits
+              learning_goals: "Getting started",
+            }
+          }
+        },
+      });
+    }
   }
 
   if (eventType === 'user.updated') {

@@ -28,32 +28,64 @@ export async function GET() {
       },
     })
 
-    // 3. Auto-registration if user doesn't exist locally
+    // 3. Auto-registration / Account Linking logic
     if (!dbUser) {
-      console.log('Auto-registering user:', clerkUser.id)
-      dbUser = await prisma.users.create({
-        data: {
-          clerkId: clerkUser.id,
-          email: clerkUser.emailAddresses[0]?.emailAddress || '',
-          full_name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'New User',
-          role: IS_OWNER_ADMIN ? 'ADMIN' : 'LEARNER',
-          student_profiles: {
-            create: {
-              credits: IS_OWNER_ADMIN ? 9999 : 0
-            }
-          }
-        },
-        select: {
-          id: true,
-          role: true,
-          is_active: true,
-          student_profiles: {
-            select: {
-              credits: true,
+      const userEmail = clerkUser.emailAddresses[0]?.emailAddress || '';
+      console.log('User not found by Clerk ID:', clerkUser.id, 'Checking by email:', userEmail);
+
+      // Check if user exists by email (Pre-existing account with old/missing Clerk ID)
+      const existingUserByEmail = await prisma.users.findUnique({
+        where: { email: userEmail },
+      });
+
+      if (existingUserByEmail) {
+        console.log('Found existing user by email. Linking new Clerk ID...');
+        dbUser = await prisma.users.update({
+          where: { id: existingUserByEmail.id },
+          data: {
+            clerkId: clerkUser.id,
+            // Update metadata if needed
+            full_name: existingUserByEmail.full_name || `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+            profile_image_url: clerkUser.imageUrl || existingUserByEmail.profile_image_url,
+          },
+          select: {
+            id: true,
+            role: true,
+            is_active: true,
+            student_profiles: {
+              select: {
+                credits: true,
+              },
             },
           },
-        }
-      })
+        });
+      } else {
+        // Truly new user: Create
+        console.log('Auto-registering new user:', clerkUser.id);
+        dbUser = await prisma.users.create({
+          data: {
+            clerkId: clerkUser.id,
+            email: userEmail,
+            full_name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'New User',
+            role: IS_OWNER_ADMIN ? 'ADMIN' : 'LEARNER',
+            student_profiles: {
+              create: {
+                credits: IS_OWNER_ADMIN ? 9999 : 0
+              }
+            }
+          },
+          select: {
+            id: true,
+            role: true,
+            is_active: true,
+            student_profiles: {
+              select: {
+                credits: true,
+              },
+            },
+          }
+        });
+      }
     }
 
     // 4. Double-check Admin status for owner

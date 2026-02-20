@@ -5,6 +5,7 @@ import "@livekit/components-styles"
 import { useEffect, useState, useRef } from "react"
 import { useParams } from "next/navigation"
 import { Track } from "livekit-client"
+import { createClient, LiveTranscriptionEvents } from "@deepgram/sdk"
 
 export default function StudentSessionPage() {
     const [token, setToken] = useState<string | null>(null)
@@ -53,13 +54,13 @@ export default function StudentSessionPage() {
                 video
                 className="flex-1 relative"
             >
-                <SessionContent />
+                <SessionContent sessionId={params.id as string} />
             </LiveKitRoom>
         </div>
     )
 }
 
-function SessionContent() {
+function SessionContent({ sessionId }: { sessionId: string }) {
     const tracks = useTracks([
         { source: Track.Source.Camera, withPlaceholder: false },
         { source: Track.Source.ScreenShare, withPlaceholder: false },
@@ -68,6 +69,7 @@ function SessionContent() {
     // Access Room Context for Data Channel
     const room = useRoomContext();
     const mediaRecorder = useRef<MediaRecorder | null>(null);
+    const dgConnection = useRef<any>(null);
 
     // Deepgram & Analysis Logic
     useEffect(() => {
@@ -76,64 +78,81 @@ function SessionContent() {
 
         const startDeepgram = async () => {
             try {
+                // Fetch Temp Streaming Token
+                const tokenRes = await fetch("/api/deepgram/token");
+                if (!tokenRes.ok) throw new Error("Could not get Deepgram token");
+                const { token } = await tokenRes.json();
+
+                const deepgram = createClient(token);
+
+                // Open WebSocket connection
+                const connection = deepgram.listen.live({
+                    model: "nova-3",
+                    language: "en-US",
+                    smart_format: true,
+                    interim_results: true,
+                    utterance_end_ms: 1000
+                });
+                
+                dgConnection.current = connection;
+
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                const recorder = new MediaRecorder(stream);
+                const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
                 mediaRecorder.current = recorder;
 
-                recorder.ondataavailable = async (e) => {
-                    if (e.data.size > 0) {
-                        const reader = new FileReader();
-                        reader.onloadend = async () => {
-                            const base64 = (reader.result as string)?.split(",")[1];
-                            if (!base64) return;
+                connection.on(LiveTranscriptionEvents.Open, () => {
+                    recorder.ondataavailable = async (e) => {
+                        if (e.data.size > 0 && connection.getReadyState() === 1) {
+                            connection.send(e.data);
+                        }
+                    };
+                    // Record in 250ms chunks for smooth real-time streaming
+                    recorder.start(250);
+                });
 
-                            // Send to Deepgram
-                            try {
-                                const dgResponse = await fetch("/api/deepgram", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({
-                                        audio: base64,
-                                        mimeType: recorder.mimeType
-                                    })
-                                });
-
-                                if (!dgResponse.ok) return;
-
-                                const dg = await dgResponse.json();
-                                const transcript = dg.transcript;
-
-                                if (transcript && transcript.length > 1) {
-                                    // Send to Analysis
-                                    fetch("/api/fluency/analyze", {
-                                        method: "POST",
-                                        body: JSON.stringify({ transcript, duration: 1 }) // 1s chunks
-                                    })
-                                        .then(r => r.json())
-                                        .then(data => {
-                                            if (data.success && data.analysis) {
-                                                // Broadcast to Tutor via LiveKit Data Channel
-                                                const payload = new TextEncoder().encode(JSON.stringify(data.analysis));
-                                                room.localParticipant.publishData(payload, { reliable: true });
-                                            }
-                                        })
-                                        .catch(console.error);
-
-                                    // Optional: Send to Gemini for potential context
-                                    fetch("/api/gemini", {
-                                        method: "POST",
-                                        body: JSON.stringify({ transcript })
-                                    }).catch(console.error);
+                connection.on(LiveTranscriptionEvents.Transcript, (data) => {
+                    const transcript = data.channel.alternatives[0].transcript;
+                    if (transcript && data.is_final) {
+                        const duration = data.duration || 1;
+                        
+                        // Send to Fluency Analysis and output to LiveKit Data Channel
+                        fetch("/api/fluency/analyze", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ transcript, duration })
+                        })
+                            .then(r => r.json())
+                            .then(res => {
+                                if (res.success && res.analysis) {
+                                    const payload = new TextEncoder().encode(JSON.stringify(res.analysis));
+                                    room.localParticipant.publishData(payload, { reliable: true });
                                 }
-                            } catch (err) {
-                                console.error("Transcription pipeline error", err);
-                            }
-                        };
-                        reader.readAsDataURL(e.data);
-                    }
-                };
+                            })
+                            .catch(console.error);
+                        
+                        // Send text/metrics to our Backend DB replacing the 24/7 worker
+                        fetch("/api/live-practice/metrics", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                sessionId: sessionId,
+                                transcript: transcript,
+                                wordData: data.channel.alternatives[0].words || [],
+                                duration: duration
+                            })
+                        }).catch(console.error);
 
-                recorder.start(1000); // 1-second chunks
+                        // Optional: Send to Gemini for potential context
+                        fetch("/api/gemini", {
+                            method: "POST",
+                            body: JSON.stringify({ transcript })
+                        }).catch(console.error);
+                    }
+                });
+
+                connection.on(LiveTranscriptionEvents.Error, (err) => {
+                    console.error("Deepgram WS Error:", err);
+                });
             } catch (err) {
                 console.error("Failed to start microphone for transcription", err);
             }
@@ -145,8 +164,11 @@ function SessionContent() {
             if (mediaRecorder.current && mediaRecorder.current.state !== "inactive") {
                 mediaRecorder.current.stop();
             }
+            if (dgConnection.current) {
+                dgConnection.current.requestClose();
+            }
         };
-    }, [room]); // Depend on 'room' to ensure it's available
+    }, [room, sessionId]); // Depend on 'room' and 'sessionId'
 
     return (
         <div className="flex flex-col h-full">

@@ -80,15 +80,7 @@ export function ChallengePlanModal({ locale, isLoggedIn }: ChallengePlanModalPro
     };
   }, [openModalOnce]);
 
-  const close = () => {
-    setIsOpen(false);
-    setIsMinimized(false);
-  };
-
-  const handleSkip = () => {
-    setIsOpen(false);
-    setIsMinimized(true);
-    trackEvent('skip_clicked');
+  const persistBlobVisible = () => {
     try {
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(BLOB_STORAGE_KEY, 'true');
@@ -96,6 +88,19 @@ export function ChallengePlanModal({ locale, isLoggedIn }: ChallengePlanModalPro
     } catch {
       // ignore storage failures
     }
+  };
+
+  const close = () => {
+    setIsOpen(false);
+    setIsMinimized(true);
+    persistBlobVisible();
+  };
+
+  const handleSkip = () => {
+    setIsOpen(false);
+    setIsMinimized(true);
+    trackEvent('skip_clicked');
+    persistBlobVisible();
   };
 
   const handleScenarioClick = (scenario: SpeakingScenario) => {

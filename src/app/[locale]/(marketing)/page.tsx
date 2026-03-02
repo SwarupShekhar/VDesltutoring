@@ -42,6 +42,7 @@ import ColourfulText from "@/components/ui/colourful-text";
 import { PerspectiveButton } from "@/components/ui/PerspectiveButton";
 const AIVsCoachingSection = dynamic(() => import('@/components/AIVsCoachingSection').then(mod => mod.AIVsCoachingSection));
 const SignalSystemVisual = dynamic(() => import('@/components/SignalSystemVisual').then(mod => mod.SignalSystemVisual));
+const ChallengePlanModal = dynamic(() => import('@/components/home/ChallengePlanModal').then(mod => mod.ChallengePlanModal));
 
 
 const tutors = [
@@ -94,10 +95,11 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
       {/* AI Tutor Floating Button */}
       <AITutorButton isLoggedIn={isLoggedIn} locale={locale} />
+      <ChallengePlanModal locale={locale} isLoggedIn={isLoggedIn} />
 
       <main className="relative z-10">
         {/* 1. HERO SECTION */}
-        <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden">
+        <section id="hero" className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden">
           {/* Abstract background glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-electric/10 rounded-full blur-[120px] pointer-events-none opacity-50" />
 

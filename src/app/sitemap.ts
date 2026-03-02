@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 
-import { prisma } from '@/lib/prisma'; // Correct DB import
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = "https://englivo.com";
@@ -57,6 +58,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Dynamic Blog Routes
     try {
+        // Avoid hard build-time failure if DB env is missing in Vercel build
+        if (!process.env.DATABASE_URL) {
+            return routes;
+        }
+
+        // Lazy import so a missing/invalid DB config does not crash module load
+        const { prisma } = await import('@/lib/prisma');
+
         const posts = await prisma.blog_posts.findMany({
             where: { status: 'published' },
             select: { slug: true, updatedAt: true }

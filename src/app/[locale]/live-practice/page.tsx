@@ -350,7 +350,7 @@ export default function LivePracticePage() {
 
         {error && (
           <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 rounded-xl flex items-center gap-3 text-left shadow-sm">
-            <AlertCircle className="h-5 w-5 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 shrink-0" />
             <p className="text-sm font-medium">{error}</p>
           </div>
         )}
@@ -575,7 +575,7 @@ export default function LivePracticePage() {
               {/* Partner Profile */}
               <div className="flex flex-col items-center gap-4">
                 <div className="relative">
-                  <div className="h-32 w-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white dark:ring-slate-800">
+                  <div className="h-32 w-32 bg-linear-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl ring-4 ring-white dark:ring-slate-800">
                     <span className="text-5xl">👤</span>
                   </div>
                   <div className="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg">
@@ -593,7 +593,7 @@ export default function LivePracticePage() {
               </div>
 
               {/* Connection Line */}
-              <div className="w-px h-16 bg-gradient-to-b from-blue-200 to-transparent dark:from-blue-800"></div>
+              <div className="w-px h-16 bg-linear-to-b from-blue-200 to-transparent dark:from-blue-800"></div>
 
               {/* User Profile (Smaller) */}
               <div className="flex items-center gap-3 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full opacity-60">

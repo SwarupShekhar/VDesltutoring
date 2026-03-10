@@ -1,58 +1,146 @@
-import Link from 'next/link';
-import type { Metadata } from 'next';
-import { Button } from '@/components/ui/Button';
-import { ArrowRight } from 'lucide-react';
-import { getDictionary, type Locale } from '@/i18n/getDictionary';
-import { currentUser } from '@clerk/nextjs/server';
-import { TextGenerateEffect } from '@/components/ui/text-generate-effect';
-import dynamic from 'next/dynamic';
+import Link from "next/link";
+import type { Metadata } from "next";
+import { Button } from "@/components/ui/Button";
+import { ArrowRight } from "lucide-react";
+import { getDictionary, type Locale } from "@/i18n/getDictionary";
+import { currentUser } from "@clerk/nextjs/server";
+import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
+import dynamic from "next/dynamic";
 
-import { constructCanonicalMetadata } from '@/lib/seo';
+import { constructCanonicalMetadata } from "@/lib/seo";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}): Promise<Metadata> {
   const { locale } = await params;
-  const seo = constructCanonicalMetadata('/', locale);
+  const seo = constructCanonicalMetadata("/", locale);
 
   return {
     title: "Englivo — English Fluency for Professionals",
-    description: "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
-    ...seo
+    description:
+      "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
+    ...seo,
   };
 }
 
-const DynamicText = dynamic(() => import('@/components/ui/dynamic-text'));
-const FAQSection = dynamic(() => import('@/components/FAQSection').then(mod => mod.FAQSection));
-const SpeakingMomentsGrid = dynamic(() => import('@/components/SpeakingMomentsGrid').then(mod => mod.SpeakingMomentsGrid));
-const FloatingConversation = dynamic(() => import('@/components/FloatingConversation').then(mod => mod.FloatingConversation));
-const TutorCard = dynamic(() => import('@/components/TutorCard').then(mod => mod.TutorCard));
-const IntermediatePlateau = dynamic(() => import('@/components/IntermediatePlateau').then(mod => mod.IntermediatePlateau));
-const DailyRoutine = dynamic(() => import('@/components/DailyRoutine').then(mod => mod.DailyRoutine));
-const AITutorButton = dynamic(() => import('@/components/AITutorButton').then(mod => mod.AITutorButton));
-const FluencyMirror = dynamic(() => import('@/components/FluencyMirror').then(mod => mod.FluencyMirror));
-const SituationalGateway = dynamic(() => import('@/components/SituationalGateway').then(mod => mod.SituationalGateway));
-const FluencyReflexSection = dynamic(() => import('@/components/FluencyReflexSection').then(mod => mod.FluencyReflexSection));
-const TestimonialsCarousel = dynamic(() => import('@/components/TestimonialsCarousel').then(mod => mod.TestimonialsCarousel));
-const AudioTransformation = dynamic(() => import('@/components/AudioTransformation').then(mod => mod.AudioTransformation));
-const FluencyEngineShowcase = dynamic(() => import('@/components/FluencyEngineShowcase').then(mod => mod.FluencyEngineShowcase));
-const FluencyGlobe = dynamic(() => import('@/components/FluencyGlobe').then(mod => mod.FluencyGlobe));
-const LiveNowBanner = dynamic(() => import('@/components/LiveNowBanner').then(mod => mod.LiveNowBanner));
-const CEFRJourney = dynamic(() => import('@/components/home/CEFRJourney').then(mod => mod.CEFRJourney));
-const MicroHeadlines = dynamic(() => import('@/components/MicroHeadlines').then(mod => mod.MicroHeadlines));
+const DynamicText = dynamic(() => import("@/components/ui/dynamic-text"));
+const FAQSection = dynamic(() =>
+  import("@/components/FAQSection").then((mod) => mod.FAQSection),
+);
+const SpeakingMomentsGrid = dynamic(() =>
+  import("@/components/SpeakingMomentsGrid").then(
+    (mod) => mod.SpeakingMomentsGrid,
+  ),
+);
+const FloatingConversation = dynamic(() =>
+  import("@/components/FloatingConversation").then(
+    (mod) => mod.FloatingConversation,
+  ),
+);
+const TutorCard = dynamic(() =>
+  import("@/components/TutorCard").then((mod) => mod.TutorCard),
+);
+const IntermediatePlateau = dynamic(() =>
+  import("@/components/IntermediatePlateau").then(
+    (mod) => mod.IntermediatePlateau,
+  ),
+);
+const DailyRoutine = dynamic(() =>
+  import("@/components/DailyRoutine").then((mod) => mod.DailyRoutine),
+);
+const AITutorButton = dynamic(() =>
+  import("@/components/AITutorButton").then((mod) => mod.AITutorButton),
+);
+const FluencyMirror = dynamic(() =>
+  import("@/components/FluencyMirror").then((mod) => mod.FluencyMirror),
+);
+const SituationalGateway = dynamic(() =>
+  import("@/components/SituationalGateway").then(
+    (mod) => mod.SituationalGateway,
+  ),
+);
+const FluencyReflexSection = dynamic(() =>
+  import("@/components/FluencyReflexSection").then(
+    (mod) => mod.FluencyReflexSection,
+  ),
+);
+const TestimonialsCarousel = dynamic(() =>
+  import("@/components/TestimonialsCarousel").then(
+    (mod) => mod.TestimonialsCarousel,
+  ),
+);
+const AudioTransformation = dynamic(() =>
+  import("@/components/AudioTransformation").then(
+    (mod) => mod.AudioTransformation,
+  ),
+);
+const FluencyEngineShowcase = dynamic(() =>
+  import("@/components/FluencyEngineShowcase").then(
+    (mod) => mod.FluencyEngineShowcase,
+  ),
+);
+const FluencyGlobe = dynamic(() =>
+  import("@/components/FluencyGlobe").then((mod) => mod.FluencyGlobe),
+);
+const LiveNowBanner = dynamic(() =>
+  import("@/components/LiveNowBanner").then((mod) => mod.LiveNowBanner),
+);
+const CEFRJourney = dynamic(() =>
+  import("@/components/home/CEFRJourney").then((mod) => mod.CEFRJourney),
+);
+const MicroHeadlines = dynamic(() =>
+  import("@/components/MicroHeadlines").then((mod) => mod.MicroHeadlines),
+);
 import ColourfulText from "@/components/ui/colourful-text";
 import { PerspectiveButton } from "@/components/ui/PerspectiveButton";
-const AIVsCoachingSection = dynamic(() => import('@/components/AIVsCoachingSection').then(mod => mod.AIVsCoachingSection));
-const SignalSystemVisual = dynamic(() => import('@/components/SignalSystemVisual').then(mod => mod.SignalSystemVisual));
-const ChallengePlanModal = dynamic(() => import('@/components/home/ChallengePlanModal').then(mod => mod.ChallengePlanModal));
-
+const AIVsCoachingSection = dynamic(() =>
+  import("@/components/AIVsCoachingSection").then(
+    (mod) => mod.AIVsCoachingSection,
+  ),
+);
+const SignalSystemVisual = dynamic(() =>
+  import("@/components/SignalSystemVisual").then(
+    (mod) => mod.SignalSystemVisual,
+  ),
+);
+const ChallengePlanModal = dynamic(() =>
+  import("@/components/home/ChallengePlanModal").then(
+    (mod) => mod.ChallengePlanModal,
+  ),
+);
 
 const tutors = [
-  { name: "Sarah J.", specialty: "Business English", style: "Former HR Director. Helps you navigate interviews and presentations." },
-  { name: "David L.", specialty: "Conversation Fluency", style: "Casual, supportive chats that help you find your natural rhythm." },
-  { name: "Elena R.", specialty: "Academic Writing", style: "Precise and structured. Perfect for thesis defense or exam preparation." },
-  { name: "Michael C.", specialty: "Accent Reduction", style: "Phonetics expert. Helps you hear the sounds you are missing." },
+  {
+    name: "Sarah J.",
+    specialty: "Business English",
+    style:
+      "Former HR Director. Helps you navigate interviews and presentations.",
+  },
+  {
+    name: "David L.",
+    specialty: "Conversation Fluency",
+    style: "Casual, supportive chats that help you find your natural rhythm.",
+  },
+  {
+    name: "Elena R.",
+    specialty: "Academic Writing",
+    style:
+      "Precise and structured. Perfect for thesis defense or exam preparation.",
+  },
+  {
+    name: "Michael C.",
+    specialty: "Accent Reduction",
+    style: "Phonetics expert. Helps you hear the sounds you are missing.",
+  },
 ];
 
-export default async function Home({ params }: { params: Promise<{ locale: Locale }> }) {
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
   const { locale } = await params;
   const dict = await getDictionary(locale);
 
@@ -69,17 +157,17 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
   const t = dict;
 
   // Clean headline for Text Effect (remove HTML tags)
-  const headlineText = t.hero.headline.replace(/<[^>]*>/g, ' ');
+  const headlineText = t.hero.headline.replace(/<[^>]*>/g, " ");
 
   // FAQ Schema
   const faqJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
     mainEntity: t.faq.items.map((item: any) => ({
-      '@type': 'Question',
+      "@type": "Question",
       name: item.question,
       acceptedAnswer: {
-        '@type': 'Answer',
+        "@type": "Answer",
         text: item.answer,
       },
     })),
@@ -99,13 +187,14 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
       <main className="relative z-10">
         {/* 1. HERO SECTION */}
-        <section id="hero" className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden">
+        <section
+          id="hero"
+          className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 overflow-hidden"
+        >
           {/* Abstract background glow */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-electric/10 rounded-full blur-[120px] pointer-events-none opacity-50" />
 
-
           <div className="w-full max-w-7xl mx-auto text-center relative z-10 glass-card p-8 md:p-12 rounded-3xl bg-background/20 backdrop-blur-md border border-white/10 shadow-2xl">
-
             <div className="mb-4 flex justify-center">
               <DynamicText />
             </div>
@@ -123,7 +212,9 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
             {/* NEW: Colourful Text Lines (Single Line Layout) */}
             <div className="mb-8 font-medium text-foreground/90 flex flex-wrap justify-center gap-2 items-center text-xl md:text-2xl">
               <span>AI-powered practice.</span>
-              <span>Expert <ColourfulText text="human coaching" />.</span>
+              <span>
+                Expert <ColourfulText text="human coaching" />.
+              </span>
               <span>Real-world speaking confidence.</span>
             </div>
 
@@ -133,11 +224,27 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               {/* Logic: If Logged In -> Practice. If Logged Out -> Book Session (as requested) */}
-              <Link href={locale === 'en' ? '/sessions/book' : `/${locale}/sessions/book`}>
+              <Link
+                href={
+                  locale === "en"
+                    ? "/sessions/book"
+                    : `/${locale}/sessions/book`
+                }
+              >
                 <PerspectiveButton label="Book Session" />
               </Link>
-              <Link href={locale === 'en' ? '/fluency-guide' : `/${locale}/fluency-guide`}>
-                <Button variant="ghost" size="lg" className="rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/10 px-8 h-12 text-base">
+              <Link
+                href={
+                  locale === "en"
+                    ? "/fluency-guide"
+                    : `/${locale}/fluency-guide`
+                }
+              >
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/10 px-8 h-12 text-base"
+                >
                   Explore Fluency Guide →
                 </Button>
               </Link>
@@ -149,7 +256,11 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         <LiveNowBanner locale={locale} />
 
         {/* 1.3 MICRO-HEADLINES (Pillar + Problem/Solution) */}
-        <MicroHeadlines locale={locale} dict={t.microHeadlines} isLoggedIn={isLoggedIn} />
+        <MicroHeadlines
+          locale={locale}
+          dict={t.microHeadlines}
+          isLoggedIn={isLoggedIn}
+        />
 
         {/* 1.4 AI VS COACHING COMPARISON */}
         {/* @ts-ignore */}
@@ -170,12 +281,13 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         {/* 2.0 CEFR JOURNEY (Aspirational Prestige Ladder) */}
         <CEFRJourney dict={t.cefrJourney} locale={locale} />
 
-        <SituationalGateway dict={t.situationalGateway} isLoggedIn={isLoggedIn} />
+        <SituationalGateway
+          dict={t.situationalGateway}
+          isLoggedIn={isLoggedIn}
+        />
 
         {/* 2.75 FLUENCY GLOBE (Global Context) */}
         <FluencyGlobe dict={t.fluencyGlobe} />
-
-
 
         {/* 3. SPEAKING MOMENTS (Empathy Grid) */}
         <SpeakingMomentsGrid dict={t.speakingMoments} />
@@ -210,12 +322,13 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
           <div className="container mx-auto px-6 max-w-6xl">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div>
-                <h2 className="font-serif text-3xl md:text-4xl mb-4 text-foreground">{t.tutors.headline}</h2>
-                <p className="text-muted-foreground max-w-xl">{t.tutors.subtext}</p>
+                <h2 className="font-serif text-3xl md:text-4xl mb-4 text-foreground">
+                  {t.tutors.headline}
+                </h2>
+                <p className="text-muted-foreground max-w-xl">
+                  {t.tutors.subtext}
+                </p>
               </div>
-              <Link href={locale === 'en' ? '/tutors' : `/${locale}/tutors`} className="text-electric hover:text-electric/80 transition-colors flex items-center gap-2 text-sm font-medium tracking-wide uppercase">
-                {t.tutors.viewAll} <ArrowRight size={16} />
-              </Link>
             </div>
 
             {/* Simulated Bento Layout by varying sizes in Grid */}
@@ -237,43 +350,65 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
         </section>
 
         {/* 6. THE ROADMAP (Process) with Vertical Line */}
-        <section id="method" className="py-32 bg-background relative overflow-hidden">
-
+        <section
+          id="method"
+          className="py-32 bg-background relative overflow-hidden"
+        >
           <div className="container mx-auto px-6 max-w-4xl relative z-10">
             <div className="text-center mb-24">
-              <h2 className="font-serif text-3xl md:text-5xl mb-6">{t.roadmap.headline}</h2>
+              <h2 className="font-serif text-3xl md:text-5xl mb-6">
+                {t.roadmap.headline}
+              </h2>
             </div>
 
             <div className="relative">
               {/* The Path (Vertical Line) */}
-              <div className="absolute left-[30px] md:left-1/2 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-electric/30 to-transparent -translate-x-1/2">
+              <div className="absolute left-[30px] md:left-1/2 top-0 bottom-0 w-px bg-linear-to-b from-transparent via-electric/30 to-transparent -translate-x-1/2">
                 <div
-                  className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent via-electric to-transparent w-[2px] -translate-x-[0.5px] blur-[1px] animate-[pulse_3s_ease-in-out_infinite]"
-                // Replaced motion.div with standard div and tailwind animation/class to avoid client-side animation sync issues in RSC or keep it simple.
-                // Or assume global CSS handles pulse.
+                  className="absolute top-0 left-0 right-0 h-32 bg-linear-to-b from-transparent via-electric to-transparent w-[2px] -translate-x-[0.5px] blur-[1px] animate-[pulse_3s_ease-in-out_infinite]"
+                  // Replaced motion.div with standard div and tailwind animation/class to avoid client-side animation sync issues in RSC or keep it simple.
+                  // Or assume global CSS handles pulse.
                 />
               </div>
 
               {[
-                { step: "01", title: t.roadmap.audit.title, desc: t.roadmap.audit.desc },
-                { step: "02", title: t.roadmap.plan.title, desc: t.roadmap.plan.desc },
-                { step: "03", title: t.roadmap.immersion.title, desc: t.roadmap.immersion.desc }
+                {
+                  step: "01",
+                  title: t.roadmap.audit.title,
+                  desc: t.roadmap.audit.desc,
+                },
+                {
+                  step: "02",
+                  title: t.roadmap.plan.title,
+                  desc: t.roadmap.plan.desc,
+                },
+                {
+                  step: "03",
+                  title: t.roadmap.immersion.title,
+                  desc: t.roadmap.immersion.desc,
+                },
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className={`flex flex-col md:flex-row items-center gap-8 mb-20 relative ${idx % 2 === 0 ? 'md:flex-row-reverse text-left md:text-left' : 'text-left md:text-right'}`}
-                // Removed motion.div for server component simplicity or keeping framer requires client component.
-                // BUT 'Home' is a Server Component. It can't render motion.div directly?
-                // Wait, motion.div works in Server Components? NO. It renders as normal div but animation is client side?
-                // The original page.tsx was 'use client'!
-                // Line 1: 'use client'; in original file.
-                // I REMOVED 'use client' because I need 'await params' and 'getDictionary'.
-                // THIS IS A CONFLICT.
-                // I MUST split the Client parts into a Client Component.
+                  className={`flex flex-col md:flex-row items-center gap-8 mb-20 relative ${idx % 2 === 0 ? "md:flex-row-reverse text-left md:text-left" : "text-left md:text-right"}`}
+                  // Removed motion.div for server component simplicity or keeping framer requires client component.
+                  // BUT 'Home' is a Server Component. It can't render motion.div directly?
+                  // Wait, motion.div works in Server Components? NO. It renders as normal div but animation is client side?
+                  // The original page.tsx was 'use client'!
+                  // Line 1: 'use client'; in original file.
+                  // I REMOVED 'use client' because I need 'await params' and 'getDictionary'.
+                  // THIS IS A CONFLICT.
+                  // I MUST split the Client parts into a Client Component.
                 >
-                  <div className={`flex-1 ${idx % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                    <h3 className="text-2xl font-serif text-foreground mb-2">{item.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <div
+                    className={`flex-1 ${idx % 2 === 0 ? "md:text-left" : "md:text-right"}`}
+                  >
+                    <h3 className="text-2xl font-serif text-foreground mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {item.desc}
+                    </p>
                   </div>
 
                   <div className="w-[60px] flex justify-center z-10 relative">
@@ -289,25 +424,41 @@ export default async function Home({ params }: { params: Promise<{ locale: Local
           </div>
         </section>
 
-
         {/* 8. METHODOLOGY FAQ */}
         <FAQSection content={t.faq} />
 
         {/* 9. FINAL CTA */}
         <section className="py-32 flex justify-center text-center px-6">
           <div className="max-w-3xl">
-            <h2 className="font-serif text-4xl md:text-6xl mb-8 leading-tight">{t.ctaBottom.headline}</h2>
+            <h2 className="font-serif text-4xl md:text-6xl mb-8 leading-tight">
+              {t.ctaBottom.headline}
+            </h2>
             <div className="flex flex-col gap-6 items-center">
-              <Link href={isLoggedIn ? (locale === 'en' ? '/book/session' : `/${locale}/book/session`) : (locale === 'en' ? '/sign-in' : `/${locale}/sign-in`)}>
-                <Button size="lg" className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium px-12 h-16 text-lg tracking-wide shadow-2xl">
+              <Link
+                href={
+                  isLoggedIn
+                    ? locale === "en"
+                      ? "/book/session"
+                      : `/${locale}/book/session`
+                    : locale === "en"
+                      ? "/sign-in"
+                      : `/${locale}/sign-in`
+                }
+              >
+                <Button
+                  size="lg"
+                  className="rounded-full bg-foreground text-background hover:bg-foreground/90 font-medium px-12 h-16 text-lg tracking-wide shadow-2xl"
+                >
                   {t.ctaBottom.button}
                 </Button>
               </Link>
-              <p className="text-muted-foreground text-sm">{t.ctaBottom.guarantee}</p>
+              <p className="text-muted-foreground text-sm">
+                {t.ctaBottom.guarantee}
+              </p>
             </div>
           </div>
         </section>
       </main>
-    </div >
+    </div>
   );
 }

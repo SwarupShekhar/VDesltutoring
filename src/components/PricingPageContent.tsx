@@ -61,10 +61,10 @@ export function PricingPageContent({ dict, locale }: { dict: any, locale: string
                 className="max-w-4xl mx-auto relative group mb-24"
             >
                 {/* Glow Effect */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                 
                 <div className="relative glass-card p-12 rounded-[2.5rem] text-center border border-blue-500/30 dark:border-blue-400/20 overflow-hidden bg-white/80 dark:bg-slate-900/80 shadow-2xl">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5" />
+                    <div className="absolute inset-0 bg-linear-to-br from-blue-500/5 via-transparent to-indigo-500/5" />
                     
                     {/* Badge */}
                     <div className="inline-block px-4 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest rounded-full mb-6 relative z-10">

@@ -1,5 +1,23 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { Redis } from "@upstash/redis";
+
+// Initialize Redis client once outside the middleware function
+let redis: Redis | null = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+} catch (error) {
+  console.error("Failed to initialize Redis for rate limiting:", error);
+}
+
+// Rate limit configuration
+const RATE_LIMIT_WINDOW_SECONDS = 15 * 60; // 15 minutes
+const RATE_LIMIT_MAX_REQUESTS = 100;
 
 const locales = ["en", "de", "fr", "es", "vi", "ja"];
 const defaultLocale = "en";
@@ -58,6 +76,57 @@ const isPublicRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
 
+  // --- 0. Rate Limiting (API only) ---
+  let rateLimitInfo = null;
+  if (pathname.startsWith("/api/") && redis) {
+    try {
+      const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || 
+                 req.headers.get("x-real-ip") || 
+                 "127.0.0.1";
+      const rateLimitKey = `ratelimit:${ip}`;
+      
+      console.log(`[Rate Limit] Checking for: ${pathname} (IP: ${ip})`);
+      
+      const count: number = await redis.incr(rateLimitKey);
+      if (count === 1) {
+        await redis.expire(rateLimitKey, RATE_LIMIT_WINDOW_SECONDS);
+      }
+
+      rateLimitInfo = {
+        limit: String(RATE_LIMIT_MAX_REQUESTS),
+        remaining: String(Math.max(0, RATE_LIMIT_MAX_REQUESTS - count)),
+      };
+
+      if (count > RATE_LIMIT_MAX_REQUESTS) {
+        console.warn(`[Rate Limit] Exceeded for IP: ${ip}`);
+        return NextResponse.json(
+          { error: "Rate limit exceeded. Please try again later." },
+          { 
+            status: 429,
+            headers: { 
+              "Retry-After": String(RATE_LIMIT_WINDOW_SECONDS),
+              "X-RateLimit-Limit": rateLimitInfo.limit,
+              "X-RateLimit-Remaining": rateLimitInfo.remaining,
+            }
+          }
+        );
+      }
+    } catch (error) {
+      console.error("[Rate Limit] Error:", error);
+      // Fail open for rate limiting
+    }
+  }
+
+  // Helper to wrap responses and inject common headers (SEO + Rate Limit)
+  const enhanceResponse = (res: NextResponse) => {
+    addSeoHeaders(res);
+    if (rateLimitInfo) {
+      res.headers.set("X-RateLimit-Limit", rateLimitInfo.limit);
+      res.headers.set("X-RateLimit-Remaining", rateLimitInfo.remaining);
+    }
+    return res;
+  };
+
   // 0. EXPLICIT SEO EXCLUSIONS (Avoid any redirects for bots)
   const userAgent = req.headers.get("user-agent") || "";
   const isBot =
@@ -77,7 +146,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (pathname === "/" && !isBot) {
       // regular flow continues below
     } else if (pathname !== "/") {
-      return addSeoHeaders(NextResponse.next());
+      return enhanceResponse(NextResponse.next());
     }
   }
 
@@ -114,7 +183,7 @@ export default clerkMiddleware(async (auth, req) => {
       const newPath = pathname.replace(redirect.from, redirect.to);
       const newUrl = new URL(newPath, req.url);
       newUrl.search = req.nextUrl.search;
-      return addSeoHeaders(NextResponse.redirect(newUrl, { status: 308 }));
+      return enhanceResponse(NextResponse.redirect(newUrl, { status: 308 }));
     }
   }
 
@@ -144,7 +213,7 @@ export default clerkMiddleware(async (auth, req) => {
     const pathWithoutLocale = pathname.replace(`/${defaultLocale}`, "") || "/";
     const newUrl = new URL(pathWithoutLocale, req.url);
     newUrl.search = req.nextUrl.search;
-    return addSeoHeaders(NextResponse.redirect(newUrl, { status: 308 }));
+    return enhanceResponse(NextResponse.redirect(newUrl, { status: 308 }));
   }
 
   // If URL has no locale prefix and is not a non-default locale, rewrite to /en internally
@@ -153,7 +222,7 @@ export default clerkMiddleware(async (auth, req) => {
     const cleanPath = pathname === "/" ? "" : pathname;
     const rewriteUrl = new URL(`/${defaultLocale}${cleanPath}`, req.url);
     rewriteUrl.search = req.nextUrl.search;
-    return addSeoHeaders(NextResponse.rewrite(rewriteUrl));
+    return enhanceResponse(NextResponse.rewrite(rewriteUrl));
   }
 
   // 2. Authentication Logic
@@ -164,7 +233,7 @@ export default clerkMiddleware(async (auth, req) => {
     ) || defaultLocale;
 
   if (isPublicRoute(req)) {
-    return addSeoHeaders(NextResponse.next());
+    return enhanceResponse(NextResponse.next());
   } else {
     // Protect private routes
     const { userId, redirectToSignIn } = await auth();
@@ -176,14 +245,15 @@ export default clerkMiddleware(async (auth, req) => {
         console.log(
           `[Auth] Unauthorized API request: ${req.method} ${pathname}`,
         );
-        return NextResponse.json(
+        return enhanceResponse(NextResponse.json(
           { error: "Unauthorized", message: "Authentication required" },
           { status: 401 },
-        );
+        ));
       }
       return redirectToSignIn({ returnBackUrl: req.url });
     }
   }
+
 });
 
 export const config = {

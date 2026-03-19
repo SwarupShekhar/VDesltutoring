@@ -53,19 +53,40 @@ export function PricingPageContent({ dict, locale }: { dict: any, locale: string
                 />
             </div>
 
-            {/* Enterprise */}
+            {/* Enterprise - Highlighted and Improved */}
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="max-w-4xl mx-auto glass-card p-12 rounded-3xl text-center border border-white/20 dark:border-white/10 relative overflow-hidden mb-24"
+                className="max-w-4xl mx-auto relative group mb-24"
             >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
-                <h3 className="text-3xl font-serif mb-4 text-foreground relative z-10">{t.enterprise.title}</h3>
-                <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-2xl mx-auto relative z-10">{t.enterprise.description}</p>
-                <a href="mailto:sales@naturalfluency.com" className="inline-block px-8 py-3 rounded-full bg-slate-100 dark:bg-slate-800 text-foreground font-semibold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors relative z-10">
-                    {t.enterprise.button}
-                </a>
+                {/* Glow Effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                
+                <div className="relative glass-card p-12 rounded-[2.5rem] text-center border border-blue-500/30 dark:border-blue-400/20 overflow-hidden bg-white/80 dark:bg-slate-900/80 shadow-2xl">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-indigo-500/5" />
+                    
+                    {/* Badge */}
+                    <div className="inline-block px-4 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest rounded-full mb-6 relative z-10">
+                        Corporate Solutions
+                    </div>
+                    
+                    <h3 className="text-4xl md:text-5xl font-serif mb-6 text-foreground relative z-10 leading-tight">
+                        {t.enterprise.title}
+                    </h3>
+                    
+                    <p className="text-xl text-slate-600 dark:text-slate-400 mb-10 max-w-2xl mx-auto relative z-10 leading-relaxed font-light">
+                        {t.enterprise.description}
+                    </p>
+                    
+                    <a 
+                        href="mailto:sales@englivo.com" 
+                        className="inline-flex items-center gap-3 px-12 py-5 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:scale-105 transition-all shadow-xl shadow-blue-500/10 hover:shadow-blue-500/20 relative z-10 group/btn"
+                    >
+                        {t.enterprise.button}
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover/btn:translate-x-1 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </a>
+                </div>
             </motion.div>
 
             {/* Trust Statement */}

@@ -89,6 +89,21 @@
             "link": "Get your CEFR speaking snapshot in 2 minutes"
         }
     },
+    "speakingNaturally": {
+        "title": "From Everyday Conversations to High-Stakes Communication",
+        "card1": {
+            "title": "Speak Naturally in Real Conversations",
+            "desc": "Build confidence by speaking in real-world situations — not memorizing scripts."
+        },
+        "card2": {
+            "title": "Guidance From Mentors Who Fix How You Speak",
+            "desc": "Train with experts who help you think faster and respond with clarity."
+        },
+        "card3": {
+            "title": "Turn Communication Into Your Competitive Edge",
+            "desc": "Perform with clarity and confidence when it matters most."
+        }
+    },
     "methodPage": {
         "hero": {
             "title": "We Build Confident English Speakers - Not Just Good Students",

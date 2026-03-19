@@ -110,6 +110,11 @@ const ChallengePlanModal = dynamic(() =>
     (mod) => mod.ChallengePlanModal,
   ),
 );
+const SpeakNaturallySection = dynamic(() =>
+  import("@/components/SpeakNaturallySection").then(
+    (mod) => mod.SpeakNaturallySection,
+  ),
+);
 
 const tutors = [
   {
@@ -261,6 +266,8 @@ export default async function Home({
           dict={t.microHeadlines}
           isLoggedIn={isLoggedIn}
         />
+
+        <SpeakNaturallySection dict={t.speakingNaturally} />
 
         {/* 1.4 AI VS COACHING COMPARISON */}
         {/* @ts-ignore */}

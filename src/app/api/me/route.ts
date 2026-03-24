@@ -11,7 +11,8 @@ export async function GET() {
     }
 
     const email = clerkUser.emailAddresses[0]?.emailAddress || ''
-    const IS_OWNER_ADMIN = email === 'swarupshekhar.vaidikedu@gmail.com'
+    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'swarupshekhar.vaidikedu@gmail.com'
+    const IS_OWNER_ADMIN = email === ADMIN_EMAIL
 
     // 2. Get user from database with required fields only
     let dbUser = await prisma.users.findUnique({
@@ -70,7 +71,7 @@ export async function GET() {
             role: IS_OWNER_ADMIN ? 'ADMIN' : 'LEARNER',
             student_profiles: {
               create: {
-                credits: IS_OWNER_ADMIN ? 9999 : 0
+                credits: IS_OWNER_ADMIN ? 9999 : 10 // Standardized to 10 free credits
               }
             }
           },

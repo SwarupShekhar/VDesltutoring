@@ -295,10 +295,19 @@ export class GeminiService {
 
         while (true) {
             try {
-                const result = await model.generateContent(prompt);
+                // Add explicit 10s timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+                const result = await model.generateContent(prompt, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
                 const response = result.response;
                 return response.text();
             } catch (error: any) {
+                if (error.name === 'AbortError') {
+                    throw new Error('Gemini request timed out after 10s');
+                }
                 if ((error.status === 429 || error.status === 503) && retries < maxRetries) {
                     const waitTime = Math.pow(2, retries) * 1000;
                     console.log(`⏳ Rate limit/Busy on ${modelName}. Retrying in ${waitTime}ms...`);

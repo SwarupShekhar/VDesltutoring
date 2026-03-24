@@ -156,7 +156,7 @@ export function createSessionWithValidation(sessionData: any) {
  * @returns Updated session
  */
 export async function updateSessionStatus(
-  prisma: any, // Prisma transaction client
+  prisma: Prisma.TransactionClient, // Prisma transaction client
   sessionId: string,
   newStatus: session_status,
   context: Omit<TransitionContext, 'fromStatus' | 'toStatus'>
@@ -211,7 +211,7 @@ export async function updateSessionStatus(
  * @returns Updated session or throws error
  */
 export async function atomicUpdateSessionStatus(
-  prisma: any, // Prisma transaction client
+  prisma: Prisma.TransactionClient, // Prisma transaction client
   sessionId: string,
   newStatus: session_status,
   expectedCurrentStatus: session_status,

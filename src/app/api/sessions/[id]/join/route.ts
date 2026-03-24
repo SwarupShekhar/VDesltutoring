@@ -6,7 +6,7 @@ import {
   apiSuccess,
   ApiErrors,
 } from '@/lib/api-response'
-import { LiveKitService } from '@/lib/livekit-service'
+import { LiveKitService } from '@/services/livekit'
 import { AuditLogger } from '@/lib/audit-logger'
 
 // Response schema

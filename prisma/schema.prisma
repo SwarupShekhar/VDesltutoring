@@ -154,6 +154,8 @@ model fluency_sessions {
   rounds        Json
   created_at    DateTime @default(now())
   user          users    @relation("UserFluency", fields: [user_clerk_id], references: [clerkId])
+
+  @@index([user_clerk_id], map: "idx_fluency_sessions_user_clerk_id")
 }
 
 model ai_chat_sessions {

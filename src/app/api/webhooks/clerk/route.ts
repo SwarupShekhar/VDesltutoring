@@ -77,16 +77,20 @@ export async function POST(req: Request) {
       });
     } else {
       // Create new user
+      const userEmail = validatedData.email_addresses[0].email_address;
+      const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'swarupshekhar.vaidikedu@gmail.com';
+      const IS_OWNER_ADMIN = userEmail === ADMIN_EMAIL;
+
       await prisma.users.create({
         data: {
           clerkId: validatedData.id,
-          email: validatedData.email_addresses[0].email_address,
+          email: userEmail,
           full_name: fullName,
           profile_image_url: validatedData.image_url,
-          role: 'LEARNER',
+          role: IS_OWNER_ADMIN ? 'ADMIN' : 'LEARNER',
           student_profiles: {
             create: {
-              credits: 10, // Default free credits
+              credits: IS_OWNER_ADMIN ? 9999 : 10, // Default free credits
               learning_goals: "Getting started",
             }
           }

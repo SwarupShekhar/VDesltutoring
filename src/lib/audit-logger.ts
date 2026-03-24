@@ -1,4 +1,18 @@
 import { PrismaClient } from '@prisma/client'
+import { Redis } from '@upstash/redis'
+
+// Initialize Redis for fallback logging if needed
+let redis: Redis | null = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+} catch (e) {
+  console.warn('Failed to initialize Redis for audit fallback:', e);
+}
 
 /**
  * Audit Logging System
@@ -65,7 +79,18 @@ export async function logAuditEvent(prisma: PrismaClient, entry: AuditLogEntry) 
 
   } catch (error) {
     // Never let audit logging failures break the main flow
-    console.warn('Failed to log audit event:', error)
+    console.error('CRITICAL: Failed to log audit event to DB:', error)
+    
+    // Backup: Log to Redis as a "Dead Letter" for audits
+    if (redis) {
+      try {
+        const fallbackKey = `audit:failed:${entry.userId || 'system'}:${Date.now()}`;
+        await redis.set(fallbackKey, JSON.stringify(entry), { ex: 60 * 60 * 24 * 7 }); // Keep for 7 days
+        console.log(`[AUDIT] Fallback: Stored failed audit in Redis link: ${fallbackKey}`);
+      } catch (redisError) {
+        console.error('FATAL: Even Redis audit fallback failed:', redisError);
+      }
+    }
   }
 }
 

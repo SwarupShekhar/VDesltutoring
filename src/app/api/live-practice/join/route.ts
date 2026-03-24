@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
-import { livekit, createToken } from "@/lib/livekit";
+import { livekit, createToken } from "@/services/livekit";
 
 export async function POST(req: NextRequest) {
     try {

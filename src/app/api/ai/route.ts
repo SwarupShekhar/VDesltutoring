@@ -323,19 +323,35 @@ GOAL: Make ${firstName} feel excited, supported, and eager to speak more. Focus 
             console.log("AI returned plain text (no corrections)")
         }
 
-        return NextResponse.json({ response, corrections })
+        // 11. Return response
+        return NextResponse.json({ 
+            success: true,
+            response, 
+            corrections 
+        })
     } catch (err: any) {
         console.error("AI Error:", err)
 
         let errorMessage = "Connection unstable. Keep speaking."
+        let errorCode = "AI_GENERATION_FAILED"
+        let status = 500
 
-        // Expose specific configuration errors to the user (via voice)
-        if (err.message && (err.message.includes("API_KEY") || err.message.includes("missing"))) {
+        // Handle specific errors
+        if (err.message?.includes("Rate limit")) {
+            errorMessage = "I'm thinking a bit too hard right now. Let's slow down for a moment."
+            errorCode = "AI_RATE_LIMIT_EXCEEDED"
+            status = 429
+        } else if (err.message && (err.message.includes("API_KEY") || err.message.includes("missing"))) {
             errorMessage = "System Error: The Gemini API Key is missing. Please check your settings."
-        } else if (err.message) {
-            errorMessage = `System Error: ${err.message}`
+            errorCode = "AI_CONFIG_ERROR"
         }
 
-        return NextResponse.json({ response: errorMessage })
+        // Return standardized error but KEEP 'response' for UI components/TTS
+        return NextResponse.json({ 
+            success: false,
+            error: errorMessage,
+            code: errorCode,
+            response: errorMessage // For UI/TTS
+        }, { status })
     }
 }

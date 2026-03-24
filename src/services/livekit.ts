@@ -24,6 +24,25 @@ const ROOM_CONFIG = {
 }
 
 /**
+ * Room Service Client with lazy initialization
+ */
+const getRoomService = () => {
+    if (!LIVEKIT_URL) throw new Error("LIVEKIT_URL is not defined");
+    if (!LIVEKIT_API_KEY) throw new Error("LIVEKIT_API_KEY is not defined");
+    if (!LIVEKIT_API_SECRET) throw new Error("LIVEKIT_API_SECRET is not defined");
+
+    return new RoomServiceClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET);
+};
+
+// Lazy initialization proxy for internal/external use
+export const livekit = new Proxy({} as RoomServiceClient, {
+    get: (_target, prop) => {
+        const service = getRoomService();
+        return (service as any)[prop];
+    }
+});
+
+/**
  * Generate a LiveKit access token for a participant
  * @param params Token generation parameters
  * @returns Access token string
@@ -32,7 +51,7 @@ export async function generateLiveKitToken(params: {
   roomId: string
   userId: string
   userName: string
-  role: 'tutor' | 'student' | 'admin'
+  role: 'tutor' | 'student' | 'admin' | 'guest'
   metadata?: Record<string, any>
 }): Promise<string> {
   // Validate configuration
@@ -57,16 +76,8 @@ export async function generateLiveKitToken(params: {
   // Grant permissions based on role
   switch (params.role) {
     case 'tutor':
-      at.addGrant({
-        room: params.roomId,
-        roomJoin: true,
-        canPublish: true,
-        canSubscribe: true,
-        canPublishData: true,
-      })
-      break
-
     case 'student':
+    case 'guest':
       at.addGrant({
         room: params.roomId,
         roomJoin: true,
@@ -95,6 +106,18 @@ export async function generateLiveKitToken(params: {
 }
 
 /**
+ * Simple token generator for Live Practice (Legacy/Compatibility)
+ */
+export async function createToken(roomName: string, userId: string) {
+    return generateLiveKitToken({
+        roomId: roomName,
+        userId: userId,
+        userName: userId, // Default to userId if name not provided
+        role: 'guest'
+    });
+}
+
+/**
  * Create a LiveKit room for a session
  * @param sessionId Session ID to use as room name
  * @returns Room ID (same as session ID)
@@ -106,7 +129,7 @@ export async function createLiveKitRoom(sessionId: string): Promise<string> {
   }
 
   try {
-    const roomClient = new RoomServiceClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
+    const roomClient = getRoomService();
 
     // Create room with session ID as room name
     await roomClient.createRoom({
@@ -134,7 +157,7 @@ export async function deleteLiveKitRoom(roomId: string): Promise<void> {
   }
 
   try {
-    const roomClient = new RoomServiceClient(LIVEKIT_URL, LIVEKIT_API_KEY, LIVEKIT_API_SECRET)
+    const roomClient = getRoomService();
     await roomClient.deleteRoom(roomId)
   } catch (error) {
     console.warn('Failed to delete LiveKit room:', error)
@@ -195,5 +218,7 @@ export const LiveKitService = {
   generateToken: generateLiveKitToken,
   createRoom: createLiveKitRoom,
   deleteRoom: deleteLiveKitRoom,
-  validateAccess: validateSessionAccess
+  validateAccess: validateSessionAccess,
+  createToken: createToken,
+  livekit: livekit
 }

@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         // 2. ALWAYS attempt to delete the room from LiveKit to ensure sync
         // We do this even if status was already 'ended' in case a previous deletion failed
         try {
-            const { livekit } = await import("@/lib/livekit");
+            const { livekit } = await import("@/services/livekit");
             console.log(`[Leave] LiveKit: Attempting to delete room: ${targetSession.room_name}`);
             await livekit.deleteRoom(targetSession.room_name);
             console.log(`[Leave] LiveKit: Successfully deleted room: ${targetSession.room_name}`);

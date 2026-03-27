@@ -66,6 +66,7 @@ const isPublicRoute = createRouteMatcher([
   "/:locale/pricing",
   "/:locale/sessions/book", // Public booking page
   "/api/webhooks(.*)", // Webhooks must be public
+  "/api/internal(.*)", // Internal API routes for service-to-service communication
   "/api/livekit/token", // Handle auth in route handler for JSON response
   "/api/live-practice(.*)", // Public stats for landing page
   "/sitemap.xml",

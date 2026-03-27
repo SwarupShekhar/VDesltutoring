@@ -1,4 +1,3 @@
-
 import { prisma } from "@/lib/prisma";
 
 export const CEFR_MODEL_VERSION = "v2.0";
@@ -20,7 +19,7 @@ type ProfileUpdateData = {
   recovery_score?: number;
   lexical_blockers?: any;
   source_session_id?: string;
-}
+};
 
 /**
  * Updates or creates the user's centralized fluency profile based on new session data.
@@ -28,13 +27,15 @@ type ProfileUpdateData = {
  */
 export async function updateUserFluencyProfile(
   userId: string,
-  data: ProfileUpdateData
+  data: ProfileUpdateData,
 ) {
   try {
-    console.log(`[FluencyProfile] Updating profile for user ${userId} with score ${data.fluency_score}`);
+    console.log(
+      `[FluencyProfile] Updating profile for user ${userId} with score ${data.fluency_score}`,
+    );
 
     const currentProfile = await prisma.user_fluency_profile.findUnique({
-      where: { user_id: userId }
+      where: { user_id: userId },
     });
 
     // Use aggregated_metrics for session tracking since session_count isn't in schema
@@ -45,16 +46,18 @@ export async function updateUserFluencyProfile(
     // Weighted Rolling Average for Stability
     const weight = currentSessions < 5 ? 0.5 : 0.3;
     const oldScore = currentProfile?.fluency_score || data.fluency_score;
-    const newScore = Math.round((oldScore * (1 - weight)) + (data.fluency_score * weight));
+    const newScore = Math.round(
+      oldScore * (1 - weight) + data.fluency_score * weight,
+    );
 
     // Map Score to CEFR Level (Default logic if explicit level not provided)
-    let cefrLevel = data.cefr_level || 'A1';
+    let cefrLevel = data.cefr_level || "A1";
     if (!data.cefr_level) {
-      if (newScore >= 90) cefrLevel = 'C2';
-      else if (newScore >= 80) cefrLevel = 'C1';
-      else if (newScore >= 65) cefrLevel = 'B2';
-      else if (newScore >= 45) cefrLevel = 'B1';
-      else if (newScore >= 25) cefrLevel = 'A2';
+      if (newScore >= 90) cefrLevel = "C2";
+      else if (newScore >= 80) cefrLevel = "C1";
+      else if (newScore >= 65) cefrLevel = "B2";
+      else if (newScore >= 45) cefrLevel = "B1";
+      else if (newScore >= 25) cefrLevel = "A2";
     }
 
     await prisma.user_fluency_profile.upsert({
@@ -64,8 +67,10 @@ export async function updateUserFluencyProfile(
         fluency_score: data.fluency_score, // Initial score is exact
         cefr_level: cefrLevel,
         confidence: data.confidence || 0.8,
-        confidence_band: data.confidence_band || (data.fluency_score > 50 ? 'Medium' : 'Low'),
-        confidence_explanation: data.confidence_explanation || 'Initial assessment.',
+        confidence_band:
+          data.confidence_band || (data.fluency_score > 50 ? "Medium" : "Low"),
+        confidence_explanation:
+          data.confidence_explanation || "Initial assessment.",
         word_count: data.word_count,
         pause_ratio: data.pause_ratio || 0.1,
         source_type: data.session_type,
@@ -74,7 +79,7 @@ export async function updateUserFluencyProfile(
         lexical_blockers: data.lexical_blockers,
         aggregated_metrics: {
           totalSeconds: data.speaking_time_seconds,
-          sessionCount: 1
+          sessionCount: 1,
         },
         // Optional Fields
         avg_pause_ms: data.avg_pause_ms,
@@ -101,22 +106,50 @@ export async function updateUserFluencyProfile(
 
         aggregated_metrics: {
           ...currentMetrics,
-          totalSeconds: (currentMetrics.totalSeconds || 0) + data.speaking_time_seconds,
-          sessionCount: currentSessions
-        }
-      }
+          totalSeconds:
+            (currentMetrics.totalSeconds || 0) + data.speaking_time_seconds,
+          sessionCount: currentSessions,
+        },
+      },
     });
 
-    console.log(`[FluencyProfile] Updated: Score ${oldScore} -> ${newScore} | Level: ${cefrLevel}`);
+    void (async () => {
+      try {
+        const user = await prisma.users.findUnique({
+          where: { id: userId },
+          select: { clerkId: true },
+        });
+        if (user?.clerkId) {
+          await fetch(process.env.BRIDGE_API_URL + "/sync/cefr", {
+            method: "PATCH",
+            headers: new Headers({
+              "x-internal-secret": process.env.INTERNAL_SECRET!,
+              "Content-Type": "application/json",
+            }),
+            body: JSON.stringify({
+              clerkId: user.clerkId,
+              cefrLevel,
+              fluencyScore: newScore,
+              source: "englivo",
+            }),
+          });
+        }
+      } catch (e) {
+        console.error("Failed to sync CEFR:", e);
+      }
+    })();
+
+    console.log(
+      `[FluencyProfile] Updated: Score ${oldScore} -> ${newScore} | Level: ${cefrLevel}`,
+    );
 
     // If this was the first session, unlock the account from "Unassessed" state
     if (currentSessions === 1) {
       await prisma.users.update({
         where: { id: userId },
-        data: { is_active: true } // Ensure active
+        data: { is_active: true }, // Ensure active
       });
     }
-
   } catch (error) {
     console.error(`[FluencyProfile] Failed to update profile:`, error);
     // Do not throw, we don't want to break the API response just because stats failed

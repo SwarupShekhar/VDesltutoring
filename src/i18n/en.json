@@ -112,39 +112,39 @@
             "ctaSecondary": "See How It Works"
         },
         "problem": {
-            "title": "Why Kids Struggle to Speak - Even When They “Know” English",
-            "copy": "Many children understand grammar and vocabulary but still hesitate when they speak. They overthink, worry about mistakes, and lose confidence in real conversations.",
-            "listTitle": "Traditional learning focuses too much on:",
+            "title": "The Fluency Gap: When 'Knowing' Isn't Enough",
+            "copy": "Most students are trapped in the 'Intermediate Plateau.' They know the grammar, they have the vocabulary, but when it’s time to speak, their brain freezes under pressure. This isn't a knowledge problem—it's a processing problem.",
+            "listTitle": "Old systems prioritize the wrong things:",
             "items": [
                 {
-                    "title": "Rules",
-                    "desc": "over real communication"
+                    "title": "Static Rules",
+                    "desc": "Memorizing instead of reacting"
                 },
                 {
-                    "title": "Tests",
-                    "desc": "over speaking"
+                    "title": "Accuracy Fear",
+                    "desc": "Correctness over communication"
                 },
                 {
-                    "title": "Corrections",
-                    "desc": "over confidence"
+                    "title": "Mental Translation",
+                    "desc": "The pause that kills confidence"
                 }
             ],
-            "conclusion": "That’s why speaking feels stressful - not natural."
+            "conclusion": "We don’t fix your English. We fix how you speak it."
         },
         "solution": {
-            "title": "The Englivo Way: Learn by Speaking",
+            "title": "The Englivo Way: Built for Modern Speakers",
             "cards": [
                 {
-                    "title": "Speak First",
-                    "content": "Kids practice English through real, guided conversations - the fastest way to build fluency."
+                    "title": "The Speaking Reflex",
+                    "content": "Textbooks teach you to think about English. We train you to live in it. By prioritizing sound over syntax, we help children develop an automatic reflex that bypasses mental translation entirely."
                 },
                 {
-                    "title": "Confidence First",
-                    "content": "We focus on flow, clarity, and confidence - not just correcting mistakes."
+                    "title": "A Safe-to-Fail Arena",
+                    "content": "The path to fluency is paved with mistakes. Our methodology removes the 'fear of being wrong,' creating a high-energy environment where students feel safe to take risks and find their own voice."
                 },
                 {
-                    "title": "Real-World English",
-                    "content": "Students practice conversations they’ll actually use in school, social life, and the real world."
+                    "title": "Global Ready",
+                    "content": "We prepare students for the messiness of real-world communication—from leading a digital classroom project to making friends in a global community, using English as a bridge, not a barrier."
                 }
             ]
         },

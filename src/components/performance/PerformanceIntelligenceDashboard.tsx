@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { PerformanceMeter } from './PerformanceMeter';
 import { SpeechStabilityCurve } from './SpeechStabilityCurve';
 import { CustomDrillPanel } from './CustomDrillPanel';
-import { P2PCoachingFeedback } from './P2PCoachingFeedback';
 import type { PerformanceAnalytics, CoachingFeedback } from '@/lib/performance-engine';
 import { AlertCircle, Lightbulb } from 'lucide-react';
 
@@ -39,37 +38,8 @@ export function PerformanceIntelligenceDashboard({ analytics, userId }: Performa
         performanceMoments
     } = analytics;
 
-    const normalizedCoachingFeedback: CoachingFeedback = {
-        performanceSummary: performanceDiagnosis,
-        performanceImpact: [],
-        patternInsight: null,
-        hesitationSignals: {
-            longPauses: analytics.cognitiveReflex.longPauseCount,
-            restarts: Math.round(analytics.speechRhythm.wpmVariance / 10),
-            fillers: Math.round(analytics.cognitiveReflex.struggleFillerRate)
-        },
-        nextBreakthrough: {
-            target: nextFocus.target,
-            action: nextFocus.action
-        },
-        performanceMoments: {
-            strongest: performanceMoments.bestMoment,
-            drop: performanceMoments.confidenceDrop
-        }
-    };
-
     return (
         <div className="space-y-8">
-            {/* ============================================================
-                PHASE 2: COACHING INTELLIGENCE LAYERS
-                Position ABOVE detailed analytics for UX hierarchy
-            ============================================================ */}
-
-            <P2PCoachingFeedback
-                coachingFeedback={normalizedCoachingFeedback}
-                primaryLimiter={primaryLimiter}
-                corrections={[]}
-            />
 
             {/* Custom Drills (Phase 3) */}
             {userId && (
@@ -159,7 +129,7 @@ export function PerformanceIntelligenceDashboard({ analytics, userId }: Performa
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Left: Overall Score */}
-                    <div className="flex flex-col items-center justify-center p-6 rounded-xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
+                    <div className="flex flex-col items-center justify-center p-6 rounded-xl bg-linear-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900">
                         <div className="text-5xl font-bold text-slate-900 dark:text-white mb-2">
                             {pressureStability.score}%
                         </div>
@@ -298,7 +268,7 @@ export function PerformanceIntelligenceDashboard({ analytics, userId }: Performa
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
-                className="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 border border-blue-200 dark:border-blue-800"
+                className="p-6 rounded-2xl bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 border border-blue-200 dark:border-blue-800"
             >
                 <div className="flex items-center gap-3 mb-4">
                     <Lightbulb className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -315,7 +285,7 @@ export function PerformanceIntelligenceDashboard({ analytics, userId }: Performa
                             transition={{ delay: 0.7 + idx * 0.1 }}
                             className="flex gap-3 p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700"
                         >
-                            <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
                                 <span className="text-xs font-bold text-blue-600 dark:text-blue-400">{idx + 1}</span>
                             </div>
                             <p className="text-sm text-slate-700 dark:text-slate-300">{insight}</p>

@@ -25,7 +25,7 @@ interface CEFRPathData {
         reason: string
     }>
     nextActions: Array<{
-        type: "LIVE_PRACTICE" | "BOOK_COACH" | "ATTEMPT_TRIAL"
+        type: "AI_TUTOR" | "BOOK_COACH" | "ATTEMPT_TRIAL"
         label: string
         recommended?: boolean
         locked?: boolean
@@ -499,8 +499,8 @@ function ActionButton({ action, delay }: { action: CEFRPathData["nextActions"][0
         if (action.locked) return
 
         switch (action.type) {
-            case "LIVE_PRACTICE":
-                router.push("/live-practice")
+            case "AI_TUTOR":
+                router.push("/ai-tutor")
                 break
             case "BOOK_COACH":
                 router.push("/booking")

@@ -25,7 +25,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
 
     // Secure Destinations
     const aiTutorHref = user ? "/ai-tutor" : `/${currentLocale}/sign-up`;
-    const livePracticeHref = user ? `/${currentLocale}/live-practice` : `/${currentLocale}/sign-up`;
+    const livePracticeHref = user ? `/${currentLocale}/sessions/book` : `/${currentLocale}/sign-up`;
 
     // Fallback if content is missing (prevents crash during dev/translation lag)
     const t = content?.fluencyGuide || {};
@@ -88,7 +88,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
                                 <Brain size={20} />
                             </div>
                             <h3 className="font-semibold text-lg mb-2">{diagnosisCards[0]?.title}</h3>
-                            <p className="text-sm text-muted-foreground mb-6 flex-grow">{diagnosisCards[0]?.desc}</p>
+                            <p className="text-sm text-muted-foreground mb-6 grow">{diagnosisCards[0]?.desc}</p>
                             <Link href={`${blogPrefix}/stop-translating-in-head`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
                                 {diagnosisCards[0]?.linkText} <ArrowRight size={16} className="ml-1" />
                             </Link>
@@ -100,7 +100,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
                                 <Clock size={20} />
                             </div>
                             <h3 className="font-semibold text-lg mb-2">{diagnosisCards[1]?.title}</h3>
-                            <p className="text-sm text-muted-foreground mb-6 flex-grow">{diagnosisCards[1]?.desc}</p>
+                            <p className="text-sm text-muted-foreground mb-6 grow">{diagnosisCards[1]?.desc}</p>
                             <Link href={`${blogPrefix}/b1-to-b2-speaking-gap`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
                                 {diagnosisCards[1]?.linkText} <ArrowRight size={16} className="ml-1" />
                             </Link>
@@ -112,7 +112,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
                                 <MessageSquare size={20} />
                             </div>
                             <h3 className="font-semibold text-lg mb-2">{diagnosisCards[2]?.title}</h3>
-                            <p className="text-sm text-muted-foreground mb-6 flex-grow">{diagnosisCards[2]?.desc}</p>
+                            <p className="text-sm text-muted-foreground mb-6 grow">{diagnosisCards[2]?.desc}</p>
                             <Link href={`${blogPrefix}/thinking-in-chunks-the-secret-behind-natural-english-fluency`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
                                 {diagnosisCards[2]?.linkText} <ArrowRight size={16} className="ml-1" />
                             </Link>
@@ -122,7 +122,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
 
                 {/* SECTION 2 – WHAT FLUENCY REALLY IS */}
                 <section className="mb-32">
-                    <div className="bg-gradient-to-br from-indigo-50 to-white dark:from-slate-900 dark:to-slate-950 p-10 md:p-14 rounded-3xl border border-indigo-100 dark:border-indigo-900/30 relative overflow-hidden">
+                    <div className="bg-linear-to-br from-indigo-50 to-white dark:from-slate-900 dark:to-slate-950 p-10 md:p-14 rounded-3xl border border-indigo-100 dark:border-indigo-900/30 relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-20 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
 
                         <h2 className="text-3xl font-serif mb-6 relative z-10">{tProcess.title}</h2>
@@ -157,7 +157,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Step 1 */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-transparent rounded-2xl transform group-hover:scale-105 transition-transform duration-500" />
+                            <div className="absolute inset-0 bg-linear-to-b from-indigo-500/10 to-transparent rounded-2xl transform group-hover:scale-105 transition-transform duration-500" />
                             <div className="relative p-8 text-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-lg">
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 dark:bg-slate-800 text-2xl font-serif mb-6">{methodSteps[0]?.number}</div>
                                 <h3 className="text-xl font-bold mb-2">{methodSteps[0]?.title}</h3>
@@ -172,7 +172,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
 
                         {/* Step 2 */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-transparent rounded-2xl transform group-hover:scale-105 transition-transform duration-500 delay-75" />
+                            <div className="absolute inset-0 bg-linear-to-b from-indigo-500/10 to-transparent rounded-2xl transform group-hover:scale-105 transition-transform duration-500 delay-75" />
                             <div className="relative p-8 text-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-lg">
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 dark:bg-slate-800 text-2xl font-serif mb-6">{methodSteps[1]?.number}</div>
                                 <h3 className="text-xl font-bold mb-2">{methodSteps[1]?.title}</h3>
@@ -187,7 +187,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
 
                         {/* Step 3 */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-transparent rounded-2xl transform group-hover:scale-105 transition-transform duration-500 delay-150" />
+                            <div className="absolute inset-0 bg-linear-to-b from-indigo-500/10 to-transparent rounded-2xl transform group-hover:scale-105 transition-transform duration-500 delay-150" />
                             <div className="relative p-8 text-center bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-lg">
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 dark:bg-slate-800 text-2xl font-serif mb-6">{methodSteps[2]?.number}</div>
                                 <h3 className="text-xl font-bold mb-2">{methodSteps[2]?.title}</h3>
@@ -238,9 +238,9 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
 
                 {/* FINAL CTA */}
                 <section className="text-center pb-20">
-                    <div className="inline-block p-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full mb-8">
+                    <div className="inline-block p-1 bg-linear-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full mb-8">
                         <div className="bg-white dark:bg-slate-950 rounded-full px-8 py-4">
-                            <span className="font-medium bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
+                            <span className="font-medium bg-clip-text text-transparent bg-linear-to-r from-indigo-500 to-purple-500">
                                 {tFinal.headline}
                             </span>
                         </div>

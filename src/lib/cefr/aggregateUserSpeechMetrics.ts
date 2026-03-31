@@ -37,7 +37,7 @@ export interface AggregatedMetrics {
     /** Active lexical blockers */
     lexicalBlockers: string[];
 
-    /** Unique practice types used (ai_tutor, live_practice, human_tutor) */
+    /** Unique practice types used (ai_tutor, human_tutor) */
     practiceTypes: string[];
 
     /** Number of non-English segments detected */
@@ -47,7 +47,7 @@ export interface AggregatedMetrics {
     lastSessionDate: Date | null;
 }
 
-export type PracticeType = "ai_tutor" | "live_practice" | "human_tutor";
+export type PracticeType = "ai_tutor" | "human_tutor";
 
 /**
  * Aggregate all speech metrics for a user across all session types.
@@ -59,7 +59,7 @@ export async function aggregateUserSpeechMetrics(userId: string): Promise<Aggreg
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     // Parallel fetch all session types
-    const [aiSessions, liveSessions, humanSessions, microFixes, fluencyProfile] = await Promise.all([
+    const [aiSessions, humanSessions, fluencyProfile] = await Promise.all([
         // AI Tutor sessions
         prisma.ai_chat_sessions.findMany({
             where: {
@@ -73,23 +73,6 @@ export async function aggregateUserSpeechMetrics(userId: string): Promise<Aggreg
                 grammar_score: true,
                 vocabulary_score: true,
                 feedback_summary: true
-            }
-        }),
-
-        // Live Practice sessions (as either user_a or user_b)
-        prisma.live_session_summary.findMany({
-            where: {
-                user_id: userId,
-                created_at: { gte: thirtyDaysAgo }
-            },
-            include: {
-                session: {
-                    include: {
-                        metrics: {
-                            where: { user_id: userId }
-                        }
-                    }
-                }
             }
         }),
 
@@ -107,18 +90,6 @@ export async function aggregateUserSpeechMetrics(userId: string): Promise<Aggreg
                 start_time: true,
                 end_time: true,
                 completion_notes: true
-            }
-        }),
-
-        // Lexical blockers (micro-fixes)
-        prisma.live_micro_fixes.findMany({
-            where: {
-                user_id: userId,
-                created_at: { gte: thirtyDaysAgo }
-            },
-            select: {
-                category: true,
-                detected_words: true
             }
         }),
 
@@ -168,32 +139,6 @@ export async function aggregateUserSpeechMetrics(userId: string): Promise<Aggreg
         }
     }
 
-    // Process Live Practice sessions
-    for (const summary of liveSessions) {
-        practiceTypes.add("live_practice");
-        sessionCount++;
-        activeDates.add(summary.created_at.toISOString().split("T")[0]);
-
-        if (!lastSessionDate || summary.created_at > lastSessionDate) {
-            lastSessionDate = summary.created_at;
-        }
-
-        // Get metrics for this user
-        const userMetrics = summary.session.metrics[0];
-        if (userMetrics) {
-            totalSeconds += userMetrics.speaking_time || 0;
-            totalWords += userMetrics.word_count || 0;
-            totalFillers += userMetrics.filler_count || 0;
-            totalSpeakingMinutes += (userMetrics.speaking_time || 0) / 60;
-
-            // Pause metrics
-            if ((userMetrics as any).avg_pause_ms) {
-                totalPauseSum += (userMetrics as any).avg_pause_ms / 1000;
-                pauseCount++;
-            }
-        }
-    }
-
     // Process Human Tutor sessions
     for (const session of humanSessions) {
         practiceTypes.add("human_tutor");
@@ -224,8 +169,7 @@ export async function aggregateUserSpeechMetrics(userId: string): Promise<Aggreg
     // Get confidence band from fluency profile
     const confidenceBand: ConfidenceBand = fluencyProfile?.confidence_band || "Low";
 
-    // Collect lexical blockers
-    const lexicalBlockers = [...new Set(microFixes.map(f => f.category))];
+    const lexicalBlockers: string[] = [];
 
     return {
         totalSeconds: Math.round(totalSeconds),

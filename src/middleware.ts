@@ -48,7 +48,6 @@ const isPublicRoute = createRouteMatcher([
   "/terms",
   "/pricing",
   "/practice", // Public practice page
-  "/live-practice", // Public live practice page
   "/sessions/book", // Public booking page
   "/:locale", // For non-English locales
   "/:locale/sign-in(.*)",
@@ -68,7 +67,6 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks(.*)", // Webhooks must be public
   "/api/internal(.*)", // Internal API routes for service-to-service communication
   "/api/livekit/token", // Handle auth in route handler for JSON response
-  "/api/live-practice(.*)", // Public stats for landing page
   "/sitemap.xml",
   "/robots.txt",
   "/googlee0719812a88d81a6.html",

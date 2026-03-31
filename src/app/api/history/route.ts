@@ -10,7 +10,6 @@ export async function GET() {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        // Resolve Clerk ID to internal UUID
         const user = await prisma.users.findUnique({
             where: { clerkId },
             select: { id: true }
@@ -31,29 +30,6 @@ export async function GET() {
                 }
             },
             orderBy: { started_at: 'desc' },
-            take: 50
-        });
-
-        // Fetch Live Practice sessions
-        const liveSessions = await prisma.live_sessions.findMany({
-            where: {
-                OR: [
-                    { user_a: userId },
-                    { user_b: userId }
-                ],
-                status: 'ended'
-            },
-            include: {
-                summaries: {
-                    where: { user_id: userId }
-                },
-                transcripts: {
-                    where: { user_id: userId },
-                    orderBy: { timestamp: 'asc' },
-                    take: 100
-                }
-            },
-            orderBy: { ended_at: 'desc' },
             take: 50
         });
 
@@ -85,38 +61,7 @@ export async function GET() {
             };
         });
 
-        // Transform Live Practice sessions
-        const liveHistory = liveSessions.map(session => {
-            const summary = session.summaries[0] as any; // Cast to any to avoid strict typing issues with dynamic JSON fields
-            return {
-                id: session.id,
-                type: 'live_practice' as const,
-                date: session.ended_at || session.started_at,
-                duration: session.ended_at && session.started_at
-                    ? Math.round((new Date(session.ended_at).getTime() - new Date(session.started_at).getTime()) / 1000)
-                    : 0,
-                fluencyScore: summary?.fluency_score || 0,
-                confidenceScore: summary?.confidence_score || 0,
-                weaknesses: (summary?.weaknesses as string[]) || [],
-                drillPlan: (summary?.drill_plan as any[]) || [],
-                aiFeedback: summary?.ai_feedback || null,
-                performanceAnalytics: summary?.performance_analytics || null,
-                coachingFeedback: summary?.coaching_feedback || null,
-                transcriptFull: summary?.transcript_full || null,
-                // Fallback to raw transcripts if full transcript missing
-                transcript: session.transcripts.map(t => ({
-                    text: t.text,
-                    timestamp: t.timestamp
-                }))
-            };
-        });
-
-        // Combine and sort by date
-        const allHistory = [...aiHistory, ...liveHistory].sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-
-        return NextResponse.json({ history: allHistory });
+        return NextResponse.json({ history: aiHistory });
 
     } catch (error) {
         console.error("History fetch error:", error);

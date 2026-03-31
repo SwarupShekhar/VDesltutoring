@@ -84,9 +84,6 @@ const FluencyEngineShowcase = dynamic(() =>
 const FluencyGlobe = dynamic(() =>
   import("@/components/FluencyGlobe").then((mod) => mod.FluencyGlobe),
 );
-const LiveNowBanner = dynamic(() =>
-  import("@/components/LiveNowBanner").then((mod) => mod.LiveNowBanner),
-);
 const CEFRJourney = dynamic(() =>
   import("@/components/home/CEFRJourney").then((mod) => mod.CEFRJourney),
 );
@@ -257,8 +254,6 @@ export default async function Home({
           </div>
         </section>
 
-        {/* 1.2 LIVE NOW BANNER */}
-        <LiveNowBanner locale={locale} />
 
         {/* 1.3 MICRO-HEADLINES (Pillar + Problem/Solution) */}
         <MicroHeadlines

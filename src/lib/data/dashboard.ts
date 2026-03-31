@@ -274,7 +274,7 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
         // Fetch AI Sessions & Practice Sessions for Learner
         let formattedAiSessions: any[] = [];
         if (role === 'LEARNER') {
-            const [aiChats, practiceSessions, liveSessions] = await Promise.all([
+            const [aiChats, practiceSessions] = await Promise.all([
                 prisma.ai_chat_sessions.findMany({
                     where: { user_id: user.id },
                     orderBy: { started_at: 'desc' },
@@ -284,19 +284,6 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 prisma.fluency_sessions.findMany({
                     where: { user_clerk_id: user.clerkId! },
                     orderBy: { created_at: 'desc' },
-                    take: 10
-                }),
-                prisma.live_sessions.findMany({
-                    where: {
-                        OR: [
-                            { user_a: user.id },
-                            { user_b: user.id }
-                        ]
-                    },
-                    include: {
-                        summaries: true
-                    },
-                    orderBy: { started_at: 'desc' },
                     take: 10
                 })
             ])
@@ -328,62 +315,8 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                 }
             }));
 
-            // Normalize Live Sessions (P2P)
-            const p2pSessions = await Promise.all(liveSessions.map(async (s) => {
-                // Find summary for this user
-                const summary = s.summaries.find((sum: any) => sum.user_id === user.id) as any;
-                // Find metrics for this user
-                const userMetrics = await prisma.live_metrics.findUnique({
-                    where: { session_id_user_id: { session_id: s.id, user_id: user.id } }
-                }) as any;
-
-                let report = {
-                    identity: { archetype: "Live Peer Session" },
-                    cefr_analysis: { level: 'Unassessed', reason: 'Peer conversation.' },
-                    patterns: [`Peer Session • Status: ${s.status}`],
-                    metrics: { wordCount: userMetrics?.word_count || 0, fillerPercentage: userMetrics?.filler_count || 0 },
-                    audioAnalysis: null as any
-                };
-
-                if (summary) {
-                    report = {
-                        identity: { archetype: "Live Partnership" },
-                        cefr_analysis: {
-                            level: summary.fluency_score >= 90 ? 'C2' : summary.fluency_score >= 80 ? 'C1' : summary.fluency_score >= 65 ? 'B2' : summary.fluency_score >= 50 ? 'B1' : 'A2',
-                            reason: `Training Session (Score: ${summary.fluency_score})`
-                        },
-                        patterns: [
-                            `Fluency Score: ${summary.fluency_score}/100`,
-                            ...(summary.weaknesses as string[] || []).map(w => `Detected Weakness: ${w}`)
-                        ],
-                        metrics: {
-                            wordCount: userMetrics?.word_count || 0,
-                            fillerPercentage: Math.round(((userMetrics?.filler_count || 0) / (userMetrics?.word_count || 1)) * 100)
-                        },
-                        audioAnalysis: {
-                            score: summary.confidence_score,
-                            band: summary.confidence_band,
-                            explanation: summary.confidence_explanation,
-                            metrics: {
-                                avgPauseMs: userMetrics?.avg_pause_ms,
-                                midSentencePauseRatio: userMetrics?.mid_sentence_pause_ratio,
-                                pauseVariance: userMetrics?.pause_variance,
-                                recoveryScore: userMetrics?.recovery_score
-                            }
-                        }
-                    };
-                }
-
-                return {
-                    id: s.id,
-                    date: s.started_at,
-                    type: 'P2P_PRACTICE',
-                    report
-                };
-            }));
-
             // Merge & Sort
-            formattedAiSessions = [...chats, ...practices, ...p2pSessions]
+            formattedAiSessions = [...chats, ...practices]
                 .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
                 .slice(0, 10);
 

@@ -59,7 +59,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                             <Brain size={24} />
                         </div>
                         <h3 className="font-semibold text-xl mb-3 text-foreground">{dict?.card1?.title || "You Don’t Need More Grammar"}</h3>
-                        <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-6 grow">
                             {dict?.card1?.desc || "You already “know” English. The gap is speed — your brain is translating instead of responding."}
                         </p>
                         <Link href={locale === 'en' ? '/blog/stop-translating-in-head' : `/${locale}/blog/stop-translating-in-head`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
@@ -73,7 +73,7 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                             <Compass size={24} />
                         </div>
                         <h3 className="font-semibold text-xl mb-3 text-foreground">{dict?.card2?.title || "CEFR Is About Processing, Not Vocabulary"}</h3>
-                        <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-6 grow">
                             {dict?.card2?.desc || "B2 isn’t harder words. It’s natural pauses, structured ideas, and thinking without detours."}
                         </p>
                         <Link href={locale === 'en' ? '/fluency-guide' : `/${locale}/fluency-guide`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
@@ -87,15 +87,12 @@ export function MicroHeadlines({ locale, dict, isLoggedIn }: { locale: string; d
                             <Mic size={24} />
                         </div>
                         <h3 className="font-semibold text-xl mb-3 text-foreground">{dict?.card3?.title || "Fluency Is Conditioned, Not Studied"}</h3>
-                        <p className="text-muted-foreground text-sm leading-relaxed mb-6 flex-grow">
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-6 grow">
                             {dict?.card3?.desc || "Live interaction, micro-feedback, and chunk training build what textbooks cannot: reflex."}
                         </p>
                         <div className="flex flex-col gap-2 mt-auto">
                             <Link href={isLoggedIn ? "/ai-tutor" : (locale === 'en' ? '/sign-in' : `/${locale}/sign-in`)} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline">
                                 <span className="mr-2">👉</span> {dict?.card3?.link1 || "Try AI Tutor"}
-                            </Link>
-                            <Link href={locale === 'en' ? '/live-practice' : `/${locale}/live-practice`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline">
-                                <span className="mr-2">👉</span> {dict?.card3?.link2 || "Talk to a partner"}
                             </Link>
                         </div>
                     </motion.div>

@@ -118,6 +118,11 @@ export default function AITutor() {
             if (streamRef.current) {
                 streamRef.current.getTracks().forEach(track => track.stop())
             }
+            if (audioRef.current) {
+                audioRef.current.pause()
+                process.env.NODE_ENV !== 'production' && console.log("[AI Tutor] Audio paused on exit")
+                audioRef.current = null
+            }
         }
     }, [token, started])
 

@@ -120,6 +120,7 @@ export default function AITutor() {
             }
             if (audioRef.current) {
                 audioRef.current.pause()
+                process.env.NODE_ENV !== 'production' && console.log("[AI Tutor] Audio paused on exit")
                 audioRef.current = null
             }
         }

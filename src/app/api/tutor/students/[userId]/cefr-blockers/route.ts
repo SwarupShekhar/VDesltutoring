@@ -4,9 +4,12 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function GET(
     req: Request,
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise<{ userId: string }> }
 ) {
     try {
+        const { userId } = await params;
+        
+        // 1. Authenticate user
         const { userId: clerkId } = await auth();
         if (!clerkId) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -25,7 +28,7 @@ export async function GET(
             );
         }
 
-        const studentId = params.userId;
+        const studentId = userId;
 
         const student = await prisma.users.findUnique({
             where: { id: studentId },

@@ -89,6 +89,41 @@ export async function POST(req: Request) {
             console.error("Failed to update fluency profile:", e);
         }
 
+        // Bridge Sync (Task 2)
+        const sessionDurationMinutes = duration ? Math.ceil(duration / 60) : 15;
+        const cefrLevelFromSession = report?.cefr_analysis?.level || null;
+        const fluencyScoreMap: Record<string, number> = { 'A1': 20, 'A2': 35, 'B1': 50, 'B2': 65, 'C1': 80, 'C2': 95 };
+
+        // Fire-and-forget sync to Bridge
+        (async () => {
+            try {
+                const { incrementStreak, addPracticeMinutes, syncCefr } = await import('@/lib/bridge');
+                console.log(`[Bridge Sync] Starting sync for user ${clerkId}`);
+
+                const bridgeCalls: Promise<unknown>[] = [
+                    addPracticeMinutes(clerkId, sessionDurationMinutes),
+                    incrementStreak(clerkId),
+                ];
+
+                // Only sync CEFR if a new level was determined in this session
+                if (cefrLevelFromSession) {
+                    bridgeCalls.push(
+                        syncCefr({
+                            clerkId,
+                            cefrLevel: cefrLevelFromSession,
+                            fluencyScore: fluencyScoreMap[cefrLevelFromSession] || 50,
+                            source: 'CORE',
+                        })
+                    );
+                }
+
+                await Promise.allSettled(bridgeCalls);
+                console.log(`[Bridge Sync] Completed sync for user ${clerkId}`);
+            } catch (err) {
+                console.error(`[Bridge Sync] Failed sync for user ${clerkId}:`, err);
+            }
+        })();
+
         return NextResponse.json({ success: true, sessionId: session.id });
     } catch (error) {
         console.error('Failed to save session:', error);

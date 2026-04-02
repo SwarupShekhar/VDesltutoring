@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 
 export async function GET(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const { userId: clerkId } = await auth();
@@ -12,7 +12,7 @@ export async function GET(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const sessionId = params.id;
+        const { id: sessionId } = await params;
 
         // Fetch the session with student details
         const session = await prisma.sessions.findUnique({

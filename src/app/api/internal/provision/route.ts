@@ -4,7 +4,9 @@ import { prisma } from '@/lib/prisma';
 export async function POST(req: Request) {
   const secret = req.headers.get('x-internal-secret');
   
-  if (!secret || secret !== process.env.INTERNAL_BRIDGE_SECRET) {
+  const internalSecret = process.env.INTERNAL_BRIDGE_SECRET || process.env.INTERNAL_SECRET;
+  
+  if (!secret || secret !== internalSecret) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

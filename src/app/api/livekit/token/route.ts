@@ -18,8 +18,9 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const mode = searchParams.get("mode");
 
-        // 2. Query student_profiles and tutor_profiles
-        const user = await prisma.users.findUnique({
+
+        // 2. Query user with auto-registration/linking logic (Self-Healing)
+        let user = await prisma.users.findUnique({
             where: { clerkId },
             include: {
                 student_profiles: true,
@@ -28,8 +29,55 @@ export async function GET(req: Request) {
         });
 
         if (!user) {
-            console.error(`LiveKit Token: User not found for Clerk ID ${clerkId}`);
-            return NextResponse.json({ error: "User not found" }, { status: 404 });
+            const { currentUser } = await import('@clerk/nextjs/server');
+            const clerkUser = await currentUser();
+
+            if (!clerkUser) {
+                console.error("LiveKit Token: User not in DB and Clerk currentUser failed");
+                return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            }
+
+            const userEmail = clerkUser.emailAddresses[0]?.emailAddress || '';
+            const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'swarupshekhar.vaidikedu@gmail.com';
+            const IS_OWNER_ADMIN = userEmail === ADMIN_EMAIL;
+
+            console.log('LiveKit Token Auto-Registration: User not found by Clerk ID. Checking by email:', userEmail);
+
+            // Check if user exists by email
+            const existingUserByEmail = await prisma.users.findUnique({
+                where: { email: userEmail },
+                include: { student_profiles: true, tutor_profiles: true }
+            });
+
+            if (existingUserByEmail) {
+                console.log('LiveKit Token: Linking new Clerk ID to existing email...');
+                user = await prisma.users.update({
+                    where: { id: existingUserByEmail.id },
+                    data: {
+                        clerkId: clerkUser.id,
+                        full_name: existingUserByEmail.full_name || `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+                    },
+                    include: { student_profiles: true, tutor_profiles: true }
+                });
+            } else {
+                // Truly new user: Create
+                console.log('LiveKit Token: Auto-registering new user:', clerkUser.id);
+                user = await prisma.users.create({
+                    data: {
+                        clerkId: clerkUser.id,
+                        email: userEmail,
+                        full_name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() || 'New User',
+                        role: IS_OWNER_ADMIN ? 'ADMIN' : 'LEARNER',
+                        student_profiles: {
+                            create: {
+                                credits: IS_OWNER_ADMIN ? 9999 : 10, // Default for new users
+                                learning_goals: "Getting started",
+                            }
+                        }
+                    },
+                    include: { student_profiles: true, tutor_profiles: true }
+                });
+            }
         }
 
         let session = null;

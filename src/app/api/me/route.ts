@@ -1,6 +1,7 @@
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { apiSuccess, ApiErrors } from '@/lib/api-response'
+import { getBridgeUser } from '@/lib/bridge'
 
 export async function GET() {
   try {
@@ -97,6 +98,23 @@ export async function GET() {
       return ApiErrors.userNotFound()
     }
 
+    // 5. Fetch Bridge Profile (Task 3)
+    let bridgeProfile = null;
+    try {
+      const bridgeData = await getBridgeUser(clerkUser.id);
+      if (bridgeData) {
+        bridgeProfile = {
+          cefrLevel: bridgeData.cefrLevel,
+          fluencyScore: bridgeData.fluencyScore,
+          totalPracticeMinutes: bridgeData.totalPracticeMinutes,
+          streakDays: bridgeData.streakDays,
+          lastActiveApp: bridgeData.lastActiveApp
+        };
+      }
+    } catch (e) {
+      console.warn('[Bridge Sync] Failed to fetch bridge profile:', e);
+    }
+
     // 4. Return only the required fields
     return apiSuccess({
       data: {
@@ -107,6 +125,14 @@ export async function GET() {
         ...((finalRole === 'LEARNER' || IS_OWNER_ADMIN) && {
           credits: finalCredits,
         }),
+        // Add Bridge Profile
+        bridgeProfile: bridgeProfile || {
+          cefrLevel: 'B1', // Fallback
+          fluencyScore: 50,
+          totalPracticeMinutes: 0,
+          streakDays: 0,
+          lastActiveApp: null
+        }
       },
     })
   } catch (error) {

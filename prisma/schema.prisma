@@ -7,24 +7,24 @@ datasource db {
 }
 
 model users {
-  id                     String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clerkId                String?                @unique
-  email                  String                 @unique
-  full_name              String
-  role                   user_role?             @default(LEARNER)
-  profile_image_url      String?
-  is_active              Boolean?               @default(true)
-  last_login             DateTime?              @db.Timestamptz(6)
-  created_at             DateTime?              @default(now()) @db.Timestamptz(6)
-  coach_memory           Json?
-  ai_chat_sessions       ai_chat_sessions[]
-  fluency_sessions       fluency_sessions[]     @relation("UserFluency")
-  fluency_snapshots      fluency_snapshots[]
-  notifications          notifications[]
-  student_profiles       student_profiles?
-  tutor_profiles         tutor_profiles?
-  user_fluency_profile   user_fluency_profile?
-  daily_plans            user_daily_plan[]
+  id                   String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkId              String?               @unique
+  email                String                @unique
+  full_name            String
+  role                 user_role?            @default(LEARNER)
+  profile_image_url    String?
+  is_active            Boolean?              @default(true)
+  last_login           DateTime?             @db.Timestamptz(6)
+  created_at           DateTime?             @default(now()) @db.Timestamptz(6)
+  coach_memory         Json?
+  ai_chat_sessions     ai_chat_sessions[]
+  fluency_sessions     fluency_sessions[]    @relation("UserFluency")
+  fluency_snapshots    fluency_snapshots[]
+  notifications        notifications[]
+  student_profiles     student_profiles?
+  tutor_profiles       tutor_profiles?
+  daily_plans          user_daily_plan[]
+  user_fluency_profile user_fluency_profile?
 }
 
 model packages {
@@ -187,11 +187,9 @@ model fluency_snapshots {
   translation_thinking Int
   word_count           Int      @default(0)
   wpm                  Int      @default(0)
+  detected_language    String?  @default("en")
+  language_confidence  Float?   @default(1.0)
   user                 users    @relation(fields: [user_id], references: [id])
-  
-  // English-Only enforcement
-  language_confidence Float?    @default(1.0)
-  detected_language   String?   @default("en")
 }
 
 model fluency_exercises {
@@ -228,34 +226,30 @@ model blog_posts {
 }
 
 model user_fluency_profile {
-  user_id           String   @id @db.Uuid
-  user              users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  cefr_level        String
-  fluency_score     Float
-  confidence        Float
-  confidence_band   String?
-  confidence_explanation String?
-  
-  pause_ratio       Float
+  user_id                  String    @id @db.Uuid
+  cefr_level               String
+  fluency_score            Float
+  confidence               Float
+  pause_ratio              Float
+  word_count               Int
+  last_updated             DateTime  @updatedAt
+  lexical_blockers         Json?
+  source_session_id        String?
+  source_type              String
+  assessment_audit         Json?
+  cefr_model_version       String?   @default("v1.0")
   avg_pause_ms             Float?    @default(0)
+  confidence_band          String?
+  confidence_explanation   String?
   mid_sentence_pause_ratio Float?    @default(0)
   pause_variance           Float?    @default(0)
-  speech_rate_variance     Float?    @default(0)
   recovery_score           Float?    @default(0)
-  
-  word_count        Int
-  last_updated      DateTime @updatedAt
-  lexical_blockers  Json?
-  source_session_id String?
-  source_type       String
-  cefr_model_version String? @default("v1.0")
-  assessment_audit   Json?   // Audit trail of inputs -> gates -> decision
-  
-  // CEFR Promotion System Fields
-  gate_failures          Json?     // Array of failed gate codes from last evaluation
-  aggregated_metrics     Json?     // Cached aggregated metrics from all session types
-  last_aggregation       DateTime? // When metrics were last aggregated
-  unique_practice_types  String[]  // Types of practice completed (ai_tutor, live_practice, human_tutor)
+  speech_rate_variance     Float?    @default(0)
+  aggregated_metrics       Json?
+  gate_failures            Json?
+  last_aggregation         DateTime?
+  unique_practice_types    String[]
+  user                     users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 enum session_status {
@@ -271,4 +265,3 @@ enum user_role {
   TUTOR
   LEARNER
 }
-

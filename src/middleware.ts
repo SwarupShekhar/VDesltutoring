@@ -67,6 +67,7 @@ const isPublicRoute = createRouteMatcher([
   "/api/webhooks(.*)", // Webhooks must be public
   "/api/internal(.*)", // Internal API routes for service-to-service communication
   "/api/livekit/token", // Handle auth in route handler for JSON response
+  "/api/sessions/slots", // Allow route handler to check internal secret
   "/sitemap.xml",
   "/robots.txt",
   "/googlee0719812a88d81a6.html",

@@ -28,6 +28,7 @@ export default function AITutor() {
     const firstName = user?.firstName || "Student"
 
     const [token, setToken] = useState<string | null>(null)
+    const [connectionError, setConnectionError] = useState<string | null>(null)
     const [transcript, setTranscript] = useState("")
     const [aiResponse, setAiResponse] = useState("")
     const [listening, setListening] = useState(false)
@@ -78,11 +79,30 @@ export default function AITutor() {
 
     // Fetch LiveKit token
     useEffect(() => {
-        fetch("/api/livekit/token?mode=ai", { credentials: "include" })
-            .then(res => res.json())
-            .then(data => setToken(data.token))
-            .catch(console.error)
-    }, [])
+        let isMounted = true;
+        const fetchToken = async () => {
+            try {
+                const res = await fetch("/api/livekit/token?mode=ai", { credentials: "include" });
+                if (!res.ok) {
+                    const data = await res.json();
+                    throw new Error(data.error || `HTTP error! status: ${res.status}`);
+                }
+                const data = await res.json();
+                if (isMounted) {
+                    setToken(data.token);
+                    setConnectionError(null);
+                }
+            } catch (err: any) {
+                console.error("Token Fetch Error:", err);
+                if (isMounted) {
+                    setConnectionError(err.message || "Failed to establish connection.");
+                }
+            }
+        };
+
+        fetchToken();
+        return () => { isMounted = false };
+    }, [user?.id])
 
     // Start microphone recording loop only after session starts
     useEffect(() => {
@@ -469,8 +489,24 @@ export default function AITutor() {
             <div className={`min-h-screen ${isBossMode ? 'bg-black text-red-500' : 'bg-black text-white'} flex flex-col transition-colors duration-300`}>
                 <HomeNavbar locale="en" dict={{}} />
                 <div className="flex-1 flex items-center justify-center">
-                    <div className={`text-xl font-light animate-pulse ${isBossMode ? 'text-red-500 font-mono tracking-widest uppercase' : 'text-blue-600 dark:text-blue-400'}`}>
-                        {isBossMode ? 'Initializing Exam Protocols...' : 'Connecting to your tutor...'}
+                    <div className={`text-xl font-light ${isBossMode ? 'text-red-500 font-mono tracking-widest uppercase' : 'text-blue-600 dark:text-blue-400'}`}>
+                        {connectionError ? (
+                            <div className="text-center space-y-4">
+                                <p className="text-red-500">Connection Error</p>
+                                <p className="text-sm opacity-60 max-w-xs">{connectionError}</p>
+                                <button
+                                    onClick={() => window.location.reload()}
+                                    className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                                >
+                                    Retry Connection
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center animate-pulse">
+                                {isBossMode ? 'Initializing Exam Protocols...' : 'Connecting to your tutor...'}
+                                <p className="text-xs mt-2 opacity-50">Setting up secure audio channel</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -491,7 +527,7 @@ export default function AITutor() {
                     )}
 
                     {isBossMode && (
-                        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-900/10 via-zinc-950 to-zinc-950" />
+                        <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-red-900/10 via-zinc-950 to-zinc-950" />
                     )}
 
                     <div className="relative z-10 flex flex-col items-center space-y-6">
@@ -500,12 +536,12 @@ export default function AITutor() {
                                 <span className="text-6xl animate-pulse">🛑</span>
                             </div>
                         ) : (
-                            <div className="w-40 h-40 bg-gradient-to-tr from-blue-100 to-white dark:from-blue-600 dark:to-blue-500 rounded-full flex items-center justify-center shadow-2xl dark:shadow-[0_0_80px_rgba(37,99,235,0.5)] mb-6 ring-4 ring-white/20">
+                            <div className="w-40 h-40 bg-linear-to-tr from-blue-100 to-white dark:from-blue-600 dark:to-blue-500 rounded-full flex items-center justify-center shadow-2xl dark:shadow-[0_0_80px_rgba(37,99,235,0.5)] mb-6 ring-4 ring-white/20">
                                 <span className="text-6xl animate-bounce-slow">🎓</span>
                             </div>
                         )}
 
-                        <h1 className={`text-6xl font-bold font-serif bg-clip-text text-transparent ${isBossMode ? 'bg-gradient-to-r from-red-500 to-red-800 tracking-widest uppercase' : 'bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300'} text-center`}>
+                        <h1 className={`text-6xl font-bold font-serif bg-clip-text text-transparent ${isBossMode ? 'bg-linear-to-r from-red-500 to-red-800 tracking-widest uppercase' : 'bg-linear-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300'} text-center`}>
                             {isBossMode ? `${targetLevel} TRIAL` : 'Fluency Tutor'}
                         </h1>
                         <p className={`${isBossMode ? 'text-zinc-500 font-mono text-sm uppercase tracking-widest' : 'text-slate-600 dark:text-gray-300 text-xl font-light'} max-w-lg text-center leading-relaxed`}>
@@ -526,7 +562,7 @@ export default function AITutor() {
 
                     <button
                         onClick={startSession}
-                        className={`group relative px-12 py-5 ${isBossMode ? 'bg-red-900 hover:bg-red-800 border border-red-700/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]' : 'bg-gradient-to-r from-blue-600 to-indigo-600 shadow-xl hover:shadow-2xl'} text-white rounded-full font-bold text-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-4 z-10 overflow-hidden`}
+                        className={`group relative px-12 py-5 ${isBossMode ? 'bg-red-900 hover:bg-red-800 border border-red-700/50 hover:shadow-[0_0_30px_rgba(220,38,38,0.4)]' : 'bg-linear-to-r from-blue-600 to-indigo-600 shadow-xl hover:shadow-2xl'} text-white rounded-full font-bold text-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-4 z-10 overflow-hidden`}
                     >
                         {!isBossMode && <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />}
                         <Play size={28} fill="currentColor" />
@@ -549,7 +585,7 @@ export default function AITutor() {
                     <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-violet-500/5 dark:bg-violet-500/10 blur-[100px] rounded-full" />
                 </div>
             ) : (
-                <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-zinc-950">
+                <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-zinc-900 via-zinc-950 to-zinc-950">
                     <div className="absolute top-0 right-0 p-8 opacity-20 text-red-700 font-mono text-xs">
                         CLASSIFIED ASSESSMENT // {targetLevel}
                     </div>

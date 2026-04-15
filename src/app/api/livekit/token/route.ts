@@ -87,6 +87,51 @@ export async function GET(req: Request) {
         if (mode === "ai") {
             roomName = `ai-practice-${user.id}-${Date.now()}`;
         } else {
+            // NEW: Instant TutorConnect call (category-based, no booked session required)
+            const category = searchParams.get('category')
+            const VALID_CATEGORIES = ['basics', 'general', 'business']
+
+            if (mode === 'human' && category && VALID_CATEGORIES.includes(category)) {
+                const { resolveQuota } = await import('@/lib/resolveQuota')
+                const resolved = await resolveQuota(clerkId)
+
+                const isUnlimited = resolved.remainingSeconds === null
+                const hasTime = (resolved.remainingSeconds ?? 0) > 0
+
+                if (!isUnlimited && !hasTime) {
+                    return NextResponse.json(
+                        { error: 'QUOTA_EXHAUSTED', remainingSeconds: 0 },
+                        { status: 402 },
+                    )
+                }
+
+                const roomName = `core-${category}-${user.id}-${Date.now()}`
+                const apiKey = process.env.LIVEKIT_API_KEY;
+                const apiSecret = process.env.LIVEKIT_API_SECRET;
+                
+                if (!apiKey || !apiSecret) {
+                   return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+                }
+
+                const at = new AccessToken(apiKey, apiSecret, {
+                    identity: user.id,
+                    name: user.email,
+                    metadata: JSON.stringify({ category, plan: resolved.effectivePlan }),
+                })
+                at.addGrant({ roomJoin: true, room: roomName, canPublish: true, canSubscribe: true })
+                const token = await at.toJwt()
+
+                return NextResponse.json({
+                    token,
+                    roomName,
+                    serverUrl: process.env.NEXT_PUBLIC_LIVEKIT_URL || process.env.LIVEKIT_URL,
+                    freeMinutesRemaining: resolved.remainingSeconds !== null
+                        ? Math.floor(resolved.remainingSeconds / 60)
+                        : null,
+                    category,
+                })
+            }
+
             // MODE: HUMAN SESSION (Strict Check)
             const validStatuses = ['SCHEDULED', 'LIVE'];
 

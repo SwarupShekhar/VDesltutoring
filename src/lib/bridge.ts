@@ -104,3 +104,39 @@ export async function syncCefr(payload: SyncCefrDto): Promise<{ success: boolean
     body: JSON.stringify(payload),
   });
 }
+
+export interface SyncPlanDto {
+  clerkId: string
+  plan: string
+  pulseCallsPerWeek: number | null
+  coreTutorSecondsPerWeek: number | null
+  coreAiCreditsMonthly: number
+}
+
+export async function syncPlanToBridge(clerkId: string, plan: string, config: {
+  pulseCallsPerWeek: number | null
+  weeklyTutorSeconds: number | null
+  monthlyAiCredits: number
+}): Promise<void> {
+  const payload: SyncPlanDto = {
+    clerkId,
+    plan,
+    pulseCallsPerWeek: config.pulseCallsPerWeek,
+    coreTutorSecondsPerWeek: config.weeklyTutorSeconds,
+    coreAiCreditsMonthly: config.monthlyAiCredits,
+  }
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const res = await bridgeFetch<{ ok: boolean }>('/sync/plan', {
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+      })
+      if (res) return
+    } catch (e) {
+      console.warn(`[Bridge sync/plan] attempt ${attempt + 1} failed:`, e)
+    }
+    if (attempt < 2) await new Promise((r) => setTimeout(r, 2000))
+  }
+  console.error(`[Bridge sync/plan] failed for clerkId=${clerkId} after 3 attempts`)
+}

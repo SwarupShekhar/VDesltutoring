@@ -94,6 +94,10 @@ export async function GET() {
     const finalRole = IS_OWNER_ADMIN ? 'ADMIN' : dbUser.role
     const finalCredits = IS_OWNER_ADMIN ? 9999 : (dbUser.student_profiles?.credits || 0)
 
+    // Quota data (new — runs resolveQuota which also lazy-resets the weekly window)
+    const { resolveQuota } = await import('@/lib/resolveQuota')
+    const quota = await resolveQuota(clerkUser.id)
+
     if (!dbUser) {
       return ApiErrors.userNotFound()
     }
@@ -132,7 +136,23 @@ export async function GET() {
           totalPracticeMinutes: 0,
           streakDays: 0,
           lastActiveApp: null
-        }
+        },
+        // --- new quota/plan fields ---
+        clerkId: clerkUser.id,
+        plan: quota.effectivePlan,
+        status: 'ACTIVE',   // resolveQuota already handles CANCELLED grace period
+        quota: {
+          weeklyLimitSeconds: quota.weeklyLimitSeconds,
+          usedSeconds: quota.usedSeconds,
+          rolledOverSeconds: quota.rolledOverSeconds,
+          remainingSeconds: quota.remainingSeconds,
+          weekStartDate: quota.weekStartDate.toISOString(),
+        },
+        aiCredits: {
+          granted: quota.aiCreditsGranted,
+          used: quota.aiCreditsUsed,
+          remaining: Math.max(0, quota.aiCreditsGranted - quota.aiCreditsUsed),
+        },
       },
     })
   } catch (error) {

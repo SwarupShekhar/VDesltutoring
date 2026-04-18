@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   let razorpayCustomerId = existing?.razorpayCustomerId ?? null
   if (!razorpayCustomerId) {
-    const customer = await razorpay.customers.create({ notes: { clerkId: userId } } as any)
+    const customer = await razorpay.customers.create({ notes: { clerkId: userId } } as Record<string, unknown>)
     razorpayCustomerId = customer.id
     await prisma.subscription.upsert({
       where: { clerkId: userId },
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  const subscription = await (razorpay.subscriptions as any).create({
+  const subscription = await (razorpay.subscriptions as Record<string, any>).create({
     plan_id: PLAN_TO_RAZORPAY_ID[plan],
     customer_notify: 1,
     quantity: 1,

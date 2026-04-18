@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
-  const event = JSON.parse(rawBody) as { event: string; payload: { subscription?: { entity: any } } }
+  const event = JSON.parse(rawBody) as { event: string; payload: { subscription?: { entity: Record<string, any> } } }
   const entity = event.payload.subscription?.entity
   if (!entity) return NextResponse.json({ ok: true })
 

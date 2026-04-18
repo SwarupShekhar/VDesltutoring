@@ -1,9 +1,14 @@
 import Razorpay from 'razorpay'
 import type { Plan } from '@/lib/planConfig'
 
+// Build-time safety: Provide dummy values if environment variables are missing
+// Next.js often tries to execute these modules during static analysis or SSR collection.
+const key_id = process.env.RAZORPAY_KEY_ID || 'dummy_id'
+const key_secret = process.env.RAZORPAY_KEY_SECRET || 'dummy_secret'
+
 export const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  key_id,
+  key_secret,
 })
 
 export const PLAN_TO_RAZORPAY_ID: Record<string, string> = {

@@ -31,7 +31,7 @@ if (!BRIDGE_SECRET) {
   const errorMsg = `[Bridge API] Configuration Error: BRIDGE_SECRET is undefined. Please ensure either ${missingVars} is set in your environment variables. Authentication will fail without this secret.`;
 
   if (process.env.NODE_ENV === 'production') {
-    throw new Error(errorMsg);
+    console.error('\x1b[31m%s\x1b[0m', `[Bridge API] CRITICAL ERROR: ${errorMsg}`);
   } else {
     console.warn('\x1b[33m%s\x1b[0m', errorMsg); // Yellow warning in terminal
   }

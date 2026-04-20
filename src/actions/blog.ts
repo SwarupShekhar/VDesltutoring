@@ -12,15 +12,22 @@ async function ensureAdmin() {
     if (!userId) throw new Error("Unauthorized")
 
     // Production-grade Redis Rate Limiting (30 requests per minute)
-    const rateLimitKey = `rate_limit:blog_admin:${userId}`
-    const currentCount = await redis.incr(rateLimitKey)
-    
-    // Safety: Always set or refresh TTL to prevent "Eternal Ban" if expire fails
-    await redis.expire(rateLimitKey, 60)
+    try {
+        const rateLimitKey = `rate_limit:blog_admin:${userId}`
+        const currentCount = await redis.incr(rateLimitKey)
+        
+        // Safety: Always set or refresh TTL to prevent "Eternal Ban" if expire fails
+        await redis.expire(rateLimitKey, 60)
 
-    if (currentCount > 30) {
-        console.warn(`[RateLimit] Admin ${userId} exceeded limit on Redis.`)
-        throw new Error("Too many requests. Please slow down.")
+        if (currentCount > 30) {
+            console.warn(`[RateLimit] Admin ${userId} exceeded limit on Redis.`)
+            throw new Error("Too many requests. Please slow down.")
+        }
+    } catch (e: any) {
+        // If it's our own rate limit error, rethrow it
+        if (e.message === "Too many requests. Please slow down.") throw e;
+        // Otherwise, log connection error but allow admin to proceed
+        console.error("[RedisError] Rate limiting failed, falling back to open access:", e.message)
     }
 
     const user = await prisma.users.findUnique({

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Plus, Pencil, Trash2, Eye } from "lucide-react";
 import { deletePost } from "@/actions/blog";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminBlogPage() {
     const posts = await getPostsAdmin();
 

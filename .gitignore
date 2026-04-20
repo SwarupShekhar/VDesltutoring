@@ -44,3 +44,7 @@ next-env.d.ts
 /.clerk/
 googletts.json
 .env*.local
+
+# markdown notes and plans
+*.md
+!README.md

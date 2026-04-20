@@ -49,14 +49,27 @@ export default async function BlogListPage({ params }: PageProps) {
                                     </div>
                                 )}
                                 <div className="p-6 flex-1 flex flex-col">
-                                    <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-3">
-                                        <Calendar size={14} />
-                                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-[10px] font-bold uppercase tracking-wider border border-blue-500/20">
+                                            {post.category || 'General'}
+                                        </div>
+                                        <div className="flex items-center gap-1.5 text-[10px] text-slate-500 font-medium">
+                                            <Calendar size={12} />
+                                            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                        </div>
                                     </div>
-                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-500 transition-colors">
+
+                                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3 group-hover:text-blue-500 transition-colors line-clamp-2">
                                         {post.title}
                                     </h2>
-                                    <div className="mt-auto pt-4 flex items-center text-blue-600 font-medium text-sm group-hover:gap-2 transition-all">
+                                    
+                                    {post.excerpt && (
+                                        <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-6">
+                                            {post.excerpt}
+                                        </p>
+                                    )}
+
+                                    <div className="mt-auto pt-4 flex items-center text-blue-600 font-medium text-sm group-hover:gap-2 transition-all border-t border-slate-100 dark:border-slate-800">
                                         Read Article <ArrowRight size={16} className="ml-1" />
                                     </div>
                                 </div>

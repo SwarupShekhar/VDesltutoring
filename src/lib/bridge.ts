@@ -26,14 +26,16 @@ const BRIDGE_API_URL = process.env.BRIDGE_API_URL || 'http://localhost:3012';
 const BRIDGE_SECRET = process.env.INTERNAL_BRIDGE_SECRET || process.env.INTERNAL_SECRET;
 
 // Module startup validation to prevent silent unauthenticated requests
-if (!BRIDGE_SECRET) {
+const IS_BUILD_PHASE = process.env.NEXT_PHASE === 'phase-production-build';
+
+if (!BRIDGE_SECRET && !IS_BUILD_PHASE) {
   const missingVars = ['INTERNAL_BRIDGE_SECRET', 'INTERNAL_SECRET'].join(' or ');
   const errorMsg = `[Bridge API] Configuration Error: BRIDGE_SECRET is undefined. Please ensure either ${missingVars} is set in your environment variables. Authentication will fail without this secret.`;
 
   if (process.env.NODE_ENV === 'production') {
     console.error('\x1b[31m%s\x1b[0m', `[Bridge API] CRITICAL ERROR: ${errorMsg}`);
   } else {
-    console.warn('\x1b[33m%s\x1b[0m', errorMsg); // Yellow warning in terminal
+    console.warn('\x1b[33m%s\x1b[0m', errorMsg);
   }
 }
 

@@ -205,8 +205,9 @@ export async function getPublishedPosts() {
             slug: true,
             cover: true,
             createdAt: true,
-            // Don't fetch full content for list
-            content: false
+            excerpt: true,
+            category: true,
+            author_id: true
         }
     })
 }

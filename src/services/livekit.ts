@@ -12,8 +12,12 @@ const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY || ''
 const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET || ''
 
 // Validate configuration
+const IS_BUILD_PHASE = process.env.NEXT_PHASE === 'phase-production-build';
+
 if (!LIVEKIT_URL || !LIVEKIT_API_KEY || !LIVEKIT_API_SECRET) {
-  console.warn('LiveKit configuration incomplete - video sessions will not work')
+  if (!IS_BUILD_PHASE) {
+    console.warn('LiveKit configuration incomplete - video sessions will not work')
+  }
 }
 
 // Room configuration

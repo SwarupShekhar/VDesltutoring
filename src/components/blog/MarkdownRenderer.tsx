@@ -1,14 +1,17 @@
 import React from 'react'
 import ReactMarkdown from 'react-markdown'
+import Image from 'next/image'
 import remarkGfm from 'remark-gfm'
 import { Components } from 'react-markdown'
-import Image from 'next/image'
+import DOMPurify from 'isomorphic-dompurify'
 
 interface MarkdownRendererProps {
     content: string
 }
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+    const sanitizedContent = DOMPurify.sanitize(content)
+
     const components: Components = {
         // Styled Tables with horizontal scroll
         table: ({ node, ...props }) => (
@@ -35,10 +38,14 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             return (
                 <span className="block my-8">
                     <span className={`block relative rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 ${isFullWidth ? 'w-full' : 'max-w-full'}`}>
-                        <img
+                        <Image
+                            src={props.src as string}
                             {...props}
+                            width={1200}
+                            height={800}
                             className="w-full h-auto object-cover"
                             alt={props.alt || ''}
+                            unoptimized={true} // Allow any external domains in markdown content
                             style={{ margin: 0 }} // Override prose margin
                         />
                     </span>
@@ -82,7 +89,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             remarkPlugins={[remarkGfm]}
             components={components}
         >
-            {content}
+            {sanitizedContent}
         </ReactMarkdown>
     )
 }

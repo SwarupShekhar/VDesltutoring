@@ -70,6 +70,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 import { BlogSchema } from "@/components/seo/BlogSchema";
+import { ShareButtons } from "@/components/blog/ShareButtons";
+
+export const revalidate = 3600; // Revalidate every hour
 
 export default async function BlogPostPage({ params }: PageProps) {
     const { slug, locale } = await params
@@ -107,12 +110,14 @@ export default async function BlogPostPage({ params }: PageProps) {
                         {post.title}
                     </h1>
                     {post.cover && (
-                        <div className="aspect-[16/9] w-full relative rounded-2xl overflow-hidden shadow-xl mb-8">
+                        <div className="aspect-video w-full relative rounded-2xl overflow-hidden shadow-xl mb-8">
                             {/* External image handling needed or allow all domains */}
-                            <img
+                            <Image
                                 src={post.cover}
                                 alt={post.title}
-                                className="w-full h-full object-cover"
+                                fill
+                                priority
+                                className="object-cover"
                             />
                         </div>
                     )}
@@ -120,6 +125,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
                 <article className="prose prose-lg prose-indigo dark:prose-invert max-w-3xl mx-auto px-4">
                     <MarkdownRenderer content={post.content} />
+                    <ShareButtons title={post.title} url={`https://englivo.com/${locale}/blog/${slug}`} postId={post.id} />
                     <RelatedFromPillar />
                 </article>
             </div>

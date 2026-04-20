@@ -1,12 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition, useEffect } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import BlogEditor from '@/components/blog/BlogEditor'
-import { useTransition } from 'react'
-import { Loader2, ArrowLeft, Save, Globe } from 'lucide-react'
+import { Loader2, ArrowLeft, Save, Globe, Eye, Code, FileText, CheckCircle2, XCircle } from 'lucide-react'
 import Link from 'next/link'
-import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer";
+import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer"
+import { SEOHealthScore } from './SEOHealthScore'
+import { SettingsSidebar } from './SettingsSidebar'
+import { magicScanContent } from '@/actions/intelligence'
+import { getBlogRevisions } from '@/actions/blog'
+import { EditorErrorBoundary } from './EditorErrorBoundary'
 
 interface EditorPageProps {
     initialData?: {
@@ -16,6 +21,13 @@ interface EditorPageProps {
         content: string
         status: string
         cover: string | null
+        seo_title: string | null
+        meta_description: string | null
+        excerpt: string | null
+        category: string | null
+        focal_keyword: string | null
+        alt_text: string | null
+        published_at: Date | null
     }
     onSave: (data: any) => Promise<{ success: boolean, error?: string, id?: string }>
 }
@@ -23,166 +35,295 @@ interface EditorPageProps {
 export default function BlogEditorPage({ initialData, onSave }: EditorPageProps) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
+    
+    // Core State
     const [title, setTitle] = useState(initialData?.title || '')
     const [slug, setSlug] = useState(initialData?.slug || '')
     const [content, setContent] = useState(initialData?.content || '')
     const [status, setStatus] = useState(initialData?.status || 'draft')
+    
+    // Metadata State
     const [cover, setCover] = useState(initialData?.cover || '')
-    const [isPreview, setIsPreview] = useState(false)
+    const [seoTitle, setSeoTitle] = useState(initialData?.seo_title || '')
+    const [metaDescription, setMetaDescription] = useState(initialData?.meta_description || '')
+    const [excerpt, setExcerpt] = useState(initialData?.excerpt || '')
+    const [category, setCategory] = useState(initialData?.category || '')
+    const [focalKeyword, setFocalKeyword] = useState(initialData?.focal_keyword || '')
+    const [altText, setAltText] = useState(initialData?.alt_text || '')
+    const [publishedAt, setPublishedAt] = useState<Date | null>(initialData?.published_at || null)
 
-    const handleSave = async () => {
-        if (!title || !slug) return
+    // Intelligence State
+    const [suggestions, setSuggestions] = useState<any[]>([])
+    const [isScanning, setIsScanning] = useState(false)
+    const [revisions, setRevisions] = useState<any[]>([])
 
+    // UI View State
+    const [isSaving, setIsSaving] = useState(false)
+    const [lastSaved, setLastSaved] = useState<Date | null>(null)
+    const [viewMode, setViewMode] = useState<'visual' | 'markdown' | 'preview'>('markdown')
+
+    // Automatically detect title from H1 in real-time
+    useEffect(() => {
+        const h1Match = content.match(/^#\s+(.+)$/m)
+        if (h1Match && h1Match[1] !== title) {
+            setTitle(h1Match[1].trim())
+        }
+    }, [content, title])
+
+    const handleMagicScan = async () => {
+        if (!initialData?.id || !content) return;
+        
+        setIsScanning(true);
+        try {
+            const result = await magicScanContent(initialData.id, content);
+            if (result.success && result.suggestions) {
+                setSuggestions(result.suggestions);
+            }
+        } catch (err) {
+            console.error("Scan error:", err);
+        } finally {
+            setIsScanning(false);
+        }
+    };
+
+    const fetchRevisions = async () => {
+        if (!initialData?.id) return;
+        const revs = await getBlogRevisions(initialData.id);
+        setRevisions(revs);
+    };
+
+    useEffect(() => {
+        fetchRevisions();
+    }, [initialData?.id]);
+
+    const handleRollback = (rev: any) => {
+        if (confirm("Restore this version? current unsaved changes will be lost.")) {
+            setTitle(rev.title || '');
+            setContent(rev.content || '');
+            if (rev.metadata) {
+                const meta = rev.metadata as any;
+                if (meta.cover !== undefined) setCover(meta.cover);
+                if (meta.seo_title !== undefined) setSeoTitle(meta.seo_title);
+                if (meta.meta_description !== undefined) setMetaDescription(meta.meta_description);
+                if (meta.focal_keyword !== undefined) setFocalKeyword(meta.focal_keyword);
+            }
+        }
+    };
+
+    // Autosave Effect
+    useEffect(() => {
+        if (!content || content === initialData?.content) return;
+
+        const timer = setTimeout(() => {
+            handleSave();
+        }, 2000);
+
+        return () => clearTimeout(timer);
+    }, [content, title, slug, cover, seoTitle, metaDescription, excerpt, category, focalKeyword, altText]);
+
+    const handleSave = async (overrideStatus?: string) => {
+        const finalStatus = overrideStatus || status
+        if (!title || !slug) {
+            alert("Title and Slug are required.")
+            return
+        }
+
+        setIsSaving(true);
         startTransition(async () => {
             const res = await onSave({
                 title,
                 slug,
                 content,
-                status,
-                cover
+                status: finalStatus,
+                cover,
+                seo_title: seoTitle,
+                meta_description: metaDescription,
+                excerpt,
+                category,
+                focal_keyword: focalKeyword,
+                alt_text: altText,
+                published_at: publishedAt
             })
 
             if (res.success) {
-                router.push('/admin/blog')
+                setLastSaved(new Date());
+                fetchRevisions();
+                if (!initialData) {
+                    router.push('/admin/blog')
+                }
                 router.refresh()
             } else {
                 alert(res.error)
             }
+            setIsSaving(false);
         })
     }
 
-    const generateSlug = () => {
-        const s = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
-        setSlug(s)
+    const toggleStatus = async () => {
+        const newStatus = status === 'published' ? 'draft' : 'published'
+        setStatus(newStatus)
+        await handleSave(newStatus)
     }
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto">
-            <div className="flex items-center justify-between">
+        <div className="flex flex-col h-screen bg-slate-950 text-slate-200 overflow-hidden">
+            {/* Top Navigation / Header */}
+            <header className="flex items-center justify-between px-6 py-4 bg-slate-900/50 border-b border-slate-800 backdrop-blur-md">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/blog" className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-                        <ArrowLeft size={20} className="text-slate-600 dark:text-slate-400" />
+                    <Link href="/admin/blog" className="p-2 hover:bg-slate-800 rounded-full transition-colors group">
+                        <ArrowLeft size={20} className="text-slate-400 group-hover:text-white" />
                     </Link>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-                        {initialData ? 'Edit Post' : 'New Post'}
-                    </h1>
+                    <div>
+                        <h1 className="text-xl font-bold text-white leading-tight">Edit Blog Post</h1>
+                        <p className="text-xs text-slate-500">You have full access to all blogs</p>
+                    </div>
                 </div>
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setIsPreview(!isPreview)}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isPreview
-                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white'
-                            : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                            }`}
+
+                <div className="flex items-center gap-4">
+                    {/* Status Badge */}
+                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
+                        status === 'published' 
+                        ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
+                        : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                    }`}>
+                        {status === 'published' ? <CheckCircle2 size={12} /> : <FileText size={12} />}
+                        {status}
+                    </div>
+
+                    <button 
+                        onClick={toggleStatus}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                            status === 'published'
+                            ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
+                            : 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20'
+                        }`}
                     >
-                        {isPreview ? 'Back to Editor' : 'Preview'}
+                        {status === 'published' ? (
+                            <><XCircle size={16} /> Unpublish</>
+                        ) : (
+                            <><Globe size={16} /> Publish Post 🚀</>
+                        )}
                     </button>
-                    <div className="h-6 w-px bg-slate-200 dark:bg-slate-800" />
-                    <select
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value)}
-                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                    </select>
-                    <button
-                        onClick={handleSave}
-                        disabled={isPending}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
-                    >
-                        {isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
-                        Save
-                    </button>
-                </div>
-            </div>
 
-            {isPreview ? (
-                <div className="bg-white dark:bg-slate-950 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-                    <div className="max-w-3xl mx-auto">
-                        <header className="mb-8">
-                            <h1 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
-                                {title || 'Untitled Post'}
-                            </h1>
-                            {cover && (
-                                <div className="aspect-[16/9] w-full relative rounded-2xl overflow-hidden shadow-xl mb-8">
-                                    <img
-                                        src={cover}
-                                        alt={title}
-                                        className="w-full h-full object-cover"
-                                    />
-                                </div>
-                            )}
-                        </header>
+                    <div className="h-4 w-px bg-slate-800" />
 
-                        <article className="prose prose-lg prose-indigo dark:prose-invert max-w-3xl mx-auto px-4">
-                            <MarkdownRenderer content={content} />
-                        </article>
+                    {/* View Switcher */}
+                    <div className="flex p-1 bg-slate-900 border border-slate-800 rounded-xl">
+                        <TabButton 
+                            active={viewMode === 'visual'} 
+                            onClick={() => setViewMode('visual')} 
+                            icon={<Eye size={16} />} 
+                            label="Visual" 
+                        />
+                        <TabButton 
+                            active={viewMode === 'markdown'} 
+                            onClick={() => setViewMode('markdown')} 
+                            icon={<Code size={16} />} 
+                            label="Markdown" 
+                        />
+                        <TabButton 
+                            active={viewMode === 'preview'} 
+                            onClick={() => setViewMode('preview')} 
+                            icon={<Eye size={16} />} 
+                            label="Preview" 
+                        />
                     </div>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 space-y-6">
-                        <div className="space-y-4 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800">
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
-                                <input
-                                    type="text"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    // onBlue logic preserved below if it was there or part of the component logic
-                                    onBlur={() => !slug && generateSlug()}
-                                    className="w-full px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="Post title..."
-                                />
-                                {title.length > 65 && (
-                                    <p className="text-xs text-amber-500 mt-1">
-                                        Warning: Title exceeds 65 characters. Google may truncate it in search results.
-                                    </p>
-                                )}
-                            </div>
-                            <BlogEditor content={content} onChange={setContent} />
+
+                    <div className="flex items-center gap-6">
+                        <div className="flex flex-col items-end">
+                            {isSaving ? (
+                                <span className="text-[10px] text-blue-500 font-bold animate-pulse">AUTOSAVING...</span>
+                            ) : lastSaved ? (
+                                <span className="text-[10px] text-slate-500 font-medium italic">Saved {lastSaved.toLocaleTimeString()}</span>
+                            ) : null}
                         </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        <div className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
-                            <h3 className="font-semibold text-slate-900 dark:text-white">Settings</h3>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Slug</label>
-                                <div className="flex gap-2">
-                                    <input
-                                        type="text"
-                                        value={slug}
-                                        onChange={(e) => setSlug(e.target.value)}
-                                        className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                        placeholder="post-url-slug"
-                                    />
-                                    <button
-                                        onClick={generateSlug}
-                                        className="p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
-                                        title="Auto-generate from title"
-                                    >
-                                        <Globe size={18} />
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cover Image URL</label>
-                                <input
-                                    type="text"
-                                    value={cover}
-                                    onChange={(e) => setCover(e.target.value)}
-                                    className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    placeholder="https://..."
-                                />
-                            </div>
-                        </div>
+                        <button
+                            onClick={() => handleSave()}
+                            disabled={isPending}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                        >
+                            {isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
+                            Save
+                        </button>
                     </div>
                 </div>
-            )}
+            </header>
+
+            {/* Main Content Area */}
+            <main className="flex-1 flex overflow-hidden">
+                {/* Editor Surface */}
+                <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                     <div className="max-w-4xl mx-auto py-12 px-6">
+                        {viewMode === 'preview' ? (
+                            <div className="bg-white dark:bg-slate-950 p-12 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-500">
+                                <header className="mb-8">
+                                    <h1 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
+                                        {title || 'Untitled Post'}
+                                    </h1>
+                                    {cover && (
+                                        <div className="aspect-21/9 w-full relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
+                                            <Image src={cover} alt={title} fill className="object-cover" />
+                                        </div>
+                                    )}
+                                </header>
+                                <article className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-a:text-blue-400">
+                                    <EditorErrorBoundary>
+                                        <MarkdownRenderer content={content} />
+                                    </EditorErrorBoundary>
+                                </article>
+                            </div>
+                        ) : (
+                            <BlogEditor 
+                                content={content} 
+                                onChange={setContent} 
+                                mode={viewMode}
+                                onMagicScan={handleMagicScan}
+                                isScanning={isScanning}
+                            />
+                        )}
+                    </div>
+                </div>
+
+                {/* Settings Sidebar */}
+                <SettingsSidebar 
+                    data={{
+                        title, slug, cover, seoTitle, metaDescription, 
+                        excerpt, category, focalKeyword, altText, publishedAt
+                    }}
+                    update={(updates: any) => {
+                        if (updates.title !== undefined) setTitle(updates.title)
+                        if (updates.slug !== undefined) setSlug(updates.slug)
+                        if (updates.cover !== undefined) setCover(updates.cover)
+                        if (updates.seoTitle !== undefined) setSeoTitle(updates.seoTitle)
+                        if (updates.metaDescription !== undefined) setMetaDescription(updates.metaDescription)
+                        if (updates.excerpt !== undefined) setExcerpt(updates.excerpt)
+                        if (updates.category !== undefined) setCategory(updates.category)
+                        if (updates.focalKeyword !== undefined) setFocalKeyword(updates.focalKeyword)
+                        if (updates.altText !== undefined) setAltText(updates.altText)
+                        if (updates.publishedAt !== undefined) setPublishedAt(updates.publishedAt)
+                    }}
+                    content={content}
+                    suggestions={suggestions}
+                    revisions={revisions}
+                    onRollback={handleRollback}
+                />
+            </main>
         </div>
+    )
+}
+
+function TabButton({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) {
+    return (
+        <button
+            onClick={onClick}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                active 
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20' 
+                : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+        >
+            {icon}
+            {label}
+        </button>
     )
 }

@@ -5,32 +5,60 @@ import { auth } from '@clerk/nextjs/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { PrismaClient } from '@prisma/client'
+import { redis } from '@/lib/redis'
 
-// Helper to ensure admin
 async function ensureAdmin() {
     const { userId } = await auth()
     if (!userId) throw new Error("Unauthorized")
 
-    // In a real app check role, but for now we assume /admin layout does the check
-    // or we can fetch user and check role
+    // Production-grade Redis Rate Limiting (30 requests per minute)
+    const rateLimitKey = `rate_limit:blog_admin:${userId}`
+    const currentCount = await redis.incr(rateLimitKey)
+    
+    // Safety: Always set or refresh TTL to prevent "Eternal Ban" if expire fails
+    await redis.expire(rateLimitKey, 60)
+
+    if (currentCount > 30) {
+        console.warn(`[RateLimit] Admin ${userId} exceeded limit on Redis.`)
+        throw new Error("Too many requests. Please slow down.")
+    }
+
     const user = await prisma.users.findUnique({
         where: { clerkId: userId }
     })
 
-    if (user?.role !== 'ADMIN') {
-        throw new Error("Unauthorized: Admin only")
+    if (!user || user.role !== 'ADMIN') {
+        console.error(`[AuthError] Access denied for user ${userId}. Role: ${user?.role || 'NONE'}`)
+        throw new Error("Unauthorized: Admin access required")
     }
     return userId
 }
 
+function extractTitleFromContent(content: string): string | null {
+    const match = content.match(/^#\s+(.+)$/m);
+    return match ? match[1].trim() : null;
+}
+
+function sanitizeSlug(slug: string): string {
+    return slug
+        .toLowerCase()
+        .replace(/^blog\//, '')
+        .replace(/^\//, '')
+        .replace(/\/$/, '')
+        .replace(/[^a-z0-9-]/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+}
+
 export async function createPost(title: string, slug: string) {
     const userId = await ensureAdmin()
+    const cleanSlug = sanitizeSlug(slug)
 
     try {
         const post = await prisma.blog_posts.create({
             data: {
                 title,
-                slug,
+                slug: cleanSlug,
                 content: '',
                 status: 'draft',
                 author_id: userId,
@@ -48,21 +76,71 @@ export async function updatePost(id: string, data: {
     content?: string,
     cover?: string,
     status?: string,
-    slug?: string
+    slug?: string,
+    seo_title?: string,
+    meta_description?: string,
+    excerpt?: string,
+    category?: string,
+    focal_keyword?: string,
+    alt_text?: string,
+    published_at?: Date | null
 }) {
     await ensureAdmin()
 
     try {
+        // Automatically extract title from content if H1 is present
+        let finalTitle = data.title;
+        if (data.content) {
+            const extractedTitle = extractTitleFromContent(data.content);
+            if (extractedTitle) {
+                finalTitle = extractedTitle;
+            }
+        }
+
+        // Capture revision snapshot before applying update
+        const currentPost = await prisma.blog_posts.findUnique({ where: { id } })
+        const post = currentPost as any;
+        
+        // Track changes in content OR metadata
+        const hasContentChange = post && post.content !== data.content
+        const hasMetaChange = post && (
+            post.title !== data.title ||
+            post.cover !== data.cover ||
+            post.seo_title !== data.seo_title ||
+            post.meta_description !== data.meta_description
+        )
+
+        if (post && (hasContentChange || hasMetaChange)) {
+            // @ts-ignore - revisions model definitely exists in DB
+            await prisma.blog_post_revisions.create({
+                data: {
+                    postId: id,
+                    content: post.content,
+                    title: post.title,
+                    authorId: post.author_id,
+                    metadata: {
+                        cover: post.cover,
+                        focal_keyword: post.focal_keyword,
+                        seo_title: post.seo_title,
+                        meta_description: post.meta_description
+                    }
+                }
+            })
+        }
+
         await prisma.blog_posts.update({
             where: { id },
             data: {
                 ...data,
+                slug: data.slug ? sanitizeSlug(data.slug) : undefined,
+                title: finalTitle,
                 updatedAt: new Date()
             }
         })
-        revalidatePath('/blog')
-        revalidatePath(`/blog/${data.slug || ''}`)
-        revalidatePath('/admin/blog')
+
+        // Revalidate with wildcard to handle localized routes
+        revalidatePath('/', 'layout')
+        
         return { success: true }
     } catch (error) {
         console.error("Failed to update post:", error)
@@ -97,6 +175,23 @@ export async function getPostsAdmin() {
     return await prisma.blog_posts.findMany({
         orderBy: { updatedAt: 'desc' }
     })
+}
+
+export async function getBlogRevisions(postId: string) {
+    await ensureAdmin()
+    // @ts-ignore - Local types may be stale
+    return await prisma.blog_post_revisions.findMany({
+        where: { postId },
+        orderBy: { createdAt: 'desc' },
+        take: 20
+    })
+}
+
+export async function trackShare(postId: string, platform: string) {
+    const key = `blog:share_count:${postId}`
+    await redis.hincrby(key, platform, 1)
+    await redis.hincrby(key, 'total', 1)
+    return { success: true }
 }
 
 // Public Actions

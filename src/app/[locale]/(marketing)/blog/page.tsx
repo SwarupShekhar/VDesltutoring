@@ -4,6 +4,7 @@ import { Calendar, ArrowRight } from "lucide-react";
 import type { Metadata } from 'next';
 import { constructCanonicalMetadata } from '@/lib/seo';
 import { getDictionary, type Locale } from "@/i18n/getDictionary";
+import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params;
@@ -32,20 +33,19 @@ export default async function BlogListPage({ params }: PageProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {posts.map((post: any) => {
-                        const cleanSlug = post.slug.replace(/^blog\//, '').replace(/^\//, '');
-                        console.log(`[BlogList] Generating link for: ${post.title}, Slug: ${post.slug}, Clean: ${cleanSlug}`);
                         return (
-                            <Link key={post.id} href={`/${locale}/blog/${cleanSlug}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                            <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
 
                                 {post.cover && (
-                                    <div className="aspect-[16/9] w-full relative overflow-hidden">
+                                    <div className="aspect-video w-full relative overflow-hidden">
                                         {/* Simple img for now, verify next/image usage if needed but external URL might need config */}
-                                        <img
+                                        <Image
                                             src={post.cover}
                                             alt={post.title}
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                            fill
+                                            className="object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
                                 )}
                                 <div className="p-6 flex-1 flex flex-col">

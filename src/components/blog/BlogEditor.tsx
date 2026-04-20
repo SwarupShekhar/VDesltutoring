@@ -1,15 +1,29 @@
 'use client'
 
-import React, { useState, useRef } from 'react'
-import { Bold, Italic, Link as LinkIcon, Image as ImageIcon, List, ListOrdered, Quote, Code, Heading1, Heading2 } from 'lucide-react'
+import React, { useRef } from 'react'
+import { 
+    Bold, Italic, Link as LinkIcon, Image as ImageIcon, 
+    List, ListOrdered, Quote, Code, 
+    Type, Wand2, Sparkles
+} from 'lucide-react'
 
 interface BlogEditorProps {
     content: string
     onChange: (markdown: string) => void
     editable?: boolean
+    mode?: 'visual' | 'markdown' | 'preview'
+    onMagicScan?: () => void
+    isScanning?: boolean
 }
 
-export default function BlogEditor({ content, onChange, editable = true }: BlogEditorProps) {
+export default function BlogEditor({ 
+    content, 
+    onChange, 
+    editable = true, 
+    mode = 'markdown',
+    onMagicScan,
+    isScanning = false
+}: BlogEditorProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     const insertText = (before: string, after: string = '') => {
@@ -46,39 +60,71 @@ export default function BlogEditor({ content, onChange, editable = true }: BlogE
         }
     }
 
+    if (mode === 'preview') return null // Handled externally in BlogEditorPage
+
     return (
-        <div className="border border-slate-200 dark:border-slate-800 rounded-lg overflow-hidden bg-white dark:bg-slate-950 shadow-sm flex flex-col h-[600px]">
+        <div className="flex flex-col h-[70vh] bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
             {/* Toolbar */}
-            <div className="border-b border-slate-200 dark:border-slate-800 p-2 flex flex-wrap gap-1 bg-slate-50 dark:bg-slate-900 sticky top-0 z-10">
-                <ToolbarButton icon={<Heading1 size={18} />} onClick={() => insertText('# ')} title="Heading 1" />
-                <ToolbarButton icon={<Heading2 size={18} />} onClick={() => insertText('## ')} title="Heading 2" />
-                <div className="w-px h-6 bg-slate-300 dark:bg-slate-700 mx-1" />
-                <ToolbarButton icon={<Bold size={18} />} onClick={() => insertText('**', '**')} title="Bold" />
-                <ToolbarButton icon={<Italic size={18} />} onClick={() => insertText('*', '*')} title="Italic" />
-                <ToolbarButton icon={<Code size={18} />} onClick={() => insertText('`', '`')} title="Code" />
-                <div className="w-px h-6 bg-slate-300 dark:bg-slate-700 mx-1" />
-                <ToolbarButton icon={<Quote size={18} />} onClick={() => insertText('> ')} title="Blockquote" />
-                <ToolbarButton icon={<List size={18} />} onClick={() => insertText('- ')} title="Bullet List" />
-                <ToolbarButton icon={<ListOrdered size={18} />} onClick={() => insertText('1. ')} title="Numbered List" />
-                <div className="w-px h-6 bg-slate-300 dark:bg-slate-700 mx-1" />
-                <ToolbarButton icon={<LinkIcon size={18} />} onClick={insertLink} title="Link" />
-                <ToolbarButton icon={<ImageIcon size={18} />} onClick={insertImage} title="Image" />
+            <div className="flex items-center gap-1 p-3 bg-slate-800/50 border-b border-slate-700/50 backdrop-blur-md sticky top-0 z-10 overflow-x-auto no-scrollbar">
+                <div className="flex items-center gap-0.5 px-2">
+                    <ToolbarButton icon={<Bold size={16} />} onClick={() => insertText('**', '**')} title="Bold" />
+                    <ToolbarButton icon={<Italic size={16} />} onClick={() => insertText('*', '*')} title="Italic" />
+                </div>
+                
+                <div className="w-px h-6 bg-slate-700 mx-1" />
+                
+                <div className="flex items-center gap-0.5 px-2">
+                    <ToolbarButton icon={<span className="text-[10px] font-bold">H1</span>} onClick={() => insertText('# ')} title="Heading 1" />
+                    <ToolbarButton icon={<span className="text-[10px] font-bold text-slate-500">H2</span>} onClick={() => insertText('## ')} title="Heading 2" />
+                    <ToolbarButton icon={<span className="text-[10px] font-bold text-slate-500">H3</span>} onClick={() => insertText('### ')} title="Heading 3" />
+                </div>
+
+                <div className="w-px h-6 bg-slate-700 mx-1" />
+
+                <div className="flex items-center gap-0.5 px-2">
+                    <ToolbarButton icon={<List size={16} />} onClick={() => insertText('- ')} title="Bullet List" />
+                </div>
+
+                <div className="w-px h-6 bg-slate-700 mx-1" />
+
+                <div className="flex items-center gap-0.5 px-2">
+                    <ToolbarButton icon={<LinkIcon size={16} />} onClick={insertLink} title="Link" />
+                </div>
+
+                <div className="flex-1" />
+
+                <button 
+                    onClick={onMagicScan}
+                    disabled={isScanning || !onMagicScan}
+                    className="flex items-center gap-2 px-4 py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-500/20 transition-all group disabled:opacity-50"
+                >
+                    <Wand2 size={12} className={`${isScanning ? 'animate-spin' : 'group-hover:rotate-12'} transition-transform`} />
+                    {isScanning ? 'Scanning...' : 'Magic Scan'}
+                </button>
+
+                <div className="w-px h-6 bg-slate-700 mx-1" />
+
+                <ToolbarButton icon={<ImageIcon size={16} />} onClick={insertImage} title="Image" />
             </div>
 
-            {/* Editor */}
+            {/* Editor Area */}
             <textarea
                 ref={textareaRef}
                 value={content}
                 onChange={(e) => onChange(e.target.value)}
                 disabled={!editable}
-                className="flex-1 w-full p-6 font-mono text-sm sm:text-base bg-slate-50 dark:bg-slate-950 dark:text-slate-300 focus:outline-none resize-none leading-relaxed"
-                placeholder="# Start writing your story..."
+                className="flex-1 w-full p-10 font-mono text-base bg-transparent text-slate-200 focus:outline-none resize-none leading-relaxed custom-scrollbar selection:bg-blue-500/30"
+                placeholder="# Your story starts here..."
                 spellCheck={false}
             />
 
-            <div className="bg-slate-100 dark:bg-slate-900 px-4 py-2 text-xs text-slate-500 flex justify-between">
-                <span>Markdown Supported</span>
-                <span>{content.length} chars</span>
+            <div className="flex items-center justify-between px-6 py-3 bg-slate-800/30 border-t border-slate-800/50 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1.5"><Sparkles size={10} className="text-blue-500" /> Markdown Active</span>
+                    <div className="w-1 h-1 rounded-full bg-slate-700" />
+                    <span>Autosaved</span>
+                </div>
+                <div>{content.split(/\s+/).length} Words &bull; {content.length} Characters</div>
             </div>
         </div>
     )
@@ -90,9 +136,10 @@ function ToolbarButton({ onClick, icon, title }: { onClick: () => void, icon: Re
             onClick={onClick}
             title={title}
             type="button"
-            className="p-2 rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-slate-600 dark:text-slate-400"
+            className="p-2.5 rounded-lg hover:bg-slate-700 transition-all text-slate-400 hover:text-white"
         >
             {icon}
         </button>
     )
 }
+

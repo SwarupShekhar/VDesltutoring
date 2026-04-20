@@ -33,14 +33,17 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         ),
 
         // Images with captions
-        img: ({ node, ...props }) => {
+        img: ({ node, src: rawSrc, ...props }) => {
             const isFullWidth = props.alt?.toLowerCase().includes('full width')
+            const imageSrc = typeof rawSrc === 'string' ? rawSrc : ''
+            
+            if (!imageSrc) return null
+
             return (
                 <span className="block my-8">
                     <span className={`block relative rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-slate-800 ${isFullWidth ? 'w-full' : 'max-w-full'}`}>
                         <Image
-                            src={props.src as string}
-                            {...props}
+                            src={imageSrc}
                             width={1200}
                             height={800}
                             className="w-full h-auto object-cover"

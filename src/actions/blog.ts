@@ -43,7 +43,12 @@ async function ensureAdmin() {
 
 function extractTitleFromContent(content: string): string | null {
     const match = content.match(/^#\s+(.+)$/m);
-    return match ? match[1].trim() : null;
+    if (!match) return null;
+    // Strip markdown formatting like [Link](URL), **, etc from the extracted title
+    return match[1]
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Strip links
+        .replace(/[*_~`]/g, '') // Strip basic formatting
+        .trim();
 }
 
 function sanitizeSlug(slug: string): string {
@@ -231,18 +236,31 @@ export async function getPublishedPosts() {
 }
 
 export async function getPublishedPostBySlug(slug: string) {
-    const post = await prisma.blog_posts.findUnique({
-        where: { slug }
-    })
+    try {
+        const post = await prisma.blog_posts.findUnique({
+            where: { slug }
+        })
 
-    if (!post || post.status !== 'published') return null
+        if (!post || post.status !== 'published') return null
 
-    // Increment views (fire and forget)
-    // We don't await this to keep response fast
-    prisma.blog_posts.update({
-        where: { id: post.id },
-        data: { views: { increment: 1 } }
-    }).catch(console.error)
+        // Increment views (fire and forget) with error handling
+        // We use a separate async block to avoid blocking the main thread
+        const incrementViews = async (id: string) => {
+            try {
+                await prisma.blog_posts.update({
+                    where: { id },
+                    data: { views: { increment: 1 } }
+                })
+            } catch (err) {
+                console.error(`[BlogViewsError] Failed to increment for ${id}:`, err)
+            }
+        }
+        
+        incrementViews(post.id).catch(e => console.error("[BlogViewsError] Promise failure:", e))
 
-    return post
+        return post
+    } catch (e) {
+        console.error(`[BlogFetchError] Failed to fetch post by slug "${slug}":`, e)
+        return null
+    }
 }

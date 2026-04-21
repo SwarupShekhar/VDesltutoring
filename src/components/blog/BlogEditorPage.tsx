@@ -72,8 +72,16 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
     // Automatically detect title from H1 in real-time
     useEffect(() => {
         const h1Match = content.match(/^#\s+(.+)$/m)
-        if (h1Match && h1Match[1] !== title) {
-            setTitle(h1Match[1].trim())
+        if (h1Match) {
+            // Strip markdown formatting like [Link](URL), **, etc
+            const cleanTitle = h1Match[1]
+                .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+                .replace(/[*_~`]/g, '')
+                .trim();
+                
+            if (cleanTitle !== title) {
+                setTitle(cleanTitle)
+            }
         }
     }, [content, title])
 

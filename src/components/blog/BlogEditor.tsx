@@ -65,9 +65,28 @@ export default function BlogEditor({
     }
 
     const insertLink = () => {
+        const textarea = textareaRef.current
+        if (!textarea) return
+
+        const start = textarea.selectionStart
+        const end = textarea.selectionEnd
+        const selectedText = textarea.value.substring(start, end)
+        
         const url = window.prompt('URL')
         if (url) {
-            insertText('[Link Text](', `${url})`)
+            const linkText = selectedText || 'Link Text'
+            const markdown = `[${linkText}](${url})`
+            
+            const newText = textarea.value.substring(0, start) + markdown + textarea.value.substring(end)
+            onChange(newText)
+
+            setTimeout(() => {
+                textarea.focus()
+                // If we used "Link Text" placeholder, select it for easy replacement
+                if (!selectedText) {
+                    textarea.setSelectionRange(start + 1, start + 1 + linkText.length)
+                }
+            }, 0)
         }
     }
 

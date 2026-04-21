@@ -61,19 +61,31 @@ export async function magicScanContent(currentPostId: string, content: string) {
         // Escape regex helper
         const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
+        // Pre-process content: Ignore headers (# ) to prevent mangling titles
+        const contentLines = content.split('\n')
+        const linkableContent = contentLines
+            .filter(line => !line.trim().startsWith('#'))
+            .join(' ')
+
         for (const source of combinedSources) {
+            // Ensure URL is absolute from root
+            let cleanUrl = source.url;
+            if (!cleanUrl.startsWith('/') && !cleanUrl.startsWith('http')) {
+                cleanUrl = '/' + cleanUrl;
+            }
+
             // Find unlinked occurrences only (negative lookbehind/lookahead)
             // Regex: keyword not preceded by [ or followed by ] or ( or word character
             const regex = new RegExp(`(?<!\\[)${escapeRegex(source.keyword)}(?!\\]|\\(|\\w)`, 'gi');
-            const matches = content.match(regex);
+            const matches = linkableContent.match(regex);
             
             if (matches && matches.length > 0) {
-                // Ensure we haven't already added this keyword from another source (e.g. title vs focal keyword)
+                // Ensure we haven't already added this keyword from another source
                 if (!suggestions.find(s => s.keyword.toLowerCase() === source.keyword.toLowerCase())) {
                     const firstMatch = regex.exec(content);
                     suggestions.push({
                         keyword: source.keyword,
-                        url: source.url,
+                        url: cleanUrl,
                         category: source.category || 'blog',
                         matchCount: matches.length,
                         firstPosition: firstMatch ? firstMatch.index : 0

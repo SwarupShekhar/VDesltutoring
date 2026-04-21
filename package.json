@@ -9,9 +9,11 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db-backup": "ts-node scripts/db-backup.ts"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.31.0",
     "@clerk/nextjs": "^6.36.4",
     "@deepgram/sdk": "^4.11.3",
     "@elevenlabs/elevenlabs-js": "^2.28.0",

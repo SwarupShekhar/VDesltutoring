@@ -46,13 +46,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  transpilePackages: [
-    'isomorphic-dompurify',
-    'jsdom',
-    '@exodus/bytes',
-    'html-encoding-sniffer',
-    'encoding-lite'
-  ],
 };
 
 export default nextConfig;

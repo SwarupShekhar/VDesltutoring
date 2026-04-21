@@ -3,9 +3,29 @@ import ReactMarkdown from 'react-markdown'
 import Image from 'next/image'
 import remarkGfm from 'remark-gfm'
 import { Components } from 'react-markdown'
-import DOMPurify from 'isomorphic-dompurify'
 
 import { HoverPreviewLink } from './HoverPreviewLink'
+
+// Server-safe sanitizer: strips script/iframe/etc. without needing jsdom or
+// isomorphic-dompurify (which was causing ERR_REQUIRE_ESM on Vercel).
+// react-markdown already protects against XSS by never rendering raw HTML,
+// so this is a lightweight extra guard for content stored in the DB.
+function sanitizeContent(content: string): string {
+    if (typeof window !== 'undefined' && typeof DOMPurify !== 'undefined') {
+        // Client-side: use native DOMPurify if loaded
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (window as any).DOMPurify?.sanitize?.(content) ?? content
+    }
+    // Server-side: strip dangerous tags with a simple regex guard.
+    // react-markdown never outputs raw HTML, so this is defence-in-depth only.
+    return content
+        .replace(/<script[\s\S]*?<\/script>/gi, '')
+        .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')
+        .replace(/<object[\s\S]*?<\/object>/gi, '')
+        .replace(/<embed[^>]*>/gi, '')
+        .replace(/on\w+="[^"]*"/gi, '')
+        .replace(/javascript:/gi, '')
+}
 
 interface RelatedPostPreview {
     slug: string
@@ -22,7 +42,7 @@ interface MarkdownRendererProps {
 }
 
 export function MarkdownRenderer({ content, previewMap, locale }: MarkdownRendererProps) {
-    const sanitizedContent = DOMPurify.sanitize(content)
+    const sanitizedContent = sanitizeContent(content)
 
     const components: Components = {
         // ... standard components ...

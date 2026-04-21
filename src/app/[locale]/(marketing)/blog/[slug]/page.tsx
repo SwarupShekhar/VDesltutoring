@@ -18,56 +18,64 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { slug, locale } = await params
     const decodedSlug = decodeURIComponent(slug);
 
-    // Try to get the post, handling potential prefix issues similarly to the component
-    let post = await getPublishedPostBySlug(decodedSlug)
-    if (!post) {
-        post = await getPublishedPostBySlug(`blog/${decodedSlug}`);
-    }
+    try {
+        // Try standard lookup first
+        let post = await getPublishedPostBySlug(decodedSlug)
+        
+        // Legacy support in metadata as well
+        if (!post && !decodedSlug.startsWith('blog/')) {
+            post = await getPublishedPostBySlug(`blog/${decodedSlug}`);
+        }
 
-    if (!post) {
+        if (!post) {
+            return {
+                title: "Article Not Found | Englivo Blog",
+            }
+        }
+
+        const title = post.title;
+        const description = post.excerpt || "Practical English fluency insights for professionals. Learn to speak naturally without translating.";
+        const cleanSlug = post.slug.replace(/^blog\//, '');
+        const url = `https://englivo.com/${locale}/blog/${cleanSlug}`;
+        const images = post.cover ? [
+            {
+                url: post.cover,
+                width: 1200,
+                height: 630,
+                alt: title,
+            }
+        ] : [
+            {
+                url: "https://englivo.com/og-image.png",
+                width: 1200,
+                height: 630,
+                alt: "Englivo Blog",
+            }
+        ];
+
         return {
-            title: "Article Not Found | Englivo Blog",
-        }
-    }
-
-    const title = post.title;
-    const description = "Practical English fluency insights for professionals. Learn to speak naturally without translating.";
-    const url = `https://englivo.com/${locale}/blog/${slug}`;
-    const images = post.cover ? [
-        {
-            url: post.cover,
-            width: 1200,
-            height: 630,
-            alt: title,
-        }
-    ] : [
-        {
-            url: "https://englivo.com/og-image.png",
-            width: 1200,
-            height: 630,
-            alt: "Englivo Blog",
-        }
-    ];
-
-
-    return {
-        title: title,
-        description: description,
-        // keywords: post.keywords, // Assuming keywords might be added to schema later, currently not in Prisma model
-        openGraph: {
             title: title,
             description: description,
-            url: url,
-            images: images,
-            type: "article",
-        },
-        twitter: {
-            card: "summary_large_image",
-            title: title,
-            description: description,
-            images: images.map(img => img.url),
-        },
-        ...constructCanonicalMetadata(`/blog/${slug}`, locale)
+            openGraph: {
+                title: title,
+                description: description,
+                url: url,
+                images: images,
+                type: "article",
+            },
+            twitter: {
+                card: "summary_large_image",
+                title: title,
+                description: description,
+                images: images.map(img => img.url),
+            },
+            ...constructCanonicalMetadata(`/blog/${cleanSlug}`, locale)
+        }
+    } catch (e) {
+        console.error("[BlogMetadataError] Metadata generation failed:", e);
+        return {
+            title: "Englivo Blog",
+        }
     }
 }
 
@@ -81,10 +89,11 @@ export default async function BlogPostPage({ params }: PageProps) {
     const decodedSlug = decodeURIComponent(slug);
 
     try {
+        // 1. Primary lookup: Clean slug (Standard)
         let post = await getPublishedPostBySlug(decodedSlug)
 
-        // Healing logic: if clean slug fails, try prefix (legacy support)
-        if (!post) {
+        // 2. Legacy lookup: Try with prefix if standard fails (e.g. from old external links)
+        if (!post && !decodedSlug.startsWith('blog/')) {
             post = await getPublishedPostBySlug(`blog/${decodedSlug}`);
         }
 
@@ -93,13 +102,12 @@ export default async function BlogPostPage({ params }: PageProps) {
             notFound()
         }
 
-        // Canonical redirect: If the URL slug is "dirty" (e.g. starts with blog/ or is outdated),
-        // redirect to the clean version stored in the post.id/slug.
-        // Also strips any accidental double-prefixes.
+        // 3. Canonical Healing: If URL is dirty but post was found, redirect to clean URL
+        // This ensures SEO authority consolidates on the clean path.
         const cleanSlug = post.slug.replace(/^blog\//, '');
-        if (slug !== cleanSlug) {
+        if (decodedSlug !== cleanSlug) {
             const redirectPath = `/${locale}/blog/${cleanSlug}`;
-            console.log(`[BlogRedirect] Healing URL: From "${slug}" to "${cleanSlug}"`);
+            console.log(`[BlogRedirect] Healing URL from "${decodedSlug}" to "${cleanSlug}"`);
             redirect(redirectPath);
         }
 
@@ -111,22 +119,27 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         let previewMap: Record<string, any> = {};
         if (linkedSlugs.length > 0) {
-            const previews = await prisma.blog_posts.findMany({
-                where: { 
-                    slug: { in: linkedSlugs },
-                    status: 'published'
-                },
-                select: {
-                    slug: true,
-                    title: true,
-                    cover: true,
-                    excerpt: true,
-                    category: true
-                }
-            });
-            previews.forEach(p => {
-                previewMap[p.slug] = p;
-            });
+            try {
+                const previews = await prisma.blog_posts.findMany({
+                    where: { 
+                        slug: { in: linkedSlugs },
+                        status: 'published'
+                    },
+                    select: {
+                        slug: true,
+                        title: true,
+                        cover: true,
+                        excerpt: true,
+                        category: true
+                    }
+                });
+                previews.forEach(p => {
+                    previewMap[p.slug] = p;
+                });
+            } catch (previewError) {
+                console.error("[BlogPreviewError] Failed to fetch internal link previews:", previewError);
+                // Allow page to render without previews rather than crashing
+            }
         }
         // -----------------------------------------------------------
 
@@ -176,10 +189,12 @@ export default async function BlogPostPage({ params }: PageProps) {
             </article>
         )
     } catch (error) {
-        console.error("[BlogCriticalError] Render failure:", error);
-        // Avoid crash, try to fallback or notFound
+        // Next.js internal errors must be rethrown
         if ((error as any).digest?.includes('NEXT_NOT_FOUND')) throw error;
         if ((error as any).digest?.includes('NEXT_REDIRECT')) throw error;
+        
+        console.error("[BlogCriticalError] Render failure:", error);
+        // Fallback to 404 for unrecoverable errors in post lookup
         notFound();
     }
 }

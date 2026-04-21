@@ -5,15 +5,27 @@ import remarkGfm from 'remark-gfm'
 import { Components } from 'react-markdown'
 import DOMPurify from 'isomorphic-dompurify'
 
-interface MarkdownRendererProps {
-    content: string
+import { HoverPreviewLink } from './HoverPreviewLink'
+
+interface RelatedPostPreview {
+    slug: string
+    title: string
+    cover: string | null
+    excerpt: string | null
+    category: string | null
 }
 
-export function MarkdownRenderer({ content }: MarkdownRendererProps) {
+interface MarkdownRendererProps {
+    content: string
+    previewMap?: Record<string, RelatedPostPreview>
+    locale?: string
+}
+
+export function MarkdownRenderer({ content, previewMap, locale }: MarkdownRendererProps) {
     const sanitizedContent = DOMPurify.sanitize(content)
 
     const components: Components = {
-        // Styled Tables with horizontal scroll
+        // ... standard components ...
         table: ({ node, ...props }) => (
             <div className="overflow-x-auto my-8 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm">
                 <table className="w-full text-sm text-left border-collapse" {...props} />
@@ -63,7 +75,6 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
         // Blockquotes (CTA Style or Standard)
         blockquote: ({ node, children, ...props }) => {
-            // Check if it's likely a CTA (custom metric logic could go here, but styling universally professional first)
             return (
                 <blockquote className="not-italic border-l-4 border-indigo-500 bg-indigo-50/50 dark:bg-indigo-900/20 px-6 py-4 rounded-r-lg my-8 text-slate-700 dark:text-slate-300 shadow-sm" {...props}>
                     {children}
@@ -71,10 +82,42 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
             )
         },
 
-        // Links
-        a: ({ node, ...props }) => (
-            <a className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline decoration-2 underline-offset-2 transition-colors" {...props} />
-        ),
+        // Links: Intercept relative links and prevent double-blog prefixing
+        a: ({ node, ...props }) => {
+            let href = props.href || ''
+            
+            // 1. Resolve relative links that mistakenly omit the leading slash
+            if (href.startsWith('blog/')) {
+                href = '/' + href
+            }
+            
+            // 2. Clear out accidental double-prefixing
+            if (href.includes('/blog/blog/')) {
+                href = href.replace('/blog/blog/', '/blog/')
+            }
+
+            // 3. Detect slug for hover preview
+            // Match /blog/slug-name but ignore query params or fragments for lookup
+            const slugMatch = href.match(/\/blog\/([^?#]+)/)
+            const slug = slugMatch ? slugMatch[1].replace(/^\/|\/$/g, '') : null
+            const preview = slug && previewMap ? previewMap[slug] : undefined
+
+            if (preview) {
+                return (
+                    <HoverPreviewLink href={href} preview={preview} locale={locale}>
+                        {props.children}
+                    </HoverPreviewLink>
+                )
+            }
+
+            return (
+                <a 
+                    className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline decoration-2 underline-offset-2 transition-colors" 
+                    {...props} 
+                    href={href}
+                />
+            )
+        },
 
         // Headings
         h1: ({ node, ...props }) => <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mt-12 mb-6" {...props} />,

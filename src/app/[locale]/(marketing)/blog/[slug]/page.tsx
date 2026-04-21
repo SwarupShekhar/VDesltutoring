@@ -1,13 +1,14 @@
 import { getPublishedPostBySlug } from "@/actions/blog";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import { Calendar, ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 import { constructCanonicalMetadata } from '@/lib/seo';
 import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer";
-import { RelatedFromPillar } from '@/components/blog/RelatedFromPillar';
+import { RelatedPosts } from "@/components/blog/RelatedPosts";
 import { TableOfContents } from "@/components/blog/TableOfContents";
+import { prisma } from "@/lib/prisma";
 
 interface PageProps {
     params: Promise<{ slug: string; locale: string }>
@@ -77,67 +78,108 @@ export const revalidate = 3600; // Revalidate every hour
 
 export default async function BlogPostPage({ params }: PageProps) {
     const { slug, locale } = await params
-    console.log(`[BlogParamDebug] Slug raw: "${slug}", Locale: "${locale}"`);
-
     const decodedSlug = decodeURIComponent(slug);
-    console.log(`[BlogParamDebug] Decoded Slug: "${decodedSlug}"`);
 
-    let post = await getPublishedPostBySlug(decodedSlug)
+    try {
+        let post = await getPublishedPostBySlug(decodedSlug)
 
-    if (!post) {
-        console.log(`[BlogDebug] Clean slug not found. Trying with 'blog/' prefix...`);
-        post = await getPublishedPostBySlug(`blog/${decodedSlug}`);
-    }
+        // Healing logic: if clean slug fails, try prefix (legacy support)
+        if (!post) {
+            post = await getPublishedPostBySlug(`blog/${decodedSlug}`);
+        }
 
-    if (!post) {
-        console.error(`[BlogError] Post not found for slug: "${decodedSlug}" (nor with prefix)`);
-        notFound()
-    }
+        if (!post) {
+            console.error(`[BlogError] Post not found: "${decodedSlug}"`);
+            notFound()
+        }
 
-    return (
-        <article className="min-h-screen bg-white dark:bg-slate-950 pt-24 pb-16">
-            <BlogSchema post={post} slug={decodedSlug} locale={locale} />
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-                <Link href={`/${locale}/blog`} className="inline-flex items-center text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mb-8 transition-colors">
-                    <ArrowLeft size={16} className="mr-2" /> Back to Blog
-                </Link>
+        // Canonical redirect: If the URL slug is "dirty" (e.g. starts with blog/ or is outdated),
+        // redirect to the clean version stored in the post.id/slug.
+        // Also strips any accidental double-prefixes.
+        const cleanSlug = post.slug.replace(/^blog\//, '');
+        if (slug !== cleanSlug) {
+            const redirectPath = `/${locale}/blog/${cleanSlug}`;
+            console.log(`[BlogRedirect] Healing URL: From "${slug}" to "${cleanSlug}"`);
+            redirect(redirectPath);
+        }
 
-                <header className="mb-8">
-                    <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
-                        <span className="flex items-center gap-1.5">
-                            <Calendar size={14} />
-                            {new Date(post.createdAt).toLocaleDateString()}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <Clock size={14} />
-                            {Math.ceil(post.content.split(/\s+/).filter(Boolean).length / 200)} min read
-                        </span>
-                    </div>
-                    <h1 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
-                        {post.title}
-                    </h1>
-                    {post.cover && (
-                        <div className="aspect-video w-full relative rounded-2xl overflow-hidden shadow-xl mb-8">
-                            {/* External image handling needed or allow all domains */}
-                            <Image
-                                src={post.cover}
-                                alt={post.title}
-                                fill
-                                priority
-                                className="object-cover"
-                            />
+        // --- Intelligence 2.0: Build Preview Map for internal links ---
+        const content = post.content || "";
+        const internalBlogLinkRegex = /\[.*?\]\((\/(?:[a-z]{2}\/)?blog\/([^)#\s]+))/g;
+        const matches = [...content.matchAll(internalBlogLinkRegex)];
+        const linkedSlugs = Array.from(new Set(matches.map(m => m[2].replace(/^\/|\/$/g, ''))));
+
+        let previewMap: Record<string, any> = {};
+        if (linkedSlugs.length > 0) {
+            const previews = await prisma.blog_posts.findMany({
+                where: { 
+                    slug: { in: linkedSlugs },
+                    status: 'published'
+                },
+                select: {
+                    slug: true,
+                    title: true,
+                    cover: true,
+                    excerpt: true,
+                    category: true
+                }
+            });
+            previews.forEach(p => {
+                previewMap[p.slug] = p;
+            });
+        }
+        // -----------------------------------------------------------
+
+        return (
+            <article className="min-h-screen bg-white dark:bg-slate-950 pt-24 pb-16">
+                <BlogSchema post={post} slug={cleanSlug} locale={locale} />
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <Link href={`/${locale}/blog`} className="inline-flex items-center text-sm text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 mb-8 transition-colors">
+                        <ArrowLeft size={16} className="mr-2" /> Back to Blog
+                    </Link>
+
+                    <header className="mb-8">
+                        <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                            <span className="flex items-center gap-1.5">
+                                <Calendar size={14} />
+                                {new Date(post.createdAt).toLocaleDateString()}
+                            </span>
+                            <span className="flex items-center gap-1.5">
+                                <Clock size={14} />
+                                {Math.ceil((post.content || "").split(/\s+/).filter(Boolean).length / 200)} min read
+                            </span>
                         </div>
-                    )}
-                </header>
+                        <h1 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
+                            {post.title}
+                        </h1>
+                        {post.cover && (
+                            <div className="aspect-video w-full relative rounded-2xl overflow-hidden shadow-xl mb-8">
+                                <Image
+                                    src={post.cover}
+                                    alt={post.title}
+                                    fill
+                                    priority
+                                    className="object-cover"
+                                />
+                            </div>
+                        )}
+                    </header>
 
-                <article className="prose prose-lg prose-indigo dark:prose-invert max-w-3xl mx-auto px-4">
-                    <TableOfContents content={post.content} />
-                    <div className="my-12" />
-                    <MarkdownRenderer content={post.content} />
-                    <ShareButtons title={post.title} url={`https://englivo.com/${locale}/blog/${slug}`} postId={post.id} />
-                    <RelatedFromPillar />
-                </article>
-            </div>
-        </article>
-    )
+                    <article className="prose prose-lg prose-indigo dark:prose-invert max-w-3xl mx-auto px-4">
+                        <TableOfContents content={post.content || ""} />
+                        <div className="my-12" />
+                        <MarkdownRenderer content={post.content || ""} previewMap={previewMap} locale={locale} />
+                        <ShareButtons title={post.title} url={`https://englivo.com/${locale}/blog/${cleanSlug}`} postId={post.id} />
+                        <RelatedPosts posts={((post as any).related_posts as any) || []} locale={locale} />
+                    </article>
+                </div>
+            </article>
+        )
+    } catch (error) {
+        console.error("[BlogCriticalError] Render failure:", error);
+        // Avoid crash, try to fallback or notFound
+        if ((error as any).digest?.includes('NEXT_NOT_FOUND')) throw error;
+        if ((error as any).digest?.includes('NEXT_REDIRECT')) throw error;
+        notFound();
+    }
 }

@@ -161,6 +161,13 @@ export async function updatePost(id: string, data: {
             }
         })
 
+        // Recompute related posts for current post and siblings
+        await computeRelatedPosts(id);
+        const categoryToRefresh = data.category || (currentPost as any)?.category;
+        if (categoryToRefresh) {
+            await cascadeRefreshRelated(categoryToRefresh, id);
+        }
+
         // Revalidate with wildcard to handle localized routes
         revalidatePath('/', 'layout')
         
@@ -263,4 +270,87 @@ export async function getPublishedPostBySlug(slug: string) {
         console.error(`[BlogFetchError] Failed to fetch post by slug "${slug}":`, e)
         return null
     }
+}
+export async function computeRelatedPosts(postId: string) {
+    const post = await prisma.blog_posts.findUnique({
+        where: { id: postId },
+        select: { id: true, category: true, focal_keyword: true }
+    });
+    if (!post) return;
+
+    const allPosts = await prisma.blog_posts.findMany({
+        where: { 
+            id: { not: postId }, 
+            status: 'published' 
+        },
+        select: { id: true, slug: true, title: true, cover: true, excerpt: true, category: true, focal_keyword: true }
+    });
+
+    const focalWords = (post.focal_keyword || '').toLowerCase().split(/\s+/).filter(Boolean);
+
+    const scored = allPosts.map(p => {
+        let score = 0;
+        if (p.category && post.category && p.category.toLowerCase() === post.category.toLowerCase()) {
+            score += 2;
+        }
+
+        if (focalWords.length > 0) {
+            const pText = `${p.title} ${p.focal_keyword || ''}`.toLowerCase();
+            focalWords.forEach(word => {
+                if (pText.includes(word)) score += 1;
+            });
+        }
+
+        return {
+            slug: p.slug,
+            title: p.title,
+            cover: p.cover,
+            excerpt: p.excerpt,
+            category: p.category,
+            score
+        };
+    }).filter(p => p.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+
+    await prisma.blog_posts.update({
+        where: { id: postId },
+        data: { related_posts: scored as any }
+    });
+
+    return scored;
+}
+
+async function cascadeRefreshRelated(categoryId: string | null | undefined, excludeId: string) {
+    if (!categoryId) return;
+    const siblingPosts = await prisma.blog_posts.findMany({
+        where: { 
+            category: categoryId, 
+            id: { not: excludeId },
+            status: 'published' 
+        },
+        take: 10,
+        select: { id: true }
+    });
+    
+    // Process in parallel with minimal concurrency or just Promise.all since it's capped at 10
+    await Promise.all(siblingPosts.map(p => computeRelatedPosts(p.id)));
+}
+
+export async function backfillRelatedPosts() {
+    await ensureAdmin();
+    const posts = await prisma.blog_posts.findMany({
+        where: { status: 'published' },
+        select: { id: true }
+    });
+
+    console.log(`[Backfill] Starting for ${posts.length} posts...`);
+    let count = 0;
+    for (const post of posts) {
+        await computeRelatedPosts(post.id);
+        count++;
+    }
+    
+    revalidatePath('/blog');
+    return { success: true, count };
 }

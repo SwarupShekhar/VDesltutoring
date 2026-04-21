@@ -48,3 +48,9 @@ googletts.json
 # markdown notes and plans
 *.md
 !README.md
+.worktrees/
+
+# graphify
+graphify-out/
+graphify.json
+.graphify_python

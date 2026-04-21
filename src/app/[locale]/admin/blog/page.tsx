@@ -2,6 +2,7 @@ import { getPostsAdmin } from "@/actions/blog";
 import Link from "next/link";
 import { Plus, Pencil, Trash2, Eye } from "lucide-react";
 import { deletePost } from "@/actions/blog";
+import { RecomputeButton } from "@/components/blog/RecomputeButton";
 
 export const dynamic = 'force-dynamic';
 
@@ -11,7 +12,10 @@ export default async function AdminBlogPage() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Blog Posts</h1>
+                <div className="flex items-center gap-4">
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Blog Posts</h1>
+                    <RecomputeButton />
+                </div>
                 <Link href="/admin/blog/new" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
                     <Plus size={18} />
                     New Post

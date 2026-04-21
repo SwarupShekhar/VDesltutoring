@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix",
     "type-check": "tsc --noEmit",
     "postinstall": "prisma generate",
-    "db-backup": "ts-node scripts/db-backup.ts"
+    "db-backup": "ts-node tools/db-backup.ts"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.31.0",

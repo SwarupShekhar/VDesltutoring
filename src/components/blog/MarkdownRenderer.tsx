@@ -78,8 +78,16 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
         // Headings
         h1: ({ node, ...props }) => <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 dark:text-white mt-12 mb-6" {...props} />,
-        h2: ({ node, ...props }) => <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white mt-12 mb-6 border-b border-slate-100 dark:border-slate-800 pb-2" {...props} />,
-        h3: ({ node, ...props }) => <h3 className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white mt-8 mb-4" {...props} />,
+        h2: ({ node, ...props }) => {
+            const text = props.children?.toString() || ''
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+            return <h2 id={id} className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white mt-12 mb-6 border-b border-slate-100 dark:border-slate-800 pb-2" {...props} />
+        },
+        h3: ({ node, ...props }) => {
+            const text = props.children?.toString() || ''
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+            return <h3 id={id} className="text-xl md:text-2xl font-semibold text-slate-900 dark:text-white mt-8 mb-4" {...props} />
+        },
 
         // Lists
         ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-6 space-y-2 my-6 text-slate-700 dark:text-slate-300" {...props} />,

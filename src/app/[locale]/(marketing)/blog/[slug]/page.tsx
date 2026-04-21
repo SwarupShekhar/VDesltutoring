@@ -1,12 +1,13 @@
 import { getPublishedPostBySlug } from "@/actions/blog";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { Calendar, ArrowLeft } from "lucide-react";
+import { Calendar, ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
 import { constructCanonicalMetadata } from '@/lib/seo';
 import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer";
 import { RelatedFromPillar } from '@/components/blog/RelatedFromPillar';
+import { TableOfContents } from "@/components/blog/TableOfContents";
 
 interface PageProps {
     params: Promise<{ slug: string; locale: string }>
@@ -102,9 +103,15 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </Link>
 
                 <header className="mb-8">
-                    <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
-                        <Calendar size={14} />
-                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
+                        <span className="flex items-center gap-1.5">
+                            <Calendar size={14} />
+                            {new Date(post.createdAt).toLocaleDateString()}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                            <Clock size={14} />
+                            {Math.ceil(post.content.split(/\s+/).filter(Boolean).length / 200)} min read
+                        </span>
                     </div>
                     <h1 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
                         {post.title}
@@ -124,6 +131,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </header>
 
                 <article className="prose prose-lg prose-indigo dark:prose-invert max-w-3xl mx-auto px-4">
+                    <TableOfContents content={post.content} />
+                    <div className="my-12" />
                     <MarkdownRenderer content={post.content} />
                     <ShareButtons title={post.title} url={`https://englivo.com/${locale}/blog/${slug}`} postId={post.id} />
                     <RelatedFromPillar />

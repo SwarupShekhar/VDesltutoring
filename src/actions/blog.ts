@@ -57,6 +57,17 @@ function sanitizeSlug(slug: string): string {
         .trim();
 }
 
+export async function checkSlugUniqueness(slug: string, excludeId?: string) {
+    const cleanSlug = sanitizeSlug(slug)
+    const existing = await prisma.blog_posts.findFirst({
+        where: {
+            slug: cleanSlug,
+            id: excludeId ? { not: excludeId } : undefined
+        }
+    })
+    return { isUnique: !existing }
+}
+
 export async function createPost(title: string, slug: string) {
     const userId = await ensureAdmin()
     const cleanSlug = sanitizeSlug(slug)

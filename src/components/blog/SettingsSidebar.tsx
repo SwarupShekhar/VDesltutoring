@@ -14,8 +14,11 @@ import {
     Zap,
     CheckCircle2,
     AlertCircle,
-    Info
+    Info,
+    Share2,
+    Target
 } from 'lucide-react'
+import { SocialPreview } from './SocialPreview'
 import { SEOHealthScore } from './SEOHealthScore'
 import { useSEOHealth } from '@/hooks/useSEOHealth'
 
@@ -31,31 +34,56 @@ interface SettingsSidebarProps {
         focalKeyword: string
         altText: string
         publishedAt: Date | null
+        views?: number
+        slugError?: string | null
     }
     update: (updates: Partial<SettingsSidebarProps['data']>) => void
     content: string
-    suggestions?: Array<{ title: string, slug: string, reason: string }>
+    onContentChange?: (content: string) => void
+    suggestions?: any[]
     revisions?: any[]
+    internalLinks?: any[]
+    categories?: any[]
     onRollback?: (revision: any) => void
 }
 
-export function SettingsSidebar({ data, update, content, suggestions = [], revisions = [], onRollback }: SettingsSidebarProps) {
+export function SettingsSidebar({ data, update, content, onContentChange, suggestions = [], revisions = [], internalLinks = [], categories = [], onRollback }: SettingsSidebarProps) {
+    const [activeTab, setActiveTab] = useState<'settings' | 'links'>('settings')
+    const [linkSearch, setLinkSearch] = useState('')
+    const [linkCategory, setLinkCategory] = useState('all')
     const [showSEO, setShowSEO] = useState(false)
+    const [showSocialPreview, setShowSocialPreview] = useState(false)
     const [showRevisions, setShowRevisions] = useState(false)
     const seo = useSEOHealth(content, {
         title: data.seoTitle || data.title,
         metaDescription: data.metaDescription,
         focalKeyword: data.focalKeyword,
-        altText: data.altText
+        altText: data.altText,
+        slug: data.slug
     })
 
     return (
         <aside className="w-96 bg-slate-900 border-l border-slate-800 flex flex-col h-full overflow-y-auto custom-scrollbar">
             <div className="p-6 space-y-8">
                 {/* Header */}
-                <div className="flex items-center gap-2 text-indigo-400 font-bold uppercase tracking-widest text-xs">
-                    <Layout size={14} /> Blog Settings
+                {/* Tabs */}
+                <div className="flex gap-4 border-b border-slate-800 mb-6">
+                    <button 
+                        onClick={() => setActiveTab('settings')}
+                        className={`pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'settings' ? 'text-indigo-400 border-b-2 border-indigo-400' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                        Metadata
+                    </button>
+                    <button 
+                        onClick={() => setActiveTab('links')}
+                        className={`pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'links' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
+                    >
+                        Links
+                    </button>
                 </div>
+
+                {activeTab === 'settings' ? (
+                    <div className="space-y-8">
 
                 {/* Section: Title & Identity */}
                 <div className="space-y-4">
@@ -115,9 +143,9 @@ export function SettingsSidebar({ data, update, content, suggestions = [], revis
                             className="sidebar-input text-xs"
                         >
                             <option value="General">General</option>
-                            <option value="Study Tips">Study Tips</option>
-                            <option value="Grammar">Grammar</option>
-                            <option value="Career">Career</option>
+                            {categories.map(cat => (
+                                <option key={cat.id} value={cat.name}>{cat.name}</option>
+                            ))}
                         </select>
                     </SidebarSection>
                     <SidebarSection icon={<Calendar size={14} />} label="Publish Date">
@@ -147,23 +175,30 @@ export function SettingsSidebar({ data, update, content, suggestions = [], revis
 
                 {/* Slug */}
                 <SidebarSection icon={<Search size={14} />} label="URL Slug">
-                    <div className="flex gap-2">
-                         <div className="flex-1 relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs">/</span>
-                            <input 
-                                type="text"
-                                value={data.slug}
-                                onChange={(e) => update({ slug: e.target.value })}
-                                className="sidebar-input pl-6 text-xs"
-                                placeholder="url-friendly-slug"
-                            />
+                    <div className="space-y-2">
+                        <div className="flex gap-2">
+                            <div className="flex-1 relative">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs">/</span>
+                                <input 
+                                    type="text"
+                                    value={data.slug}
+                                    onChange={(e) => update({ slug: e.target.value })}
+                                    className={`sidebar-input pl-6 text-xs ${data.slugError ? 'border-rose-500/50 focus:ring-rose-500/50' : ''}`}
+                                    placeholder="url-friendly-slug"
+                                />
+                            </div>
+                            <button 
+                                onClick={() => update({ slug: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') })}
+                                className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg text-[10px] font-bold uppercase transition-colors"
+                            >
+                                Generate
+                            </button>
                         </div>
-                        <button 
-                            onClick={() => update({ slug: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') })}
-                            className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded-lg text-[10px] font-bold uppercase transition-colors"
-                        >
-                            Generate
-                        </button>
+                        {data.slugError && (
+                            <p className="text-[9px] text-rose-500 flex items-center gap-1">
+                                <AlertCircle size={10} /> {data.slugError}
+                            </p>
+                        )}
                     </div>
                 </SidebarSection>
 
@@ -174,9 +209,11 @@ export function SettingsSidebar({ data, update, content, suggestions = [], revis
                         checks={seo.checks} 
                     />
 
-                    <div className="flex p-1 bg-slate-950 rounded-xl border border-slate-800">
-                        <button className="flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-slate-800 text-white rounded-lg">Checklist</button>
-                        <button className="flex-1 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-500 hover:text-slate-300">Metrics</button>
+                    <div className="p-1 bg-slate-950 rounded-xl border border-slate-800">
+                        <div className="flex items-center justify-between px-4 py-2">
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Lifetime Views</span>
+                            <span className="text-xs font-black text-white">{data.views || 0}</span>
+                        </div>
                     </div>
 
                     {/* SEO Detailed Toggle */}
@@ -242,6 +279,31 @@ export function SettingsSidebar({ data, update, content, suggestions = [], revis
                             </div>
                         </div>
                     )}
+
+                    {/* Social Preview Toggle */}
+                    <button 
+                        onClick={() => setShowSocialPreview(!showSocialPreview)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl text-indigo-400 hover:bg-indigo-500/10 transition-all group"
+                    >
+                        <div className="flex items-center gap-2 text-xs font-bold">
+                            <Share2 size={14} /> SOCIAL PREVIEW
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px]">
+                            {showSocialPreview ? 'Hide' : 'Show'}
+                            {showSocialPreview ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </div>
+                    </button>
+
+                    {showSocialPreview && (
+                        <div className="p-4 bg-slate-950/50 rounded-2xl border border-slate-800 animate-in fade-in slide-in-from-top-2">
+                            <SocialPreview 
+                                title={data.seoTitle || data.title}
+                                description={data.metaDescription}
+                                cover={data.cover}
+                                slug={data.slug}
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Revision History */}
@@ -289,29 +351,127 @@ export function SettingsSidebar({ data, update, content, suggestions = [], revis
                 {/* Internal Linking Suggestions */}
                 {suggestions.length > 0 && (
                     <div className="space-y-4 pt-4 border-t border-slate-800">
-                        <div className="flex items-center gap-2 text-blue-400 font-bold uppercase tracking-widest text-xs">
-                            <Zap size={14} /> Magic Suggestions
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-blue-400 font-bold uppercase tracking-widest text-xs">
+                                <Zap size={14} /> Magic Scan
+                            </div>
+                            <button 
+                                onClick={() => {
+                                    let newContent = content;
+                                    suggestions.forEach(s => {
+                                        const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                        const regex = new RegExp(`(?<!\\[)${escapeRegex(s.keyword)}(?!\\]|\\(|\\w)`, 'i');
+                                        newContent = newContent.replace(regex, `[${s.keyword}](${s.url})`);
+                                    });
+                                    if (onContentChange) onContentChange(newContent);
+                                }}
+                                className="text-[10px] bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-full font-bold transition-all shadow-lg shadow-blue-500/20"
+                            >
+                                Bulk Apply
+                            </button>
                         </div>
-                        <div className="space-y-2">
-                            {suggestions.map((s, i) => (
-                                <div key={i} className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl group hover:bg-blue-500/10 transition-all">
-                                    <div className="text-[10px] text-blue-300 font-bold mb-1 flex items-center gap-1">
-                                        <div className="w-1 h-1 rounded-full bg-blue-400 animate-pulse" />
-                                        {s.reason}
+                        <div className="space-y-4">
+                            {/* Grouped by category */}
+                            {Array.from(new Set(suggestions.map(s => s.category))).map(cat => (
+                                <div key={cat as string} className="space-y-2">
+                                    <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest px-1">{cat as string}</div>
+                                    <div className="space-y-2">
+                                        {suggestions.filter(s => s.category === cat).slice(0, 10).map((s, i) => (
+                                            <div key={i} className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl group hover:bg-blue-500/10 transition-all">
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div>
+                                                        <div className="text-[10px] text-blue-300 font-bold mb-0.5 flex items-center gap-1">
+                                                            <div className="w-1 h-1 rounded-full bg-blue-400 animate-pulse" />
+                                                            Found {s.matchCount} mentions
+                                                        </div>
+                                                        <div className="text-xs text-white font-medium">{s.keyword}</div>
+                                                    </div>
+                                                    <button 
+                                                        onClick={() => {
+                                                            const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                                            const regex = new RegExp(`(?<!\\[)${escapeRegex(s.keyword)}(?!\\]|\\(|\\w)`, 'i');
+                                                            const newContent = content.replace(regex, `[${s.keyword}](${s.url})`);
+                                                            if (onContentChange) onContentChange(newContent);
+                                                        }}
+                                                        className="px-2 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded text-[9px] font-bold uppercase transition-all"
+                                                    >
+                                                        Insert
+                                                    </button>
+                                                </div>
+                                                <div className="text-[9px] text-slate-500 font-mono truncate">{s.url}</div>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <div className="text-xs text-white font-medium mb-2">{s.title}</div>
-                                    <button 
-                                        onClick={() => {
-                                            const link = `[${s.title}](https://englivo.com/blog/${s.slug})`
-                                            navigator.clipboard.writeText(link)
-                                            // Handle copy success visually if needed
-                                        }}
-                                        className="w-full py-1.5 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-[9px] font-black uppercase tracking-widest border border-blue-500/20 active:scale-95 transition-all"
-                                    >
-                                        Copy Link Markdown
-                                    </button>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                )}
+                    </div>
+                ) : (
+                    <div className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={14} />
+                                <input 
+                                    type="text"
+                                    placeholder="Search link database..."
+                                    className="sidebar-input pl-9 text-xs"
+                                    value={linkSearch}
+                                    onChange={(e) => setLinkSearch(e.target.value)}
+                                />
+                            </div>
+                            
+                            <div className="flex flex-wrap gap-2">
+                                {['all', 'navigation', 'blog', 'course', 'resource'].map(cat => (
+                                    <button 
+                                        key={cat}
+                                        onClick={() => setLinkCategory(cat)}
+                                        className={`px-3 py-1 rounded-full text-[9px] font-bold uppercase transition-all ${linkCategory === cat ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            {internalLinks
+                                .filter(l => {
+                                    const matchesSearch = l.keyword.toLowerCase().includes(linkSearch.toLowerCase()) || l.url.toLowerCase().includes(linkSearch.toLowerCase())
+                                    const matchesCat = linkCategory === 'all' || l.category === linkCategory
+                                    return matchesSearch && matchesCat
+                                })
+                                .map((l, i) => {
+                                    const isAlreadyLinked = content.toLowerCase().includes(`](${l.url.toLowerCase()})`) || content.toLowerCase().includes(`](${l.url.toLowerCase()} `)
+                                    return (
+                                        <button 
+                                            key={i}
+                                            onClick={() => {
+                                                if (onContentChange) {
+                                                    const markdown = `[${l.keyword}](${l.url})`
+                                                    // Simple append at the end or if we had editor ref we could insert at cursor
+                                                    // Spec: "inserts [keyword](url) at cursor position in editor"
+                                                    // Since we don't have direct ref to editor here, we might need to handle this in BlogEditor
+                                                    // For now, I'll use a hack or just emit a custom event
+                                                    const event = new CustomEvent('insert-markdown', { detail: markdown })
+                                                    window.dispatchEvent(event)
+                                                }
+                                            }}
+                                            className={`w-full text-left p-3 rounded-xl border transition-all ${isAlreadyLinked ? 'opacity-40 border-slate-800 bg-slate-900/30' : 'border-slate-800 bg-slate-900 hover:border-blue-500/50 hover:bg-blue-500/5'}`}
+                                        >
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="text-xs font-bold text-white">{l.keyword}</span>
+                                                <span className="text-[8px] px-1.5 py-0.5 bg-slate-800 text-slate-500 rounded font-black uppercase">{l.category}</span>
+                                            </div>
+                                            <div className="text-[9px] text-slate-500 font-mono truncate">{l.url}</div>
+                                        </button>
+                                    )
+                                })
+                            }
+                            {internalLinks.length === 0 && (
+                                <p className="text-[10px] text-slate-600 text-center py-8 italic">No internal links found in database.</p>
+                            )}
                         </div>
                     </div>
                 )}

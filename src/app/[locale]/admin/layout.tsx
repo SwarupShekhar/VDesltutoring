@@ -18,6 +18,7 @@ export default async function AdminLayout({ children, params }: { children: Reac
               Manage Tutors
             </Link>
             <Link href="/admin/blog" className="block hover:text-blue-400">Blog System</Link>
+            <Link href="/admin/internal-links" className="block hover:text-blue-400 text-slate-400">Internal Links</Link>
             <Link href="/admin/dashboard" className="block hover:text-blue-400">Manage Sessions</Link>
           </nav>
         </aside>

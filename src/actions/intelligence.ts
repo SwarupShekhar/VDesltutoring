@@ -22,7 +22,12 @@ export async function magicScanContent(currentPostId: string, content: string) {
     await ensureAdmin()
 
     try {
-        // Fetch all other published posts
+        // Source 1: InternalLink table (active only)
+        const dbLinks = await prisma.internalLink.findMany({
+            where: { isActive: true }
+        })
+
+        // Source 2: Published blog posts
         const otherPosts = await prisma.blog_posts.findMany({
             where: {
                 id: { not: currentPostId },
@@ -32,39 +37,55 @@ export async function magicScanContent(currentPostId: string, content: string) {
                 id: true,
                 title: true,
                 slug: true,
-                focal_keyword: true
+                focal_keyword: true,
+                category: true
             }
         })
 
-        const suggestions: Array<{ title: string, slug: string, reason: string }> = []
-        const lowercaseContent = content.toLowerCase()
+        const combinedSources: Array<{ keyword: string, url: string, category: string }> = [
+            ...dbLinks.map((l: any) => ({ keyword: l.keyword, url: l.url, category: l.category })),
+            ...otherPosts.map(p => ({ 
+                keyword: p.title, 
+                url: `/blog/${p.slug}`, 
+                category: 'blog' 
+            })),
+            ...otherPosts.filter(p => p.focal_keyword).map(p => ({ 
+                keyword: p.focal_keyword!, 
+                url: `/blog/${p.slug}`, 
+                category: 'blog' 
+            }))
+        ]
 
-        // Very simple matching for now
-        for (const post of otherPosts) {
-            // Check if title or focal keyword is mentioned in content
-            const titleMentioned = lowercaseContent.includes(post.title.toLowerCase())
-            const keywordMentioned = post.focal_keyword && lowercaseContent.includes(post.focal_keyword.toLowerCase())
+        const suggestions: Array<{ keyword: string, url: string, category: string, matchCount: number, firstPosition: number }> = []
+        
+        // Escape regex helper
+        const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
-            if (titleMentioned || keywordMentioned) {
-                // Check if already linked (basic [text](slug) check)
-                const isAlreadyLinked = lowercaseContent.includes(post.slug.toLowerCase())
-                
-                if (!isAlreadyLinked) {
+        for (const source of combinedSources) {
+            // Find unlinked occurrences only (negative lookbehind/lookahead)
+            // Regex: keyword not preceded by [ or followed by ] or ( or word character
+            const regex = new RegExp(`(?<!\\[)${escapeRegex(source.keyword)}(?!\\]|\\(|\\w)`, 'gi');
+            const matches = content.match(regex);
+            
+            if (matches && matches.length > 0) {
+                // Ensure we haven't already added this keyword from another source (e.g. title vs focal keyword)
+                if (!suggestions.find(s => s.keyword.toLowerCase() === source.keyword.toLowerCase())) {
+                    const firstMatch = regex.exec(content);
                     suggestions.push({
-                        title: post.title,
-                        slug: post.slug,
-                        reason: titleMentioned 
-                            ? `Found mention of title: "${post.title}"` 
-                            : `Matches focal keyword: "${post.focal_keyword}"`
+                        keyword: source.keyword,
+                        url: source.url,
+                        category: source.category || 'blog',
+                        matchCount: matches.length,
+                        firstPosition: firstMatch ? firstMatch.index : 0
                     })
                 }
             }
         }
 
-        // Limit to top 5 suggestions to keep UI clean
+        // Grouping and sorting is handled by the UI as per spec
         return { 
             success: true, 
-            suggestions: suggestions.slice(0, 5) 
+            suggestions: suggestions.sort((a, b) => b.matchCount - a.matchCount)
         }
     } catch (error) {
         console.error("Magic Scan failed:", error)

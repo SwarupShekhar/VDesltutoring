@@ -46,6 +46,17 @@ export default function BlogEditor({
         }, 0)
     }
 
+    React.useEffect(() => {
+        const handleInsert = (e: Event) => {
+            const detail = (e as CustomEvent).detail
+            if (typeof detail === 'string') {
+                insertText(detail)
+            }
+        }
+        window.addEventListener('insert-markdown', handleInsert)
+        return () => window.removeEventListener('insert-markdown', handleInsert)
+    }, [onChange])
+
     const insertImage = () => {
         const url = window.prompt('Image URL')
         if (url) {
@@ -83,6 +94,28 @@ export default function BlogEditor({
 
                 <div className="flex items-center gap-0.5 px-2">
                     <ToolbarButton icon={<List size={16} />} onClick={() => insertText('- ')} title="Bullet List" />
+                    <ToolbarButton 
+                        icon={<span className="text-[9px] font-bold">TOC</span>} 
+                        onClick={() => {
+                            const lines = content.split('\n')
+                            let tocMd = '## Table of Contents\n'
+                            lines.forEach(line => {
+                                const h2Match = line.match(/^##\s+(.+)$/)
+                                const h3Match = line.match(/^###\s+(.+)$/)
+                                if (h2Match) {
+                                    const text = h2Match[1].trim()
+                                    const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                                    tocMd += `- [${text}](#${id})\n`
+                                } else if (h3Match) {
+                                    const text = h3Match[1].trim()
+                                    const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+                                    tocMd += `  - [${text}](#${id})\n`
+                                }
+                            })
+                            insertText(tocMd + '\n')
+                        }} 
+                        title="Generate TOC" 
+                    />
                 </div>
 
                 <div className="w-px h-6 bg-slate-700 mx-1" />
@@ -124,7 +157,14 @@ export default function BlogEditor({
                     <div className="w-1 h-1 rounded-full bg-slate-700" />
                     <span>Autosaved</span>
                 </div>
-                <div>{content.split(/\s+/).length} Words &bull; {content.length} Characters</div>
+                <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1 text-slate-400 bg-slate-900/50 px-2 py-0.5 rounded-full border border-slate-700/50">
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+                        {Math.ceil(content.split(/\s+/).filter(w => w.length > 0).length / 200)} min read
+                    </span>
+                    <span>{content.split(/\s+/).filter(w => w.length > 0).length} Words</span>
+                    <span>{content.length} Characters</span>
+                </div>
             </div>
         </div>
     )

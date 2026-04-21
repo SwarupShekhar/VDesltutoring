@@ -34,7 +34,8 @@ export default async function EditPostPage({ params }: PageProps) {
                 category: post.category,
                 focal_keyword: post.focal_keyword,
                 alt_text: post.alt_text,
-                published_at: post.published_at
+                published_at: post.published_at,
+                views: post.views
             }}
             onSave={handleSave}
         />

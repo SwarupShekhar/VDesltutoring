@@ -16,6 +16,7 @@ export function useSEOHealth(content: string, metadata: {
     metaDescription: string
     focalKeyword: string
     altText: string
+    slug?: string
 }): SEOStats {
     return useMemo(() => {
         const checks: SEOStats['checks'] = []
@@ -59,10 +60,23 @@ export function useSEOHealth(content: string, metadata: {
         }
 
         // 4. H1 Check
+        const h1Match = content.match(/^#\s+(.+)$/m)
         const h1Count = (content.match(/^#\s/gm) || []).length
+        
         if (h1Count === 1) {
             checks.push({ id: 'h1-check', label: 'Main Heading', status: 'success', message: 'Exactly one H1 found.' })
             score += 20
+
+            // 4.1 Keyword in H1 check (Section 1.2)
+            if (metadata.focalKeyword && h1Match) {
+                const h1Content = h1Match[1].toLowerCase()
+                if (h1Content.includes(metadata.focalKeyword.toLowerCase())) {
+                    checks.push({ id: 'h1-keyword', label: 'Keyword in H1', status: 'success', message: 'Focal keyword found in main heading.' })
+                    score += 10
+                } else {
+                    checks.push({ id: 'h1-keyword', label: 'Keyword in H1', status: 'warning', message: 'Focal keyword not found in H1.' })
+                }
+            }
         } else if (h1Count > 1) {
             checks.push({ id: 'h1-check', label: 'Main Heading', status: 'error', message: 'Multiple H1 tags found. Use only one for SEO.' })
         } else {
@@ -97,13 +111,22 @@ export function useSEOHealth(content: string, metadata: {
             } else {
                 checks.push({ id: 'keyword-density', label: 'Keyword Density', status: 'error', message: 'Focal keyword not found in content.', value: 0 })
             }
+
+            // 6.1 Keyword in Intro (Section 1.3)
+            const first100Words = content.split(/\s+/).slice(0, 100).join(' ')
+            if (first100Words.toLowerCase().includes(metadata.focalKeyword.toLowerCase())) {
+                checks.push({ id: 'keyword-intro', label: 'Intro Keyword', status: 'success', message: 'Keyword appears in the first 100 words.' })
+                score += 5
+            } else {
+                checks.push({ id: 'keyword-intro', label: 'Intro Keyword', status: 'warning', message: 'Keyword missing from introduction.' })
+            }
         } else if (metadata.focalKeyword) {
             checks.push({ id: 'keyword-density', label: 'Keyword Density', status: 'error', message: 'Add content to check keyword density.', value: 0 })
         }
 
         // 7. Internal & External Links
         const links = content.match(/\[.*?\]\((.*?)\)/g) || []
-        const internalLinks = links.filter(l => l.includes('englivo.com') || l.includes('](') && l.match(/\]\(\//)).length
+        const internalLinks = links.filter(l => (l.includes('englivo.com') || l.match(/\]\(\//)) && l.includes('](')).length
         const totalLinks = links.length
         const externalLinks = totalLinks - internalLinks
 
@@ -131,8 +154,19 @@ export function useSEOHealth(content: string, metadata: {
              checks.push({ id: 'readability', label: 'Readability', status: 'error', message: `Score: ${readability.score.toFixed(1)} (${readability.level}). Content is very complex.`, value: readability.score })
         }
 
+        // 9. Keyword in URL/Slug
+        if (metadata.focalKeyword && metadata.slug) {
+            const slugSafeKeyword = metadata.focalKeyword.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (metadata.slug.toLowerCase().includes(slugSafeKeyword)) {
+                checks.push({ id: 'slug-keyword', label: 'Slug Keyword', status: 'success', message: 'Keyword found in URL slug.', value: 5 })
+                score += 5
+            } else {
+                checks.push({ id: 'slug-keyword', label: 'Slug Keyword', status: 'warning', message: 'Add focal keyword to URL slug.' })
+            }
+        }
+
         // Normalize score to 100
-        const totalAvailableScore = metadata.focalKeyword ? 140 : 125 // Adjusted for readability points
+        const totalAvailableScore = metadata.focalKeyword ? 160 : 125 // Adjusted for readability and new checks
         const normalizedScore = Math.min(100, Math.round((score / totalAvailableScore) * 100))
 
         return { score: normalizedScore, checks }

@@ -49,21 +49,21 @@ const isPublicRoute = createRouteMatcher([
   "/pricing",
   "/practice", // Public practice page
   "/sessions/book", // Public booking page
-  "/:locale", // For non-English locales
-  "/:locale/sign-in(.*)",
-  "/:locale/sign-up(.*)",
-  "/:locale/about",
-  "/:locale/method",
-  "/:locale/how-it-works",
-  "/:locale/assessment",
-  "/:locale/blog",
-  "/:locale/blog/(.*)",
-  "/:locale/fluency-guide",
-  "/:locale/roadmap",
-  "/:locale/privacy",
-  "/:locale/terms",
-  "/:locale/pricing",
-  "/:locale/sessions/book", // Public booking page
+  "/(de|fr|es|vi|ja)", // For non-English locales specifically
+  "/(de|fr|es|vi|ja)/sign-in(.*)",
+  "/(de|fr|es|vi|ja)/sign-up(.*)",
+  "/(de|fr|es|vi|ja)/about",
+  "/(de|fr|es|vi|ja)/method",
+  "/(de|fr|es|vi|ja)/how-it-works",
+  "/(de|fr|es|vi|ja)/assessment",
+  "/(de|fr|es|vi|ja)/blog",
+  "/(de|fr|es|vi|ja)/blog/(.*)",
+  "/(de|fr|es|vi|ja)/fluency-guide",
+  "/(de|fr|es|vi|ja)/roadmap",
+  "/(de|fr|es|vi|ja)/privacy",
+  "/(de|fr|es|vi|ja)/terms",
+  "/(de|fr|es|vi|ja)/pricing",
+  "/(de|fr|es|vi|ja)/sessions/book", // Public booking page
   "/api/webhooks(.*)", // Webhooks must be public
   "/api/internal(.*)", // Internal API routes for service-to-service communication
   "/api/livekit/token", // Handle auth in route handler for JSON response

@@ -143,6 +143,10 @@ export default async function BlogPostPage({ params }: PageProps) {
         }
         // -----------------------------------------------------------
 
+        // Safely extract related posts
+        const rawRelatedPosts = (post as any).related_posts;
+        const relatedPosts = Array.isArray(rawRelatedPosts) ? rawRelatedPosts : [];
+
         return (
             <article className="min-h-screen bg-white dark:bg-slate-950 pt-24 pb-16">
                 <BlogSchema post={post} slug={cleanSlug} locale={locale} />
@@ -155,7 +159,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                         <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400 mb-4">
                             <span className="flex items-center gap-1.5">
                                 <Calendar size={14} />
-                                {new Date(post.createdAt).toLocaleDateString()}
+                                {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'Recent'}
                             </span>
                             <span className="flex items-center gap-1.5">
                                 <Clock size={14} />
@@ -163,13 +167,13 @@ export default async function BlogPostPage({ params }: PageProps) {
                             </span>
                         </div>
                         <h1 className="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-6">
-                            {post.title}
+                            {post.title || "Untitled Article"}
                         </h1>
                         {post.cover && (
                             <div className="aspect-video w-full relative rounded-2xl overflow-hidden shadow-xl mb-8">
                                 <Image
                                     src={post.cover}
-                                    alt={post.title}
+                                    alt={post.title || "Blog Image"}
                                     fill
                                     priority
                                     className="object-cover"
@@ -182,8 +186,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                         <TableOfContents content={post.content || ""} />
                         <div className="my-12" />
                         <MarkdownRenderer content={post.content || ""} previewMap={previewMap} locale={locale} />
-                        <ShareButtons title={post.title} url={`https://englivo.com/${locale}/blog/${cleanSlug}`} postId={post.id} />
-                        <RelatedPosts posts={((post as any).related_posts as any) || []} locale={locale} />
+                        <ShareButtons title={post.title || ""} url={`https://englivo.com/${locale}/blog/${cleanSlug}`} postId={post.id} />
+                        <RelatedPosts posts={relatedPosts} locale={locale} />
                     </article>
                 </div>
             </article>

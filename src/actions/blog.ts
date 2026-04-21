@@ -245,7 +245,24 @@ export async function getPublishedPosts() {
 export async function getPublishedPostBySlug(slug: string) {
     try {
         const post = await prisma.blog_posts.findUnique({
-            where: { slug }
+            where: { slug },
+            select: {
+                id: true,
+                title: true,
+                slug: true,
+                content: true,
+                cover: true,
+                status: true,
+                excerpt: true,
+                category: true,
+                focal_keyword: true,
+                related_posts: true,
+                createdAt: true,
+                updatedAt: true,
+                published_at: true,
+                author_id: true,
+                views: true
+            }
         })
 
         if (!post || post.status !== 'published') return null

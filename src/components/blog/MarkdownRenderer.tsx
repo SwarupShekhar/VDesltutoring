@@ -6,18 +6,11 @@ import { Components } from 'react-markdown'
 
 import { HoverPreviewLink } from './HoverPreviewLink'
 
-// Server-safe sanitizer: strips script/iframe/etc. without needing jsdom or
-// isomorphic-dompurify (which was causing ERR_REQUIRE_ESM on Vercel).
-// react-markdown already protects against XSS by never rendering raw HTML,
-// so this is a lightweight extra guard for content stored in the DB.
+// Server-safe sanitizer: strips dangerous tags without needing jsdom or
+// isomorphic-dompurify (which caused ERR_REQUIRE_ESM on Vercel).
+// react-markdown never renders raw HTML so XSS is already impossible —
+// this is defence-in-depth for content stored directly in the DB.
 function sanitizeContent(content: string): string {
-    if (typeof window !== 'undefined' && typeof DOMPurify !== 'undefined') {
-        // Client-side: use native DOMPurify if loaded
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (window as any).DOMPurify?.sanitize?.(content) ?? content
-    }
-    // Server-side: strip dangerous tags with a simple regex guard.
-    // react-markdown never outputs raw HTML, so this is defence-in-depth only.
     return content
         .replace(/<script[\s\S]*?<\/script>/gi, '')
         .replace(/<iframe[\s\S]*?<\/iframe>/gi, '')

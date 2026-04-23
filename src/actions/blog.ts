@@ -106,7 +106,8 @@ export async function updatePost(id: string, data: {
     category?: string,
     focal_keyword?: string,
     alt_text?: string,
-    published_at?: Date | null
+    published_at?: Date | null,
+    relatedPostIds?: string[]
 }) {
     await ensureAdmin()
 
@@ -151,21 +152,45 @@ export async function updatePost(id: string, data: {
             })
         }
 
+        // Resolve manual related posts if provided
+        let manualRelatedPosts: any[] | undefined = undefined
+        if (data.relatedPostIds !== undefined) {
+            if (data.relatedPostIds.length > 0) {
+                const picked = await prisma.blog_posts.findMany({
+                    where: { id: { in: data.relatedPostIds }, status: 'published' },
+                    select: { id: true, slug: true, title: true, cover: true, excerpt: true, category: true }
+                })
+                // Preserve user-specified order
+                manualRelatedPosts = data.relatedPostIds
+                    .map(pid => picked.find(p => p.id === pid))
+                    .filter(Boolean)
+                    .map(p => ({ slug: p!.slug, title: p!.title, cover: p!.cover, excerpt: p!.excerpt, category: p!.category }))
+            } else {
+                manualRelatedPosts = []
+            }
+        }
+
+        // Remove relatedPostIds from data before spreading into Prisma (not a DB column)
+        const { relatedPostIds: _rids, ...prismaData } = data
+
         await prisma.blog_posts.update({
             where: { id },
             data: {
-                ...data,
-                slug: data.slug ? sanitizeSlug(data.slug) : undefined,
+                ...prismaData,
+                slug: prismaData.slug ? sanitizeSlug(prismaData.slug) : undefined,
                 title: finalTitle,
-                updatedAt: new Date()
+                updatedAt: new Date(),
+                ...(manualRelatedPosts !== undefined ? { related_posts: manualRelatedPosts as any } : {})
             }
         })
 
-        // Recompute related posts for current post and siblings
-        await computeRelatedPosts(id);
-        const categoryToRefresh = data.category || (currentPost as any)?.category;
-        if (categoryToRefresh) {
-            await cascadeRefreshRelated(categoryToRefresh, id);
+        // Recompute related posts — skip if user manually set them
+        if (manualRelatedPosts === undefined) {
+            await computeRelatedPosts(id)
+            const categoryToRefresh = prismaData.category || (currentPost as any)?.category
+            if (categoryToRefresh) {
+                await cascadeRefreshRelated(categoryToRefresh, id)
+            }
         }
 
         // Revalidate with wildcard to handle localized routes

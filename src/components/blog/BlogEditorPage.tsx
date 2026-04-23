@@ -67,7 +67,7 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
     const [isSaving, setIsSaving] = useState(false)
     const [lastSaved, setLastSaved] = useState<Date | null>(null)
     const [saveError, setSaveError] = useState<string | null>(null)
-    const [viewMode, setViewMode] = useState<'visual' | 'markdown' | 'preview'>('markdown')
+    const [viewMode, setViewMode] = useState<'visual' | 'markdown'>('visual')
 
     // Automatically detect title from H1 in real-time
     useEffect(() => {
@@ -162,6 +162,15 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
 
         return () => clearTimeout(timer);
     }, [content, title, slug, cover, seoTitle, metaDescription, excerpt, category, focalKeyword, altText]);
+
+    // Auto magic scan: debounce 3s after content change, only for saved posts
+    useEffect(() => {
+        if (!initialData?.id || !content) return
+        const timer = setTimeout(() => {
+            handleMagicScan()
+        }, 3000)
+        return () => clearTimeout(timer)
+    }, [content])
 
     const handleSave = async (overrideStatus?: string) => {
         const finalStatus = overrideStatus || status
@@ -277,23 +286,17 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
 
                     {/* View Switcher */}
                     <div className="flex p-1 bg-slate-900 border border-slate-800 rounded-xl">
-                        <TabButton 
-                            active={viewMode === 'visual'} 
-                            onClick={() => setViewMode('visual')} 
-                            icon={<Eye size={16} />} 
-                            label="Visual" 
+                        <TabButton
+                            active={viewMode === 'visual'}
+                            onClick={() => setViewMode('visual')}
+                            icon={<Eye size={16} />}
+                            label="Visual"
                         />
-                        <TabButton 
-                            active={viewMode === 'markdown'} 
-                            onClick={() => setViewMode('markdown')} 
-                            icon={<Code size={16} />} 
-                            label="Markdown" 
-                        />
-                        <TabButton 
-                            active={viewMode === 'preview'} 
-                            onClick={() => setViewMode('preview')} 
-                            icon={<Eye size={16} />} 
-                            label="Preview" 
+                        <TabButton
+                            active={viewMode === 'markdown'}
+                            onClick={() => setViewMode('markdown')}
+                            icon={<Code size={16} />}
+                            label="Markdown"
                         />
                     </div>
 
@@ -322,14 +325,14 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                 {/* Editor Surface */}
                 <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                      <div className="max-w-4xl mx-auto py-12 px-6">
-                        {viewMode === 'preview' ? (
+                        {viewMode === 'visual' ? (
                             <div className="bg-white dark:bg-slate-950 p-12 rounded-[3rem] shadow-2xl border border-slate-100 dark:border-slate-800 animate-in fade-in zoom-in-95 duration-500">
                                 <header className="mb-8">
-                                    <h1 className="text-4xl md:text-6xl font-black text-white leading-tight mb-6">
+                                    <h1 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white leading-tight mb-6">
                                         {title || 'Untitled Post'}
                                     </h1>
                                     {cover && (
-                                        <div className="aspect-21/9 w-full relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
+                                        <div className="aspect-video w-full relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl">
                                             <Image src={cover} alt={title} fill className="object-cover" />
                                         </div>
                                     )}
@@ -341,10 +344,10 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                                 </article>
                             </div>
                         ) : (
-                            <BlogEditor 
-                                content={content} 
-                                onChange={setContent} 
-                                mode={viewMode}
+                            <BlogEditor
+                                content={content}
+                                onChange={setContent}
+                                mode="markdown"
                                 onMagicScan={handleMagicScan}
                                 isScanning={isScanning}
                             />

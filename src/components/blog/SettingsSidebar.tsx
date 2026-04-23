@@ -1,22 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { 
-    Layout, 
-    Type, 
-    Image as ImageIcon, 
-    Hash, 
-    Calendar, 
-    Search, 
-    FileText, 
-    ChevronDown, 
+import {
+    Layout,
+    Type,
+    Image as ImageIcon,
+    Hash,
+    Calendar,
+    Search,
+    FileText,
+    ChevronDown,
     ChevronUp,
     Zap,
     CheckCircle2,
     AlertCircle,
     Info,
     Share2,
-    Target
+    Target,
+    XCircle
 } from 'lucide-react'
 import { SocialPreview } from './SocialPreview'
 import { SEOHealthScore } from './SEOHealthScore'
@@ -36,6 +37,7 @@ interface SettingsSidebarProps {
         publishedAt: Date | null
         views?: number
         slugError?: string | null
+        relatedPostIds: string[]
     }
     update: (updates: Partial<SettingsSidebarProps['data']>) => void
     content: string
@@ -45,15 +47,18 @@ interface SettingsSidebarProps {
     internalLinks?: any[]
     categories?: any[]
     onRollback?: (revision: any) => void
+    publishedPosts?: { id: string; title: string; slug: string }[]
 }
 
-export function SettingsSidebar({ data, update, content, onContentChange, suggestions = [], revisions = [], internalLinks = [], categories = [], onRollback }: SettingsSidebarProps) {
+export function SettingsSidebar({ data, update, content, onContentChange, suggestions = [], revisions = [], internalLinks = [], categories = [], onRollback, publishedPosts = [] }: SettingsSidebarProps) {
     const [activeTab, setActiveTab] = useState<'settings' | 'links'>('settings')
     const [linkSearch, setLinkSearch] = useState('')
     const [linkCategory, setLinkCategory] = useState('all')
     const [showSEO, setShowSEO] = useState(false)
     const [showSocialPreview, setShowSocialPreview] = useState(false)
     const [showRevisions, setShowRevisions] = useState(false)
+    const [relatedSearch, setRelatedSearch] = useState('')
+    const [showRelatedPicker, setShowRelatedPicker] = useState(false)
     const seo = useSEOHealth(content, {
         title: data.seoTitle || data.title,
         metaDescription: data.metaDescription,
@@ -344,6 +349,84 @@ export function SettingsSidebar({ data, update, content, onContentChange, sugges
                                     </div>
                                 ))
                             )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Related Posts Picker */}
+                <div className="space-y-4 pt-4 border-t border-slate-800">
+                    <button
+                        onClick={() => setShowRelatedPicker(!showRelatedPicker)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl text-emerald-400 hover:bg-emerald-500/10 transition-all group"
+                    >
+                        <div className="flex items-center gap-2 text-xs font-bold">
+                            <Target size={14} /> RELATED POSTS ({(data.relatedPostIds || []).length}/5)
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px]">
+                            {showRelatedPicker ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                        </div>
+                    </button>
+
+                    {showRelatedPicker && (
+                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+                            {/* Selected posts */}
+                            {(data.relatedPostIds || []).length > 0 && (
+                                <div className="space-y-2">
+                                    {(data.relatedPostIds || []).map(pid => {
+                                        const post = (publishedPosts || []).find(p => p.id === pid)
+                                        if (!post) return null
+                                        return (
+                                            <div key={pid} className="flex items-center justify-between p-2 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
+                                                <span className="text-xs text-emerald-300 font-medium truncate flex-1 mr-2">{post.title}</span>
+                                                <button
+                                                    onClick={() => update({ relatedPostIds: (data.relatedPostIds || []).filter(rid => rid !== pid) })}
+                                                    className="text-slate-500 hover:text-rose-400 transition-colors shrink-0"
+                                                >
+                                                    <XCircle size={14} />
+                                                </button>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
+
+                            {/* Search */}
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={12} />
+                                <input
+                                    type="text"
+                                    placeholder="Search published posts..."
+                                    className="sidebar-input pl-9 text-xs"
+                                    value={relatedSearch}
+                                    onChange={(e) => setRelatedSearch(e.target.value)}
+                                />
+                            </div>
+
+                            {/* Results */}
+                            <div className="space-y-1 max-h-48 overflow-y-auto custom-scrollbar">
+                                {(publishedPosts || [])
+                                    .filter(p => {
+                                        const alreadyPinned = (data.relatedPostIds || []).includes(p.id)
+                                        const matchesSearch = p.title.toLowerCase().includes(relatedSearch.toLowerCase())
+                                        return !alreadyPinned && matchesSearch
+                                    })
+                                    .slice(0, 10)
+                                    .map(post => (
+                                        <button
+                                            key={post.id}
+                                            disabled={(data.relatedPostIds || []).length >= 5}
+                                            onClick={() => update({ relatedPostIds: [...(data.relatedPostIds || []), post.id] })}
+                                            className="w-full text-left p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-emerald-500/50 hover:bg-emerald-500/5 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                        >
+                                            <span className="text-xs text-white truncate block">{post.title}</span>
+                                            <span className="text-[9px] text-slate-500 font-mono">/blog/{post.slug}</span>
+                                        </button>
+                                    ))
+                                }
+                                {(publishedPosts || []).length === 0 && (
+                                    <p className="text-[10px] text-slate-600 text-center py-4 italic">No published posts found.</p>
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>

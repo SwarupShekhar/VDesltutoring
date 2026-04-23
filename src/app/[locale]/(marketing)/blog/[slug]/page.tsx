@@ -93,7 +93,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         const relatedPosts = Array.isArray((post as any).related_posts) ? (post as any).related_posts : [];
 
-        const displayContent = content.replace(/^#[^\n]*\n?/, '')
+        const displayContent = content.replace(/^# [^\n]*\n?/, '')
 
         return (
             <article className="min-h-screen bg-white dark:bg-slate-950 pt-24 pb-16">

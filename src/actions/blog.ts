@@ -261,8 +261,7 @@ export async function getPublishedPosts() {
             cover: true,
             createdAt: true,
             excerpt: true,
-            category: true,
-            author_id: true
+            category: true
         }
     })
 }

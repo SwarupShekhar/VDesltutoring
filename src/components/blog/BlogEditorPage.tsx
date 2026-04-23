@@ -55,6 +55,7 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
     const [publishedAt, setPublishedAt] = useState<Date | null>(initialData?.published_at || null)
     const [views, setViews] = useState(initialData?.views || 0)
     const [relatedPostIds, setRelatedPostIds] = useState<string[]>([])
+    const [relatedPostIdsDirty, setRelatedPostIdsDirty] = useState(false)
     const [publishedPosts, setPublishedPosts] = useState<{ id: string; title: string; slug: string }[]>([])
 
     // Intelligence State
@@ -202,7 +203,7 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                     focal_keyword: focalKeyword,
                     alt_text: altText,
                     published_at: publishedAt,
-                    relatedPostIds
+                    relatedPostIds: relatedPostIdsDirty ? relatedPostIds : undefined
                 })
 
                 if (res.success) {
@@ -345,7 +346,7 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                                 </header>
                                 <article className="prose prose-invert prose-lg max-w-none prose-headings:text-white prose-a:text-blue-400">
                                     <EditorErrorBoundary>
-                                        <MarkdownRenderer content={content} />
+                                        <MarkdownRenderer content={content.replace(/^# [^\n]*\n?/, '')} />
                                     </EditorErrorBoundary>
                                 </article>
                             </div>
@@ -380,7 +381,10 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                         if (updates.focalKeyword !== undefined) setFocalKeyword(updates.focalKeyword)
                         if (updates.altText !== undefined) setAltText(updates.altText)
                         if (updates.publishedAt !== undefined) setPublishedAt(updates.publishedAt)
-                        if (updates.relatedPostIds !== undefined) setRelatedPostIds(updates.relatedPostIds)
+                        if (updates.relatedPostIds !== undefined) {
+                            setRelatedPostIds(updates.relatedPostIds)
+                            setRelatedPostIdsDirty(true)
+                        }
                     }}
                     content={content}
                     onContentChange={setContent}

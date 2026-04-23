@@ -21,8 +21,8 @@ export function TableOfContents({ content, variant = 'inline' }: TableOfContents
         const items: TOCItem[] = []
 
         lines.forEach(line => {
-            const h3Match = line.match(/^###\s+(.+)$/)
             const h2Match = line.match(/^##\s+(.+)$/)
+            const h3Match = line.match(/^###\s+(.+)$/)
 
             if (h2Match) {
                 const text = h2Match[1].trim()

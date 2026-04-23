@@ -10,7 +10,7 @@ import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer"
 import { SEOHealthScore } from './SEOHealthScore'
 import { SettingsSidebar } from './SettingsSidebar'
 import { magicScanContent } from '@/actions/intelligence'
-import { getBlogRevisions, checkSlugUniqueness } from '@/actions/blog'
+import { getBlogRevisions, checkSlugUniqueness, getPublishedPosts } from '@/actions/blog'
 import { listInternalLinks, listBlogCategories } from '@/actions/internal-links'
 import { EditorErrorBoundary } from './EditorErrorBoundary'
 
@@ -54,6 +54,8 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
     const [altText, setAltText] = useState(initialData?.alt_text || '')
     const [publishedAt, setPublishedAt] = useState<Date | null>(initialData?.published_at || null)
     const [views, setViews] = useState(initialData?.views || 0)
+    const [relatedPostIds, setRelatedPostIds] = useState<string[]>([])
+    const [publishedPosts, setPublishedPosts] = useState<{ id: string; title: string; slug: string }[]>([])
 
     // Intelligence State
     const [suggestions, setSuggestions] = useState<any[]>([])
@@ -136,6 +138,9 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
         fetchRevisions();
         fetchInternalLinks();
         fetchCategories();
+        getPublishedPosts().then(posts =>
+            setPublishedPosts(posts.map(p => ({ id: p.id, title: p.title || '', slug: p.slug })))
+        )
     }, [initialData?.id]);
 
     const handleRollback = (rev: any) => {
@@ -196,7 +201,8 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                     category,
                     focal_keyword: focalKeyword,
                     alt_text: altText,
-                    published_at: publishedAt
+                    published_at: publishedAt,
+                    relatedPostIds
                 })
 
                 if (res.success) {
@@ -356,11 +362,12 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                 </div>
 
                 {/* Settings Sidebar */}
-                <SettingsSidebar 
+                <SettingsSidebar
                     data={{
-                        title, slug, cover, seoTitle, metaDescription, 
+                        title, slug, cover, seoTitle, metaDescription,
                         excerpt, category, focalKeyword, altText, publishedAt,
-                        views, slugError
+                        views, slugError,
+                        relatedPostIds
                     }}
                     update={(updates: any) => {
                         if (updates.title !== undefined) setTitle(updates.title)
@@ -373,6 +380,7 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                         if (updates.focalKeyword !== undefined) setFocalKeyword(updates.focalKeyword)
                         if (updates.altText !== undefined) setAltText(updates.altText)
                         if (updates.publishedAt !== undefined) setPublishedAt(updates.publishedAt)
+                        if (updates.relatedPostIds !== undefined) setRelatedPostIds(updates.relatedPostIds)
                     }}
                     content={content}
                     onContentChange={setContent}
@@ -381,6 +389,7 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                     internalLinks={internalLinks}
                     categories={categories}
                     onRollback={handleRollback}
+                    publishedPosts={publishedPosts}
                 />
             </main>
         </div>

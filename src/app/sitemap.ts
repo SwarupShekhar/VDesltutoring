@@ -6,8 +6,8 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://englivo.com";
 
-  // Static routes
-  const routes = [
+  // Static routes (English)
+  const englishRoutes = [
     {
       url: baseUrl,
       priority: 1.0,
@@ -46,7 +46,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
       changeFrequency: "weekly" as const,
     },
-
     {
       url: `${baseUrl}/ai-tutor`,
       priority: 0.9,
@@ -62,6 +61,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
     },
   ];
+
+  // Localized routes for non-English locales
+  const localizedRoutes = ["de", "fr", "es", "vi", "ja"].flatMap(locale =>
+    [
+      `${baseUrl}/${locale}`,
+      `${baseUrl}/${locale}/fluency-guide`,
+      `${baseUrl}/${locale}/how-it-works`,
+      `${baseUrl}/${locale}/method`,
+      `${baseUrl}/${locale}/about`,
+      `${baseUrl}/${locale}/pricing`,
+      `${baseUrl}/${locale}/blog`,
+      `${baseUrl}/${locale}/roadmap`,
+      `${baseUrl}/${locale}/ai-tutor`,
+      `${baseUrl}/${locale}/privacy`,
+      `${baseUrl}/${locale}/terms`,
+    ].map(url => ({
+      url,
+      priority: 0.8, // Slightly lower priority for localized versions
+      changeFrequency: "weekly" as const,
+    }))
+  );
+
+  const routes = [...englishRoutes, ...localizedRoutes];
 
   // Dynamic Blog Routes
   try {

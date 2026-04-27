@@ -14,6 +14,36 @@ interface PageProps {
     params: Promise<{ slug: string; locale: string }>
 }
 
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const decodedSlug = decodeURIComponent(slug);
+    const post = await getPublishedPostBySlug(decodedSlug);
+
+    if (!post) {
+        return {};
+    }
+
+    // For blog posts, always use English as canonical since content is English-only
+    // This prevents "Duplicate, Google chose different canonical" errors
+    return {
+        ...constructCanonicalMetadata(`/blog/${post.slug.replace(/^blog\//, '')}`, 'en'),
+        title: post.title,
+        description: post.excerpt || post.meta_description || `${post.title} - Learn English with Englivo`,
+        openGraph: {
+            title: post.title,
+            description: post.excerpt || post.meta_description,
+            images: post.cover ? [{ url: post.cover, alt: post.title }] : [],
+            type: 'article',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: post.title,
+            description: post.excerpt || post.meta_description,
+            images: post.cover ? [post.cover] : [],
+        },
+    };
+}
+
 // 1. Shared lookup logic to ensure consistency between Metadata and Rendering
 async function resolvePost(slug: string) {
     const decodedSlug = decodeURIComponent(slug);

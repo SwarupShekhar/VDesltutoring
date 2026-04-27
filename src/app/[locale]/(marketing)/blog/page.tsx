@@ -7,8 +7,9 @@ import { getDictionary, type Locale } from "@/i18n/getDictionary";
 import Image from "next/image";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
-    const { locale } = await params;
-    return constructCanonicalMetadata('/blog', locale);
+    // For blog pages, always use English as canonical since content is English-only
+    // This prevents "Duplicate, Google chose different canonical" errors
+    return constructCanonicalMetadata('/blog', 'en');
 }
 
 interface PageProps {
@@ -34,7 +35,7 @@ export default async function BlogListPage({ params }: PageProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {posts.map((post: any) => {
                         return (
-                            <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                            <Link key={post.id} href={`/${locale}/blog/${post.slug.replace(/^blog\//, '')}`} className="group flex flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 hover:shadow-xl hover:border-blue-500/30 transition-all duration-300 transform hover:-translate-y-1">
 
                                 {post.cover && (
                                     <div className="aspect-video w-full relative overflow-hidden">

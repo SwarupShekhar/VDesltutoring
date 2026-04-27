@@ -3,7 +3,12 @@ import { constructCanonicalMetadata } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params;
-    return constructCanonicalMetadata('/how-it-works', locale);
+    const dict = await getDictionary(locale);
+    return {
+        ...constructCanonicalMetadata('/how-it-works', locale),
+        title: dict.howItWorksPage.title || 'How It Works | Englivo',
+        description: dict.howItWorksPage.description || 'Learn how Englivo\'s AI-powered English fluency training works with live practice and personalized coaching.',
+    };
 }
 
 import { getDictionary, type Locale } from "@/i18n/getDictionary";

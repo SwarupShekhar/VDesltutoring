@@ -268,8 +268,8 @@ export async function getPublishedPosts() {
 
 export async function getPublishedPostBySlug(slug: string) {
     try {
-        const post = await prisma.blog_posts.findUnique({
-            where: { slug },
+        const post = await prisma.blog_posts.findFirst({
+            where: { slug: { in: [slug, `blog/${slug}`] } },
             select: {
                 id: true,
                 title: true,
@@ -343,7 +343,7 @@ export async function computeRelatedPosts(postId: string) {
         }
 
         return {
-            slug: p.slug,
+            slug: p.slug.replace(/^blog\//, ''),
             title: p.title,
             cover: p.cover,
             excerpt: p.excerpt,

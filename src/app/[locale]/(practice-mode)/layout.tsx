@@ -2,6 +2,13 @@ import { requireRole } from '@/lib/require-role'
 import { HomeNavbar } from '@/components/HomeNavbar'
 import { getDictionary } from '@/i18n/getDictionary'
 import type { Locale } from '@/i18n/getDictionary'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    robots: 'noindex, nofollow'
+  }
+}
 
 export default async function PracticeModeLayout({
     children,

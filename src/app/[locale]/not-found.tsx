@@ -1,4 +1,11 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    robots: 'noindex, follow'
+  }
+}
 
 export default function NotFound() {
     return (

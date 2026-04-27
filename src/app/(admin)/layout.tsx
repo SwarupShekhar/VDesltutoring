@@ -1,5 +1,12 @@
 import Link from 'next/link'
 import { requireRole } from '@/modules/auth'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    robots: 'noindex, nofollow'
+  }
+}
 
 export default async function AdminLayout({
     children,

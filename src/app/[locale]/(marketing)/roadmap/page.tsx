@@ -2,10 +2,13 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { ArrowLeft, CheckCircle2, Circle } from 'lucide-react';
 import { getDictionary, type Locale } from '@/i18n/getDictionary';
+import { constructCanonicalMetadata } from '@/lib/seo';
+import type { Metadata } from 'next';
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params;
     return {
+        ...constructCanonicalMetadata('/roadmap', locale),
         title: "Product Roadmap | Englivo",
         description: "Explore the future of English fluency. See what we're building to help you speak more naturally and confidently.",
     };

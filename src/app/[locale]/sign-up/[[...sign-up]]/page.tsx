@@ -1,5 +1,13 @@
 import { SignUp } from '@clerk/nextjs'
 import { Vortex } from '@/components/ui/vortex'
+import type { Metadata } from 'next'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    robots: 'noindex, nofollow',
+    title: 'Sign Up | Englivo'
+  }
+}
 
 export default function SignUpPage() {
   return (

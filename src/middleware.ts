@@ -197,7 +197,7 @@ export default clerkMiddleware(async (auth, req) => {
       const newPath = pathname.replace(redirect.from, redirect.to);
       const newUrl = new URL(newPath, req.url);
       newUrl.search = req.nextUrl.search;
-      return enhanceResponse(NextResponse.redirect(newUrl, { status: 308 }));
+      return enhanceResponse(NextResponse.redirect(newUrl, { status: 301 }));
     }
   }
 

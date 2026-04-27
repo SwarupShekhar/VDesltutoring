@@ -3,7 +3,11 @@ import { constructCanonicalMetadata } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params;
-    return constructCanonicalMetadata('/pricing', locale);
+    return {
+        ...constructCanonicalMetadata('/pricing', locale),
+        title: 'Pricing | Englivo',
+        description: 'Choose the perfect Englivo plan for your English fluency journey. Flexible pricing with expert tutors and AI practice.',
+    };
 }
 
 import { getDictionary, type Locale } from "@/i18n/getDictionary";

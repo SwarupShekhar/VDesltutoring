@@ -280,6 +280,7 @@ export async function getPublishedPostBySlug(slug: string) {
                 excerpt: true,
                 category: true,
                 focal_keyword: true,
+                meta_description: true,
                 related_posts: true,
                 createdAt: true,
                 updatedAt: true,

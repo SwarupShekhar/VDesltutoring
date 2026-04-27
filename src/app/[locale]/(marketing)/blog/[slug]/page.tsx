@@ -31,14 +31,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description: post.excerpt || post.meta_description || `${post.title} - Learn English with Englivo`,
         openGraph: {
             title: post.title,
-            description: post.excerpt || post.meta_description,
+            description: post.excerpt || post.meta_description || undefined,
             images: post.cover ? [{ url: post.cover, alt: post.title }] : [],
             type: 'article',
         },
         twitter: {
             card: 'summary_large_image',
             title: post.title,
-            description: post.excerpt || post.meta_description,
+            description: post.excerpt || post.meta_description || undefined,
             images: post.cover ? [post.cover] : [],
         },
     };

@@ -1,5 +1,6 @@
 import { type Metadata } from 'next'
 import { Geist, Geist_Mono, Playfair_Display, Inter, DM_Serif_Display } from 'next/font/google'
+import { notFound } from 'next/navigation'
 import '../globals.css'
 import { BrowserExtensionFix } from '@/components/BrowserExtensionFix'
 import type { Locale } from '@/i18n/getDictionary'

@@ -33,6 +33,7 @@ const inter = Inter({
 const dmSerif = DM_Serif_Display({
   variable: '--font-dm-serif-display',
   subsets: ['latin'],
+  weight: '400',
 })
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {

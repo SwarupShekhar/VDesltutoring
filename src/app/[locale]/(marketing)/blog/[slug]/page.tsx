@@ -56,28 +56,7 @@ async function resolvePost(slug: string) {
     return { post, decodedSlug };
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { slug, locale } = await params;
-    try {
-        const { post } = await resolvePost(slug);
-        
-        if (!post) {
-            return { title: "Article Not Found | Englivo Blog" };
-        }
 
-        const cleanSlug = post.slug.replace(/^blog\//, '');
-        const title = post.title || "Untitled Article";
-        const description = post.excerpt || "Practical English fluency insights for professionals.";
-
-        return {
-            title,
-            description,
-            ...constructCanonicalMetadata(`/blog/${cleanSlug}`, locale)
-        }
-    } catch (e) {
-        return { title: "Englivo Blog" };
-    }
-}
 
 import { BlogSchema } from "@/components/seo/BlogSchema";
 import { ShareButtons } from "@/components/blog/ShareButtons";

@@ -69,7 +69,8 @@ export default async function BlogPostPage({ params }: PageProps) {
         // Canonical Healing
         const cleanSlug = post.slug.replace(/^blog\//, '');
         if (decodedSlug !== cleanSlug) {
-            redirect(`/${locale}/blog/${cleanSlug}`);
+            const redirectPath = locale === 'en' ? `/blog/${cleanSlug}` : `/${locale}/blog/${cleanSlug}`;
+            redirect(redirectPath);
         }
 
         // Safe Preview Map Building

@@ -49,6 +49,20 @@ const isPublicRoute = createRouteMatcher([
   "/pricing",
   "/practice", // Public practice page
   "/sessions/book", // Public booking page
+  "/en", // English locale prefix — now served directly, not redirected
+  "/en/sign-in(.*)",
+  "/en/sign-up(.*)",
+  "/en/about",
+  "/en/method",
+  "/en/how-it-works",
+  "/en/assessment",
+  "/en/blog(.*)",  // Matches /en/blog and /en/blog/* dynamically
+  "/en/fluency-guide",
+  "/en/roadmap",
+  "/en/privacy",
+  "/en/terms",
+  "/en/pricing",
+  "/en/sessions/book",
   "/(de|fr|es|vi|ja)", // For non-English locales specifically
   "/(de|fr|es|vi|ja)/sign-in(.*)",
   "/(de|fr|es|vi|ja)/sign-up(.*)",
@@ -208,12 +222,37 @@ export default clerkMiddleware(async (auth, req) => {
     pathname.startsWith("/_next") ||
     pathname.includes(".");
 
-  // If URL has /en, redirect to remove it (e.g., /en/practice -> /practice)
+  // 2. Authentication Logic (runs BEFORE i18n routing so /en/ private routes are protected)
+  if (!isIgnoredPath) {
+    if (isPublicRoute(req)) {
+      // Public routes: skip auth check, proceed to i18n routing below
+    } else {
+      // Protect private routes
+      const { userId, redirectToSignIn } = await auth();
+
+      if (!userId) {
+        // For API routes, return JSON 401 instead of HTML redirect
+        // This is critical for mobile apps that expect JSON responses
+        if (pathname.startsWith("/api/")) {
+          console.log(
+            `[Auth] Unauthorized API request: ${req.method} ${pathname}`,
+          );
+          return enhanceResponse(NextResponse.json(
+            { error: "Unauthorized", message: "Authentication required" },
+            { status: 401 },
+          ));
+        }
+        return redirectToSignIn({ returnBackUrl: req.url });
+      }
+    }
+  }
+
+  // English locale (/en) URLs are served directly without redirect.
+  // This avoids "Redirect error" issues in Google Search Console.
+  // Canonical tags on these pages still point to the root path (no /en),
+  // so Google indexes the preferred URL while /en/xxx returns 200 OK.
   if (hasDefaultLocale && !isIgnoredPath) {
-    const pathWithoutLocale = pathname.replace(`/${defaultLocale}`, "") || "/";
-    const newUrl = new URL(pathWithoutLocale, req.url);
-    newUrl.search = req.nextUrl.search;
-    return enhanceResponse(NextResponse.redirect(newUrl, { status: 308 }));
+    return enhanceResponse(NextResponse.next());
   }
 
   // If URL has no locale prefix and is not a non-default locale, rewrite to /en internally
@@ -225,28 +264,8 @@ export default clerkMiddleware(async (auth, req) => {
     return enhanceResponse(NextResponse.rewrite(rewriteUrl));
   }
 
-  // 2. Authentication Logic
-  if (isPublicRoute(req)) {
-    return enhanceResponse(NextResponse.next());
-  } else {
-    // Protect private routes
-    const { userId, redirectToSignIn } = await auth();
-
-    if (!userId) {
-      // For API routes, return JSON 401 instead of HTML redirect
-      // This is critical for mobile apps that expect JSON responses
-      if (pathname.startsWith("/api/")) {
-        console.log(
-          `[Auth] Unauthorized API request: ${req.method} ${pathname}`,
-        );
-        return enhanceResponse(NextResponse.json(
-          { error: "Unauthorized", message: "Authentication required" },
-          { status: 401 },
-        ));
-      }
-      return redirectToSignIn({ returnBackUrl: req.url });
-    }
-  }
+  // Fall through for non-English locales (already handled by Next.js routing)
+  return enhanceResponse(NextResponse.next());
 
 });
 

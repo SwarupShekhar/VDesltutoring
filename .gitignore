@@ -54,3 +54,11 @@ googletts.json
 graphify-out/
 graphify.json
 .graphify_python
+
+.subagent-tracking.json
+.agent-replay*.jsonl
+
+
+# local overrides
+.local-overrides.json
+.agent-history.json

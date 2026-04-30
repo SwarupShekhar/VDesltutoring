@@ -23,10 +23,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         return {};
     }
 
-    // For blog posts, always use English as canonical since content is English-only
-    // This prevents "Duplicate, Google chose different canonical" errors
+    // All blog locales point canonical to the English version.
+    // Google was already overriding self-referencing canonicals on translated pages
+    // with the English URL — this aligns our declared canonical with Google's choice
+    // and eliminates "Duplicate, Google chose different canonical than user" in GSC.
+    const canonicalPath = `/blog/${post.slug.replace(/^blog\//, '')}`;
+    const canonicalMetadata = constructCanonicalMetadata(canonicalPath, 'en');
     return {
-        ...constructCanonicalMetadata(`/blog/${post.slug.replace(/^blog\//, '')}`, 'en'),
+        ...canonicalMetadata,
+        robots: 'index, follow',
         title: post.title,
         description: post.excerpt || post.meta_description || `${post.title} - Learn English with Englivo`,
         openGraph: {
@@ -34,12 +39,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description: post.excerpt || post.meta_description || undefined,
             images: post.cover ? [{ url: post.cover, alt: post.title }] : [],
             type: 'article',
+            publishedTime: post.published_at ? post.published_at.toISOString() : undefined,
+            modifiedTime: post.updatedAt.toISOString(),
+            section: post.category || 'Blog',
         },
         twitter: {
             card: 'summary_large_image',
             title: post.title,
             description: post.excerpt || post.meta_description || undefined,
-            images: post.cover ? [post.cover] : [],
+            images: post.cover ? [{ url: post.cover, alt: post.title }] : [],
         },
     };
 }

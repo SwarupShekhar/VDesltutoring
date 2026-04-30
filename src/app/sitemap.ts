@@ -100,16 +100,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       select: { slug: true, updatedAt: true },
     });
 
-    const blogRoutes = posts.map((post: { slug: string; updatedAt: Date }) => {
+    const blogRoutes = posts.flatMap((post: { slug: string; updatedAt: Date }) => {
       // Clean slug: remove leading 'blog/' if it exists to avoid double prefix
       const cleanSlug = post.slug.startsWith("blog/")
         ? post.slug.replace("blog/", "")
         : post.slug;
-      return {
+      const englishUrl = {
         url: `${baseUrl}/blog/${cleanSlug}`,
         lastModified: post.updatedAt,
         priority: 0.7,
       };
+      // Add localized URLs for each locale
+      const localizedUrls = ["de", "fr", "es", "vi", "ja"].map(locale => ({
+        url: `${baseUrl}/${locale}/blog/${cleanSlug}`,
+        lastModified: post.updatedAt,
+        priority: 0.6,
+      }));
+      return [englishUrl, ...localizedUrls];
     });
 
     return [...routes, ...blogRoutes];

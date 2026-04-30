@@ -47,6 +47,8 @@ const isPublicRoute = createRouteMatcher([
   "/privacy",
   "/terms",
   "/pricing",
+  "/faq",
+  "/ai-tutor",
   "/practice", // Public practice page
   "/sessions/book", // Public booking page
   "/en", // English locale prefix — now served directly, not redirected
@@ -62,6 +64,8 @@ const isPublicRoute = createRouteMatcher([
   "/en/privacy",
   "/en/terms",
   "/en/pricing",
+  "/en/faq",
+  "/en/ai-tutor",
   "/en/sessions/book",
   "/(de|fr|es|vi|ja)", // For non-English locales specifically
   "/(de|fr|es|vi|ja)/sign-in(.*)",
@@ -77,6 +81,8 @@ const isPublicRoute = createRouteMatcher([
   "/(de|fr|es|vi|ja)/privacy",
   "/(de|fr|es|vi|ja)/terms",
   "/(de|fr|es|vi|ja)/pricing",
+  "/(de|fr|es|vi|ja)/faq",
+  "/(de|fr|es|vi|ja)/ai-tutor",
   "/(de|fr|es|vi|ja)/sessions/book", // Public booking page
   "/api/webhooks(.*)", // Webhooks must be public
   "/api/internal(.*)", // Internal API routes for service-to-service communication

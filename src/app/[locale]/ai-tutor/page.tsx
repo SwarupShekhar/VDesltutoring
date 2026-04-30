@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import { constructCanonicalMetadata } from '@/lib/seo';
 import type { Locale } from '@/i18n/getDictionary';
-import AITutorClient from './AITutorClient';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+
+// Load the interactive session client-side only so SSR renders the landing page,
+// not the loading spinner that triggers Google's soft 404 detector.
+const AITutorClient = dynamic(() => import('./AITutorClient'), { ssr: false });
 
 export async function generateMetadata({
     params,
@@ -25,11 +30,7 @@ export default function AITutorPage() {
         description: 'An AI-powered conversational English tutor that gives real-time fluency feedback, grammar corrections, and CEFR-level coaching through voice practice sessions.',
         applicationCategory: 'EducationalApplication',
         operatingSystem: 'Any',
-        offers: {
-            '@type': 'Offer',
-            price: '0',
-            priceCurrency: 'USD',
-        },
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     };
 
     return (
@@ -38,31 +39,56 @@ export default function AITutorPage() {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            {/* Static content indexed by search engines.
-                Describes the page accurately and is always present in the HTML.
-                The client component overlays this once JS loads. */}
-            <div className="sr-only">
-                <h1>AI English Tutor — Practice Speaking English</h1>
-                <p>
-                    Englivo&apos;s AI English Tutor is a voice-based conversational practice tool that
-                    listens to you speak, provides real-time grammar corrections, fluency scoring, and
-                    CEFR-level feedback. No judgment — just practice at your own pace.
-                </p>
-                <h2>What you get</h2>
-                <ul>
-                    <li>Real-time spoken English feedback powered by AI</li>
-                    <li>Grammar and vocabulary corrections after each response</li>
-                    <li>CEFR-aligned fluency scoring (A2 through C1)</li>
-                    <li>Challenge mode: a strict examiner session to test your level</li>
-                    <li>Session report with fluency insights and next steps</li>
-                </ul>
-                <h2>How it works</h2>
-                <p>
-                    Start a conversation, speak naturally, and the AI tutor responds in real time.
-                    After your session, receive a detailed report on your speaking fluency, common
-                    errors, and personalised recommendations to improve.
-                </p>
+
+            {/* Landing section — rendered server-side, always visible.
+                AITutorClient mounts over this once JS loads. */}
+            <div id="ai-tutor-landing" className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6 py-32">
+                <div className="max-w-2xl mx-auto text-center space-y-8">
+                    <h1 className="text-5xl md:text-6xl font-bold font-serif text-white leading-tight">
+                        AI English Tutor
+                    </h1>
+                    <p className="text-xl text-gray-300 leading-relaxed">
+                        Practice speaking English with an AI conversation partner.
+                        Get real-time fluency feedback, grammar corrections, and
+                        CEFR-level coaching — no judgment, just practice.
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm text-gray-400 pt-4">
+                        <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div className="text-2xl mb-2">🎤</div>
+                            <div className="font-semibold text-white mb-1">Voice Practice</div>
+                            <div>Speak naturally — the AI listens and responds in real time</div>
+                        </div>
+                        <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div className="text-2xl mb-2">📊</div>
+                            <div className="font-semibold text-white mb-1">Fluency Feedback</div>
+                            <div>Grammar corrections and CEFR scoring after every session</div>
+                        </div>
+                        <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div className="text-2xl mb-2">🏆</div>
+                            <div className="font-semibold text-white mb-1">Challenge Mode</div>
+                            <div>Strict examiner sessions to test and certify your level</div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+                        <Link
+                            href="/sign-up"
+                            className="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-semibold text-lg transition-colors"
+                        >
+                            Start Practising Free
+                        </Link>
+                        <Link
+                            href="/how-it-works"
+                            className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white rounded-full font-semibold text-lg transition-colors"
+                        >
+                            How It Works
+                        </Link>
+                    </div>
+                </div>
             </div>
+
+            {/* Interactive session — mounts client-side and takes over the page */}
             <AITutorClient />
         </>
     );

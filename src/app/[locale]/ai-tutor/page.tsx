@@ -1,12 +1,8 @@
 import type { Metadata } from 'next';
 import { constructCanonicalMetadata } from '@/lib/seo';
 import type { Locale } from '@/i18n/getDictionary';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
-
-// Load the interactive session client-side only so SSR renders the landing page,
-// not the loading spinner that triggers Google's soft 404 detector.
-const AITutorClient = dynamic(() => import('./AITutorClient'), { ssr: false });
+import AITutorLoader from './AITutorLoader';
 
 export async function generateMetadata({
     params,
@@ -89,7 +85,7 @@ export default function AITutorPage() {
             </div>
 
             {/* Interactive session — mounts client-side and takes over the page */}
-            <AITutorClient />
+            <AITutorLoader />
         </>
     );
 }

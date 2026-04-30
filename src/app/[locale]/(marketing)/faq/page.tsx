@@ -9,9 +9,11 @@ export async function generateMetadata({
     params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
     const { locale } = await params;
+    const dict = await getDictionary(locale);
+    const faqHeadline = dict.faq?.headline;
     return {
         ...constructCanonicalMetadata('/faq', locale),
-        title: 'FAQ | Englivo',
+        title: faqHeadline ? `${faqHeadline} | Englivo` : 'FAQ | Englivo',
         description: 'Answers to common questions about Englivo — how the AI tutor works, CEFR levels, pricing, and getting started with English fluency training.',
     };
 }

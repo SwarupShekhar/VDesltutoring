@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             images: post.cover ? [{ url: post.cover, alt: post.title }] : [],
             type: 'article',
             publishedTime: post.published_at ? post.published_at.toISOString() : undefined,
-            modifiedTime: post.updatedAt.toISOString(),
+            modifiedTime: post.updatedAt ? post.updatedAt.toISOString() : undefined,
             section: post.category || 'Blog',
         },
         twitter: {

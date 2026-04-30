@@ -60,6 +60,7 @@ export default function AITutorClient() {
     const streamRef = useRef<MediaStream | null>(null)
     const voiceDetectRef = useRef<number | null>(null)
     const startTimeRef = useRef<number>(0)
+    const audioContextRef = useRef<AudioContext | null>(null)
 
     const router = useRouter()
     const [mode, setMode] = useState<'practice' | 'challenge'>('practice')
@@ -122,6 +123,10 @@ export default function AITutorClient() {
                 audioRef.current.pause()
                 process.env.NODE_ENV !== 'production' && console.log("[AI Tutor] Audio paused on exit")
                 audioRef.current = null
+            }
+            if (audioContextRef.current) {
+                audioContextRef.current.close().catch(() => {})
+                audioContextRef.current = null
             }
         }
     }, [token, started])
@@ -192,13 +197,12 @@ export default function AITutorClient() {
             setReportData(report)
 
             // 2. Save Session
-            const durationSeconds = Math.round((Date.now() - (startTimeRef.current || Date.now())) / 1000);
             await fetch("/api/ai-tutor/save", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     messages: chats,
-                    duration: durationSeconds,
+                    duration: duration,
                     report: report
                 })
             })
@@ -250,11 +254,16 @@ export default function AITutorClient() {
                 setChats(prev => [...prev, { role: "assistant", content: text, timestamp: new Date() }])
             }
 
-            const tts = await fetch("/api/tts", {
+            const ttsRes = await fetch("/api/tts", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text }),
-            }).then(r => r.json())
+            })
+            if (!ttsRes.ok) {
+                const errText = await ttsRes.text()
+                throw new Error(`TTS API error ${ttsRes.status}: ${errText}`)
+            }
+            const tts = await ttsRes.json()
             setProcessing(false)
 
             if (tts.audio) {
@@ -296,6 +305,7 @@ export default function AITutorClient() {
             streamRef.current = stream
 
             const audioContext = new AudioContext()
+            audioContextRef.current = audioContext
             const source = audioContext.createMediaStreamSource(stream)
             const analyser = audioContext.createAnalyser()
             analyser.fftSize = 256
@@ -322,20 +332,33 @@ export default function AITutorClient() {
                 // Set processing TRUE immediately to lock UI
                 setProcessing(true)
 
-                const dg = await fetch("/api/deepgram", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        audio: base64,
-                        mimeType: recorder.mimeType
+                let dg: any
+                try {
+                    const dgRes = await fetch("/api/deepgram", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            audio: base64,
+                            mimeType: recorder.mimeType
+                        })
                     })
-                }).then(r => r.json())
+                    if (!dgRes.ok) {
+                        const errText = await dgRes.text()
+                        throw new Error(`Deepgram API error ${dgRes.status}: ${errText}`)
+                    }
+                    dg = await dgRes.json()
+                } catch (dgErr) {
+                    console.error("Deepgram fetch failed:", dgErr)
+                    setProcessing(false)
+                    return
+                }
 
                 console.log("Deepgram Transcript:", dg.transcript)
 
                 // If a newer request started while we were processing speech-to-text, abort this one
                 if (requestCounter.current !== currentRequestId) {
                     console.log("Request obsolete (barge-in detected during STT). Ignoring.")
+                    setProcessing(false)
                     return
                 }
 
@@ -354,18 +377,7 @@ export default function AITutorClient() {
                     sessionWordsRef.current.push(...adjustedWords)
 
                     try {
-                        // 1) Analyze fluency (Parallel)
-                        const fluencyPromise = fetch("/api/fluency/analyze", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                transcript: dg.transcript,
-                                duration: 3,
-                                deepgram: dg.result
-                            })
-                        }).then(r => r.json())
-
-                        // 2) AI Response
+                        // AI Response
                         const aiResponseRaw = await fetch("/api/ai", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
@@ -462,10 +474,14 @@ export default function AITutorClient() {
                     }
 
                     if (recorder.state === "inactive") {
-                        console.log("Voice started. Recording...")
-                        chunkOffsetRef.current = (Date.now() - sessionStartTimeRef.current) / 1000
-                        recorder.start()
-                        setListening(true)
+                        try {
+                            recorder.start()
+                            chunkOffsetRef.current = (Date.now() - sessionStartTimeRef.current) / 1000
+                            setListening(true)
+                            console.log("Voice started. Recording...")
+                        } catch (startErr) {
+                            console.warn("recorder.start() failed (state race):", startErr)
+                        }
                     }
                 } else {
                     // Silence Logic
@@ -553,7 +569,7 @@ export default function AITutorClient() {
                             {isBossMode ? (
                                 <>
                                     Examiner Protocol Active.<br />
-                                    This seesion will be strictly graded.<br />
+                                    This session will be strictly graded.<br />
                                     Good luck.
                                 </>
                             ) : (
@@ -729,9 +745,11 @@ export default function AITutorClient() {
 }
 
 function blobToBase64(blob: Blob): Promise<string> {
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.onloadend = () => resolve(reader.result?.toString().split(",")[1] || "")
+        reader.onerror = () => reject(reader.error ?? new Error("FileReader error"))
+        reader.onabort = () => reject(new Error("FileReader aborted"))
         reader.readAsDataURL(blob)
     })
 }

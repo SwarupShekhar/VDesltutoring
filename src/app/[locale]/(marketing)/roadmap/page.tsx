@@ -11,6 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
         ...constructCanonicalMetadata('/roadmap', locale),
         title: "Product Roadmap | Englivo",
         description: "Explore the future of English fluency. See what we're building to help you speak more naturally and confidently.",
+        robots: 'noindex, nofollow',
     };
 }
 

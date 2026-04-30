@@ -41,12 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/blog`,
       priority: 0.8, // Increased priority for blog hub
     },
-    {
-      url: `${baseUrl}/roadmap`,
-      priority: 0.9,
-      changeFrequency: "weekly" as const,
-    },
-    {
+{
       url: `${baseUrl}/ai-tutor`,
       priority: 0.9,
     },
@@ -72,7 +67,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       `${baseUrl}/${locale}/about`,
       `${baseUrl}/${locale}/pricing`,
       `${baseUrl}/${locale}/blog`,
-      `${baseUrl}/${locale}/roadmap`,
       `${baseUrl}/${locale}/ai-tutor`,
       `${baseUrl}/${locale}/privacy`,
       `${baseUrl}/${locale}/terms`,

@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
       sessions = await prisma.sessions.findMany({
         where: {
           student_id: user.student_profiles.id,
-          ...(status && { status: status as any }),
+          ...(status && { status: status.toUpperCase() as any }),
         },
         include: {
           tutor_profiles: {
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
       sessions = await prisma.sessions.findMany({
         where: {
           tutor_id: user.tutor_profiles.id,
-          ...(status && { status: status as any }),
+          ...(status && { status: status.toUpperCase() as any }),
         },
         include: {
           student_profiles: {
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       // Admin sees everything
       sessions = await prisma.sessions.findMany({
         where: {
-          ...(status && { status: status as any }),
+          ...(status && { status: status.toUpperCase() as any }),
         },
         include: {
           student_profiles: {

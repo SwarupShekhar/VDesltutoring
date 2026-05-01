@@ -2,6 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { InstantCallTeaser } from "./promo/InstantCallTeaser";
 
 export function HowItWorksPageContent({ dict }: { dict: any }) {
     const t = dict;
@@ -50,6 +51,11 @@ export function HowItWorksPageContent({ dict }: { dict: any }) {
                         <Step key={index} step={step} index={index} />
                     ));
                 })()}
+            </div>
+
+            {/* PROMO - INSTANT CALL TEASER */}
+            <div className="mt-32 max-w-6xl mx-auto px-4">
+                <InstantCallTeaser />
             </div>
 
             {/* Final */}

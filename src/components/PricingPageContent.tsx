@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { InstantCallTeaser } from "./promo/InstantCallTeaser";
 
 export function PricingPageContent({ dict, locale }: { dict: any, locale: string }) {
     const t = dict;
@@ -88,6 +89,11 @@ export function PricingPageContent({ dict, locale }: { dict: any, locale: string
                     </a>
                 </div>
             </motion.div>
+
+            {/* PROMO - INSTANT CALL TEASER */}
+            <div className="max-w-6xl mx-auto px-4 mb-24">
+                <InstantCallTeaser />
+            </div>
 
             {/* Trust Statement */}
             <motion.div

@@ -10,6 +10,7 @@ import { DailyInsightCard } from '@/components/DailyInsightCard';
 import { CEFRDashboard } from '@/components/dashboard/CEFRDashboard';
 import { TrainingHub } from '@/components/dashboard/TrainingHub';
 import { CEFRPathCard } from '@/components/dashboard/CEFRPathCard';
+import { InstantCallTeaser } from '@/components/promo/InstantCallTeaser';
 
 // Disable caching to ensure fluency profile updates are immediately visible
 export const revalidate = 0;
@@ -102,6 +103,9 @@ export default async function LearnerDashboard({ params }: { params: Promise<{ l
 
       {/* TRAINING HUB - NEW COMMAND CENTER */}
       <TrainingHub />
+
+      {/* PROMO - INSTANT CALL TEASER */}
+      <InstantCallTeaser />
 
       {/* CEFR PATH CARD - PROGRESSION OVERVIEW */}
       <CEFRPathCard />

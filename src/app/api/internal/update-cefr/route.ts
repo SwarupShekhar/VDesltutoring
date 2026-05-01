@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function PATCH(req: Request) {
   const secret = req.headers.get('x-internal-secret');
 
-  if (!secret || secret !== process.env.INTERNAL_SECRET) {
+  if (!secret || secret !== process.env.BRIDGE_INTERNAL_SECRET) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

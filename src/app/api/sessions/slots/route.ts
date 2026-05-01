@@ -4,8 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 export async function GET(req: NextRequest) {
     try {
         const internalSecret = req.headers.get("x-internal-secret");
-        const isInternal = internalSecret === process.env.INTERNAL_BRIDGE_SECRET || 
-                        internalSecret === process.env.INTERNAL_SECRET;
+        const isInternal = internalSecret === process.env.BRIDGE_INTERNAL_SECRET;
 
         let userId = null;
         if (isInternal) {

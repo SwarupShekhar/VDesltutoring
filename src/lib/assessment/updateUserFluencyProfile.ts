@@ -123,7 +123,7 @@ export async function updateUserFluencyProfile(
           await fetch(process.env.BRIDGE_API_URL + "/sync/cefr", {
             method: "PATCH",
             headers: new Headers({
-              "x-internal-secret": process.env.INTERNAL_SECRET!,
+              "x-internal-secret": process.env.BRIDGE_INTERNAL_SECRET!,
               "Content-Type": "application/json",
             }),
             body: JSON.stringify({

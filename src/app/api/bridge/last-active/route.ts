@@ -2,7 +2,7 @@ import { auth } from '@clerk/nextjs/server'
 import { apiSuccess, ApiErrors } from '@/lib/api-response'
 
 const BRIDGE_URL = 'https://bridge-api-3m4n.onrender.com'
-const BRIDGE_SECRET = process.env.BRIDGE_INTERNAL_SECRET || process.env.INTERNAL_SECRET
+const BRIDGE_SECRET = process.env.BRIDGE_INTERNAL_SECRET
 
 export async function POST(req: Request) {
   try {

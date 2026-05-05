@@ -120,6 +120,7 @@ export function HomeNavbar({
     { label: t.practice || 'Practice', href: safePath('/practice'), onClick: handlePracticeClick },
     { label: t.pricing || 'Pricing', href: safePath('/pricing') },
     { label: t.about || 'About Us', href: safePath('/about') },
+    { label: 'Explore Hub', href: safePath('/explore') },
     { label: t.blog || 'Blog', href: safePath('/blog') },
   ];
 

@@ -31,7 +31,7 @@ export default async function ExplorePage({ params }: { params: Promise<{ locale
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 pt-24 pb-32">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
         
         {/* Header Section */}
         <div className="max-w-3xl mb-20">
@@ -81,9 +81,9 @@ export default async function ExplorePage({ params }: { params: Promise<{ locale
                     {page.seoDescription || 'Explore this comprehensive guide on the Englivo platform.'}
                   </p>
                   
-                  {/* Subtle hover indicator */}
-                  <div className="mt-8 flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-electric opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                    Read Article <span className="text-lg">→</span>
+                  {/* Subtle hover indicator - Always visible on mobile, hover-only on desktop */}
+                  <div className="mt-6 flex items-center gap-2 text-sm font-semibold tracking-wider uppercase text-electric opacity-100 translate-x-0 md:opacity-0 md:-translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    Learn More <span className="text-lg">→</span>
                   </div>
                 </div>
               </Link>

@@ -10,11 +10,16 @@ interface FontWeightProps {
 }
 
 export const FontWeight = ({ text, fontSize = 24, className }: FontWeightProps) => {
+    // Calculate a responsive size using clamp. 
+    // Minimum is 60% of the target size, maximum is the target size.
+    const minSize = Math.max(16, fontSize * 0.6);
+    const responsiveSize = `clamp(${minSize}px, 6vw, ${fontSize}px)`;
+
     return (
-        <div className={cn("flex items-center justify-center", className)}>
+        <div className={cn("flex items-center justify-center w-full", className)}>
             <div
-                style={{ fontSize: `${fontSize}px` }}
-                className="font-serif font-bold tracking-tight"
+                style={{ fontSize: responsiveSize }}
+                className="font-serif font-bold tracking-tight leading-none"
             >
                 {text.split('').map((char, i) => (
                     <motion.span

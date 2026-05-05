@@ -43,7 +43,8 @@ export default defineConfig({
         origin: typeof location !== 'undefined' ? location.origin : 'http://localhost:3000',
         previewMode: {
           enable: '/api/draft',
-          secret: process.env.SANITY_PREVIEW_SECRET,
+          // Use NEXT_PUBLIC if available to ensure it reaches the browser Studio
+          secret: process.env.NEXT_PUBLIC_SANITY_PREVIEW_SECRET || process.env.SANITY_PREVIEW_SECRET,
         },
       },
     }),

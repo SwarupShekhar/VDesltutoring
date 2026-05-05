@@ -8,7 +8,14 @@ export async function GET(request: NextRequest) {
   const secret = searchParams.get('secret') || searchParams.get('sanity-preview-secret');
   const language = searchParams.get('language') || 'en';
   
-  if (process.env.SANITY_PREVIEW_SECRET && secret !== process.env.SANITY_PREVIEW_SECRET) {
+  const storedSecret = process.env.SANITY_PREVIEW_SECRET;
+  
+  if (!storedSecret) {
+    return new Response('Preview secret not configured', { status: 500 })
+  }
+
+  if (secret !== storedSecret) {
+    console.error(`[Draft Mode] Secret mismatch. Received: ${secret?.slice(0, 3)}... Expected: ${storedSecret.slice(0, 3)}...`)
     return new Response('Invalid preview secret', { status: 401 })
   }
   

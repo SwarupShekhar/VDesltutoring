@@ -10,7 +10,7 @@ interface TextBlockProps {
 export function TextBlock({ content }: TextBlockProps) {
   return (
     <section className="py-24">
-      <div className="container mx-auto px-4 max-w-3xl">
+      <div className="container mx-auto px-6 md:px-4 max-w-3xl">
         <div className="prose prose-lg dark:prose-invert prose-slate max-w-none">
           <PortableText 
             value={content} 

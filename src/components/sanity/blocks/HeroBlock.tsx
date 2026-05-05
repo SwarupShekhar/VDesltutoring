@@ -30,7 +30,7 @@ export function HeroBlock({
     : (typeof backgroundImage === 'string' ? backgroundImage : null)
 
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-16 md:py-24 overflow-hidden">
       {bgImageUrl && (
         <div 
           className="absolute inset-0 z-0 opacity-20"
@@ -43,7 +43,7 @@ export function HeroBlock({
           }}
         />
       )}
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-6 md:px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -51,7 +51,7 @@ export function HeroBlock({
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h1 className="font-serif text-5xl md:text-7xl mb-8 text-foreground leading-tight">
+          <h1 className="font-serif text-4xl md:text-7xl mb-6 md:mb-8 text-foreground leading-tight px-2">
             {title}
           </h1>
           {subtitle && (

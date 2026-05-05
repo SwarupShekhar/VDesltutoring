@@ -44,7 +44,8 @@ export default defineConfig({
         previewMode: {
           enable: '/api/draft',
           // Use NEXT_PUBLIC if available to ensure it reaches the browser Studio
-          secret: process.env.NEXT_PUBLIC_SANITY_PREVIEW_SECRET || process.env.SANITY_PREVIEW_SECRET,
+          // Added 'Vaidik@1234' as a fallback to ensure stability during sync
+          secret: process.env.NEXT_PUBLIC_SANITY_PREVIEW_SECRET || process.env.SANITY_PREVIEW_SECRET || 'Vaidik@1234',
         },
       },
     }),

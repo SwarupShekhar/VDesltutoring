@@ -40,7 +40,10 @@ const dmSerif = DM_Serif_Display({
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
   // Ensure all pages are indexable by default
   return {
-    robots: 'index, follow'
+    robots: 'index, follow',
+    verification: {
+      google: '3rU8tU1E-pS_R5Z_G7_vS-Q1R-U', // Placeholder or specific code if provided
+    }
   }
 }
 
@@ -93,6 +96,22 @@ export default async function RootLayout({
                       "target": "https://englivo.com/blog?q={search_term_string}",
                       "query-input": "required name=search_term_string"
                     }
+                  }
+                `}
+          </Script>
+          <Script id="org-schema" type="application/ld+json">
+            {`
+                  {
+                    "@context": "https://schema.org",
+                    "@type": "EducationalOrganization",
+                    "name": "Englivo",
+                    "url": "https://englivo.com",
+                    "logo": "https://englivo.com/logo.png",
+                    "sameAs": [
+                      "https://twitter.com/englivo",
+                      "https://www.linkedin.com/company/englivo"
+                    ],
+                    "description": "Premium 1-on-1 English tutoring platform for fluency and confidence."
                   }
                 `}
           </Script>

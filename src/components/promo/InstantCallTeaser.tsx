@@ -13,7 +13,7 @@ export const InstantCallTeaser = () => {
     <>
       <motion.div
         whileHover={{ y: -4 }}
-        className="relative group overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 to-violet-700 p-6 shadow-xl shadow-indigo-500/20 text-white"
+        className="relative group overflow-hidden rounded-3xl bg-linear-to-br from-indigo-600 to-violet-700 p-6 shadow-xl shadow-indigo-500/20 text-white"
       >
         {/* Background Decorative Elements */}
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform duration-500">

@@ -22,11 +22,11 @@ export const AppDownloadModal = ({ isOpen, onClose }: AppDownloadModalProps) => 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-100"
           />
 
           {/* Modal Container */}
-          <div className="fixed inset-0 flex items-center justify-center p-4 z-[101] pointer-events-none">
+          <div className="fixed inset-0 flex items-center justify-center p-4 z-101 pointer-events-none">
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -35,10 +35,10 @@ export const AppDownloadModal = ({ isOpen, onClose }: AppDownloadModalProps) => 
             >
               {/* Left Side: Visuals */}
               <div className="w-full md:w-1/2 bg-slate-100 dark:bg-slate-950 p-8 flex flex-col items-center justify-center relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-indigo-500/10 to-teal-500/10 z-0" />
+                <div className="absolute top-0 left-0 w-full h-full bg-linear-to-br from-indigo-500/10 to-teal-500/10 z-0" />
                 
                 {/* Phone Mockup */}
-                <div className="relative z-10 w-full max-w-[280px] aspect-[9/19] rounded-[3rem] border-[8px] border-slate-900 dark:border-slate-800 shadow-2xl overflow-hidden bg-slate-900">
+                <div className="relative z-10 w-full max-w-[280px] aspect-9/19 rounded-[3rem] border-8 border-slate-900 dark:border-slate-800 shadow-2xl overflow-hidden bg-slate-900">
                   <Image 
                     src="/englivo_app_calling_ui_1777638508282.png" 
                     alt="App Calling UI" 

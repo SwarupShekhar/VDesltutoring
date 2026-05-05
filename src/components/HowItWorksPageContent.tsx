@@ -24,7 +24,7 @@ export function HowItWorksPageContent({ dict }: { dict: any }) {
             {/* Steps */}
             <div className="space-y-32 relative">
                 {/* Connector Line */}
-                <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-electric/0 via-electric/30 to-electric/0 -translate-x-1/2 hidden md:block" />
+                <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-linear-to-b from-electric/0 via-electric/30 to-electric/0 -translate-x-1/2 hidden md:block" />
 
                 {/* INJECTED TUTOR STEP */}
                 {(() => {
@@ -101,7 +101,7 @@ function Step({ step, index }: { step: any, index: number }) {
             className={`relative flex flex-col md:flex-row gap-8 md:gap-16 items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}
         >
             {/* Number Bubble (Center) */}
-            <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-electric/10 border-2 border-electric flex items-center justify-center text-xs font-bold text-electric z-10 hidden md:flex">
+            <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-electric/10 border-2 border-electric items-center justify-center text-xs font-bold text-electric z-10 hidden md:flex">
                 {index + 1}
             </div>
 
@@ -109,7 +109,7 @@ function Step({ step, index }: { step: any, index: number }) {
             <div className="flex-1 text-left md:text-right w-full">
                 <div className={`p-8 rounded-2xl border ${step.isFeatured
                     ? 'border-electric bg-electric/10 shadow-[0_0_30px_rgba(59,130,246,0.2)] md:p-12 scale-105'
-                    : 'glass-card border-electric/10 bg-gradient-to-br from-white/50 to-white/10 dark:from-slate-900/50 dark:to-slate-900/10'
+                    : 'glass-card border-electric/10 bg-linear-to-br from-white/50 to-white/10 dark:from-slate-900/50 dark:to-slate-900/10'
                     } ${isEven ? 'md:text-right' : 'md:text-left'}`}>
                     <span className="text-electric font-bold uppercase tracking-widest text-xs mb-2 block">{step.step}</span>
                     <h3 className="text-3xl font-serif mb-4 text-foreground">{step.title}</h3>

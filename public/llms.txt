@@ -1,0 +1,17 @@
+# Englivo
+
+Premium 1-on-1 English tutoring platform for fluency and confidence.
+
+## Core Pages
+- [Home](https://englivo.com/)
+- [Method](https://englivo.com/method)
+- [Pricing](https://englivo.com/pricing)
+- [How it Works](https://englivo.com/how-it-works)
+- [FAQ](https://englivo.com/faq)
+
+## About
+Englivo provides personalized English coaching with a focus on natural fluency, professional communication, and confidence building.
+
+## Technical SEO Pages
+Our SEO landing pages are managed via Sanity CMS and localized in 6 languages.
+- [Sitemap](https://englivo.com/sitemap.xml)

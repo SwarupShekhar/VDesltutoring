@@ -3,6 +3,9 @@ import { join } from "path";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  compiler: {
+    styledComponents: true,
+  },
   images: {
     remotePatterns: [
       {
@@ -28,6 +31,11 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: '*.public.blob.vercel-storage.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.sanity.io',
         pathname: '/**',
       },
     ],

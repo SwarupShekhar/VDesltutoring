@@ -15,14 +15,26 @@ import { BubbleText } from '@/components/BubbleText';
 import { GetStartedButton } from '@/components/GetStartedButton';
 import { FontWeight } from '@/components/font-weight';
 import Image from 'next/image';
+import type { NavPage } from '@/types/sanity'
 
-export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
+export function HomeNavbar({ 
+  dict, 
+  locale, 
+  navPages = [] 
+}: { 
+  dict: any; 
+  locale: string; 
+  navPages?: NavPage[] 
+}) {
   const { user, isLoaded } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Filter pages for resources menu
+  const resourcePages = navPages.filter(p => p.showInResources);
 
   const t = dict || {};
   const locales = ['en', 'de', 'fr', 'es', 'vi', 'ja'];
@@ -122,7 +134,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
           <div className="flex justify-between h-24 items-center">
 
             {/* LEFT: BRAND */}
-            <Link href={safePath('/')} className="flex-shrink-0 cursor-pointer group flex items-center gap-3" onClick={scrollToTop}>
+            <Link href={safePath('/')} className="shrink-0 cursor-pointer group flex items-center gap-3" onClick={scrollToTop}>
               <div className="relative h-10 w-10">
                 <Image
                   src="https://res.cloudinary.com/de8vvmpip/image/upload/v1767350961/logoESL_sfixb1.png"
@@ -149,17 +161,17 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
             <div className="hidden md:flex items-center space-x-8 lg:space-x-12">
               <Link href={safePath('/method')} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
                 {t.approach || 'Method'}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-electric transition-all duration-300 group-hover:w-full" />
               </Link>
 
               <Link href={safePath('/practice')} onClick={handlePracticeClick} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
                 {t.practice || 'Practice'}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-electric transition-all duration-300 group-hover:w-full" />
               </Link>
 
               <Link href={safePath('/pricing')} className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-electric dark:hover:text-electric transition-colors relative group">
                 {t.pricing || 'Pricing'}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-electric transition-all duration-300 group-hover:w-full" />
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-electric transition-all duration-300 group-hover:w-full" />
               </Link>
 
               {/* Resources Dropdown */}
@@ -184,6 +196,15 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
                   </DropdownItem>
                   <DropdownItem onClick={() => router.push(safePath('/about'))}>
                     {t.about || 'About Us'}
+                  </DropdownItem>
+                  {resourcePages.map((page: any) => (
+                    <DropdownItem key={page.slug} onClick={() => router.push(safePath(`/p/${page.slug}`))}>
+                      {page.title}
+                    </DropdownItem>
+                  ))}
+                  <div className="h-px bg-gray-100 dark:bg-white/10 w-full my-2" />
+                  <DropdownItem onClick={() => router.push(safePath('/explore'))} className="font-medium text-electric group flex items-center justify-between">
+                    Explore Hub <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
                   </DropdownItem>
                 </div>
               </Dropdown>
@@ -291,7 +312,7 @@ export function HomeNavbar({ dict, locale }: { dict: any; locale: string }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[60] bg-white dark:bg-slate-950 p-6 flex flex-col"
+              className="fixed inset-0 z-60 bg-white dark:bg-slate-950 p-6 flex flex-col"
             >
               <div className="flex justify-between items-center mb-12">
                 <div className="flex items-center gap-2">

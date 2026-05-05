@@ -3,21 +3,15 @@ import { HomeNavbar } from '@/components/HomeNavbar'
 import { Footer } from '@/components/Footer'
 import { getDictionary } from '@/i18n/getDictionary'
 import type { Locale } from '@/i18n/getDictionary'
+import { VisualEditing } from 'next-sanity/visual-editing'
+import { draftMode } from 'next/headers'
+import { client } from '@/sanity/lib/client'
+import { NAV_PAGES_QUERY } from '@/sanity/lib/queries'
+import type { NavPage } from '@/types/sanity'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params
-    const baseUrl = 'https://englivo.com'
-
-    // English content is served at root (no /en prefix)
-    // Other languages use locale prefix (/de, /fr, /es, /vi, /ja)
-
-    // Base metadata for the layout
-    // Canonical tags are now handled by individual pages to ensure subpages (like /method)
-    // have correct self-referencing URLs.
-
-    return {
-        // Base metadata can go here if needed
-    }
+    return {}
 }
 
 export default async function MarketingLayout({
@@ -29,14 +23,29 @@ export default async function MarketingLayout({
 }) {
     const { locale } = await params
     const dict = await getDictionary(locale)
+    const isDraftMode = (await draftMode()).isEnabled
+
+    // Fetch dynamic pages for Navbar and Footer
+    const fetchClient = isDraftMode
+        ? client.withConfig({
+            perspective: 'previewDrafts',
+            useCdn: false,
+            stega: { enabled: true, studioUrl: '/studio' }
+          })
+        : client
+
+    const navPages = await fetchClient.fetch<NavPage[]>(NAV_PAGES_QUERY, { locale }, {
+        next: { revalidate: 3600 }
+    })
 
     return (
         <>
-            <HomeNavbar dict={dict.nav} locale={locale} />
-            <main className="flex-grow">
+            <HomeNavbar dict={dict.nav} locale={locale} navPages={navPages} />
+            <main className="grow">
                 {children}
             </main>
-            <Footer dict={dict.footer} locale={locale} />
+            <Footer dict={dict.footer} locale={locale} navPages={navPages} />
+            {isDraftMode && <VisualEditing />}
         </>
     )
 }

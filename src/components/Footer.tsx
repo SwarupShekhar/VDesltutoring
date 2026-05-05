@@ -1,9 +1,19 @@
 import Link from 'next/link';
 import { BubbleText } from '@/components/BubbleText';
+import type { NavPage } from '@/types/sanity';
 
 
-export function Footer({ dict, locale }: { dict: any; locale: string }) {
+export function Footer({ 
+    dict, 
+    locale, 
+    navPages = [] 
+}: { 
+    dict: any; 
+    locale: string; 
+    navPages?: NavPage[] 
+}) {
     const t = dict || {};
+    const footerPages = navPages.filter(p => p.showInFooter);
     const columns = t.columns || {};
 
     return (
@@ -103,6 +113,16 @@ export function Footer({ dict, locale }: { dict: any; locale: string }) {
                                 <li><Link href={locale === 'en' ? '/about' : `/${locale}/about`} className="hover:text-electric transition-colors">{columns.company?.about || 'About'}</Link></li>
                                 <li><a href="#" className="hover:text-electric transition-colors">{columns.company?.careers || 'Careers'}</a></li>
                                 <li><a href="#" className="hover:text-electric transition-colors">{columns.company?.contact || 'Contact'}</a></li>
+                                {footerPages.map((page: any) => (
+                                    <li key={page.slug}>
+                                        <Link 
+                                            href={locale === 'en' ? `/p/${page.slug}` : `/${locale}/p/${page.slug}`} 
+                                            className="hover:text-electric transition-colors"
+                                        >
+                                            {page.title}
+                                        </Link>
+                                    </li>
+                                ))}
                             </ul>
                         </div>
 

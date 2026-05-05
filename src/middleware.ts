@@ -51,6 +51,8 @@ const isPublicRoute = createRouteMatcher([
   "/ai-tutor",
   "/practice", // Public practice page
   "/sessions/book", // Public booking page
+  "/p/(.*)", // Public landing pages
+  "/explore", // Public explore hub
   "/en", // English locale prefix — now served directly, not redirected
   "/en/sign-in(.*)",
   "/en/sign-up(.*)",
@@ -67,6 +69,8 @@ const isPublicRoute = createRouteMatcher([
   "/en/faq",
   "/en/ai-tutor",
   "/en/sessions/book",
+  "/en/p/(.*)", // Public landing pages explicitly under /en
+  "/en/explore", // Public explore hub
   "/(de|fr|es|vi|ja)", // For non-English locales specifically
   "/(de|fr|es|vi|ja)/sign-in(.*)",
   "/(de|fr|es|vi|ja)/sign-up(.*)",
@@ -84,6 +88,8 @@ const isPublicRoute = createRouteMatcher([
   "/(de|fr|es|vi|ja)/faq",
   "/(de|fr|es|vi|ja)/ai-tutor",
   "/(de|fr|es|vi|ja)/sessions/book", // Public booking page
+  "/(de|fr|es|vi|ja)/p/(.*)", // Public landing pages under non-English locales
+  "/(de|fr|es|vi|ja)/explore", // Public explore hub under non-English locales
   "/api/webhooks(.*)", // Webhooks must be public
   "/api/internal(.*)", // Internal API routes for service-to-service communication
   "/api/livekit/token", // Handle auth in route handler for JSON response
@@ -91,6 +97,7 @@ const isPublicRoute = createRouteMatcher([
   "/sitemap.xml",
   "/robots.txt",
   "/googlee0719812a88d81a6.html",
+  "/studio(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
@@ -225,6 +232,7 @@ export default clerkMiddleware(async (auth, req) => {
   // Exclude API, internal files, static files from i18n handling
   const isIgnoredPath =
     pathname.startsWith("/api") ||
+    pathname.startsWith("/studio") ||
     pathname.startsWith("/_next") ||
     pathname.includes(".");
 

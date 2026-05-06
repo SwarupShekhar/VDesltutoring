@@ -372,7 +372,7 @@ export default async function TutorDashboard({ params }: { params: Promise<{ loc
                         {n.message}
                       </div>
                       <div className="text-[9px] text-slate-400 dark:text-slate-500 font-mono mt-1.5">
-                        {new Date(n.created_at).toLocaleDateString(locale, { dateStyle: 'short', timeStyle: 'short' })}
+                        {new Date(n.created_at).toLocaleString(locale, { dateStyle: 'short', timeStyle: 'short' })}
                       </div>
                     </div>
                   ))}

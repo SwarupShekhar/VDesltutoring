@@ -802,7 +802,7 @@ export function TutorBlogDashboard({
                                     <button 
                                         onClick={() => handlePageChange(currentPage - 1)}
                                         disabled={currentPage === 1}
-                                        className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850 disabled:opacity-40 transition-colors"
+                                        className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 transition-colors"
                                     >
                                         <ChevronLeft size={16} />
                                     </button>
@@ -813,7 +813,7 @@ export function TutorBlogDashboard({
                                             className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                                                 currentPage === idx + 1
                                                 ? 'bg-indigo-600 text-white shadow-sm'
-                                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850'
+                                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
                                             }`}
                                         >
                                             {idx + 1}
@@ -822,7 +822,7 @@ export function TutorBlogDashboard({
                                     <button 
                                         onClick={() => handlePageChange(currentPage + 1)}
                                         disabled={currentPage === totalPages}
-                                        className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-850 disabled:opacity-40 transition-colors"
+                                        className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 transition-colors"
                                     >
                                         <ChevronRight size={16} />
                                     </button>
@@ -866,7 +866,7 @@ export function TutorBlogDashboard({
                         <div className="grid grid-cols-7 gap-2">
                             {/* Prev month fill-in cells */}
                             {prevMonthCells.map((day, idx) => (
-                                <div key={`prev-${idx}`} className="bg-slate-50/40 dark:bg-slate-950/10 min-h-[100px] p-2 rounded-2xl border border-slate-100 dark:border-slate-850/50 opacity-30">
+                                <div key={`prev-${idx}`} className="bg-slate-50/40 dark:bg-slate-950/10 min-h-[100px] p-2 rounded-2xl border border-slate-100 dark:border-slate-800/50 opacity-30">
                                     <div className="text-xs font-bold text-slate-400 font-mono">{day}</div>
                                 </div>
                             ))}
@@ -917,11 +917,11 @@ export function TutorBlogDashboard({
                                         </div>
                                     </div>
                                 )
-                            })}
+                             })}
 
                             {/* Next month pad cell cells */}
                             {nextMonthCells.map((day, idx) => (
-                                <div key={`next-${idx}`} className="bg-slate-50/40 dark:bg-slate-950/10 min-h-[100px] p-2 rounded-2xl border border-slate-100 dark:border-slate-850/50 opacity-30">
+                                <div key={`next-${idx}`} className="bg-slate-50/40 dark:bg-slate-950/10 min-h-[100px] p-2 rounded-2xl border border-slate-100 dark:border-slate-800/50 opacity-30">
                                     <div className="text-xs font-bold text-slate-400 font-mono">{day}</div>
                                 </div>
                             ))}
@@ -957,7 +957,7 @@ export function TutorBlogDashboard({
                                         <path className="text-slate-100 dark:text-slate-800" strokeWidth="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                         <path className="text-indigo-600 dark:text-indigo-400 transition-all duration-1000" strokeDasharray={`${calculateSEOScore(submitChecklistPost)}, 100`} strokeWidth="3" strokeLinecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                     </svg>
-                                    <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-slate-850 dark:text-white">
+                                    <div className="absolute inset-0 flex items-center justify-center text-xs font-black text-slate-800 dark:text-white">
                                         {calculateSEOScore(submitChecklistPost)}%
                                     </div>
                                 </div>
@@ -1165,7 +1165,7 @@ function StatusBadge({ status }: { status: string }) {
         published: { label: 'Live', classes: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' },
         submitted: { label: 'In Review', classes: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
         needs_rework: { label: 'Needs Rework', classes: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-        draft: { label: 'Draft', classes: 'bg-slate-100 text-slate-700 dark:bg-slate-850 dark:text-slate-400' },
+        draft: { label: 'Draft', classes: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400' },
     }
 
     const { label, classes } = config[status] || config.draft;

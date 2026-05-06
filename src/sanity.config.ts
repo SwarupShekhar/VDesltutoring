@@ -38,7 +38,7 @@ export default defineConfig({
         mainDocuments: defineDocuments([
           {
             route: '/:locale/p/:slug',
-            filter: `_type == "page" && slug.current == $slug && language == $locale`,
+            filter: `_type == "page" && (slug.current == $slug || slug.current == "/" + $slug || "/" + slug.current == $slug) && language == $locale`,
           },
         ]),
       },

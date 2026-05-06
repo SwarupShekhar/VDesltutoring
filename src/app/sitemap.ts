@@ -57,21 +57,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         select: { slug: true, updatedAt: true },
       });
 
-      const blogRoutes = posts.flatMap((post) => {
+      const blogRoutes = posts.map((post) => {
         const cleanSlug = post.slug.startsWith("blog/")
           ? post.slug.replace("blog/", "")
           : post.slug;
-        const englishUrl = {
+        return {
           url: `${baseUrl}/blog/${cleanSlug}`,
           lastModified: post.updatedAt,
           priority: 0.7,
         };
-        const localizedUrls = ["de", "fr", "es", "vi", "ja"].map(locale => ({
-          url: `${baseUrl}/${locale}/blog/${cleanSlug}`,
-          lastModified: post.updatedAt,
-          priority: 0.6,
-        }));
-        return [englishUrl, ...localizedUrls];
       });
       allRoutes = [...allRoutes, ...blogRoutes];
     }

@@ -162,7 +162,7 @@ export default async function TutorDashboard({ params }: { params: Promise<{ loc
                     const showActions = !['COMPLETED', 'NO_SHOW'].includes(s.status)
 
                     return (
-                      <div key={s.id} className="p-4 border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-950/20 transition-all duration-300 hover:border-indigo-500/20 dark:hover:border-indigo-400/20 hover:shadow-md hover:shadow-indigo-500/[0.02]">
+                      <div key={s.id} className="p-4 border border-slate-100 dark:border-slate-800/60 rounded-2xl bg-slate-50/50 dark:bg-slate-950/20 transition-all duration-300 hover:border-indigo-500/20 dark:hover:border-indigo-400/20 hover:shadow-md hover:shadow-indigo-500/2">
                         <div className="flex justify-between items-start">
                           <div>
                             <div className="font-bold text-slate-900 dark:text-white">
@@ -285,7 +285,7 @@ export default async function TutorDashboard({ params }: { params: Promise<{ loc
         {/* Right Sidebar Column (Editorial Queue & Notifications) */}
         <div className="space-y-8">
           {/* Quick Actions Panel */}
-          <Card className="border-indigo-500/20 dark:border-indigo-800/40 bg-gradient-to-br from-indigo-500/[0.02] to-transparent shadow-sm rounded-3xl overflow-hidden">
+          <Card className="border-indigo-500/20 dark:border-indigo-800/40 bg-linear-to-br from-indigo-500/2 to-transparent shadow-sm rounded-3xl overflow-hidden">
             <CardHeader className="p-6 pb-2">
               <CardTitle className="text-sm font-black tracking-widest uppercase text-indigo-500 flex items-center gap-1.5">
                 Quick Portal Actions

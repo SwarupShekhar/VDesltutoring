@@ -282,7 +282,13 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                         role: 'LEARNER'
                     }
                 },
-                include: { users: true },
+                include: {
+                    users: {
+                        include: {
+                            user_fluency_profile: true
+                        }
+                    }
+                },
                 orderBy: { users: { full_name: 'asc' } }
             });
 
@@ -353,7 +359,9 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
                     id: s.id,
                     name: s.users?.full_name,
                     email: s.users?.email,
-                    credits: s.credits
+                    credits: s.credits,
+                    cefr_level: s.users?.user_fluency_profile?.cefr_level || 'A1',
+                    fluency_score: s.users?.user_fluency_profile?.fluency_score || 0
                 })),
                 unassignedSessions: formatSess(unassignedSessions),
                 scheduledSessions: formatSess(scheduledSessions),

@@ -8,6 +8,7 @@ import { HealthOverview } from './HealthOverview'
 import { AtRiskPanel } from './AtRiskPanel'
 import { TutorPerformance } from './TutorPerformance'
 import { RevenueHealth } from './RevenueHealth'
+import { QuickActionsAndAlerts } from './QuickActionsAndAlerts'
 import { LayoutDashboard, BrainCircuit, Users, Settings2 } from 'lucide-react'
 
 export function DashboardTabs({
@@ -57,6 +58,13 @@ export function DashboardTabs({
             ) : (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
                     <section>
+                        <QuickActionsAndAlerts 
+                            unassignedSessions={unassignedSessions}
+                            students={students}
+                            locale={locale}
+                        />
+                    </section>
+                    <section>
                         <SessionManager
                             unassigned={unassignedSessions}
                             upcoming={scheduledSessions}
@@ -67,7 +75,7 @@ export function DashboardTabs({
                     <section>
                         <StudentList students={students} />
                     </section>
-                    <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <section id="credit-adjustment-form-container" className="grid grid-cols-1 md:grid-cols-2 gap-6 transition-all duration-300 rounded-2xl scroll-mt-6">
                         <CreditAdjustmentForm />
                     </section>
                 </div>

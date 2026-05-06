@@ -1,7 +1,7 @@
 import BlogEditorPage from '@/components/blog/BlogEditorPage'
 import { createPost, updatePost } from '@/actions/blog'
 
-export default function NewPostPage() {
+export default function TutorNewPostPage() {
     async function handleSave(data: any) {
         'use server'
         // First create
@@ -18,7 +18,7 @@ export default function NewPostPage() {
     return (
         <BlogEditorPage
             onSave={handleSave}
-            role="ADMIN"
+            role="TUTOR"
         />
     )
 }

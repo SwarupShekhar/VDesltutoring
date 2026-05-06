@@ -1,0 +1,36 @@
+◇ injected env (31) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+🚀 Starting Blog Author ID Migration (Simple Mode)...
+(node:99676) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/swarupshekhar/ESL_T/esltutoring/tools/migrate-blog-author-ids.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/swarupshekhar/ESL_T/esltutoring/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+PrismaClientKnownRequestError: 
+Invalid `prisma.blog_posts.findMany()` invocation:
+
+
+The column `(not available)` does not exist in the current database.
+    at Vr.handleRequestError (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client/src/runtime/RequestHandler.ts:228:13)
+    at Vr.handleAndLogRequestError (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client/src/runtime/RequestHandler.ts:174:12)
+    at Vr.request (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client/src/runtime/RequestHandler.ts:143:12)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async a (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:805:24)
+    at async main (file:///Users/swarupshekhar/ESL_T/esltutoring/tools/migrate-blog-author-ids.ts:21:16) {
+  code: 'P2022',
+  meta: {
+    modelName: 'blog_posts',
+    driverAdapterError: DriverAdapterError: ColumnNotFound
+        at PrismaPgAdapter.onError (file:///Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/adapter-pg/dist/index.mjs:651:11)
+        at PrismaPgAdapter.performIO (file:///Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/adapter-pg/dist/index.mjs:646:12)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async PrismaPgAdapter.queryRaw (file:///Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/adapter-pg/dist/index.mjs:566:30)
+        at async e.interpretNode (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client-engine-runtime/src/interpreter/query-interpreter.ts:182:26)
+        at async e.interpretNode (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client-engine-runtime/src/interpreter/query-interpreter.ts:268:41)
+        at async e.run (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client-engine-runtime/src/interpreter/query-interpreter.ts:93:23)
+        at async execute (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client/src/runtime/core/engines/client/LocalExecutor.ts:81:12)
+        at async Dt.request (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client/src/runtime/core/engines/client/ClientEngine.ts:461:22)
+        at async Object.singleLoader (/Users/swarupshekhar/ESL_T/esltutoring/node_modules/@prisma/client/src/runtime/RequestHandler.ts:112:26) {
+      cause: [Object]
+    }
+  },
+  clientVersion: '7.3.0'
+}

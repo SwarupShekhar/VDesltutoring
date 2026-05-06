@@ -40,9 +40,11 @@ export function Navbar({ role }: NavbarProps) {
     ],
     TUTOR: [
       { name: 'Dashboard', href: safePath('/tutor/dashboard') },
+      { name: 'Blog Hub', href: safePath('/tutor/blog') },
     ],
     ADMIN: [
       { name: 'Dashboard', href: safePath('/admin/dashboard') },
+      { name: 'Blog', href: safePath('/admin/blog') },
     ],
   };
 

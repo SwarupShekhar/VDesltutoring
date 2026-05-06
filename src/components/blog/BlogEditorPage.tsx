@@ -4,7 +4,7 @@ import { useState, useTransition, useEffect } from 'react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import BlogEditor from '@/components/blog/BlogEditor'
-import { Loader2, ArrowLeft, Save, Globe, Eye, Code, FileText, CheckCircle2, XCircle, BarChart2 } from 'lucide-react'
+import { Loader2, ArrowLeft, Save, Globe, Eye, Code, FileText, CheckCircle2, XCircle, BarChart2, Clock, Send, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 import { MarkdownRenderer } from "@/components/blog/MarkdownRenderer"
 import { SEOHealthScore } from './SEOHealthScore'
@@ -29,12 +29,14 @@ interface EditorPageProps {
         focal_keyword: string | null
         alt_text: string | null
         published_at: Date | null
+        review_notes?: string | null
         views?: number
     }
     onSave: (data: any) => Promise<{ success: boolean, error?: string, id?: string }>
+    role: 'TUTOR' | 'ADMIN'
 }
 
-export default function BlogEditorPage({ initialData, onSave }: EditorPageProps) {
+export default function BlogEditorPage({ initialData, onSave, role }: EditorPageProps) {
     const router = useRouter()
     const [isPending, startTransition] = useTransition()
     
@@ -211,7 +213,7 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                     setSaveError(null);
                     fetchRevisions();
                     if (!initialData) {
-                        router.push('/admin/blog')
+                        router.push(role === 'ADMIN' ? '/admin/blog' : '/tutor/blog')
                     }
                     router.refresh()
                 } else {
@@ -227,10 +229,78 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
         }
     }
 
+    const handleApprove = async () => {
+        if (!initialData?.id) return
+        // Auto-save current editor state before approving
+        await handleSave()
+        const { approvePost } = await import('@/actions/blog')
+        const res = await approvePost(initialData.id)
+        if (res.success) {
+            router.push('/admin/blog')
+            router.refresh()
+        }
+    }
+
+    const handleReject = async (notes: string) => {
+        if (!initialData?.id) return
+        // Auto-save current editor state before rejecting
+        await handleSave()
+        const { rejectPost } = await import('@/actions/blog')
+        const res = await rejectPost(initialData.id, notes)
+        if (res.success) {
+            router.push('/admin/blog')
+            router.refresh()
+        }
+    }
+
     const toggleStatus = async () => {
-        const newStatus = status === 'published' ? 'draft' : 'published'
-        setStatus(newStatus)
-        await handleSave(newStatus)
+        if (status === 'published') {
+            // Unpublish: save as draft
+            setStatus('draft')
+            await handleSave('draft')
+        } else {
+            // Publish: First save current editor state
+            setIsSaving(true)
+            try {
+                const res = await onSave({
+                    title,
+                    slug,
+                    content,
+                    status: 'draft', // save as draft first before approving
+                    cover,
+                    seo_title: seoTitle,
+                    meta_description: metaDescription,
+                    excerpt,
+                    category,
+                    focal_keyword: focalKeyword,
+                    alt_text: altText,
+                    published_at: publishedAt,
+                    relatedPostIds: relatedPostIdsDirty ? relatedPostIds : undefined
+                })
+
+                if (res.success) {
+                    const postId = initialData?.id || res.id
+                    if (postId) {
+                        const { approvePost } = await import('@/actions/blog')
+                        const approveRes = await approvePost(postId)
+                        if (approveRes.success) {
+                            router.push('/admin/blog')
+                            router.refresh()
+                        } else {
+                            setSaveError("Failed to publish post via formal validation.")
+                        }
+                    } else {
+                        setSaveError("Failed to retrieve post ID for publishing.")
+                    }
+                } else {
+                    setSaveError(res.error || "Failed to save post before publishing.")
+                }
+            } catch (err: any) {
+                setSaveError(err.message || "An unexpected error occurred.")
+            } finally {
+                setIsSaving(false)
+            }
+        }
     }
 
     return (
@@ -243,15 +313,25 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                 </div>
             )}
 
+            {status === 'needs_rework' && initialData?.review_notes && (
+                <div className="bg-orange-500/10 border-b border-orange-500/20 px-6 py-3 flex items-start gap-3">
+                    <AlertCircle size={18} className="text-orange-500 shrink-0 mt-0.5" />
+                    <div>
+                        <div className="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-0.5">Admin Feedback for Rework</div>
+                        <p className="text-sm text-orange-200/80 leading-relaxed">{initialData.review_notes}</p>
+                    </div>
+                </div>
+            )}
+
             {/* Top Navigation / Header */}
             <header className="flex items-center justify-between px-6 py-4 bg-slate-900/50 border-b border-slate-800 backdrop-blur-md">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/blog" className="p-2 hover:bg-slate-800 rounded-full transition-colors group">
+                    <Link href={role === 'ADMIN' ? "/admin/blog" : "/tutor/blog"} className="p-2 hover:bg-slate-800 rounded-full transition-colors group">
                         <ArrowLeft size={20} className="text-slate-400 group-hover:text-white" />
                     </Link>
                     <div>
-                        <h1 className="text-xl font-bold text-white leading-tight">Edit Blog Post</h1>
-                        <p className="text-xs text-slate-500">You have full access to all blogs</p>
+                        <h1 className="text-xl font-bold text-white leading-tight">{initialData ? 'Edit Blog Post' : 'New Blog Post'}</h1>
+                        <p className="text-xs text-slate-500">{role === 'ADMIN' ? 'You have full access to all blogs' : 'Drafting your blog post'}</p>
                     </div>
                 </div>
 
@@ -264,30 +344,50 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                         </div>
                     )}
 
-                    {/* Status Badge */}
                     <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
                         status === 'published' 
                         ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
+                        : status === 'submitted'
+                        ? 'bg-blue-500/10 text-blue-500 border-blue-500/20'
+                        : status === 'needs_rework'
+                        ? 'bg-orange-500/10 text-orange-500 border-orange-500/20'
                         : 'bg-amber-500/10 text-amber-500 border-amber-500/20'
                     }`}>
-                        {status === 'published' ? <CheckCircle2 size={12} /> : <FileText size={12} />}
+                        {status === 'published' ? <CheckCircle2 size={12} /> : status === 'submitted' ? <Clock size={12} /> : <FileText size={12} />}
                         {status}
                     </div>
 
-                    <button 
-                        onClick={toggleStatus}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                            status === 'published'
-                            ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
-                            : 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20'
-                        }`}
-                    >
-                        {status === 'published' ? (
-                            <><XCircle size={16} /> Unpublish</>
-                        ) : (
-                            <><Globe size={16} /> Publish Post 🚀</>
-                        )}
-                    </button>
+                    {role === 'ADMIN' ? (
+                        <button 
+                            onClick={toggleStatus}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                                status === 'published'
+                                ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20'
+                                : 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/20'
+                            }`}
+                        >
+                            {status === 'published' ? (
+                                <><XCircle size={16} /> Unpublish</>
+                            ) : (
+                                <><Globe size={16} /> Publish Post 🚀</>
+                            )}
+                        </button>
+                    ) : (
+                        (status === 'draft' || status === 'needs_rework') && initialData && (
+                            <form action={async () => {
+                                const { submitForReview } = await import('@/actions/blog')
+                                await submitForReview(initialData.id)
+                                router.push('/tutor/blog')
+                            }}>
+                                <button 
+                                    type="submit"
+                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-500/20 transition-all"
+                                >
+                                    <Send size={16} /> Submit Review
+                                </button>
+                            </form>
+                        )
+                    )}
 
                     <div className="h-4 w-px bg-slate-800" />
 
@@ -367,9 +467,12 @@ export default function BlogEditorPage({ initialData, onSave }: EditorPageProps)
                     data={{
                         title, slug, cover, seoTitle, metaDescription,
                         excerpt, category, focalKeyword, altText, publishedAt,
-                        views, slugError,
+                        views, slugError, status,
                         relatedPostIds
                     }}
+                    role={role}
+                    onApprove={handleApprove}
+                    onReject={handleReject}
                     update={(updates: any) => {
                         if (updates.title !== undefined) setTitle(updates.title)
                         if (updates.slug !== undefined) setSlug(updates.slug)

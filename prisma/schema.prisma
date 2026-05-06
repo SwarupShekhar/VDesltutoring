@@ -25,6 +25,9 @@ model users {
   tutor_profiles       tutor_profiles?
   daily_plans          user_daily_plan[]
   user_fluency_profile user_fluency_profile?
+  blog_posts           blog_posts[]         @relation("BlogAuthor")
+  submitted_posts      blog_posts[]         @relation("BlogSubmitter")
+  reviewed_posts       blog_posts[]         @relation("BlogReviewer")
 }
 
 model packages {
@@ -213,36 +216,49 @@ model user_daily_plan {
 }
 
 model blog_posts {
-  id               String    @id @default(uuid())
+  id               String                @id @default(uuid())
   title            String
-  slug             String    @unique
+  slug             String                @unique
   content          String
   cover            String?
-  alt_text         String?
   status           String
-  author_id        String
-  views            Int       @default(0)
-  seo_title        String?
-  meta_description String?
-  excerpt          String?
+  author_id        String                @db.Uuid
+  views            Int                   @default(0)
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  alt_text         String?
   category         String?
+  excerpt          String?
   focal_keyword    String?
-  related_posts    Json?
+  meta_description String?
   published_at     DateTime?
-  createdAt        DateTime               @default(now())
-  updatedAt        DateTime               @updatedAt
+  submitted_at     DateTime?
+  submitted_by     String?               @db.Uuid
+  review_notes     String?
+  reviewed_at      DateTime?
+  reviewed_by      String?               @db.Uuid
+  seo_title        String?
+  related_posts    Json?
   revisions        blog_post_revisions[]
+  author           users                 @relation("BlogAuthor", fields: [author_id], references: [id])
+  submitter        users?                @relation("BlogSubmitter", fields: [submitted_by], references: [id])
+  reviewer         users?                @relation("BlogReviewer", fields: [reviewed_by], references: [id])
+
+  @@index([author_id])
+  @@index([status])
+  @@index([submitted_by])
+  @@index([reviewed_by])
 }
 
 model blog_post_revisions {
-  id               String      @id @default(uuid())
-  postId           String
-  content          String
-  title            String
-  authorId         String
-  metadata         Json?       // Stores cover, focal_keyword, seo_title, etc.
-  createdAt        DateTime    @default(now())
-  post             blog_posts  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id        String     @id @default(uuid())
+  postId    String
+  content   String
+  title     String
+  authorId  String
+  metadata  Json?
+  createdAt DateTime   @default(now())
+  post      blog_posts @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([postId])
 }
@@ -274,20 +290,6 @@ model user_fluency_profile {
   user                     users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
-enum session_status {
-  SCHEDULED
-  LIVE
-  COMPLETED
-  CANCELLED
-  NO_SHOW
-}
-
-enum user_role {
-  ADMIN
-  TUTOR
-  LEARNER
-}
-
 model UserQuota {
   id                String    @id @default(cuid())
   clerkId           String    @unique
@@ -310,25 +312,25 @@ model Subscription {
   status                 SubStatus     @default(ACTIVE)
   currentPeriodEnd       DateTime?
   organizationId         String?
-  organization           Organization? @relation(fields: [organizationId], references: [id])
   createdAt              DateTime      @default(now())
   updatedAt              DateTime      @updatedAt
+  organization           Organization? @relation(fields: [organizationId], references: [id])
 }
 
 model Organization {
-  id                     String       @id @default(cuid())
+  id                     String         @id @default(cuid())
   name                   String
   adminClerkId           String
   razorpayCustomerId     String?
   razorpaySubscriptionId String?
-  seatLimit              Int          @default(10)
-  poolSeconds            Int          @default(0)
-  poolUsedSeconds        Int          @default(0)
+  seatLimit              Int            @default(10)
+  poolSeconds            Int            @default(0)
+  poolUsedSeconds        Int            @default(0)
   poolResetDate          DateTime?
-  status                 SubStatus    @default(ACTIVE)
+  status                 SubStatus      @default(ACTIVE)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
   members                Subscription[]
-  createdAt              DateTime     @default(now())
-  updatedAt              DateTime     @updatedAt
 }
 
 model ProcessedSession {
@@ -337,21 +339,6 @@ model ProcessedSession {
   clerkId         String
   deductedSeconds Int
   processedAt     DateTime @default(now())
-}
-
-enum Plan {
-  FREE
-  STARTER
-  PRO
-  PREMIUM
-  ENTERPRISE
-}
-
-enum SubStatus {
-  ACTIVE
-  CANCELLED
-  PAST_DUE
-  PAUSED
 }
 
 model InternalLink {
@@ -368,4 +355,33 @@ model BlogCategory {
   id   String @id @default(uuid())
   name String @unique
   slug String @unique
+}
+
+enum session_status {
+  SCHEDULED
+  LIVE
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum user_role {
+  ADMIN
+  TUTOR
+  LEARNER
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+  PREMIUM
+  ENTERPRISE
+}
+
+enum SubStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  PAUSED
 }

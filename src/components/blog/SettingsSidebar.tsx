@@ -38,7 +38,11 @@ interface SettingsSidebarProps {
         views?: number
         slugError?: string | null
         relatedPostIds: string[]
+        status: string
     }
+    role?: 'TUTOR' | 'ADMIN'
+    onApprove?: () => Promise<void>
+    onReject?: (notes: string) => Promise<void>
     update: (updates: Partial<SettingsSidebarProps['data']>) => void
     content: string
     onContentChange?: (content: string) => void
@@ -50,8 +54,10 @@ interface SettingsSidebarProps {
     publishedPosts?: { id: string; title: string; slug: string }[]
 }
 
-export function SettingsSidebar({ data, update, content, onContentChange, suggestions = [], revisions = [], internalLinks = [], categories = [], onRollback, publishedPosts = [] }: SettingsSidebarProps) {
-    const [activeTab, setActiveTab] = useState<'settings' | 'links'>('settings')
+export function SettingsSidebar({ data, role, onApprove, onReject, update, content, onContentChange, suggestions = [], revisions = [], internalLinks = [], categories = [], onRollback, publishedPosts = [] }: SettingsSidebarProps) {
+    const [activeTab, setActiveTab] = useState<'settings' | 'links' | 'review'>('settings')
+    const [reviewNotes, setReviewNotes] = useState('')
+    const [isPending, setIsPending] = useState(false)
     const [linkSearch, setLinkSearch] = useState('')
     const [linkCategory, setLinkCategory] = useState('all')
     const [showSEO, setShowSEO] = useState(false)
@@ -85,6 +91,14 @@ export function SettingsSidebar({ data, update, content, onContentChange, sugges
                     >
                         Links
                     </button>
+                    {role === 'ADMIN' && (
+                        <button 
+                            onClick={() => setActiveTab('review')}
+                            className={`pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${activeTab === 'review' ? 'text-green-400 border-b-2 border-green-400' : 'text-slate-500 hover:text-slate-300'}`}
+                        >
+                            Review
+                        </button>
+                    )}
                 </div>
 
                 {activeTab === 'settings' ? (
@@ -555,6 +569,62 @@ export function SettingsSidebar({ data, update, content, onContentChange, sugges
                             {internalLinks.length === 0 && (
                                 <p className="text-[10px] text-slate-600 text-center py-8 italic">No internal links found in database.</p>
                             )}
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === 'review' && role === 'ADMIN' && (
+                    <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
+                        <div className="p-6 bg-green-500/5 border border-green-500/10 rounded-3xl space-y-4">
+                            <div className="flex items-center gap-2 text-green-400 font-bold uppercase tracking-[0.2em] text-[10px]">
+                                <CheckCircle2 size={14} /> Quick Approval
+                            </div>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Review the content on the left. If everything looks good, publish it directly.
+                            </p>
+                            <button 
+                                onClick={async () => {
+                                    setIsPending(true)
+                                    await onApprove?.()
+                                    setIsPending(false)
+                                }}
+                                disabled={isPending || data.status === 'published'}
+                                className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-green-500/20 transition-all active:scale-95 disabled:opacity-50"
+                            >
+                                {isPending ? <Zap size={16} className="animate-spin mx-auto" /> : 'Approve & Publish Now'}
+                            </button>
+                        </div>
+
+                        <div className="p-6 bg-rose-500/5 border border-rose-500/10 rounded-3xl space-y-4">
+                            <div className="flex items-center gap-2 text-rose-400 font-bold uppercase tracking-[0.2em] text-[10px]">
+                                <XCircle size={14} /> Request Rework
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Feedback Notes</label>
+                                <textarea 
+                                    value={reviewNotes}
+                                    onChange={(e) => setReviewNotes(e.target.value)}
+                                    placeholder="Tell the author what to fix..."
+                                    className="w-full h-32 p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-300 focus:ring-1 focus:ring-rose-500 outline-none resize-none"
+                                />
+                            </div>
+                            <button 
+                                onClick={async () => {
+                                    if (!reviewNotes) return alert('Please enter feedback')
+                                    setIsPending(true)
+                                    await onReject?.(reviewNotes)
+                                    setIsPending(false)
+                                }}
+                                disabled={isPending || !reviewNotes}
+                                className="w-full py-3 bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 border border-rose-500/20 rounded-xl text-sm font-bold transition-all active:scale-95 disabled:opacity-50"
+                            >
+                                Send Feedback
+                            </button>
+                        </div>
+
+                        <div className="px-4 py-2 bg-slate-950 border border-slate-800 rounded-xl">
+                            <div className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-1">Current Status</div>
+                            <div className="text-xs font-bold text-white uppercase tracking-tighter">{data.status}</div>
                         </div>
                     </div>
                 )}

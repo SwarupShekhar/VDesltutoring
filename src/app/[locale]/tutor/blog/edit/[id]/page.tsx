@@ -6,7 +6,7 @@ interface PageProps {
     params: Promise<{ id: string }>
 }
 
-export default async function EditPostPage({ params }: PageProps) {
+export default async function TutorEditPostPage({ params }: PageProps) {
     const { id } = await params
     const post = await getPost(id)
 
@@ -35,11 +35,11 @@ export default async function EditPostPage({ params }: PageProps) {
                 focal_keyword: post.focal_keyword,
                 alt_text: post.alt_text,
                 published_at: post.published_at,
-                views: post.views,
-                review_notes: post.review_notes
+                review_notes: post.review_notes,
+                views: post.views
             }}
             onSave={handleSave}
-            role="ADMIN"
+            role="TUTOR"
         />
     )
 }

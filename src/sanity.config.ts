@@ -22,14 +22,17 @@ export default defineConfig({
               slug: 'slug.current',
               language: 'language',
             },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.title || 'Untitled',
-                  href: `/${doc?.language || 'en'}/p/${doc?.slug}`,
-                },
-              ],
-            }),
+            resolve: (doc) => {
+              const cleanSlug = doc?.slug ? doc.slug.replace(/^\//, '') : '';
+              return {
+                locations: [
+                  {
+                    title: doc?.title || 'Untitled',
+                    href: `/${doc?.language || 'en'}/p/${cleanSlug}`,
+                  },
+                ],
+              };
+            },
           }),
         },
         mainDocuments: defineDocuments([

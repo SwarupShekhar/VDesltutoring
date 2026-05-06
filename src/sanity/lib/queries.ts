@@ -1,7 +1,7 @@
 import { defineQuery, groq } from 'next-sanity'
 
 export const PAGE_QUERY = defineQuery(`
-  *[_type == "page" && slug.current == $slug && language == $locale][0] {
+  *[_type == "page" && (slug.current == $slug || slug.current == "/" + $slug || "/" + slug.current == $slug) && language == $locale][0] {
     _id,
     title,
     language,

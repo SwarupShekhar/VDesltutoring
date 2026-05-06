@@ -77,14 +77,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     type SanityPageSlug = { slug: string; language: string; _updatedAt: string }
     const sanityPages = await client.fetch<SanityPageSlug[]>(PAGES_SLUGS_QUERY);
-    const sanityRoutes = sanityPages.map((page) => ({
-      url: page.language === 'en' 
-        ? `${baseUrl}/p/${page.slug}` 
-        : `${baseUrl}/${page.language}/p/${page.slug}`,
-      priority: 0.8,
-      changeFrequency: "weekly" as const,
-      lastModified: new Date(page._updatedAt),
-    }));
+    const sanityRoutes = sanityPages.map((page) => {
+      const cleanSlug = page.slug ? page.slug.replace(/^\//, '') : '';
+      return {
+        url: page.language === 'en' 
+          ? `${baseUrl}/p/${cleanSlug}` 
+          : `${baseUrl}/${page.language}/p/${cleanSlug}`,
+        priority: 0.8,
+        changeFrequency: "weekly" as const,
+        lastModified: new Date(page._updatedAt),
+      };
+    });
     allRoutes = [...allRoutes, ...sanityRoutes];
   } catch (e) {
     console.error("Sitemap failed to fetch Sanity pages:", e);

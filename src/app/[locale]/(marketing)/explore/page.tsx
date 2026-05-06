@@ -50,10 +50,11 @@ export default async function ExplorePage({ params }: { params: Promise<{ locale
           {pages.map((page, index) => {
             const isFeatured = index === 0;
             const imageUrl = page.ogImage ? urlForImage(page.ogImage as any)?.width(800).height(600).url() : null;
+            const cleanSlug = page.slug ? page.slug.replace(/^\//, '') : '';
 
             return (
               <Link 
-                href={locale === 'en' ? `/p/${page.slug}` : `/${locale}/p/${page.slug}`}
+                href={locale === 'en' ? `/p/${cleanSlug}` : `/${locale}/p/${cleanSlug}`}
                 key={page._id}
                 className={`group relative overflow-hidden rounded-3xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 ${isFeatured ? 'md:col-span-2 lg:col-span-2 row-span-2' : ''}`}
               >

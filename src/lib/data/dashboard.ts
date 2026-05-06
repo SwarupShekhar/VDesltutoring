@@ -25,6 +25,15 @@ export type DashboardData = {
         lastWordCount: number;
         improvementNote: string;
     } | null;
+    blogStats?: {
+        total: number;
+        published: number;
+        submitted: number;
+        needs_rework: number;
+        drafts: number;
+    };
+    recentBlogs?: any[];
+    notifications?: any[];
 }
 
 export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Promise<DashboardData> {
@@ -143,15 +152,124 @@ export async function getDashboardData(role: 'LEARNER' | 'TUTOR' | 'ADMIN'): Pro
         } else if (role === 'TUTOR') {
             if (!user.tutor_profiles) {
                 console.warn(`[DashboardService] Role is TUTOR but no tutor_profile found for user ${user.id}`);
+                return { credits: 0, sessions: [], students: [], blogStats: { total: 0, published: 0, submitted: 0, needs_rework: 0, drafts: 0 }, recentBlogs: [], notifications: [] };
             } else {
                 console.log(`[DashboardService] Fetching sessions for Tutor Profile: ${user.tutor_profiles.id}`);
-                sessions = await prisma.sessions.findMany({
+                const tutorSessions = await prisma.sessions.findMany({
                     where: { tutor_id: user.tutor_profiles.id },
                     include: {
                         student_profiles: { include: { users: true } },
                     },
                     orderBy: { start_time: 'desc' },
                 });
+
+                // 1. Fetch Blog Stats & Recent Posts for Tutor
+                const [blogStatsRaw, recentBlogsRaw, unreadNotifications] = await Promise.all([
+                    prisma.blog_posts.groupBy({
+                        by: ['status'],
+                        where: { author_id: user.id },
+                        _count: true
+                    }),
+                    prisma.blog_posts.findMany({
+                        where: { author_id: user.id },
+                        orderBy: { updatedAt: 'desc' },
+                        take: 3
+                    }),
+                    prisma.notifications.findMany({
+                        where: { user_id: user.id, is_read: false },
+                        orderBy: { created_at: 'desc' },
+                        take: 5
+                    })
+                ]);
+
+                // Map blog counts
+                const blogCounts = {
+                    total: 0,
+                    published: 0,
+                    submitted: 0,
+                    needs_rework: 0,
+                    drafts: 0
+                };
+                blogStatsRaw.forEach(stat => {
+                    const cnt = stat._count;
+                    blogCounts.total += cnt;
+                    if (stat.status === 'published') blogCounts.published = cnt;
+                    else if (stat.status === 'submitted') blogCounts.submitted = cnt;
+                    else if (stat.status === 'needs_rework') blogCounts.needs_rework = cnt;
+                    else if (stat.status === 'draft') blogCounts.drafts = cnt;
+                });
+
+                // 2. Fetch Active Student Profiles with CEFR levels
+                const studentsMap = new Map();
+                tutorSessions.forEach(s => {
+                    if (s.student_profiles && s.student_profiles.users) {
+                        studentsMap.set(s.student_profiles.id, {
+                            id: s.student_profiles.id,
+                            userId: s.student_profiles.users.id,
+                            name: s.student_profiles.users.full_name,
+                            email: s.student_profiles.users.email,
+                            credits: s.student_profiles.credits,
+                            cefr: 'Unassessed'
+                        });
+                    }
+                });
+
+                const activeStudentIds = Array.from(studentsMap.values()).map(s => s.userId);
+                if (activeStudentIds.length > 0) {
+                    const fluencyProfiles = await prisma.user_fluency_profile.findMany({
+                        where: { user_id: { in: activeStudentIds } },
+                        select: { user_id: true, cefr_level: true }
+                    });
+                    
+                    const levelMap = new Map(fluencyProfiles.map(p => [p.user_id, p.cefr_level]));
+                    studentsMap.forEach(student => {
+                        const level = levelMap.get(student.userId);
+                        if (level) {
+                            student.cefr = level;
+                        }
+                    });
+                }
+
+                // 3. Construct and format return payload
+                const formattedRecentBlogs = recentBlogsRaw.map(b => ({
+                    id: b.id,
+                    title: b.title,
+                    slug: b.slug,
+                    status: b.status,
+                    views: b.views,
+                    updatedAt: b.updatedAt
+                }));
+
+                const formattedSessionsList = tutorSessions.map(session => {
+                    const studentProfile = session.student_profiles;
+                    return {
+                        id: session.id,
+                        start_time: session.start_time,
+                        end_time: session.end_time,
+                        status: session.status || 'SCHEDULED',
+                        livekit_room_id: session.livekit_room_id,
+                        meeting_link: session.meeting_link,
+                        student: studentProfile ? {
+                            id: studentProfile.id,
+                            name: studentProfile.users?.full_name,
+                            email: studentProfile.users?.email
+                        } : null
+                    };
+                });
+
+                return {
+                    credits: 0,
+                    sessions: formattedSessionsList,
+                    students: Array.from(studentsMap.values()),
+                    blogStats: blogCounts,
+                    recentBlogs: formattedRecentBlogs,
+                    notifications: unreadNotifications.map(n => ({
+                        id: n.id,
+                        title: n.title,
+                        message: n.message,
+                        created_at: n.created_at
+                    }))
+                };
             }
         } else if (role === 'ADMIN' && user.role === 'ADMIN') {
             console.log(`[DashboardService] Fetching Ops Center data for ADMIN`);

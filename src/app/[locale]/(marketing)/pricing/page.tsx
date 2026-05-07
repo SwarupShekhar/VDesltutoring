@@ -5,8 +5,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     const { locale } = await params;
     return {
         ...constructCanonicalMetadata('/pricing', locale),
-        title: 'Pricing | Englivo',
-        description: 'Choose the perfect Englivo plan for your English fluency journey. Flexible pricing with expert tutors and AI practice.',
+        title: 'English Fluency Program Plans & Pricing: Englivo',
+        description: 'Choose the perfect English fluency plan for your budget and goals. Access secure AI practice, custom CEFR roadmaps, and 1-on-1 language coaching.',
     };
 }
 
@@ -21,9 +21,9 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
     const pricingSchema = {
       "@context": "https://schema.org",
       "@type": "Product",
-      "name": "Englivo Fluency Program",
+      "name": "English Fluency Program Plans & Pricing: Englivo",
       "image": "https://englivo.com/images/hero-preview.png",
-      "description": "Premium English fluency coaching and AI-powered reflex training program for professionals and global job seekers.",
+      "description": "Choose the perfect English fluency plan for your budget and goals. Access secure AI practice, custom CEFR roadmaps, and 1-on-1 language coaching.",
       "brand": {
         "@type": "Brand",
         "name": "Englivo"

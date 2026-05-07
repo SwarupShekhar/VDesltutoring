@@ -22,9 +22,14 @@ export async function generateMetadata({
   const brandSubtitle = dictionary?.nav?.brandSubtitle || "English Fluency for Professionals";
   const heroSubtext = dictionary?.hero?.subtext || "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.";
 
-  // Clean HTML from strings
-  const cleanTitle = `Englivo — ${brandSubtitle}`.replace(/<[^>]*>/g, ' ').trim();
-  const cleanDesc = heroSubtext.replace(/<[^>]*>/g, ' ').trim();
+  // Custom targeted titles and descriptions per user specifications
+  const cleanTitle = locale === "en"
+    ? "Fluency in English | Speak Faster in English with Confidence"
+    : `Englivo — ${brandSubtitle}`.replace(/<[^>]*>/g, ' ').trim();
+
+  const cleanDesc = locale === "en"
+    ? "Want fluency in English? Our training helps you speak faster in English, overcome hesitation, and communicate confidently in real-life situations."
+    : heroSubtext.replace(/<[^>]*>/g, ' ').trim();
 
   return {
     title: cleanTitle,
@@ -190,8 +195,8 @@ export default async function Home({
   const homepageSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": `Englivo — ${dict.nav?.brandSubtitle || 'English Fluency for Professionals'}`,
-    "description": dict.hero?.subtext ? dict.hero.subtext.replace(/<[^>]*>/g, " ").trim() : "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
+    "name": locale === "en" ? "Fluency in English | Speak Faster in English with Confidence" : `Englivo — ${dict.nav?.brandSubtitle || 'English Fluency for Professionals'}`,
+    "description": locale === "en" ? "Want fluency in English? Our training helps you speak faster in English, overcome hesitation, and communicate confidently in real-life situations." : (dict.hero?.subtext ? dict.hero.subtext.replace(/<[^>]*>/g, " ").trim() : "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching."),
     "url": `https://englivo.com/${locale}`,
     "audience": {
       "@type": "Audience",

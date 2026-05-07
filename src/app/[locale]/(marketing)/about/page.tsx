@@ -5,8 +5,8 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
     const { locale } = await params;
     return {
         ...constructCanonicalMetadata('/about', locale),
-        title: 'About Us | Englivo',
-        description: 'Learn about Englivo\'s mission to make English fluency accessible through AI-powered learning and expert tutoring.',
+        title: 'About Englivo | Online English Speaking & Fluency Platform',
+        description: 'Learn about Englivo’s fluency-first approach to English learning. We help learners build speaking confidence through real conversations, personalized coaching.',
     };
 }
 
@@ -21,8 +21,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
     const aboutSchema = {
       "@context": "https://schema.org",
       "@type": "AboutPage",
-      "name": "About Us | Englivo",
-      "description": "Learn about Englivo's mission to make English fluency accessible through AI-powered learning and expert tutoring.",
+      "name": "About Englivo | Online English Speaking & Fluency Platform",
+      "description": "Learn about Englivo’s fluency-first approach to English learning. We help learners build speaking confidence through real conversations, personalized coaching.",
       "url": `https://englivo.com/${locale}/about`,
       "audience": {
         "@type": "Audience",

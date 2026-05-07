@@ -8,7 +8,11 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  return constructCanonicalMetadata("/terms", locale);
+  return {
+    ...constructCanonicalMetadata("/terms", locale),
+    title: 'Terms of Service | Englivo English Fluency Platform',
+    description: 'Review the terms, conditions, subscription rules, and acceptable usage guidelines for learning and practicing on Englivo.',
+  };
 }
 
 const termsContent = {

@@ -3,11 +3,10 @@ import { constructCanonicalMetadata } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params;
-    const dict = await getDictionary(locale);
     return {
         ...constructCanonicalMetadata('/method', locale),
-        title: dict.methodPage.title || 'Our Method | Englivo',
-        description: dict.methodPage.description || 'Discover Englivo\'s proven method for mastering English fluency through real conversations and smart practice.',
+        title: 'Speak Faster & Boost Confidence in English: Englivo',
+        description: 'Help your child speak faster in English and speak confident English through real conversations, expert coaching, and stress-free learning with Englivo.',
     };
 }
 
@@ -22,8 +21,8 @@ export default async function MethodPage({ params }: { params: Promise<{ locale:
     const methodSchema = {
       "@context": "https://schema.org",
       "@type": "WebPage",
-      "name": "Our Method | Englivo",
-      "description": "Discover Englivo's proven method for mastering English fluency through real conversations, reflex training, and avoiding grammar overload.",
+      "name": "Speak Faster & Boost Confidence in English: Englivo",
+      "description": "Help your child speak faster in English and speak confident English through real conversations, expert coaching, and stress-free learning with Englivo.",
       "url": `https://englivo.com/${locale}/method`,
       "audience": {
         "@type": "Audience",

@@ -8,7 +8,11 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
-  return constructCanonicalMetadata("/privacy", locale);
+  return {
+    ...constructCanonicalMetadata("/privacy", locale),
+    title: 'Privacy Policy | Englivo English Fluency Platform',
+    description: 'Learn how Englivo securely handles, encrypts, and protects your account information, speaking recordings, and learning metrics in our privacy policy.',
+  };
 }
 
 const privacyContent = {

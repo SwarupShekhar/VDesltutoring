@@ -3,11 +3,10 @@ import { constructCanonicalMetadata } from '@/lib/seo';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params;
-    const dict = await getDictionary(locale);
     return {
         ...constructCanonicalMetadata('/how-it-works', locale),
-        title: dict.howItWorksPage.title || 'How It Works | Englivo',
-        description: dict.howItWorksPage.description || 'Learn how Englivo\'s AI-powered English fluency training works with live practice and personalized coaching.',
+        title: 'Our English Speaking & Fluency Training Process: Englivo',
+        description: 'Discover how Englivo combines interactive AI practice, immediate CEFR feedback, and custom live coaching to help you transition from translating to speaking naturally.',
     };
 }
 
@@ -22,8 +21,8 @@ export default async function HowItWorksPage({ params }: { params: Promise<{ loc
     const howItWorksSchema = {
       "@context": "https://schema.org",
       "@type": "HowTo",
-      "name": "How Englivo Works",
-      "description": "Learn how Englivo's English fluency training works with live practice and personalized coaching.",
+      "name": "Our English Speaking & Fluency Training Process: Englivo",
+      "description": "Discover how Englivo combines interactive AI practice, immediate CEFR feedback, and custom live coaching to help you transition from translating to speaking naturally.",
       "url": `https://englivo.com/${locale}/how-it-works`,
       "audience": {
         "@type": "Audience",

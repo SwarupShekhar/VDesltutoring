@@ -9,7 +9,11 @@ import Image from "next/image";
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     // For blog pages, always use English as canonical since content is English-only
     // This prevents "Duplicate, Google chose different canonical" errors
-    return constructCanonicalMetadata('/blog', 'en');
+    return {
+        ...constructCanonicalMetadata('/blog', 'en'),
+        title: 'English Fluency Insights, Tips & Guides | Englivo Blog',
+        description: 'Explore actionable guides, professional communication tips, and expert language learning strategies designed to help you speak English faster and with confidence.',
+    };
 }
 
 interface PageProps {

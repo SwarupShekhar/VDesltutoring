@@ -12,13 +12,57 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 
 import { getDictionary, type Locale } from "@/i18n/getDictionary";
 import { PricingPageContent } from "@/components/PricingPageContent";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export default async function PricingPage({ params }: { params: Promise<{ locale: Locale }> }) {
     const { locale } = await params;
     const dict = await getDictionary(locale);
 
+    const pricingSchema = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": "Englivo Fluency Program",
+      "image": "https://englivo.com/images/hero-preview.png",
+      "description": "Premium English fluency coaching and AI-powered reflex training program for professionals and global job seekers.",
+      "brand": {
+        "@type": "Brand",
+        "name": "Englivo"
+      },
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "USD",
+        "lowPrice": "49.00",
+        "highPrice": "199.00",
+        "offerCount": "3",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Starter Plan",
+            "price": "49.00",
+            "priceCurrency": "USD",
+            "url": `https://englivo.com/${locale}/pricing`
+          },
+          {
+            "@type": "Offer",
+            "name": "Pro Plan",
+            "price": "99.00",
+            "priceCurrency": "USD",
+            "url": `https://englivo.com/${locale}/pricing`
+          },
+          {
+            "@type": "Offer",
+            "name": "Executive Plan",
+            "price": "199.00",
+            "priceCurrency": "USD",
+            "url": `https://englivo.com/${locale}/pricing`
+          }
+        ]
+      }
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground selection:bg-electric/30 selection:text-electric-foreground relative overflow-hidden font-sans">
+            <JsonLd schema={pricingSchema} />
 
 
             {/* Background Ambience */}

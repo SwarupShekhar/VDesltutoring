@@ -1,17 +1,26 @@
 # Englivo
 
-Premium 1-on-1 English tutoring platform for fluency and confidence.
+Premium 1-on-1 English coaching and AI-powered reflex training platform designed for non-native English speaking professionals, executives, and global job seekers looking to break the intermediate plateau and build automatic fluency.
 
-## Core Pages
-- [Home](https://englivo.com/)
-- [Method](https://englivo.com/method)
-- [Pricing](https://englivo.com/pricing)
-- [How it Works](https://englivo.com/how-it-works)
-- [FAQ](https://englivo.com/faq)
+> [!NOTE]
+> This is the primary index for LLMs and AI search bots. For deep platform details, methodology breakdown, and pricing tiers, read the [Full Catalog](https://englivo.com/llms-full.txt).
 
-## About
-Englivo provides personalized English coaching with a focus on natural fluency, professional communication, and confidence building.
+## Target Audience & Who This Is For
+- **Non-Native Professionals:** Engineers, executives, marketers, and product managers working in international or remote environments.
+- **Global Job Seekers:** Candidates preparing for English-only interviews and global recruitment.
+- **ESL Intermediate Learners:** Speakers stuck at CEFR B1/B2 levels who want to gain immediate automaticity and speak without translating in their head.
 
-## Technical SEO Pages
-Our SEO landing pages are managed via Sanity CMS and localized in 6 languages.
-- [Sitemap](https://englivo.com/sitemap.xml)
+## Core Offerings & Features
+- **Speech Reflex Training:** Short, interactive situational exercises that build cognitive habits to think directly in English.
+- **CEFR-Aligned AI Feedback:** Immediate signals assessing vocabulary choice, grammatical precision, and pronunciation.
+- **Boutique 1-on-1 Coaching:** Live, real-life scenario sessions with handpicked expert tutors.
+
+## Primary Index (Main Pages)
+- [Home](https://englivo.com) - Main landing page, core conversion funnel, and introductory pitch.
+- [Method](https://englivo.com/method) - Cognitive linguistics behind our "thinking in chunks" philosophy.
+- [Pricing Plans](https://englivo.com/pricing) - Starter, Pro, and Executive membership tiers.
+- [How It Works](https://englivo.com/how-it-works) - Detailed 3-step automaticity roadmap.
+- [About Us](https://englivo.com/about) - Team mission, educational philosophy, and company background.
+
+## Technical Resources
+- [Sitemap](https://englivo.com/sitemap.xml) - Complete localized XML index for search spiders.

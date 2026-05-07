@@ -8,6 +8,7 @@ import { TextGenerateEffect } from "@/components/ui/text-generate-effect";
 import dynamic from "next/dynamic";
 
 import { constructCanonicalMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export async function generateMetadata({
   params,
@@ -15,12 +16,23 @@ export async function generateMetadata({
   params: Promise<{ locale: Locale }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const dictionary = await getDictionary(locale);
   const seo = constructCanonicalMetadata("/", locale);
 
+  const brandSubtitle = dictionary?.nav?.brandSubtitle || "English Fluency for Professionals";
+  const heroSubtext = dictionary?.hero?.subtext || "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.";
+
+  // Clean HTML from strings
+  const cleanTitle = `Englivo — ${brandSubtitle}`.replace(/<[^>]*>/g, ' ').trim();
+  const cleanDesc = heroSubtext.replace(/<[^>]*>/g, ' ').trim();
+
   return {
-    title: "Englivo — English Fluency for Professionals",
-    description:
-      "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
+    title: cleanTitle,
+    description: cleanDesc,
+    openGraph: {
+      title: cleanTitle,
+      description: cleanDesc,
+    },
     ...seo,
   };
 }
@@ -175,12 +187,44 @@ export default async function Home({
     })),
   };
 
+  const homepageSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": `Englivo — ${dict.nav?.brandSubtitle || 'English Fluency for Professionals'}`,
+    "description": dict.hero?.subtext ? dict.hero.subtext.replace(/<[^>]*>/g, " ").trim() : "Stop translating in your head. Build real English fluency with AI-powered speaking practice, CEFR-based feedback, and live coaching.",
+    "url": `https://englivo.com/${locale}`,
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "Non-native English speaking professionals, ESL learners seeking fluency, global executives, international workers"
+    },
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "English Fluency",
+        "sameAs": "https://en.wikipedia.org/wiki/Fluency"
+      },
+      {
+        "@type": "Thing",
+        "name": "English as a second or foreign language",
+        "sameAs": "https://en.wikipedia.org/wiki/English_as_a_second_or_foreign_language"
+      },
+      {
+        "@type": "Thing",
+        "name": "Language coaching",
+        "sameAs": "https://en.wikipedia.org/wiki/Tutor"
+      }
+    ],
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Englivo",
+      "url": "https://englivo.com"
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-electric/30 selection:text-electric-foreground relative">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
+      <JsonLd schema={homepageSchema} />
+      <JsonLd schema={faqJsonLd} />
       <FloatingConversation />
 
       {/* AI Tutor Floating Button */}

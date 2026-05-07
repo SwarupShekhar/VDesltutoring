@@ -5,15 +5,25 @@ import { FluencyGuideContent } from '@/components/content/FluencyGuideContent';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: Locale }> }): Promise<Metadata> {
     const { locale } = await params;
+    const dictionary = await getDictionary(locale);
     const seo = constructCanonicalMetadata('/fluency-guide', locale);
 
+    const t = dictionary?.fluencyGuide || {};
+    const heroTitle = t.hero?.title || "Englivo Fluency Guide";
+    const heroSubtitle = t.hero?.subtitle || "From Translating → Thinking → Speaking";
+    const heroDesc = t.hero?.description || "Your map from A2 → C1 without grammar overload.";
+
+    // Clean up title and description (strip potential HTML tags like <br/>)
+    const cleanTitle = `${heroTitle} – ${heroSubtitle}`.replace(/<[^>]*>/g, ' ').trim();
+    const cleanDesc = heroDesc.replace(/<[^>]*>/g, ' ').trim();
+
     return {
-        title: "Englivo Fluency Guide – From Translating to Thinking in English",
-        description: "Central roadmap from A2 to C1 speaking using reflex training, CEFR signals and live practice.",
+        title: cleanTitle,
+        description: cleanDesc,
         openGraph: {
             type: "article",
-            title: "Englivo Fluency Guide",
-            description: "From Translating → Thinking → Speaking. Your map from A2 → C1.",
+            title: cleanTitle,
+            description: cleanDesc,
         },
         ...seo
     };

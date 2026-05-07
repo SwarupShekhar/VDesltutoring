@@ -12,13 +12,44 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: L
 
 import { getDictionary, type Locale } from "@/i18n/getDictionary";
 import { AboutPageContent } from "@/components/AboutPageContent";
+import { JsonLd } from "@/components/seo/JsonLd";
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: Locale }> }) {
     const { locale } = await params;
     const dict = await getDictionary(locale);
 
+    const aboutSchema = {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "About Us | Englivo",
+      "description": "Learn about Englivo's mission to make English fluency accessible through AI-powered learning and expert tutoring.",
+      "url": `https://englivo.com/${locale}/about`,
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Non-native English speaking professionals, language learners, global job seekers"
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "Language education",
+          "sameAs": "https://en.wikipedia.org/wiki/Language_education"
+        },
+        {
+          "@type": "Thing",
+          "name": "Tutoring",
+          "sameAs": "https://en.wikipedia.org/wiki/Tutor"
+        }
+      ],
+      "mainEntity": {
+        "@type": "EducationalOrganization",
+        "name": "Englivo",
+        "url": "https://englivo.com"
+      }
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground selection:bg-electric/30 selection:text-electric-foreground relative overflow-hidden font-sans">
+            <JsonLd schema={aboutSchema} />
 
 
             {/* Background Ambience */}

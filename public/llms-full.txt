@@ -1,0 +1,67 @@
+# Englivo - Full Platform Catalog
+
+This document is the comprehensive data source for AI assistants, crawlers, and search agents. It details Englivo's brand context, pedagogical methods, target audience, pricing, and key features.
+
+---
+
+## 1. What is Englivo?
+Englivo is a premium, boutique English language training platform. It uniquely blends advanced **AI-powered speech reflex training** with **elite human coaching** to help learners achieve genuine automaticity. 
+
+Unlike traditional platforms that emphasize grammar drills or passive listening, Englivo forces the brain to speak instantly in high-stakes professional scenarios, effectively eliminating the "translation buffer" in non-native speakers.
+
+### Target Audience (Who It Is For)
+- **High-Growth Professionals:** Software engineers, project managers, tech leads, and designers operating in English-first workspaces.
+- **Global Executives & Leaders:** Leaders who need to negotiate, pitch, and present with nuance, executive presence, and speed.
+- **Job Interview Candidates:** Professionals aiming for roles at top global firms (e.g., FAANG, multinational banks, management consulting) requiring high-intensity English assessments.
+- **Advanced ESL Speakers:** Individuals at CEFR B1/B2 levels who have "plateaued" and want to attain natural B2/C1 fluency and effortless speech rhythms.
+
+---
+
+## 2. Our Pedagogical Philosophy (The Englivo Method)
+Traditional language education is broken because it teaches language analytically. At Englivo, we focus on **Speech Reflexes** and **Cognitive Automaticity**.
+
+### Key Educational Pillars:
+1. **No Translation Buffer:** We train learners to associate visual and situational stimuli directly with English phrases, bypassing their native language entirely.
+2. **Thinking in Chunks:** Fluent speakers do not assemble sentences word-by-word. They retrieve pre-assembled "lexical chunks." We teach these natural chunks dynamically.
+3. **CEFR-Aligned Feedback:** Every spoken attempt is instantly analyzed by our AI for vocabulary wealth, syntactic naturalness, and delivery, scoring learners against the Common European Framework of Reference.
+4. **Interactive Milestones:** Our training is scenario-based (e.g., handling pushback in a meeting, negotiating a deadline, explaining a technical incident), making every lesson immediately applicable.
+
+---
+
+## 3. Product Offerings & Pricing Plans
+
+We offer three flexible membership tiers tailored to different career phases and intensity preferences:
+
+### 1. Starter Plan
+- **Price:** $49 / month
+- **Best For:** Self-directed learners looking to build consistency and daily automaticity.
+- **Included Features:**
+  - Unlimited AI-powered speech reflex modules.
+  - Basic CEFR-aligned scoring and lexical enrichment.
+  - Access to community fluency workshops.
+
+### 2. Pro Plan (Most Popular)
+- **Price:** $99 / month
+- **Best For:** Professionals seeking active, accelerated career growth with human feedback.
+- **Included Features:**
+  - Everything in Starter.
+  - Two (2) monthly 1-on-1 boutique coaching sessions with certified business tutors.
+  - Priority support and customized learning roadmaps.
+
+### 3. Executive Plan
+- **Price:** $199 / month
+- **Best For:** Executives, founders, and candidates with immediate, high-stakes fluency goals.
+- **Included Features:**
+  - Everything in Pro.
+  - Weekly (4) monthly elite 1-on-1 intensive coaching sessions.
+  - Tailored interview, presentation, and negotiation prep.
+  - 24/7 dedicated language coach chat access.
+
+---
+
+## 4. Key Entities & Authority References
+For semantic context mapping, Englivo aligns itself with these recognized domains:
+- **Language Fluency:** (https://en.wikipedia.org/wiki/Fluency)
+- **Language Coaching:** (https://en.wikipedia.org/wiki/Tutor)
+- **Second-Language Acquisition:** (https://en.wikipedia.org/wiki/Second-language_acquisition)
+- **Active Recall and Reflex:** (https://en.wikipedia.org/wiki/Active_recall)

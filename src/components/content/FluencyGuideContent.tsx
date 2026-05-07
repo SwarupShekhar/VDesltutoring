@@ -113,7 +113,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
                             </div>
                             <h3 className="font-semibold text-lg mb-2">{diagnosisCards[2]?.title}</h3>
                             <p className="text-sm text-muted-foreground mb-6 grow">{diagnosisCards[2]?.desc}</p>
-                            <Link href={`${blogPrefix}/thinking-in-chunks-the-secret-behind-natural-english-fluency`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
+                            <Link href={`${blogPrefix}/thinking-in-chunks`} className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center hover:underline mt-auto">
                                 {diagnosisCards[2]?.linkText} <ArrowRight size={16} className="ml-1" />
                             </Link>
                         </motion.div>
@@ -138,7 +138,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
                                 </ul>
                             </div>
                             <div className="flex-1 flex flex-col justify-center gap-4 border-l border-indigo-200 dark:border-indigo-800/50 pl-0 md:pl-12">
-                                <Link href={`${blogPrefix}/what-b2-english-actually-means-in-real-life-not-grammar`} className="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all">
+                                <Link href={`${blogPrefix}/what-b2-english-means`} className="group flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all">
                                     <span className="font-medium">{tProcess.links?.b2Meaning}</span>
                                     <ArrowRight size={16} className="text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </Link>
@@ -192,7 +192,7 @@ export function FluencyGuideContent({ locale, content }: { locale: string; conte
                                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-indigo-50 dark:bg-slate-800 text-2xl font-serif mb-6">{methodSteps[2]?.number}</div>
                                 <h3 className="text-xl font-bold mb-2">{methodSteps[2]?.title}</h3>
                                 <p className="text-sm text-muted-foreground mb-6">{methodSteps[2]?.desc}</p>
-                                <Link href={`${blogPrefix}/filler-words-enemy-or-tool`}>
+                                <Link href={`${blogPrefix}/filler-words`}>
                                     <span className="inline-block px-4 py-2 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 text-sm font-medium rounded-full hover:border-indigo-400 transition-colors">
                                         {methodSteps[2]?.cta}
                                     </span>

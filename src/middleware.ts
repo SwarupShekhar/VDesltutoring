@@ -201,17 +201,42 @@ export default clerkMiddleware(async (auth, req) => {
     { from: "/blog/filler-words-enemy-or-tool", to: "/blog/filler-words" },
   ];
 
-  // Check for blog redirects
+  // Check for blog redirects (locale-aware)
+  let matchedRedirect = null;
+  let matchedLocalePrefix = "";
+
   for (const redirect of blogRedirects) {
     if (
       pathname === redirect.from ||
       pathname.startsWith(redirect.from + "/")
     ) {
-      const newPath = pathname.replace(redirect.from, redirect.to);
-      const newUrl = new URL(newPath, req.url);
-      newUrl.search = req.nextUrl.search;
-      return enhanceResponse(NextResponse.redirect(newUrl, { status: 301 }));
+      matchedRedirect = redirect;
+      matchedLocalePrefix = "";
+      break;
     }
+
+    for (const locale of locales) {
+      const localizedFrom = `/${locale}${redirect.from}`;
+      if (
+        pathname === localizedFrom ||
+        pathname.startsWith(localizedFrom + "/")
+      ) {
+        matchedRedirect = redirect;
+        matchedLocalePrefix = `/${locale}`;
+        break;
+      }
+    }
+    if (matchedRedirect) break;
+  }
+
+  if (matchedRedirect) {
+    const cleanPathname = matchedLocalePrefix ? pathname.substring(matchedLocalePrefix.length) : pathname;
+    const cleanNewPath = cleanPathname.replace(matchedRedirect.from, matchedRedirect.to);
+    const finalNewPath = `${matchedLocalePrefix}${cleanNewPath}`;
+
+    const newUrl = new URL(finalNewPath, req.url);
+    newUrl.search = req.nextUrl.search;
+    return enhanceResponse(NextResponse.redirect(newUrl, { status: 301 }));
   }
 
   // 1. i18n Routing Logic
